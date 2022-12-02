@@ -26,7 +26,7 @@ GameObject::~GameObject()
 
 void GameObject::init_object()
 {
-	
+	//a
 }
 
 void GameObject::update()
