@@ -1,10 +1,10 @@
 #pragma once
-
+#include"Component.h"
 #include "Animation.h"
 namespace bm98
 {
 
-class AnimationComponent
+class AnimationComponent : public Component
 {
 public:
 	AnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet);

@@ -9,6 +9,7 @@ public:
     Dummy(float x, float y);
     virtual ~Dummy();
 
+    void init_anim();
 
     virtual void on_collision_enter(Collision info);
 

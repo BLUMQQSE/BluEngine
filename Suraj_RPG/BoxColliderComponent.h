@@ -1,13 +1,16 @@
 #pragma once
+#include "Component.h"
+#include "Math.h"
 namespace bm98
 {
+
 enum class CollisionDetection
 {
 	DISCRETE,
 	CONTINUOUS
 };
 
-class BoxColliderComponent
+class BoxColliderComponent : public Component
 {
 public:
 
@@ -26,12 +29,11 @@ public:
 	void set_active(const bool& active);
 
 
-	sf::Vector2f get_offset();
+	Vector2f get_offset();
 
-	void update();
-	void fixed_update();
-	void render(sf::RenderTarget& target);
-	void add_to_buffer(sf::View* view = nullptr);
+	virtual void update() override;
+	virtual void fixed_update() override;
+	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
 protected:
 

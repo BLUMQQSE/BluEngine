@@ -1,9 +1,11 @@
 #pragma once
-#include "AnimationComponent.h"
+#include"Component.h"
 #include "Animation.h"
 namespace bm98
 {
-class ChildAnimationComponent
+class AnimationComponent;
+
+class ChildAnimationComponent : public Component
 {
 public:
 	ChildAnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "AnimationComponent.h"
 #include "ChildAnimationComponent.h"
 namespace bm98
 {

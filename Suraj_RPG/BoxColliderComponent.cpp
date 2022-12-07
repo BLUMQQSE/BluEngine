@@ -63,9 +63,9 @@ void BoxColliderComponent::set_active(const bool& active)
 	this->active = active;
 }
 
-sf::Vector2f BoxColliderComponent::get_offset()
+Vector2f BoxColliderComponent::get_offset()
 {
-	return sf::Vector2f(offsetX, offsetY);
+	return Vector2f(offsetX, offsetY);
 }
 
 void BoxColliderComponent::update()
@@ -78,11 +78,6 @@ void BoxColliderComponent::update()
 void BoxColliderComponent::fixed_update()
 {
 
-}
-
-void BoxColliderComponent::render(sf::RenderTarget& target)
-{
-	target.draw(hitbox);
 }
 
 void BoxColliderComponent::add_to_buffer(sf::View* view)

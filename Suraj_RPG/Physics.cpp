@@ -71,6 +71,11 @@ void Physics::fixed_update()
 	check_collisions();
 }
 
+bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, LayerMask mask)
+{
+	return false;
+}
+
 void Physics::init_matrix()
 {
 	for (int i = 0; i < (int)Layer::LAST_DONT_REMOVE; i++)
@@ -88,29 +93,30 @@ void Physics::check_collisions()
 	{
 		if (active_object.first == nullptr)
 			continue;
-		if (active_object.first->get_box_collider_component() == nullptr)
+		if (!active_object.first->has_component<BoxColliderComponent>())
 			continue;
 		if (!active_object.first->is_active())
 			continue;
 
-		BoxColliderComponent active = *active_object.first->get_box_collider_component();
-		RigidbodyComponent active_rigid = *active_object.first->get_rigidbody_component();
-		if (&active_rigid)
-			active_object.first->get_rigidbody_component()->unhalt();
-		if (!active.is_active())
+		BoxColliderComponent* active_collider = &active_object.first->get_component<BoxColliderComponent>();
+		RigidbodyComponent* active_rigid = &active_object.first->get_component<RigidbodyComponent>();
+
+		if (active_rigid)
+			active_rigid->unhalt();
+		if (!active_collider->is_active())
 			continue;
-		if (!triggers_acknowledge_colliders && active.is_trigger())
+		if (!triggers_acknowledge_colliders && active_collider->is_trigger())
 			continue;
 
 
 		/*
 		* Here can handle tile collisions
 		*/
-		if (!active.is_trigger())
+		if (!active_collider->is_trigger())
 		{
 			for (auto c : collidable_tiles)
 			{
-				if (active.check_intersect(c->get_bounds()))
+				if (active_collider->check_intersect(c->get_bounds()))
 				{
 					//collision
 					if (!collision_matrix[(int)active_object.first->get_info().layer][(int)c->get_layer()])
@@ -118,50 +124,47 @@ void Physics::check_collisions()
 
 					//here we need to move active so that its outer bounds is one off of c->get_bounds()
 
-
-					if (active_rigid.get_velocity().x > 0 && active_rigid.get_velocity().y == 0)
+					if (active_rigid->get_velocity().x > 0 && active_rigid->get_velocity().y == 0)
 					{
 						active_object.first->set_position(
-							c->get_bounds().left - active.get_offset().x - active.get_bounds().width,
+							c->get_bounds().left - active_collider->get_offset().x - active_collider->get_bounds().width,
 							active_object.first->get_transform().position.y
 						);
-						active_object.first->get_rigidbody_component()->halt_right();
+						active_rigid->halt_right();
 					}
-					if (active_rigid.get_velocity().x < 0 && active_rigid.get_velocity().y == 0)
+					if (active_rigid->get_velocity().x < 0 && active_rigid->get_velocity().y == 0)
 					{
 						active_object.first->set_position(
-							c->get_bounds().left + c->get_bounds().width - active.get_offset().x,
+							c->get_bounds().left + c->get_bounds().width - active_collider->get_offset().x,
 							active_object.first->get_transform().position.y
 						);
-						active_object.first->get_rigidbody_component()->halt_left();
+						active_rigid->halt_left();
 					}
-					if (active_rigid.get_velocity().y > 0 && active_rigid.get_velocity().x == 0)
+					if (active_rigid->get_velocity().y > 0 && active_rigid->get_velocity().x == 0)
 					{
 						active_object.first->set_position(
 							active_object.first->get_transform().position.x,
-							c->get_bounds().top - active.get_offset().y - active.get_bounds().height
+							c->get_bounds().top - active_collider->get_offset().y - active_collider->get_bounds().height
 						);
-						active_object.first->get_rigidbody_component()->halt_down();
+						active_rigid->halt_down();
 					}
-					if (active_rigid.get_velocity().y < 0 && active_rigid.get_velocity().x == 0)
+					if (active_rigid->get_velocity().y < 0 && active_rigid->get_velocity().x == 0)
 					{
 						active_object.first->set_position(
 							active_object.first->get_transform().position.x,
-							c->get_bounds().top + c->get_bounds().height - active.get_offset().y
+							c->get_bounds().top + c->get_bounds().height - active_collider->get_offset().y
 						);
-						active_object.first->get_rigidbody_component()->halt_up();
+						active_rigid->halt_up();
 					}
 				}
 			}
 		}
 
-
-
 		for (auto& checking_object : active_object.second.collisions)
 		{
 			if (checking_object.first == nullptr)
 				continue;
-			if (checking_object.first->get_box_collider_component() == nullptr)
+			if (!checking_object.first->has_component<BoxColliderComponent>())
 				continue;
 			if (!checking_object.first->is_active())
 				continue;
@@ -178,16 +181,18 @@ void Physics::check_collisions()
 			if (active_object.first->check_for_child(checking_object.first))
 				continue;
 
-			BoxColliderComponent checking = *checking_object.first->get_box_collider_component();
+			BoxColliderComponent* checking_collider = &checking_object.first->get_component<BoxColliderComponent>();
 
-			if (!checking.is_active())
+			if (!checking_collider)
 				continue;
-			if (active.is_trigger() && checking.is_trigger())
+			if (!checking_collider->is_active())
+				continue;
+			if (active_collider->is_trigger() && checking_collider->is_trigger())
 				continue;
 
-			if (checking.is_trigger())
+			if (checking_collider->is_trigger())
 			{
-				if (!active.check_outer_intersect(checking.get_outer_bounds()))
+				if (!active_collider->check_outer_intersect(checking_collider->get_outer_bounds()))
 				{
 					if (checking_object.second == Collision_State::TRIGGER)
 					{
@@ -207,33 +212,33 @@ void Physics::check_collisions()
 				continue;
 			}
 
-			if (!active.check_outer_intersect(checking.get_outer_bounds()))
+			if (!active_collider->check_outer_intersect(checking_collider->get_outer_bounds()))
 			{
 				if (checking_object.second == Collision_State::COLLISION)
 				{
 					checking_object.second = Collision_State::COLLISION_EXIT;
 					active_object.second.game_object->on_collision_exit(Collision(checking_object.first,
-						checking_object.first->get_box_collider_component()));
+						checking_collider));
 				}
 				continue;
 			}
 
 			//here prevent moving into the collider and ensure does not phase through the object
-			if (active_object.first->get_rigidbody_component())
+			if (active_rigid)
 			{
-				active_object.first->get_rigidbody_component()->set_velocity(sf::Vector2f(0, 0));
+				active_rigid->set_velocity(sf::Vector2f(0, 0));
 
 				// TODO: move everything below outside of the if statement
 				//we want to move the game_object so that its active(inner.left + inner.width) == checking(outer.left)
-				sf::FloatRect checking_outer = checking.get_outer_bounds();
-				sf::FloatRect active_inner = active.get_bounds();
+				sf::FloatRect checking_outer = checking_collider->get_outer_bounds();
+				sf::FloatRect active_inner = active_collider->get_bounds();
 
-				sf::Vector2f velocity = active_object.first->get_rigidbody_component()->get_velocity();
+				sf::Vector2f velocity = active_rigid->get_velocity();
 
 				//want to set position of active so that
 					//: active_inner == checking_outer
 				active_object.first->set_position(
-					checking_outer.left - active.get_offset().x - active.get_bounds().width,
+					checking_outer.left - active_collider->get_offset().x - active_collider->get_bounds().width,
 					active_object.first->get_transform().position.y
 				);
 
@@ -246,12 +251,12 @@ void Physics::check_collisions()
 			{
 				checking_object.second = Collision_State::COLLISION_ENTRY;
 				active_object.second.game_object->on_collision_enter(Collision(checking_object.first,
-					checking_object.first->get_box_collider_component()));
+					&checking_object.first->get_component<BoxColliderComponent>()));
 				continue;
 			}
 
 			active_object.second.game_object->on_collision_stay(Collision(checking_object.first,
-				checking_object.first->get_box_collider_component()));
+				checking_collider));
 			continue;
 		}
 	}

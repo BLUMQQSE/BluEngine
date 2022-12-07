@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <bitset>
 #include <ctime>
 #include <cstdlib>
 #include <cmath>

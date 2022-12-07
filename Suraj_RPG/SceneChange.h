@@ -1,7 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "SceneManager.h"
-#include "Player.h"
+#include "Math.h"
 namespace bm98
 {
 class SceneChange :
@@ -21,7 +20,7 @@ public:
 
 private:
     std::string scene_name;
-    sf::Vector2f scene_destination;
+    Vector2f scene_destination;
 };
 
 }

@@ -186,6 +186,7 @@
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="IRenderable.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="MainMenuState.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="PauseMenu.h" />

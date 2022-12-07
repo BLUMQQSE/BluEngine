@@ -1,6 +1,9 @@
 #pragma once
+#include "Component.h"
+#include "Math.h"
 namespace bm98
 {
+
 enum class MovementState
 {
 	IDLE,
@@ -15,7 +18,7 @@ enum class Orientation
 	RIGHT
 };
 
-class RigidbodyComponent
+class RigidbodyComponent : public Component
 {
 public:
 	RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
@@ -37,8 +40,8 @@ public:
 	const Orientation get_orientation() const;
 
 	void apply_acceleration(const float dir_x, const float dir_y);
-	void update();
-	void fixed_update();
+	virtual void update() override;
+	virtual void fixed_update() override;
 
 protected:
 	void apply_deceleration();
@@ -53,8 +56,8 @@ private:
 	float acceleration;
 	float deceleration;
 
-	sf::Vector2f velocity;
-	sf::Vector2f position;
+	Vector2f velocity;
+	Vector2f position;
 	//std::vector<Contact> contacts;
 
 	bool halted_up;

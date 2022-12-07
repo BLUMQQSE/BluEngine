@@ -169,6 +169,7 @@ void GameState::render()
 void GameState::init_players()
 {
 	player = new Player(0.f, 100.f);
+
 	/*
 	Dummy* root = new Dummy(0, 0);
 	Dummy* dummy_parent = new Dummy(0, 110);
@@ -217,7 +218,7 @@ void GameState::init_view()
 	//view = window->getView();
 	view.setSize(graphics_settings->resolution.width, graphics_settings->resolution.height);
 	view.setCenter(graphics_settings->resolution.width / 2.f, graphics_settings->resolution.height / 2.f);
-	view.zoom(.6f);
+	view.zoom(.2f);
 }
 
 #pragma endregion

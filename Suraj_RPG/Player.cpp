@@ -5,6 +5,11 @@
 #include "Input.h"
 #include "Debug.h"
 #include "Collisions.h"
+
+#include "RigidbodyComponent.h"
+#include "BoxColliderComponent.h"
+#include "AnimationComponent.h"
+#include "ChildAnimationComponent.h"
 namespace bm98
 {
 using namespace core;
@@ -27,33 +32,36 @@ Player::Player(float x, float y)
 	set_sprite_texture(texture_sheet);
 	sprite.setTextureRect(sf::IntRect(sf::Vector2i(x, y), sf::Vector2i(32, 32)));
 
-	Debug::Log("Player");
-	add_box_collider_component(sprite, 16.f, -14.f, 32.f, 50.f);
-	add_rigidbody_component(200.f, 15.f, 50.f);
+	add_component<RigidbodyComponent>(sprite, 200.f, 15.f, 50.f);
+	add_component<BoxColliderComponent>(sprite, 16.f, -14.f, 32.f, 50.f, false);
 
-	add_animation_component();
+	add_component<AnimationComponent>(sprite, texture_sheet);
+	get_component<AnimationComponent>().add_animation("IDLE_UP", 30.f, 0, 0, 0, 0, 64, 64, true);
+	get_component<AnimationComponent>().add_animation("IDLE_LEFT", 30.f, 0, 1, 0, 0, 64, 64, true);
+	get_component<AnimationComponent>().add_animation("IDLE_DOWN", 30.f, 0, 2, 0, 0, 64, 64, true);
+	get_component<AnimationComponent>().add_animation("IDLE_RIGHT", 30.f, 0, 3, 0, 0, 64, 64, true);
 
-	animation_component->add_animation("IDLE_UP", 30.f, 0, 0, 0, 0, 64, 64, true);
-	animation_component->add_animation("IDLE_LEFT", 30.f, 0, 1, 0, 0, 64, 64, true);
-	animation_component->add_animation("IDLE_DOWN", 30.f, 0, 2, 0, 0, 64, 64, true);
-	animation_component->add_animation("IDLE_RIGHT", 30.f, 0, 3, 0, 0, 64, 64, true);
+	get_component<AnimationComponent>().add_animation("WALK_UP", 30.f, 0, 4, 2, 0, 64, 64, true);
+	get_component<AnimationComponent>().add_animation("WALK_LEFT", 30.f, 0, 5, 2, 0, 64, 64, true);
+	get_component<AnimationComponent>().add_animation("WALK_DOWN", 30.f, 0, 6, 2, 0, 64, 64, true);
+	get_component<AnimationComponent>().add_animation("WALK_RIGHT", 30.f, 0, 7, 2, 0, 64, 64, true);
 
-	animation_component->add_animation("WALK_UP", 30.f, 0, 4, 2, 0, 64, 64, true);
-	animation_component->add_animation("WALK_LEFT", 30.f, 0, 5, 2, 0, 64, 64, true);
-	animation_component->add_animation("WALK_DOWN", 30.f, 0, 6, 2, 0, 64, 64, true);
-	animation_component->add_animation("WALK_RIGHT", 30.f, 0, 7, 2, 0, 64, 64, true);
-
-	animation_component->add_animation("ATTACK_UP", 30.f, 0, 16, 4, 0, 64, 64,
+	get_component<AnimationComponent>().add_animation("ATTACK_UP", 30.f, 0, 16, 4, 0, 64, 64,
 		false, true);
 
-	animation_component->play("IDLE_DOWN");
+	get_component<AnimationComponent>().play("IDLE_DOWN");
 
 	dummy = new Dummy(1, 1);
 	dummy->set_parent(this);
-	dummy->add_child_animation_component();
+	dummy->init_anim();
+	
+	//dummy->add_child_animation_component();
 	SceneManager::instantiate_gameobject(dummy, true);
 
 	render_object = new Renderer::RenderObject(&sprite, SortingLayer::ACTOR);
+
+
+	std::cout << "component count on player: " << components.size();
 }
 
 Player::~Player()
@@ -86,46 +94,44 @@ void Player::update_input()
 	{
 		attack = true;
 	}
-
 }
 
 void Player::update_animations()
 {
 	if (attack)
 	{
-		attack = animation_component->play("ATTACK_UP");
+		attack = get_component<AnimationComponent>().play("ATTACK_UP");
 	}
 	else if (movement_input.x == 0 && movement_input.y == 0
-		&& rigidbody_component->get_orientation() == Orientation::UP)
-		animation_component->play("IDLE_UP");
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::UP)
+		get_component<AnimationComponent>().play("IDLE_UP");
 	else if (movement_input.x == 0 && movement_input.y == 0
-		&& rigidbody_component->get_orientation() == Orientation::LEFT)
-		animation_component->play("IDLE_LEFT");
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::LEFT)
+		get_component<AnimationComponent>().play("IDLE_LEFT");
 	else if (movement_input.x == 0 && movement_input.y == 0
-		&& rigidbody_component->get_orientation() == Orientation::DOWN)
-		animation_component->play("IDLE_DOWN");
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::DOWN)
+		get_component<AnimationComponent>().play("IDLE_DOWN");
 	else if (movement_input.x == 0 && movement_input.y == 0
-		&& rigidbody_component->get_orientation() == Orientation::RIGHT)
-		animation_component->play("IDLE_RIGHT");
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::RIGHT)
+		get_component<AnimationComponent>().play("IDLE_RIGHT");
 
 	else if (movement_input.x < 0 && movement_input.y == 0
-		&& rigidbody_component->get_orientation() == Orientation::LEFT)
-		animation_component->play("WALK_LEFT", rigidbody_component->get_velocity().x,
-			rigidbody_component->get_max_velocity());
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::LEFT)
+		get_component<AnimationComponent>().play("WALK_LEFT", get_component<RigidbodyComponent>().get_velocity().x,
+			get_component<RigidbodyComponent>().get_max_velocity());
 	else if (movement_input.x > 0 && movement_input.y == 0
-		&& rigidbody_component->get_orientation() == Orientation::RIGHT)
-		animation_component->play("WALK_RIGHT", rigidbody_component->get_velocity().x,
-			rigidbody_component->get_max_velocity());
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::RIGHT)
+		get_component<AnimationComponent>().play("WALK_RIGHT", get_component<RigidbodyComponent>().get_velocity().x,
+			get_component<RigidbodyComponent>().get_max_velocity());
 
 	else if (movement_input.y < 0
-		&& rigidbody_component->get_orientation() == Orientation::UP)
-		animation_component->play("WALK_UP", rigidbody_component->get_velocity().y,
-			rigidbody_component->get_max_velocity());
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::UP)
+		get_component<AnimationComponent>().play("WALK_UP", get_component<RigidbodyComponent>().get_velocity().y,
+			get_component<RigidbodyComponent>().get_max_velocity());
 	else if (movement_input.y > 0
-		&& rigidbody_component->get_orientation() == Orientation::DOWN)
-		animation_component->play("WALK_DOWN", rigidbody_component->get_velocity().y,
-			rigidbody_component->get_max_velocity());
-
+		&& get_component<RigidbodyComponent>().get_orientation() == Orientation::DOWN)
+		get_component<AnimationComponent>().play("WALK_DOWN", get_component<RigidbodyComponent>().get_velocity().y,
+			get_component<RigidbodyComponent>().get_max_velocity());
 }
 
 void Player::update()
@@ -134,20 +140,13 @@ void Player::update()
 
 	update_animations();
 
-
-	transform.position = sprite.getPosition();
-
-	//_rigidbody_component->update();
-
-
-	//_box_collider_component->update();
-
 	GameObject::update();
 }
 
 void Player::fixed_update()
 {
-	rigidbody_component->apply_acceleration(movement_input.x, movement_input.y);
+	//rigidbody_component->apply_acceleration(movement_input.x, movement_input.y);
+	get_component<RigidbodyComponent>().apply_acceleration(movement_input.x, movement_input.y);
 	GameObject::fixed_update();
 }
 
@@ -155,7 +154,6 @@ void Player::on_collision_enter(Collision info)
 {
 	GameObject::on_collision_enter(info);
 	Debug::Log("Player enter collision with: " + info.game_object->get_info().name);
-
 }
 
 void Player::on_collision_stay(Collision info)
@@ -187,7 +185,6 @@ void Player::init_components()
 Json::Value Player::serialize_json()
 {
 	Json::Value obj;
-
 	return obj;
 }
 

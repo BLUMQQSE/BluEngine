@@ -16,11 +16,13 @@ void SceneChange::on_collision_enter(Collision info)
 {
 	if (info.game_object->get_info().tag == Tag::PLAYER)
 	{
+		/*
 		Player* sc = dynamic_cast<Player*>(info.game_object);
 		if (sc)
 		{
 			std::cout << "Change scene here\n";
 		}
+		*/
 	}
 }
 

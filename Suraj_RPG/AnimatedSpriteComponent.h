@@ -1,8 +1,9 @@
 #pragma once
+#include"Component.h"
 #include "Animation.h"
 namespace bm98
 {
-class AnimatedSpriteComponent
+class AnimatedSpriteComponent : public Component
 {
 
 public:

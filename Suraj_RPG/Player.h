@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Math.h"
 namespace bm98
 {
 class Dummy;
@@ -35,7 +36,7 @@ protected:
 
 private:
 
-    sf::Vector2f movement_input;
+    Vector2f movement_input;
     bool attack;
     Dummy* dummy;
 

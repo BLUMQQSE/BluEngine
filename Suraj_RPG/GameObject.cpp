@@ -4,11 +4,12 @@
 #include "Renderer.h"
 #include "Debug.h"
 #include "Collisions.h"
+#include "ChildAnimationComponent.h"
+#include "BoxColliderComponent.h"
+#include "RigidbodyComponent.h"
 namespace bm98
 {
 using namespace core;
-#pragma region PUBLIC
-
 GameObject::GameObject()
 {
 	init_variables();
@@ -16,54 +17,59 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-	delete box_collider_component;
-	delete rigidbody_component;
-	delete animation_component;
-	delete child_animation_component;
-	delete animated_sprite_component;
+	for (auto& c : components)
+	{
+		c.reset();
+	}
 	delete render_object;
 }
 
 void GameObject::init_object()
 {
-	
+
 }
 
 void GameObject::update()
 {
 	if (!active)
 		return;
-	if (rigidbody_component)
+	for (auto& c : components)
 	{
-		rigidbody_component->update();
-		transform.position = sprite.getPosition();
+		c->update();
 	}
-	if (box_collider_component)
-		box_collider_component->update();
-	if (animated_sprite_component)
-		animated_sprite_component->update();
-	if (child_animation_component)
-		child_animation_component->update();
 
+	if(!parent)
+		transform.position = sprite.getPosition();
 	if (parent)
 		sprite.setPosition(parent->transform.position + transform.local_position);
+
 }
 
 void GameObject::late_update()
 {
 	if (!active)
 		return;
+	for (auto& c : components)
+	{
+		c->late_update();
+	}
 }
 
 void GameObject::fixed_update()
 {
 	if (!active)
-		return;
+		return; 
+	for (auto& c : components)
+	{
+		c->fixed_update();
+	}
+
+	/*
 	if (rigidbody_component)
 		rigidbody_component->fixed_update();
 	if (box_collider_component)
 		box_collider_component->fixed_update(); //this needs be after rigid updates so we get next frames bounds, rather than this frames	
-	
+	*/
 }
 
 void GameObject::on_collision_enter(Collision info)
@@ -114,8 +120,10 @@ void GameObject::add_to_buffer(sf::View* view)
 		return;
 	render_object->view = view;
 	Renderer::add(get_render_object());
-	if(box_collider_component)
-		box_collider_component->add_to_buffer(view);
+	for (auto& c : components)
+	{
+		c->add_to_buffer(view);
+	}
 }
 
 Renderer::RenderObject& GameObject::get_render_object()
@@ -138,41 +146,6 @@ void GameObject::set_sprite_texture(sf::Texture& texture)
 	sprite.setTexture(texture);
 }
 
-void GameObject::add_box_collider_component(sf::Sprite& sprite, float offset_x,
-	float offset_y, float width, float height, bool trigger)
-{
-	box_collider_component = new BoxColliderComponent(sprite, offset_x, offset_y, 
-		width, height, trigger);
-}
-
-void GameObject::add_rigidbody_component(const float maxVelocity,
-	const float acceleration, const float deceleration)
-{
-	rigidbody_component = new RigidbodyComponent(sprite, maxVelocity,
-		acceleration, deceleration);
-}
-
-void GameObject::add_animation_component()
-{
-	animation_component = new AnimationComponent(sprite, texture_sheet);
-}
-
-void GameObject::add_child_animation_component()
-{
-	if (!parent)
-		return;
-	if (!parent->get_animation_component())
-		return;
-	
-	child_animation_component = new ChildAnimationComponent(sprite, texture_sheet, *parent->get_animation_component());
-}
-
-void GameObject::add_animated_sprite_component(sf::Texture& texture_sheet, sf::IntRect animation_rect,
-	float animation_timer, int frame_width, int frame_height)
-{
-	animated_sprite_component = new AnimatedSpriteComponent(sprite, texture_sheet, animation_rect, 
-		animation_timer, frame_width, frame_height);
-}
 
 void GameObject::set_parent(GameObject* parent)
 {
@@ -186,7 +159,7 @@ void GameObject::add_child(GameObject* child)
 
 void GameObject::set_position(const float x, const float y)
 {
-	transform.position = sf::Vector2f(x, y);
+	transform.position = Vector2f(x, y);
 	sprite.setPosition(x, y);
 }
 
@@ -231,44 +204,9 @@ void GameObject::unserialize_json(Json::Value obj)
 
 #pragma endregion
 
-
-BoxColliderComponent* GameObject::get_box_collider_component()
-{
-	return box_collider_component;
-}
-
-RigidbodyComponent* GameObject::get_rigidbody_component()
-{
-	return rigidbody_component;
-}
-
-AnimationComponent* GameObject::get_animation_component()
-{
-	return animation_component;
-}
-
-ChildAnimationComponent* GameObject::get_child_animation_component()
-{
-	return child_animation_component;
-}
-
-AnimatedSpriteComponent* GameObject::get_animated_sprite_component()
-{
-	return animated_sprite_component;
-}
-
-#pragma endregion
-
-#pragma region PRIVATE
-
 void GameObject::init_variables()
 {
-	box_collider_component = nullptr;
-	rigidbody_component = nullptr;
-	animation_component = nullptr;
-	animated_sprite_component = nullptr;
 	active = true;
 }
 
-#pragma endregion
 }

@@ -168,6 +168,9 @@
     <ClCompile Include="ItemData.cpp">
       <Filter>DataAssets</Filter>
     </ClCompile>
+    <ClCompile Include="Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -331,6 +334,9 @@
     </ClInclude>
     <ClInclude Include="ItemData.h">
       <Filter>DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

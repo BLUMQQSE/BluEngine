@@ -1,10 +1,25 @@
 #pragma once
 #include "globals.h"
+#include "Math.h"
 namespace bm98
 {
 class GameObject;
 class Tile;
 }
+
+struct LayerMask
+{
+	LayerMask(bool all)
+	{
+
+	}
+};
+
+struct RayCast
+{
+
+};
+
 namespace bm98::core
 {
 
@@ -39,6 +54,9 @@ public:
 	static void clear_objects();
 
 	static void fixed_update();
+	
+	static bool raycast(Vector2f origin, Vector2f direction, 
+		float distance = std::numeric_limits<long>::infinity(), LayerMask mask = LayerMask(true));
 
 private:
 
