@@ -7,7 +7,9 @@
 #include "Gui.h"
 #include "Physics.h"
 #include "PauseMenu.h"
-#include "Tilemap.h"
+#include "TilemapComponent.h"
+#include "Time.h"
+#include "GameObject.h"
 namespace bm98
 {
 using namespace core;
@@ -37,7 +39,7 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 
 EditorState::~EditorState()
 {
-	delete tilemap;
+	delete tilemap_go;
 	delete texture_selector;
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != buttons.end(); ++it)
@@ -293,6 +295,9 @@ void EditorState::init_buttons()
 
 void EditorState::init_tilemap()
 {
-	tilemap = new Tilemap(0, 0, UNIT_SIZE, 32, 32);
+	//tilemap = new TilemapComponent(0, 0, UNIT_SIZE, 32, 32);
+	tilemap_go = new GameObject();
+	tilemap_go->add_component<TilemapComponent>(0, 0, UNIT_SIZE, 32, 32);
+	tilemap = &tilemap_go->get_component<TilemapComponent>();
 }
 }

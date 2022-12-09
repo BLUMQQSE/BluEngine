@@ -5,6 +5,7 @@
 #include "Debug.h"
 #include "Collisions.h"
 
+#include "TilemapComponent.h"
 #include "ChildAnimationComponent.h"
 #include "BoxColliderComponent.h"
 #include "RigidbodyComponent.h"
@@ -141,8 +142,8 @@ void GameObject::add_to_buffer(sf::View* view)
 	{
 		//TODO: remove once components working correctly
 		//render_object->view = view;
-		Renderer::add(get_render_object());
-		Renderer::add(Renderer::RenderObject(&sprite, SortingLayer::ACTOR, 0, view));
+		//Renderer::add(get_render_object());
+		//Renderer::add(Renderer::RenderObject(&sprite, SortingLayer::ACTOR, 0, view));
 	}
 	
 	for (auto& c : components)
@@ -238,11 +239,11 @@ void GameObject::unserialize_json(Json::Value obj)
 
 	for (Json::Value component : obj["Components"])
 	{
+		if (component["name"].asString() == "TilemapComponent")
+			add_component<TilemapComponent>();
 		if (component["name"].asString() == "SpriteComponent")
-		{
-			std::cout << "sprite\n";
 			add_component<SpriteComponent>("Resources/Images/Sprites/Player/player_sprite_sheet.png");
-		}if (component["name"].asString() == "AnimatedSpriteComponent")
+		if (component["name"].asString() == "AnimatedSpriteComponent")
 			add_component<AnimatedSpriteComponent>();
 		if (component["name"].asString() == "AnimationComponent")
 			add_component<AnimationComponent>();

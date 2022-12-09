@@ -4,7 +4,7 @@
 #include "Renderer.h"
 namespace bm98
 {
-Tile::Tile(int x_offset, int y_offset, unsigned grid_x, unsigned grid_y, float grid_size_f, SortingLayer layer)
+Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f, SortingLayer layer)
 {
 	//this->shape.setSize(sf::Vector2f(grid_size_f, grid_size_f));
 	//this->shape.setFillColor(sf::Color::White);
@@ -13,7 +13,6 @@ Tile::Tile(int x_offset, int y_offset, unsigned grid_x, unsigned grid_y, float g
 	//this->shape.setPosition(static_cast<float>(grid_x) * grid_size_f, static_cast<float>(grid_y) * grid_size_f);
 
 	this->sprite.setPosition(std::floor(static_cast<float>(x_offset + grid_x) * grid_size_f), std::floor(static_cast<float>(y_offset + grid_y) * grid_size_f));
-
 
 	this->grid_x = grid_x;
 	this->grid_y = grid_y;

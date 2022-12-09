@@ -1,21 +1,21 @@
 #pragma once
 #include "globals.h"
-#include "IData.h"
-#include "IObject.h"
+
+#include "Component.h"
 namespace bm98
 {
 class Tile;
 
 static const std::string tiles_file_path = "Resources/Images/Tiles/";
 
-class Tilemap : IData, public IObject
+class TilemapComponent : public Component
 {
 
 public:
-	Tilemap();
-	Tilemap(int position_x, int position_y, float grid_size,
+	TilemapComponent();
+	TilemapComponent(int position_x, int position_y, float grid_size,
 		unsigned width, unsigned height);
-	virtual ~Tilemap();
+	virtual ~TilemapComponent();
 
 	float& grid_size();
 	sf::Texture* tile_sheet(std::string key);

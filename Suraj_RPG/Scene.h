@@ -3,7 +3,7 @@
 namespace bm98
 {
 class GameObject;
-class Tilemap;
+class TilemapComponent;
 
 class Scene : IData
 {
@@ -30,7 +30,6 @@ private:
 	std::string name;
 
 	std::vector<GameObject*> objects_in_scene;
-	std::vector<Tilemap*> tilemaps_in_scene;
 
 
 	void init_tilemap();

@@ -9,7 +9,7 @@ class AnimatedSpriteComponent;
 class Tile : IData, IObject
 {
 public:
-	Tile(int x_offset, int y_offset, unsigned grid_x, unsigned grid_y,
+	Tile(int x_offset, int y_offset, int grid_x, int grid_y,
 		float grid_size_f, SortingLayer layer);
 	virtual ~Tile();
 

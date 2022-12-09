@@ -207,7 +207,7 @@
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="Tilemap.cpp" />
+    <ClCompile Include="TilemapComponent.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -263,7 +263,7 @@
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Tile.h" />
-    <ClInclude Include="Tilemap.h" />
+    <ClInclude Include="TilemapComponent.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

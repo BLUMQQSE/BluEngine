@@ -4,7 +4,8 @@ namespace bm98
 {
 
 class PauseMenu;
-class Tilemap;
+class TilemapComponent;
+class GameObject;
 
 class EditorState :
     public State
@@ -61,10 +62,8 @@ private:
     GUI::TextureSelector* texture_selector;
     TileModifier tile_modifier;
 
-
-
-
-    Tilemap* tilemap;
+    TilemapComponent* tilemap;
+    GameObject* tilemap_go;
 
 };
 

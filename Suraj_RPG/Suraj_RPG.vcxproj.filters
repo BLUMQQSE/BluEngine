@@ -111,9 +111,6 @@
     <ClCompile Include="SettingsState.cpp">
       <Filter>States</Filter>
     </ClCompile>
-    <ClCompile Include="Tilemap.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -170,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="PlayerController.cpp">
       <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="TilemapComponent.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -232,9 +232,6 @@
     </ClInclude>
     <ClInclude Include="IRenderable.h">
       <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Tilemap.h">
-      <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsSettings.h">
       <Filter>Header Files</Filter>
@@ -334,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="PlayerController.h">
       <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="TilemapComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

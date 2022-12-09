@@ -49,7 +49,7 @@ Vector2f Vector2f::right()
 
 Vector2f Vector2f::zero()
 {
-	return Vector2f();
+	return Vector2f(0, 0);
 }
 
 float Vector2f::distance(sf::Vector2f a, sf::Vector2f b)

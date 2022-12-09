@@ -2,7 +2,8 @@
 #include "Scene.h"
 #include "Physics.h"
 #include "GameObject.h"
-#include "Tilemap.h"
+#include "TilemapComponent.h"
+#include "SceneManager.h"
 
 namespace bm98
 {
@@ -14,27 +15,21 @@ Scene::Scene(std::string name)
 
 Scene::~Scene()
 {
+	SceneManager::save_scene();
 	for (auto& o : objects_in_scene)
 		delete o;
-	for (auto& t : tilemaps_in_scene)
-		delete t;
 }
 
 void Scene::update()
 {
-	std::cout << objects_in_scene.size()<<"\n";
 	for (auto& o : objects_in_scene)
 		o->update();
-	for (auto& t : tilemaps_in_scene)
-		t->update();
 }
 
 void Scene::late_update()
 {
 	for (auto& o : objects_in_scene)
 		o->late_update();
-	for (auto& t : tilemaps_in_scene)
-		t->late_update();
 }
 
 void Scene::fixed_update()
@@ -42,16 +37,12 @@ void Scene::fixed_update()
 
 	for (auto& o : objects_in_scene)
 		o->fixed_update();
-	for (auto& t : tilemaps_in_scene)
-		t->fixed_update();
 }
 
 void Scene::render(sf::View* view)
 {
 	for (auto& o : objects_in_scene)
 		o->add_to_buffer(view);
-	for (auto& t : tilemaps_in_scene)
-		t->add_to_buffer(view);
 }
 
 std::string Scene::get_name()
@@ -91,10 +82,6 @@ Json::Value Scene::serialize_json()
 	{
 		obj["GameObjects"].append(o->serialize_json());
 	}
-	for (auto& t : tilemaps_in_scene)
-	{
-		obj["Tilemaps"].append(t->serialize_json());
-	}
 
 	return obj;
 }
@@ -109,12 +96,6 @@ void Scene::unserialize_json(Json::Value obj)
 		go->unserialize_json(game_object);
 		objects_in_scene.push_back(go);
 	}
-	for (Json::Value tilemap : obj["Tilemaps"])
-	{
-		Tilemap* tm = new Tilemap();
-		tm->unserialize_json(tilemap);
-		tilemaps_in_scene.push_back(tm);
-	}
 
 }
 
@@ -122,10 +103,16 @@ void Scene::unserialize_json(Json::Value obj)
 
 void Scene::init_tilemap()
 {
-	Tilemap* map = new Tilemap();
-	map->load_from_json("Data/Tilemaps/test.json");
-	Physics::add_tiles_to_physics(map->get_collidable_tiles());
-	tilemaps_in_scene.push_back(map);
+	GameObject* go = new GameObject();
+	go->add_component<TilemapComponent>();
+	go->get_component<TilemapComponent>().load_from_json("Data/Tilemaps/test.json");
+	Physics::add_tiles_to_physics(go->get_component<TilemapComponent>().get_collidable_tiles());
+	objects_in_scene.push_back(go);
+
+	//Tilemap* map = new Tilemap();
+	//map->load_from_json("Data/Tilemaps/test.json");
+	//Physics::add_tiles_to_physics(map->get_collidable_tiles());
+	//tilemaps_in_scene.push_back(map);
 }
 
 //actually works

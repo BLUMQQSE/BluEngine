@@ -39,6 +39,7 @@ private:
 
     void update_input();
     void update_animations();
+
 };
 
 }
