@@ -6,6 +6,8 @@
 #include "Debug.h"
 #include "Gui.h"
 #include "Physics.h"
+#include "PauseMenu.h"
+#include "Tilemap.h"
 namespace bm98
 {
 using namespace core;
@@ -111,7 +113,7 @@ void EditorState::late_update()
 
 void EditorState::fixed_update()
 {
-
+	
 }
 
 void EditorState::render()

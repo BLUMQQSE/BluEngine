@@ -1,0 +1,50 @@
+{
+	"Components" : 
+	[
+		{
+			"name" : "AnimationComponent",
+			"value" : 
+			{
+				"name" : "AnimationComponent"
+			}
+		},
+		{
+			"name" : "SpriteComponent",
+			"value" : 
+			{
+				"name" : "SpriteComponent"
+			}
+		},
+		{
+			"name" : "BoxColliderComponent",
+			"value" : 
+			{
+				"active" : true,
+				"hitbox-height" : 50.0,
+				"hitbox-offsetX" : 16.0,
+				"hitbox-offsetY" : 14.0,
+				"hitbox-width" : 32.0,
+				"name" : "BoxColliderComponent",
+				"trigger" : false
+			}
+		},
+		{
+			"name" : "PlayerController",
+			"value" : 
+			{
+				"name" : "PlayerController"
+			}
+		},
+		{
+			"name" : "RigidbodyComponent",
+			"value" : 
+			{
+				"acceleration" : 15.0,
+				"deceleration" : 50.0,
+				"max-velocity" : 200.0,
+				"name" : "RigidbodyComponent"
+			}
+		}
+	],
+	"Name" : ""
+}

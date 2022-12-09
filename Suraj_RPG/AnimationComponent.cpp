@@ -1,14 +1,21 @@
 #include "pch.h"
 #include "AnimationComponent.h"
+#include "GameObject.h"
+#include "SpriteComponent.h"
 #include "Time.h"
 namespace bm98
 {
 #pragma region PUBLIC
 
-AnimationComponent::AnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet)
-	:sprite(sprite), texture_sheet(texture_sheet), last_animation(NULL)
+AnimationComponent::AnimationComponent()
 {
+	name = "AnimationComponent";
+}
 
+AnimationComponent::AnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet)
+	:sprite(&sprite), texture_sheet(&texture_sheet), last_animation(NULL)
+{
+	name = "AnimationComponent";
 }
 
 AnimationComponent::~AnimationComponent()
@@ -72,9 +79,48 @@ void AnimationComponent::add_animation(const std::string key,
 	float anim_timer, int start_frame_x, int start_frame_y, int frames_x, int frames_y,
 	int frame_width, int frame_height, bool loop_animation, bool must_complete)
 {
-	animations[key] = new Animation(this->sprite, this->texture_sheet, anim_timer,
+	animations[key] = new Animation(*this->sprite, *this->texture_sheet, anim_timer,
 		start_frame_x, start_frame_y, frames_x, frames_y, frame_width, frame_height,
 		loop_animation, must_complete);
+}
+
+void AnimationComponent::init()
+{
+	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
+	texture_sheet = &game_object->get_component<SpriteComponent>().get_texture_sheet();
+}
+
+Json::Value AnimationComponent::serialize_json()
+{
+	Json::Value obj;
+	
+	obj["name"] = name;
+
+	/* Currently useless to save animations
+	for (auto& a : animations)
+	{
+		Json::Value obj2;
+		obj2["key"] = a.first;
+		obj2["animation"] = a.second->serialize_json();
+		
+		obj["animations"].append(obj2);
+	}
+	*/
+	return obj;
+}
+
+void AnimationComponent::unserialize_json(Json::Value obj)
+{
+	name = obj["name"].asString();
+
+	/* Currently useless to save animations
+	for (Json::Value anim : obj["animations"])
+	{
+		animations[anim["key"].asString()] = new Animation(game_object->get_component<SpriteComponent>().get_sprite(),
+			game_object->get_component<SpriteComponent>().get_texture_sheet());
+		animations[anim["key"].asString()]->unserialize_json(anim["animation"]);
+	}
+	*/
 }
 
 #pragma endregion

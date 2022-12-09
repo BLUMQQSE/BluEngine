@@ -5,6 +5,9 @@
 #include "Debug.h"
 #include "Gui.h"
 #include "Physics.h"
+#include "GameState.h"
+#include "EditorState.h"
+#include "SettingsState.h"
 namespace bm98
 {
 using namespace core;
@@ -78,6 +81,7 @@ void MainMenuState::update()
 
 void MainMenuState::fixed_update()
 {
+
 }
 
 void MainMenuState::late_update()

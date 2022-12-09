@@ -4,6 +4,8 @@
 namespace bm98
 {
 
+class RigidbodyComponent;
+
 enum class CollisionDetection
 {
 	DISCRETE,
@@ -13,11 +15,19 @@ enum class CollisionDetection
 class BoxColliderComponent : public Component
 {
 public:
-
+	BoxColliderComponent();
 	BoxColliderComponent(sf::Sprite& sprite, float offset_x,
 		float offset_y, float width, float height, bool trigger,
 		CollisionDetection collision_check_type = CollisionDetection::DISCRETE);
 	virtual ~BoxColliderComponent();
+
+	virtual void init() override;
+	virtual void update() override;
+	virtual void fixed_update() override;
+	virtual void add_to_buffer(sf::View* view = nullptr) override;
+	// Inherited via IData
+	virtual Json::Value serialize_json() override;
+	virtual void unserialize_json(Json::Value obj) override;
 
 	bool check_intersect(const sf::FloatRect& frect);
 	bool check_outer_intersect(const sf::FloatRect& frect);
@@ -31,22 +41,21 @@ public:
 
 	Vector2f get_offset();
 
-	virtual void update() override;
-	virtual void fixed_update() override;
-	virtual void add_to_buffer(sf::View* view = nullptr) override;
+	
 
 protected:
 
-
 private:
-	sf::Sprite& sprite;
+	sf::Sprite* sprite;
 	sf::RectangleShape hitbox;
 	CollisionDetection collision_check_type;
 
 	//sf::CircleShape circle;
+	float width, height;
 	float offsetX, offsetY;
 	bool trigger;
-	bool active;
+
+	RigidbodyComponent* rb;
 
 };
 }

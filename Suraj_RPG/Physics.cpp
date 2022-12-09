@@ -130,30 +130,34 @@ void Physics::check_collisions()
 							c->get_bounds().left - active_collider->get_offset().x - active_collider->get_bounds().width,
 							active_object.first->get_transform().position.y
 						);
+						active_rigid->set_velocity(Vector2f(0, 0));
 						active_rigid->halt_right();
 					}
-					if (active_rigid->get_velocity().x < 0 && active_rigid->get_velocity().y == 0)
+					else if (active_rigid->get_velocity().x < 0 && active_rigid->get_velocity().y == 0)
 					{
 						active_object.first->set_position(
 							c->get_bounds().left + c->get_bounds().width - active_collider->get_offset().x,
 							active_object.first->get_transform().position.y
 						);
+						active_rigid->set_velocity(Vector2f(0, 0));
 						active_rigid->halt_left();
 					}
-					if (active_rigid->get_velocity().y > 0 && active_rigid->get_velocity().x == 0)
+					else if (active_rigid->get_velocity().y > 0 && active_rigid->get_velocity().x == 0)
 					{
 						active_object.first->set_position(
 							active_object.first->get_transform().position.x,
 							c->get_bounds().top - active_collider->get_offset().y - active_collider->get_bounds().height
 						);
+						active_rigid->set_velocity(Vector2f(0, 0));
 						active_rigid->halt_down();
 					}
-					if (active_rigid->get_velocity().y < 0 && active_rigid->get_velocity().x == 0)
+					else if (active_rigid->get_velocity().y < 0 && active_rigid->get_velocity().x == 0)
 					{
 						active_object.first->set_position(
 							active_object.first->get_transform().position.x,
 							c->get_bounds().top + c->get_bounds().height - active_collider->get_offset().y
 						);
+						active_rigid->set_velocity(Vector2f(0, 0));
 						active_rigid->halt_up();
 					}
 				}

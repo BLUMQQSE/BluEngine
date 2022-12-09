@@ -1,12 +1,19 @@
 #include "pch.h"
 #include "AnimatedSpriteComponent.h"
+#include "GameObject.h"
+#include "SpriteComponent.h"
 
 namespace bm98
 {
+AnimatedSpriteComponent::AnimatedSpriteComponent()
+{
+	name = "AnimatedSpriteComponent";
+}
 
 AnimatedSpriteComponent::AnimatedSpriteComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,
 	sf::IntRect animation_rect, float animation_timer, int frame_width, int frame_height)
 {
+	name = "AnimatedSpriteComponent";
 	int x = static_cast<int>(animation_rect.width / frame_width);
 
 	//need to convert animation_rect.left to be divided by frame_width
@@ -25,10 +32,32 @@ AnimatedSpriteComponent::~AnimatedSpriteComponent()
 	delete animation;
 }
 
+void AnimatedSpriteComponent::init()
+{
+	animation = new Animation(game_object->get_component<SpriteComponent>().get_sprite(), game_object->get_component<SpriteComponent>().get_texture_sheet());
+}
+
 void AnimatedSpriteComponent::update()
 {
 	animation->play(1, 1);
 }
+
+Json::Value AnimatedSpriteComponent::serialize_json()
+{
+	Json::Value obj;
+
+	obj["name"] = name;
+
+	//obj["animation"] = animation->serialize_json();
+
+	return obj;
+}
+
+void AnimatedSpriteComponent::unserialize_json(Json::Value obj)
+{
+	name = obj["name"].asString();
+	//animation->unserialize_json(obj["animation"]);
+} 
 
 void AnimatedSpriteComponent::start()
 {

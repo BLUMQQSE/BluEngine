@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Scene.h"
-#include "Player.h"
 #include "Physics.h"
+#include "GameObject.h"
 #include "Tilemap.h"
 
 namespace bm98
@@ -9,9 +9,6 @@ namespace bm98
 Scene::Scene(std::string name)
 	:name(name)
 {
-	//Player* p = new Player(60, 100);
-	//objects_in_scene.push_back(p);
-	//Physics::add_to_physics(p);
 	init_tilemap();
 }
 
@@ -25,6 +22,7 @@ Scene::~Scene()
 
 void Scene::update()
 {
+	std::cout << objects_in_scene.size()<<"\n";
 	for (auto& o : objects_in_scene)
 		o->update();
 	for (auto& t : tilemaps_in_scene)
@@ -64,7 +62,11 @@ std::string Scene::get_name()
 void Scene::insert_gameobject(GameObject* go)
 {
 	//read access violation... even tho its not null ptr
+	go->init_components();
+	go->awake_components();
+	go->start_components();
 	objects_in_scene.push_back(go);
+	Physics::add_to_physics(go);
 	insert_sort();
 }
 

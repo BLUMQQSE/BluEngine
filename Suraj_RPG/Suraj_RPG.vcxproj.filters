@@ -126,12 +126,6 @@
     <ClCompile Include="Collisions.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Dummy.cpp">
-      <Filter>Entities\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Entities\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -170,6 +164,12 @@
     </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,12 +248,6 @@
     <ClInclude Include="Collisions.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="Dummy.h">
-      <Filter>Entities\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Entities\GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleSystem.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -265,9 +259,6 @@
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Script.h">
-      <Filter>Scripts</Filter>
     </ClInclude>
     <ClInclude Include="FileManager.h">
       <Filter>Core</Filter>
@@ -337,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Scripts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

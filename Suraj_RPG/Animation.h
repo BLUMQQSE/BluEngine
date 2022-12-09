@@ -1,11 +1,12 @@
 #pragma once
+#include "IData.h"
 #include "Renderer.h"
 #include "Time.h"
 namespace bm98
 {
 using namespace core;
 
-class Animation
+class Animation : public IData
 {
 public:
 	sf::Sprite& sprite;
@@ -75,6 +76,16 @@ public:
 		this->sprite.setTextureRect(this->start_rect);
 	}
 
+	/// <summary>
+	/// Constructor used for loading an animation from json data.
+	/// </summary>
+	/// <param name="sprite"></param>
+	/// <param name="texture_sheet"></param>
+	Animation(sf::Sprite& sprite, sf::Texture& texture_sheet)
+		:sprite(sprite), texture_sheet(texture_sheet)
+	{
+	}
+
 	bool play(const float& modifier, const float& modifier_max)
 	{
 		//std::cout << "Start:\nx: " << start_rect.left << "\ny: " << start_rect.top << "\nCurrent:\n" <<
@@ -122,5 +133,57 @@ public:
 		current_rect = start_rect;
 		animation_complete = false;
 	}
+
+
+	// Inherited via IData
+	virtual Json::Value serialize_json() override
+	{
+		Json::Value obj;
+		/* Currently useless to save animations
+		obj["animation-timer"] = animation_timer;
+		obj["timer"] = timer;
+		obj["frame-width"] = frame_width;
+		obj["frame-height"] = frame_height;
+		obj["start-frame-x"] = start_frame_x;
+		obj["start-frame-y"] = start_frame_y;
+		obj["frame-count-x"] = frames_x;
+		obj["frame-count-y"] = frames_y;
+		obj["loop"] = loop_animation;
+		obj["must-complete"] = must_complete;
+		obj["animation-complete"] = animation_complete;
+		obj["paused"] = paused;
+
+		obj["current-frame-left"] = current_rect.left;
+		obj["current-frame-top"] = current_rect.top;
+		*/
+		return obj;
+	}
+	virtual void unserialize_json(Json::Value obj) override
+	{
+		/* Currently useless to save animations
+		animation_timer = obj["animation-timer"].asFloat();
+		timer = obj["timer"].asFloat();
+		frame_width = obj["frame-width"].asInt64();
+		frame_height = obj["frame-height"].asInt64();
+		start_frame_x = obj["start-frame-x"].asInt64();
+		start_frame_y = obj["start-frame-y"].asInt64();
+		frames_x = obj["frame-count-x"].asInt64();
+		frames_y = obj["frame-count-y"].asInt64();
+		loop_animation = obj["loop"].asBool();
+		must_complete = obj["must-complete"].asBool();
+		animation_complete = obj["animation-complete"].asBool();
+		paused = obj["paused"].asBool();
+
+		start_rect = sf::IntRect(start_frame_x * frame_width, start_frame_y *
+			frame_height, frame_width, frame_height);
+		end_rect = sf::IntRect(start_rect.left + frames_x * frame_width, 
+			start_rect.top + frames_y * frame_height,
+			frame_width, frame_height);
+		current_rect = start_rect;
+		current_rect.left = obj["current-frame-left"].asFloat();;
+		current_rect.top = obj["current-frame-top"].asFloat();
+		*/
+	}
+
 };
 }

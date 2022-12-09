@@ -21,14 +21,26 @@ enum class Orientation
 class RigidbodyComponent : public Component
 {
 public:
+	RigidbodyComponent();
 	RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
 		float acceleration, float deceleration);
 	virtual ~RigidbodyComponent();
+
+	virtual void init() override;
+	virtual void update() override;
+	virtual void fixed_update() override;
+
+	virtual Json::Value serialize_json() override;
+	virtual void unserialize_json(Json::Value obj) override;
 
 	const sf::Vector2f get_velocity() const;
 	const float get_max_velocity() const;
 
 	void set_velocity(sf::Vector2f velocity);
+	void set_max_velocity(float velocity);
+	void set_acceleration(float acceleration);
+	void set_deceleration(float deceleration);
+
 	void halt_right();
 	void halt_left();
 	void halt_up();
@@ -40,8 +52,8 @@ public:
 	const Orientation get_orientation() const;
 
 	void apply_acceleration(const float dir_x, const float dir_y);
-	virtual void update() override;
-	virtual void fixed_update() override;
+
+	
 
 protected:
 	void apply_deceleration();
@@ -50,14 +62,13 @@ protected:
 	Orientation current_orientation;
 
 private:
-	sf::Sprite& sprite;
+	sf::Sprite* sprite;
 
 	float max_velocity;
 	float acceleration;
 	float deceleration;
 
 	Vector2f velocity;
-	Vector2f position;
 	//std::vector<Contact> contacts;
 
 	bool halted_up;

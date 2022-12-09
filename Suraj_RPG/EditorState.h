@@ -1,9 +1,10 @@
 #pragma once
 #include "State.h"
-#include "PauseMenu.h"
-#include "Tilemap.h"
 namespace bm98
 {
+
+class PauseMenu;
+class Tilemap;
 
 class EditorState :
     public State

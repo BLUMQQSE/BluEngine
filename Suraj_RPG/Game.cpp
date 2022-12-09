@@ -77,7 +77,6 @@ void Game::update_delta_time()
 {
     Time::update_delta(deltaClock.restart().asSeconds());
 
-
     if (!states.empty())
     {
         if (Time::fixed_delta_time() >= .02f)
@@ -95,6 +94,7 @@ void Game::update_delta_time()
     Time::apply_time_scale();
 
     fps = 1000 / (Time::delta_time() * 1000.f);
+    window->setTitle(std::to_string(fps));
 }
 
 

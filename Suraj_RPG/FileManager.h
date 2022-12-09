@@ -17,7 +17,7 @@ public:
 	static void unserialize_json(Json::Value obj);
 
 private:
-	std::string file_path;
+	//std::string file_path;
 	// start fresh game from start on launch
 	static bool restart_on_launch;
 

@@ -1,16 +1,23 @@
 #include "pch.h"
 #include "RigidbodyComponent.h"
 #include "Time.h"
+#include "GameObject.h"
+#include "SpriteComponent.h"
 namespace bm98
 {
 using namespace core;
-#pragma region PUBLIC
+
+RigidbodyComponent::RigidbodyComponent()
+{
+	name = "RigidbodyComponent";
+}
 
 RigidbodyComponent::RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
 	float acceleration, float deceleration)
-	:sprite(sprite), max_velocity(max_velocity), acceleration(acceleration),
+	:sprite(&sprite), max_velocity(max_velocity), acceleration(acceleration),
 	deceleration(deceleration)
 {
+	name = "RigidbodyComponent";
 	unhalt();
 }
 
@@ -18,6 +25,57 @@ RigidbodyComponent::~RigidbodyComponent()
 {
 
 }
+
+void RigidbodyComponent::init()
+{
+	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
+	max_velocity = 200;
+	acceleration = 15;
+	deceleration = 50;
+	unhalt();
+}
+
+void RigidbodyComponent::update()
+{
+	//update states
+
+	update_movement_state();
+	update_orientation();
+	//Final movement
+	sprite->move(velocity * Time::delta_time());
+	//TODO: here we can update gameobject transform to reflect this position
+	game_object->transform.position = sprite->getPosition();
+}
+
+void RigidbodyComponent::fixed_update()
+{
+
+	apply_deceleration();
+}
+#pragma region IData
+
+Json::Value RigidbodyComponent::serialize_json()
+{
+	Json::Value obj;
+
+	obj["name"] = name;
+	obj["max-velocity"] = max_velocity;
+	obj["acceleration"] = acceleration;
+	obj["deceleration"] = deceleration;
+
+	return obj;
+}
+
+void RigidbodyComponent::unserialize_json(Json::Value obj)
+{
+	name = obj["name"].asString();
+	max_velocity = obj["max-velocity"].asFloat();
+	acceleration = obj["acceleration"].asFloat();
+	deceleration = obj["deceleration"].asFloat();
+}
+
+#pragma endregion
+
 
 const sf::Vector2f RigidbodyComponent::get_velocity() const
 {
@@ -32,6 +90,21 @@ const float RigidbodyComponent::get_max_velocity() const
 void RigidbodyComponent::set_velocity(sf::Vector2f velocity)
 {
 	this->velocity = velocity;
+}
+
+void RigidbodyComponent::set_max_velocity(float velocity)
+{
+	this->max_velocity = velocity;
+}
+
+void RigidbodyComponent::set_acceleration(float acceleration)
+{
+	this->acceleration = acceleration;
+}
+
+void RigidbodyComponent::set_deceleration(float deceleration)
+{
+	this->deceleration = deceleration;
 }
 
 void RigidbodyComponent::halt_right()
@@ -79,37 +152,27 @@ void RigidbodyComponent::apply_acceleration(const float dir_x, const float dir_y
 		velocity.x += acceleration * dir_x * 100;
 	if ((!halted_down && dir_y > 0) || (!halted_up && dir_y < 0))
 		velocity.y += acceleration * dir_y * 100;
-	//velocity.x = max_velocity * dir_x;
-	//velocity.y = dir_y;
+
+	if(velocity.x > 0)
+		if (velocity.x > max_velocity)
+			velocity.x = max_velocity;
+	if(velocity.x < 0)
+		if (velocity.x < -max_velocity)
+			velocity.x = -max_velocity;
+	
+	if(velocity.y > 0)
+		if (velocity.y > max_velocity)
+			velocity.y = max_velocity; 
+	if(velocity.y < 0)
+		if (velocity.y < -max_velocity)
+			velocity.y = -max_velocity;
 }
-
-void RigidbodyComponent::update()
-{
-	//update states
-	update_movement_state();
-	update_orientation();
-	//Final movement
-	sprite.move(velocity * Time::delta_time());
-
-}
-
-void RigidbodyComponent::fixed_update()
-{
-	apply_deceleration();
-}
-
-#pragma endregion
-
-#pragma region PROTECTED
 
 void RigidbodyComponent::apply_deceleration()
 {
 	if (velocity.x > 0.f)
 	{
 		velocity.x -= deceleration;
-
-		if (velocity.x > max_velocity)
-			velocity.x = max_velocity;
 		if (velocity.x < 0.f)
 			velocity.x = 0.f;
 
@@ -117,9 +180,6 @@ void RigidbodyComponent::apply_deceleration()
 	else if (velocity.x < 0.f)
 	{
 		velocity.x += deceleration;
-
-		if (velocity.x < -max_velocity)
-			velocity.x = -max_velocity;
 		if (velocity.x > 0.f)
 			velocity.x = 0.f;
 
@@ -127,9 +187,6 @@ void RigidbodyComponent::apply_deceleration()
 	if (velocity.y > 0.f)
 	{
 		velocity.y -= deceleration;
-
-		if (velocity.y > max_velocity)
-			velocity.y = max_velocity;
 		if (velocity.y < 0.f)
 			velocity.y = 0.f;
 
@@ -137,18 +194,11 @@ void RigidbodyComponent::apply_deceleration()
 	else if (velocity.y < 0.f)
 	{
 		velocity.y += deceleration;
-
-		if (velocity.y < -max_velocity)
-			velocity.y = -max_velocity;
 		if (velocity.y > 0.f)
 			velocity.y = 0.f;
 	}
 
 }
-
-#pragma endregion
-
-#pragma region PRIVATE
 
 void RigidbodyComponent::update_orientation()
 {
@@ -201,5 +251,4 @@ void RigidbodyComponent::normalize_velocity()
 	}
 }
 
-#pragma endregion
 }

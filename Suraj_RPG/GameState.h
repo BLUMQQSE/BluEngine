@@ -1,14 +1,13 @@
 #pragma once
 #include "State.h"
-#include "GameClock.h"
-#include "PauseMenu.h"
-#include "ParticleSystem.h"
-#include "Scene.h"
-#include "SceneManager.h"
-#include "Player.h"
+
 namespace bm98
 {
 class Player;
+class GameObject;
+class Scene;
+class ParticleSystem; 
+class PauseMenu;
 
 class GameState :
     public State
@@ -40,10 +39,7 @@ private:
     Scene* active_scene;
 
     Player* player;
-    // Dummy* dummy;
-
-     //std::vector<GameObject*> objects;
-     //std::vector<GameObject*> objects;
+    GameObject* component_player;
 
     PauseMenu* pmenu;
     // Tilemap* tilemap;

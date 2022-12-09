@@ -5,8 +5,9 @@
 #include "Component.h"
 namespace bm98
 {
+
 class Collision;
-class Collider; 
+class Collider;
 
 class Component;
 
@@ -21,10 +22,10 @@ template <typename T> inline ComponentID get_component_type_id() noexcept
 	static ComponentID type_id = get_component_type_id();
 	return type_id;
 }
-constexpr std::size_t max_components = 128;
+constexpr std::size_t max_components = 150;
 using ComponentBitSet = std::bitset<max_components>;
 using ComponentArray = std::array<Component*, max_components>;
-
+	
 class GameObject : IData, public IObject
 {
 public:
@@ -47,6 +48,12 @@ public:
 
 	GameObject();
 	virtual ~GameObject();
+
+
+	Info info;
+	//this transform thing may be a bad idea
+	//difficult to ensure insync with sprite position at all times
+	Transform transform;
 
 	virtual void init_object();
 
@@ -91,14 +98,13 @@ public:
 	template <typename T, typename... TArgs> T& add_component(TArgs&&...mArgs)
 	{
 		T* c(new T(std::forward<TArgs>(mArgs)...));
-		c->game_object = this;
+		//c->game_object = this;
+		c->set_game_object(this);
 		std::unique_ptr<Component> uPtr{ c };
 		components.emplace_back(std::move(uPtr));
 
 		component_array[get_component_type_id<T>()] = c;
 		component_bitset[get_component_type_id<T>()] = true;
-
-		c->init();
 		return *c;
 	}
 
@@ -108,11 +114,11 @@ public:
 		return *static_cast<T*>(ptr);
 	}
 
+	void init_components();
+	void awake_components();
+	void start_components();
+
 protected:
-	Info info;
-	//this transform thing may be a bad idea
-	//difficult to ensure insync with sprite position at all times
-	Transform transform;
 	bool active;
 	GameObject* parent;
 	std::set<GameObject*> children;

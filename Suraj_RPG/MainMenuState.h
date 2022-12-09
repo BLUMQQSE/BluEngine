@@ -1,8 +1,5 @@
 #pragma once
 #include "State.h"
-#include "GameState.h"
-#include "EditorState.h"
-#include "SettingsState.h"
 namespace bm98
 {
 class MainMenuState :

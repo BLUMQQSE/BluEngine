@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Component.h"
 #include "GameObject.h"
+#include "Collisions.h"
 namespace bm98
 {
 
@@ -14,6 +15,14 @@ Component::~Component()
 }
 
 void Component::init()
+{
+}
+
+void Component::awake()
+{
+}
+
+void Component::start()
 {
 }
 
@@ -33,9 +42,59 @@ void Component::add_to_buffer(sf::View* view)
 {
 }
 
+void Component::on_collision_enter(Collision info)
+{
+}
+
+void Component::on_collision_stay(Collision info)
+{
+}
+
+void Component::on_collision_exit(Collision info)
+{
+}
+
+void Component::on_trigger_enter(Collider info)
+{
+}
+
+void Component::on_trigger_stay(Collider info)
+{
+}
+
+void Component::on_trigger_exit(Collider info)
+{
+}
+
+#pragma region IData
+
+Json::Value Component::serialize_json()
+{
+	return Json::Value();
+}
+
+void Component::unserialize_json(Json::Value obj)
+{
+}
+
+#pragma endregion
+
+void Component::set_game_object(GameObject* go)
+{
+	this->game_object = go;
+}
+
 GameObject* Component::get_game_object()
 {
 	return game_object;
 }
+
+std::string Component::get_name()
+{
+	return name;
+}
+
+
+
 
 }

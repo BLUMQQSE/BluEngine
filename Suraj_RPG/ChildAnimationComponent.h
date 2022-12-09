@@ -8,16 +8,22 @@ class AnimationComponent;
 class ChildAnimationComponent : public Component
 {
 public:
+	ChildAnimationComponent();
 	ChildAnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,
 		AnimationComponent& parent_animation_component);
 	virtual ~ChildAnimationComponent();
 
-	void update();
+	virtual void init() override;
+	virtual void awake() override;
+	virtual void update() override;
+	// Inherited via IData
+	virtual Json::Value serialize_json() override;
+	virtual void unserialize_json(Json::Value obj) override;
 
 private:
-	sf::Sprite& sprite;
-	sf::Texture& texture_sheet;
-	AnimationComponent& parent_animation_component;
+	sf::Sprite* sprite;
+	sf::Texture* texture_sheet;
+	AnimationComponent* parent_animation_component;
 	std::map<std::string, Animation*> animations;
 	std::string parents_last_animation;
 

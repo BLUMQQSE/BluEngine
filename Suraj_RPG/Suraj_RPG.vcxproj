@@ -169,7 +169,6 @@
     <ClCompile Include="ChildAnimationComponent.cpp" />
     <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="DataAsset.cpp" />
-    <ClCompile Include="Dummy.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="globals.cpp" />
@@ -188,6 +187,7 @@
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="pch.cpp">
@@ -199,12 +199,12 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Physics.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SettingsState.cpp" />
+    <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Tilemap.cpp" />
@@ -230,7 +230,6 @@
     <ClInclude Include="ChildAnimationComponent.h" />
     <ClInclude Include="Collisions.h" />
     <ClInclude Include="DataAsset.h" />
-    <ClInclude Include="Dummy.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="globals.h" />
@@ -251,17 +250,17 @@
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="PlayerController.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Physics.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="Script.h" />
     <ClInclude Include="SettingsState.h" />
+    <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Tilemap.h" />
