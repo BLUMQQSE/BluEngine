@@ -7,6 +7,9 @@
 
 namespace bm98
 {
+Scene::Scene()
+{
+}
 Scene::Scene(std::string name)
 	:name(name)
 {
@@ -50,12 +53,22 @@ std::string Scene::get_name()
 	return name;
 }
 
+std::vector<GameObject*> Scene::get_objects()
+{
+	return objects_in_scene;
+}
+
+void Scene::set_name(std::string name)
+{
+	this->name = name;
+}
+
 void Scene::insert_gameobject(GameObject* go)
 {
 	//read access violation... even tho its not null ptr
-	go->init_components();
-	go->awake_components();
-	go->start_components();
+	go->init();
+	go->awake();
+	go->start();
 	objects_in_scene.push_back(go);
 	Physics::add_to_physics(go);
 	insert_sort();

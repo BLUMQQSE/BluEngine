@@ -69,6 +69,9 @@ void Game::update_sfml_events()
         {
             Input::update_mouse_scroll(sfevent.mouseWheel.delta);
         }
+        if(sfevent.type == sf::Event::TextEntered)
+            states.top()->update_sfml(sfevent);
+
     }
 
 }

@@ -8,6 +8,7 @@ class TilemapComponent;
 class Scene : IData
 {
 public:
+	Scene();
 	Scene(std::string name);
 	virtual ~Scene();
 
@@ -17,6 +18,9 @@ public:
 	void render(sf::View* view = nullptr);
 
 	std::string get_name();
+	std::vector<GameObject*> get_objects();
+
+	void set_name(std::string name);
 
 	void insert_gameobject(GameObject* go);
 	void remove_gameobject(GameObject* go);

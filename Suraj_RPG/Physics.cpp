@@ -7,7 +7,7 @@ namespace bm98::core
 {
 std::unordered_map<GameObject*, Physics::GameObjects> Physics::game_objects;
 std::vector<Tile*> Physics::collidable_tiles;
-bool Physics::collision_matrix[(int)(Layer::LAST_DONT_REMOVE)][(int)(Layer::LAST_DONT_REMOVE)];
+bool Physics::collision_matrix[(int)(Layer::_LAST_DONT_REMOVE)][(int)(Layer::_LAST_DONT_REMOVE)];
 bool Physics::triggers_acknowledge_colliders = true;
 
 void Physics::init()
@@ -78,9 +78,9 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, Layer
 
 void Physics::init_matrix()
 {
-	for (int i = 0; i < (int)Layer::LAST_DONT_REMOVE; i++)
+	for (int i = 0; i < (int)Layer::_LAST_DONT_REMOVE; i++)
 	{
-		for (int x = 0; x < (int)Layer::LAST_DONT_REMOVE; x++)
+		for (int x = 0; x < (int)Layer::_LAST_DONT_REMOVE; x++)
 		{
 			collision_matrix[i][x] = true;
 		}

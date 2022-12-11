@@ -27,6 +27,7 @@ public:
 
 	virtual void update_input() = 0;
 
+	virtual void update_sfml(sf::Event sfEvent);
 	virtual void update() = 0;
 	virtual void fixed_update() = 0;
 	virtual void late_update() = 0;

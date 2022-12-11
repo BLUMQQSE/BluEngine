@@ -51,6 +51,11 @@ void SceneManager::save_scene()
 	FileManager::save_to_file_styled(active_scene->serialize_json(), scenes_file_path + active_scene->get_name());
 }
 
+void SceneManager::save_scene(Scene* scene)
+{
+	FileManager::save_to_file_styled(scene->serialize_json(), scenes_file_path + scene->get_name());
+}
+
 void SceneManager::instantiate_gameobject(GameObject* game_object, bool on_next_update)
 {
 	if (on_next_update)

@@ -1,4 +1,5 @@
 #pragma once
+#include "globals.h"
 #include "IData.h"
 
 namespace bm98

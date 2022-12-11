@@ -71,7 +71,7 @@ Json::Value BoxColliderComponent::serialize_json()
 	obj["name"] = name;
 	obj["trigger"] = trigger;
 	obj["active"] = active;
-	//obj["collision-check-type"] = x;
+	obj["collision-check-type"] = collisiondetection_to_string(collision_check_type);
 	obj["hitbox-width"] = hitbox.getSize().x;
 	obj["hitbox-height"] = hitbox.getSize().y;
 	obj["hitbox-offsetX"] = offsetX;
@@ -84,7 +84,7 @@ void BoxColliderComponent::unserialize_json(Json::Value obj)
 	name = obj["name"].asString();
 	trigger = obj["trigger"].asBool();
 	active = obj["active"].asBool();
-	//obj["collision-check-type"] = x.asInt64();
+	collision_check_type = string_to_collisiondetection(obj["collision-check-type"].asString());
 	width = obj["hitbox-width"].asFloat();
 	height = obj["hitbox-height"].asFloat();
 	offsetX = obj["hitbox-offsetX"].asFloat();
@@ -136,6 +136,31 @@ const bool BoxColliderComponent::is_active()
 void BoxColliderComponent::set_active(const bool& active)
 {
 	this->active = active;
+}
+
+void BoxColliderComponent::set_hitbox(float x, float y, float width, float height, float offset_x, float offset_y)
+{
+	active = true;
+	hitbox.setFillColor(sf::Color::Transparent);
+	hitbox.setOutlineThickness(2.f);
+	hitbox.setOutlineColor(sf::Color::Blue);
+
+	this->offsetX = offset_x;
+	this->offsetY = offset_y;
+	this->width = width;
+	this->height = height;
+	hitbox.setPosition(sf::Vector2f(x + offset_x, y + offset_y));
+	hitbox.setSize(sf::Vector2f(width, height));
+}
+
+void BoxColliderComponent::set_collision_detection(CollisionDetection col)
+{
+	this->collision_check_type = col;
+}
+
+void BoxColliderComponent::set_trigger(bool trig)
+{
+	this->trigger = trig;
 }
 
 Vector2f BoxColliderComponent::get_offset()

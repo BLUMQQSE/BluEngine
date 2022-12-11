@@ -25,7 +25,7 @@ template <typename T> inline ComponentID get_component_type_id() noexcept
 constexpr std::size_t max_components = 150;
 using ComponentBitSet = std::bitset<max_components>;
 using ComponentArray = std::array<Component*, max_components>;
-	
+
 class GameObject : IData, public IObject
 {
 public:
@@ -56,6 +56,10 @@ public:
 	Transform transform;
 
 	virtual void init_object();
+
+	virtual void init();
+	virtual void awake();
+	virtual void start();
 
 	virtual void update() override;
 	virtual void late_update() override;
@@ -108,15 +112,27 @@ public:
 		return *c;
 	}
 
+	template <typename T> void remove_component(T* comp)
+	{
+		if (component_bitset[get_component_type_id<T>()])
+		{
+
+			auto itr = std::find_if(std::begin(components),
+				std::end(components),
+				[comp](auto& element) { return element.get() == comp; });
+
+			components.erase(itr);
+
+			component_array[get_component_type_id<T>()] = nullptr;
+			component_bitset[get_component_type_id<T>()] = false;
+		}
+	}
+
 	template <typename T> T& get_component() const
 	{
 		auto ptr(component_array[get_component_type_id<T>()]);
 		return *static_cast<T*>(ptr);
 	}
-
-	void init_components();
-	void awake_components();
-	void start_components();
 
 protected:
 	bool active;
@@ -131,7 +147,9 @@ protected:
 
 private:
 	virtual void init_variables();
-
+	void init_components();
+	void awake_components();
+	void start_components();
 
 	ComponentArray component_array;
 	ComponentBitSet component_bitset;

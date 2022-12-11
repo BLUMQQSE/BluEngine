@@ -37,7 +37,7 @@ void bm98::PlayerController::update()
 	if (Input::get_action_down("INTERACT"))
 	{
 		GameObject* pants = new GameObject();
-		pants->add_component<SpriteComponent>("Resources/Images/Sprites/Items/pants.png");
+		pants->add_component<SpriteComponent>("Items/pants.png");
 		pants->add_component<ChildAnimationComponent>();
 		pants->set_parent(this->game_object);
 		this->game_object->add_child(pants);

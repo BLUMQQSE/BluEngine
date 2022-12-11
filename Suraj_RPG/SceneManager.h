@@ -22,6 +22,7 @@ public:
 
 	static void load_scene(std::string scene_name);
 	static void save_scene();
+	static void save_scene(Scene* scene);
 
 	/// <summary>
 	/// Instantiates game objects into the active scene.

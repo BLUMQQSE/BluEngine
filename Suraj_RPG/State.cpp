@@ -54,6 +54,10 @@ void State::init_variables()
 {
 }
 
+void State::update_sfml(sf::Event sfEvent)
+{
+}
+
 void State::update()
 {
 

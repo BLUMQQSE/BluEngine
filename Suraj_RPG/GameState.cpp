@@ -34,7 +34,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	SceneManager::init(active_scene);
 
 	pmenu = new PauseMenu(*window, font);
-	pmenu->add_button("QUIT", 500.f, 900.f, "Quit Game");
+	pmenu->add_button("QUIT", 900.f, 900.f, "Quit Game");
 	particles = new ParticleSystem(1000);
 	particles->set_emitter(sf::Vector2f(200, 200));
 }
@@ -43,6 +43,7 @@ GameState::~GameState()
 {
 	FileManager::save_to_file_styled(component_player->serialize_json(), "Data/DontDestroyObjects/player.json");
 	delete component_player;
+	
 }
 
 void GameState::init_state()
@@ -139,7 +140,7 @@ void GameState::init_players()
 	
 	/*
 	component_player->add_component<PlayerController>();
-	component_player->add_component<SpriteComponent>("Resources/Images/Sprites/Player/player_sprite_sheet.png");
+	component_player->add_component<SpriteComponent>("Player/player_sprite_sheet.png");
 	component_player->add_component<RigidbodyComponent>();
 	component_player->add_component<BoxColliderComponent>();
 	component_player->add_component<AnimationComponent>();
@@ -150,11 +151,9 @@ void GameState::init_players()
 	
 	
 	component_player->unserialize_json(FileManager::load_from_file("Data/DontDestroyObjects/player.json", true));
-	
-
-
-	std::cout << component_player->has_component<SpriteComponent>() << " "<< component_player->has_component<AnimationComponent>() << 
-		" " << component_player->has_component<RigidbodyComponent>() << " " << component_player->has_component<BoxColliderComponent>() << " " << component_player->has_component<PlayerController>() << " ";
+	component_player->init();
+	component_player->awake();
+	component_player->start();
 
 	Physics::add_to_physics(component_player);
 	/*

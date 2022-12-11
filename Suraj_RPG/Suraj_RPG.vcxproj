@@ -188,6 +188,7 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="PrefabEditor.cpp" />
     <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="pch.cpp">
@@ -202,6 +203,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneChange.cpp" />
+    <ClCompile Include="SceneEditor.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
@@ -251,6 +253,7 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="PrefabEditor.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="pch.h" />
@@ -258,6 +261,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneChange.h" />
+    <ClInclude Include="SceneEditor.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SettingsState.h" />
     <ClInclude Include="SpriteComponent.h" />

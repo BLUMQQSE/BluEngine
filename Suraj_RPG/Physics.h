@@ -62,7 +62,7 @@ private:
 
 	static std::unordered_map<GameObject*, GameObjects> game_objects;
 	static std::vector<Tile*> collidable_tiles;
-	static bool collision_matrix[(int)(Layer::LAST_DONT_REMOVE)][(int)(Layer::LAST_DONT_REMOVE)];
+	static bool collision_matrix[(int)(Layer::_LAST_DONT_REMOVE)][(int)(Layer::_LAST_DONT_REMOVE)];
 
 	static bool triggers_acknowledge_colliders;
 

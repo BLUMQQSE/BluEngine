@@ -36,6 +36,25 @@ void GameObject::init_object()
 
 }
 
+void GameObject::init()
+{
+	init_components();
+}
+
+void GameObject::awake()
+{
+
+	set_position(transform.position.x, transform.position.y);
+	
+	awake_components();
+
+}
+
+void GameObject::start()
+{
+	start_components();
+}
+
 void GameObject::update()
 {
 	if (!active)
@@ -51,8 +70,8 @@ void GameObject::update()
 	if (parent)
 		transform.position = parent->transform.position + transform.local_position;
 	
-	sprite.setPosition(transform.position);
-		
+	//sprite.setPosition(transform.position);
+	
 
 	
 }
@@ -136,8 +155,15 @@ void GameObject::add_to_buffer(sf::View* view)
 {
 	if (!active)
 		return;
-	if(has_component<SpriteComponent>())
-		Renderer::add(Renderer::RenderObject(&get_component<SpriteComponent>().get_sprite(), SortingLayer::ACTOR, 0 , view));
+	if (has_component<SpriteComponent>())
+	{
+		Renderer::add(
+			Renderer::RenderObject(&get_component<SpriteComponent>().get_sprite(),
+				get_component<SpriteComponent>().get_layer(),
+				get_component<SpriteComponent>().get_order(),
+				view
+			));
+	}
 	else
 	{
 		//TODO: remove once components working correctly
@@ -167,12 +193,6 @@ void GameObject::set_active(bool& active)
 	this->active = active;
 }
 
-void GameObject::set_sprite_texture(sf::Texture& texture)
-{
-	sprite.setTexture(texture);
-}
-
-
 void GameObject::set_parent(GameObject* parent)
 {
 	this->parent = parent;
@@ -186,7 +206,8 @@ void GameObject::add_child(GameObject* child)
 void GameObject::set_position(const float x, const float y)
 {
 	transform.position = Vector2f(x, y);
-	sprite.setPosition(x, y);
+	if (has_component<SpriteComponent>())
+		get_component<SpriteComponent>().set_position(x, y);
 }
 
 const GameObject::Info& GameObject::get_info() const
@@ -220,10 +241,18 @@ Json::Value GameObject::serialize_json()
 {
 	Json::Value obj;
 	obj["Name"] = info.name;
+	obj["tag"] = Global::tag_to_string(info.tag);
+	obj["physics-layer"] = Global::physics_layer_to_string(info.layer);
+	obj["position-x"] = transform.position.x;
+	obj["position-y"] = transform.position.y;
+	obj["rotation-x"] = transform.rotation.x;
+	obj["rotation-y"] = transform.rotation.y;
+	obj["scale-x"] = transform.scale.x;
+	obj["scale-y"] = transform.scale.y;
 	for (auto& c : components)
 	{
 		Json::Value obj2;
-		obj2["name"] = c->get_name();
+		obj2["name"] = typeid(*c).name();
 		obj2["value"] = c->serialize_json();
 		obj["Components"].append(obj2);
 	}
@@ -234,33 +263,71 @@ Json::Value GameObject::serialize_json()
 void GameObject::unserialize_json(Json::Value obj)
 {
 	info.name = obj["Name"].asString();
+	info.tag = Global::string_to_tag(obj["tag"].asString());
+	info.layer = Global::string_to_physics_layer(obj["physics-layer"].asString());
+	transform.position.x = obj["position-x"].asFloat();
+	transform.position.y = obj["position-y"].asFloat();
+	transform.rotation.x = obj["rotation-x"].asFloat();
+	transform.rotation.y = obj["rotation-y"].asFloat();
+	transform.scale.x = obj["scale-x"].asFloat();
+	transform.scale.y = obj["scale-y"].asFloat();
 
-	std::cout <<"\nsize:" << obj["Components"].size()<<"\n";
+	std::unordered_map<std::string, Json::Value> comps;
 
 	for (Json::Value component : obj["Components"])
 	{
-		if (component["name"].asString() == "TilemapComponent")
+
+		if (component["name"].asString() == typeid(TilemapComponent).name())
+		{
+			comps[typeid(TilemapComponent).name()] = component["value"];
 			add_component<TilemapComponent>();
-		if (component["name"].asString() == "SpriteComponent")
-			add_component<SpriteComponent>("Resources/Images/Sprites/Player/player_sprite_sheet.png");
-		if (component["name"].asString() == "AnimatedSpriteComponent")
+		}
+		if (component["name"].asString() == typeid(SpriteComponent).name())
+		{
+			comps[typeid(SpriteComponent).name()] = component["value"];
+			add_component<SpriteComponent>();
+		}
+		if (component["name"].asString() == typeid(AnimatedSpriteComponent).name())
+		{
+			comps[typeid(AnimatedSpriteComponent).name()] = component["value"];
 			add_component<AnimatedSpriteComponent>();
-		if (component["name"].asString() == "AnimationComponent")
+		}
+		if (component["name"].asString() == typeid(AnimationComponent).name())
+		{
+			comps[typeid(AnimationComponent).name()] = component["value"];
 			add_component<AnimationComponent>();
-		if (component["name"].asString() == "BoxColliderComponent")
+		}
+		if (component["name"].asString() == typeid(BoxColliderComponent).name())
+		{
+			comps[typeid(BoxColliderComponent).name()] = component["value"];
 			add_component<BoxColliderComponent>();
-		if (component["name"].asString() == "ChildAnimationComponent")
+		}
+		if (component["name"].asString() == typeid(ChildAnimationComponent).name())
+		{
+			comps[typeid(ChildAnimationComponent).name()] = component["value"];
 			add_component<ChildAnimationComponent>();
-		if (component["name"].asString() == "RigidbodyComponent")
+		}
+		if (component["name"].asString() == typeid(RigidbodyComponent).name())
+		{
+			comps[typeid(RigidbodyComponent).name()] = component["value"];
 			add_component<RigidbodyComponent>();
-		if (component["name"].asString() == "PlayerController")
+		}
+		if (component["name"].asString() == typeid(PlayerController).name())
+		{
+			comps[typeid(PlayerController).name()] = component["value"];
 			add_component<PlayerController>();
+		}
 	}
 
 	init_components();
 
+	for (auto& c : components)
+	{
+		c->unserialize_json(comps.at(typeid(*c).name()));
+	}
 	//for (auto& c : components)
-		//c->unserialize_json(obj["Components"][c->get_name()]);
+	//	c->unserialize_json(obj["Components"][c->get_name()]);
+
 
 	awake_components();
 	start_components();

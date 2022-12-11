@@ -117,23 +117,23 @@ void MainMenuState::init_background()
 
 void MainMenuState::init_buttons()
 {
-	buttons["NEW_GAME"] = new GUI::Button(500.f, 280.f, 150.f, 60.f, &font, "New Game", 28,
+	buttons["NEW_GAME"] = new GUI::Button(800.f, 380.f, 250.f, 100.f, &font, "New Game", 42,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 
-	buttons["LOAD_GAME"] = new GUI::Button(500.f, 370.f, 150.f, 60.f, &font, "Load Game", 28,
+	buttons["LOAD_GAME"] = new GUI::Button(800.f, 500.f, 250.f, 100.f, &font, "Load Game", 42,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 
-	buttons["EDITOR"] = new GUI::Button(500.f, 460.f, 150.f, 60.f, &font, "Editor", 28,
+	buttons["EDITOR"] = new GUI::Button(800.f, 620.f, 250.f, 100.f, &font, "Editor", 42,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 
-	buttons["OPTIONS"] = new GUI::Button(500.f, 550.f, 150.f, 60.f, &font, "Options", 28,
+	buttons["OPTIONS"] = new GUI::Button(800.f, 740.f, 250.f, 100.f, &font, "Options", 42,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 
-	buttons["QUIT"] = new GUI::Button(500.f, 640.f, 150.f, 60.f, &font, "QUIT", 28,
+	buttons["QUIT"] = new GUI::Button(800.f, 860.f, 250.f, 100.f, &font, "QUIT", 42,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 

@@ -6,6 +6,8 @@ namespace bm98
 class PauseMenu;
 class TilemapComponent;
 class GameObject;
+class PrefabEditor;
+class SceneEditor;
 
 class EditorState :
     public State
@@ -14,13 +16,14 @@ public:
     EditorState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings);
     virtual ~EditorState();
 
-    virtual void on_end_state();
-    virtual void update_input();
+    virtual void on_end_state() override;
+    virtual void update_input() override;
 
-    virtual void update();
-    virtual void late_update();
-    virtual void fixed_update();
-    virtual void render();
+    virtual void update_sfml(sf::Event sfEvent) override;
+    virtual void update() override;
+    virtual void late_update() override;
+    virtual void fixed_update() override;
+    virtual void render() override;
 
 
     //void set_texture_rect();
@@ -39,11 +42,20 @@ protected:
 
 private:
 
+    enum class EditingState
+    {
+        TILEMAP,
+        SCENE,
+        PREFAB
+    };
+
     struct TileModifier
     {
         bool collision;
         TileType tile_type;
     };
+
+    EditingState current_state;
 
     sf::View main_view;
     float camera_move_speed;
@@ -64,6 +76,12 @@ private:
 
     TilemapComponent* tilemap;
     GameObject* tilemap_go;
+
+    // contain scene which is saved or loaded
+    SceneEditor* editing_scene;
+
+    PrefabEditor* editing_prefab;
+
 
 };
 

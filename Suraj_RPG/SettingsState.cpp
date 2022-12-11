@@ -61,6 +61,7 @@ void SettingsState::update()
 {
 	State::update();
 	update_input();
+	Debug::mouse_position_display(font);
 	for (auto& it : buttons)
 	{
 		it.second->update();

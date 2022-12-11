@@ -10,6 +10,8 @@
 #include "TilemapComponent.h"
 #include "Time.h"
 #include "GameObject.h"
+#include "SceneEditor.h"
+#include "PrefabEditor.h"
 namespace bm98
 {
 using namespace core;
@@ -19,17 +21,23 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	:State(window, states, graphics_settings)
 {
 	state_name = "Editor_State";
+	current_state = EditingState::TILEMAP;
 	init_variables();
 	init_views();
 	init_background();
 	init_fonts();
 	init_buttons();
+
 	pmenu = new PauseMenu(*window, font);
-	pmenu->add_button("BACK", 500.f, 900.f, "Back");
-	pmenu->add_button("SAVE", 500, 840, "Save");
-	pmenu->add_button("LOAD", 500, 780, "Load");
+	pmenu->add_button("BACK", 900.f, 900.f, "Back");
+	pmenu->add_button("SAVE", 900, 840, "Save");
+	pmenu->add_button("LOAD", 900, 780, "Load");
+	
 	init_tilemap();
 	init_gui();
+
+	editing_scene = new SceneEditor(&font);
+	editing_prefab = new PrefabEditor();
 
 	tile_modifier.collision = false;
 	tile_modifier.tile_type = TileType::DEFAULT;
@@ -59,6 +67,14 @@ void EditorState::update_input()
 	//{
 	//	isRequestingQuit = true;
    //}
+	if (Input::get_action_down("SCENE_EDITOR"))
+	{
+		current_state = EditingState::SCENE;
+	}
+	if (Input::get_action_down("PREFAB_EDITOR"))
+	{
+		current_state = EditingState::PREFAB;
+	}
 	if (Input::get_action_down("MENU"))
 	{
 		if (!paused)
@@ -68,15 +84,32 @@ void EditorState::update_input()
 	}
 }
 
+void EditorState::update_sfml(sf::Event sfEvent)
+{
+	if (current_state == EditingState::SCENE)
+		editing_scene->update_sfml(sfEvent);
+	if (current_state == EditingState::PREFAB)
+		editing_prefab->update_sfml(sfEvent);
+}
+
 void EditorState::update()
 {
-	Debug::mouse_position_display(font);
+	//Debug::mouse_position_display(font);
 	update_input();
 	if (!paused)
 	{
 		State::update();
-
 		tilemap->update();
+
+		if (current_state == EditingState::SCENE)
+		{
+			editing_scene->update();
+			return;
+		}
+		if (current_state == EditingState::PREFAB)
+		{
+			editing_prefab->update();
+		}
 		for (auto& it : buttons)
 		{
 			it.second->update();
@@ -89,7 +122,7 @@ void EditorState::update()
 			tile_modifier.collision = !tile_modifier.collision;
 		if (Input::get_action_down("TYPE"))
 			tile_modifier.tile_type = TileType::DAMAGING;
-
+		
 		update_gui();
 	}
 	else
@@ -111,15 +144,21 @@ void EditorState::update()
 
 void EditorState::late_update()
 {
+
 }
 
 void EditorState::fixed_update()
 {
-	
+
 }
 
 void EditorState::render()
 {
+	if (current_state == EditingState::SCENE)
+		editing_scene->render(&main_view);
+	if (current_state == EditingState::PREFAB)
+		editing_prefab->render(&main_view);
+
 	tilemap->add_to_buffer(&main_view);
 
 	if (!paused)
@@ -173,6 +212,7 @@ void EditorState::init_gui()
 
 	texture_selector = new GUI::TextureSelector(120.f + 800, 20.f, 500.f, 500.f, UNIT_SIZE,
 		tilemap->get_texture(), font, tilemap->get_tileset_keys());
+	texture_selector->toggle_hidden();
 
 	selector_rect.setSize(sf::Vector2f(tilemap->grid_size(), tilemap->grid_size()));
 	selector_rect.setFillColor(sf::Color(255, 255, 255, 150));
