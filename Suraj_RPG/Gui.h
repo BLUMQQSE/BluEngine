@@ -65,6 +65,8 @@ public:
 	const bool mouse_in_bounds() const;
 	const std::string get_text() const;
 	const short unsigned& get_id() const;
+	const float get_height() const;
+	const sf::Vector2f get_position() const;
 
 	void set_pressed();
 	void set_text(const std::string text);
@@ -108,6 +110,11 @@ public:
 	bool changed_selection();
 
 	const bool mouse_in_bounds();
+
+	// NOTE: this could be a point of failure for inconsistency,
+	// tho with how i send in string vector to constructor I don't believe it should be
+	void set_selected_index(int index);
+
 	const short unsigned& get_selected_index() const;
 	const Button* get_selected_button() const;
 private:
@@ -324,6 +331,7 @@ public:
 
 	//temporary
 	void display_mouse_pos(sf::Font& font);
+	const bool mouse_in_bounds() const;
 
 private:
 	bool active;

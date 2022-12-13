@@ -11,13 +11,11 @@ namespace bm98
 using namespace core;
 TilemapComponent::TilemapComponent()
 {
-	name = "TilemapComponent";
 }
 
 TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_size,
 	unsigned width, unsigned height)
 {
-	name = "TilemapComponent";
 	this->position = sf::Vector2i(position_x, position_y);
 	this->grid_size_f = grid_size;
 	this->grid_size_u = static_cast<unsigned>(this->grid_size_f);
@@ -66,6 +64,12 @@ float& TilemapComponent::grid_size()
 sf::Texture* TilemapComponent::tile_sheet(std::string key)
 {
 	return &tile_sheets.at(key);
+}
+
+void TilemapComponent::init()
+{
+	load_tile_sheets();
+	layers = ((int)SortingLayer::UI);
 }
 
 void TilemapComponent::update()
@@ -257,10 +261,11 @@ Json::Value TilemapComponent::serialize_json()
 	obj["max-size.x"] = max_size.x;
 	obj["max-size.y"] = max_size.y;
 	obj["grid-size"] = grid_size_u;
+	obj["file-path"] = file_path;
 
 	for (auto r : map_renderables)
 	{
-		obj["Tiles"].append(r->serialize_json());
+		obj["tiles"].append(r->serialize_json());
 	}
 
 	return obj;
@@ -268,10 +273,14 @@ Json::Value TilemapComponent::serialize_json()
 
 void TilemapComponent::unserialize_json(Json::Value obj)
 {
+	std::cout << "unserialize tilemap";
+	load_tile_sheets();
+	layers = ((int)SortingLayer::UI);
 	position = sf::Vector2i(obj["position.x"].asInt64(), obj["position.y"].asInt64());
 	max_size.x = obj["max-size.x"].asUInt64();
 	max_size.y = obj["max-size.y"].asUInt64();
 	grid_size_u = obj["grid-size"].asUInt64();
+	file_path = obj["file-path"].asString();
 	grid_size_f = static_cast<float>(grid_size_u);
 
 	this->map_renderables.clear();
@@ -296,7 +305,7 @@ void TilemapComponent::unserialize_json(Json::Value obj)
 		}
 	}
 
-	for (Json::Value tile : obj["Tiles"])
+	for (Json::Value tile : obj["tiles"])
 	{
 		int x = tile["grid.x"].asInt64();
 		int y = tile["grid.y"].asInt64();

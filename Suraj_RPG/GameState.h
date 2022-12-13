@@ -27,7 +27,6 @@ public:
 
     virtual void render();
 
-
 protected:
 
     void init_players();
@@ -36,6 +35,7 @@ protected:
 
 private:
     sf::View view;
+    //std::vector<Scene*> scenes;
     Scene* active_scene;
 
     Player* player;

@@ -30,8 +30,9 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	init_fonts();
 	init_players();
 	init_view();
-	active_scene = new Scene("Default.json");
+	active_scene = new Scene("Dafuq.json");
 	SceneManager::init(active_scene);
+	//SceneManager::load_scene("test.json");
 
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("QUIT", 900.f, 900.f, "Quit Game");
@@ -138,19 +139,17 @@ void GameState::init_players()
 	
 	component_player = new GameObject();
 	
-	/*
-	component_player->add_component<PlayerController>();
-	component_player->add_component<SpriteComponent>("Player/player_sprite_sheet.png");
-	component_player->add_component<RigidbodyComponent>();
-	component_player->add_component<BoxColliderComponent>();
-	component_player->add_component<AnimationComponent>();
+	
+	//component_player->add_component<PlayerController>();
+	//component_player->add_component<SpriteComponent>("Player/player_sprite_sheet.png");
+	//component_player->add_component<RigidbodyComponent>();
+	//component_player->add_component<BoxColliderComponent>();
+	//component_player->add_component<AnimationComponent>();
 
-	component_player->init_components();
-	component_player->get_component<PlayerController>().awake();
-	*/
 	
 	
 	component_player->unserialize_json(FileManager::load_from_file("Data/DontDestroyObjects/player.json", true));
+	
 	component_player->init();
 	component_player->awake();
 	component_player->start();

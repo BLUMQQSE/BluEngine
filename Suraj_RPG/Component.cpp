@@ -89,12 +89,6 @@ GameObject* Component::get_game_object()
 	return game_object;
 }
 
-std::string Component::get_name()
-{
-	return name;
-}
-
-
 
 
 }

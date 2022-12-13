@@ -11,6 +11,8 @@ class Collider;
 
 class Component;
 
+static size_t current_id = 0;
+
 using ComponentID = std::size_t;
 static ComponentID last_id = 0;
 inline ComponentID get_component_type_id()
@@ -55,8 +57,6 @@ public:
 	//difficult to ensure insync with sprite position at all times
 	Transform transform;
 
-	virtual void init_object();
-
 	virtual void init();
 	virtual void awake();
 	virtual void start();
@@ -81,9 +81,11 @@ public:
 	void set_sprite_texture(sf::Texture& texture);
 	void set_parent(GameObject* parent);
 	void add_child(GameObject* child);
+	void remove_child(GameObject* child);
 
 	virtual void set_position(const float x, const float y);
 
+	const size_t get_unique_runtime_id() const;
 	const Info& get_info() const;
 	const Transform& get_transform() const;
 	GameObject* get_parent();
@@ -146,6 +148,8 @@ protected:
 	std::vector<std::unique_ptr<Component>> components;
 
 private:
+	size_t unique_runtime_id;
+
 	virtual void init_variables();
 	void init_components();
 	void awake_components();
@@ -154,7 +158,11 @@ private:
 	ComponentArray component_array;
 	ComponentBitSet component_bitset;
 
-
+	static size_t get_unique_id()
+	{
+		current_id++;
+		return current_id;
+	}
 };
 
 }

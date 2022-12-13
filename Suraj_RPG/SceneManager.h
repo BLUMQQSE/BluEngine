@@ -2,6 +2,7 @@
 
 namespace bm98
 {
+class GameState;
 class GameObject;
 class Scene;
 }
@@ -32,11 +33,12 @@ public:
 	static void instantiate_gameobject(GameObject* game_object, bool on_next_update = false);
 	static void destroy_gameobject(GameObject* game_object);
 
+	//static void set_active_scene(std::string scene_name);
 
 private:
 
 	static std::string scenes_file_path;
-
+	//static GameState* game_state;
 	static std::vector<GameObject*> objects_to_add;
 
 };

@@ -49,12 +49,13 @@ class BoxColliderComponent : public Component
 {
 public:
 	BoxColliderComponent();
-	BoxColliderComponent(sf::Sprite& sprite, float offset_x,
+	BoxColliderComponent(float offset_x,
 		float offset_y, float width, float height, bool trigger,
 		CollisionDetection collision_check_type = CollisionDetection::DISCRETE);
 	virtual ~BoxColliderComponent();
 
 	virtual void init() override;
+	virtual void awake() override;
 	virtual void update() override;
 	virtual void fixed_update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
@@ -83,7 +84,7 @@ public:
 protected:
 
 private:
-	sf::Sprite* sprite;
+	//sf::Sprite* sprite;
 	sf::RectangleShape hitbox;
 	CollisionDetection collision_check_type;
 

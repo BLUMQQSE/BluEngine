@@ -91,6 +91,12 @@ public:
 	/// </summary>
 	/// <param name="keybinds">Name of keybind set.</param>
 	static void change_keybinds_state(std::string keybinds);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	static const bool using_input_box();
+	static void set_using_input_box(bool val);
 
 protected:
 
@@ -132,6 +138,8 @@ private:
 	static float mouse_right_delta;
 	static float mouse_middle_delta;
 	static float mouse_scroll_delta;
+
+	static bool in_input_box;
 
 	/// <summary>
 	/// Checks which mouse buttons are currently held down

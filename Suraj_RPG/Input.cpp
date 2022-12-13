@@ -19,6 +19,7 @@ float Input::mouse_left_delta;
 float Input::mouse_middle_delta;
 float Input::mouse_right_delta;
 float Input::mouse_scroll_delta;
+bool Input::in_input_box = false;
 
 sf::RenderWindow* Input::window;
 
@@ -284,6 +285,16 @@ void Input::change_keybinds_state(std::string keybind)
     mouse_left = PressedState::RESET;
     mouse_right = PressedState::RESET;
     mouse_middle = PressedState::RESET;
+}
+
+const bool Input::using_input_box()
+{
+    return in_input_box;
+}
+
+void Input::set_using_input_box(bool val)
+{
+    in_input_box = val;
 }
 
 void Input::update_mouse_input()

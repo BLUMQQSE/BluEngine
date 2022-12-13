@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Debug.h"
 #include "Collisions.h"
+#include "SceneManager.h"
 
 #include "TilemapComponent.h"
 #include "ChildAnimationComponent.h"
@@ -19,6 +20,7 @@ namespace bm98
 using namespace core;
 GameObject::GameObject()
 {
+	unique_runtime_id = get_unique_id();
 	init_variables();
 }
 
@@ -29,11 +31,6 @@ GameObject::~GameObject()
 		c.reset();
 	}
 	delete render_object;
-}
-
-void GameObject::init_object()
-{
-
 }
 
 void GameObject::init()
@@ -72,8 +69,6 @@ void GameObject::update()
 	
 	//sprite.setPosition(transform.position);
 	
-
-	
 }
 
 void GameObject::late_update()
@@ -94,13 +89,6 @@ void GameObject::fixed_update()
 	{
 		c->fixed_update();
 	}
-
-	/*
-	if (rigidbody_component)
-		rigidbody_component->fixed_update();
-	if (box_collider_component)
-		box_collider_component->fixed_update(); //this needs be after rigid updates so we get next frames bounds, rather than this frames	
-	*/
 }
 
 void GameObject::on_collision_enter(Collision info)
@@ -203,11 +191,21 @@ void GameObject::add_child(GameObject* child)
 	children.insert(child);
 }
 
+void GameObject::remove_child(GameObject* child)
+{
+	children.erase(child);
+}
+
 void GameObject::set_position(const float x, const float y)
 {
 	transform.position = Vector2f(x, y);
 	if (has_component<SpriteComponent>())
 		get_component<SpriteComponent>().set_position(x, y);
+}
+
+const size_t GameObject::get_unique_runtime_id() const
+{
+	return unique_runtime_id;
 }
 
 const GameObject::Info& GameObject::get_info() const
@@ -240,7 +238,7 @@ const bool& GameObject::check_for_child(GameObject* game_object) const
 Json::Value GameObject::serialize_json()
 {
 	Json::Value obj;
-	obj["Name"] = info.name;
+	obj["name"] = info.name;
 	obj["tag"] = Global::tag_to_string(info.tag);
 	obj["physics-layer"] = Global::physics_layer_to_string(info.layer);
 	obj["position-x"] = transform.position.x;
@@ -254,15 +252,20 @@ Json::Value GameObject::serialize_json()
 		Json::Value obj2;
 		obj2["name"] = typeid(*c).name();
 		obj2["value"] = c->serialize_json();
-		obj["Components"].append(obj2);
+		obj["components"].append(obj2);
 	}
-	std::cout << "ayo" << obj["Components"].size() << "\n";
+	std::cout << children.size() << "SIZE\n";
+	for (auto& o : children)
+	{
+		obj["children"].append(o->serialize_json());
+	}
+
 	return obj;
 }
 
 void GameObject::unserialize_json(Json::Value obj)
 {
-	info.name = obj["Name"].asString();
+	info.name = obj["name"].asString();
 	info.tag = Global::string_to_tag(obj["tag"].asString());
 	info.layer = Global::string_to_physics_layer(obj["physics-layer"].asString());
 	transform.position.x = obj["position-x"].asFloat();
@@ -274,11 +277,11 @@ void GameObject::unserialize_json(Json::Value obj)
 
 	std::unordered_map<std::string, Json::Value> comps;
 
-	for (Json::Value component : obj["Components"])
+	for (Json::Value component : obj["components"])
 	{
-
 		if (component["name"].asString() == typeid(TilemapComponent).name())
 		{
+			std::cout << "added tilemap component";
 			comps[typeid(TilemapComponent).name()] = component["value"];
 			add_component<TilemapComponent>();
 		}
@@ -319,18 +322,30 @@ void GameObject::unserialize_json(Json::Value obj)
 		}
 	}
 
-	init_components();
+
+
+	//init_components();
 
 	for (auto& c : components)
 	{
 		c->unserialize_json(comps.at(typeid(*c).name()));
 	}
+
+	for (Json::Value child : obj["children"])
+	{
+		GameObject* go = new GameObject();
+		go->set_parent(this);
+		add_child(go);
+		go->unserialize_json(child);
+		SceneManager::instantiate_gameobject(go);
+	}
+	
 	//for (auto& c : components)
 	//	c->unserialize_json(obj["Components"][c->get_name()]);
 
 
-	awake_components();
-	start_components();
+	//awake_components();
+	//start_components();
 
 }
 

@@ -63,23 +63,23 @@ public:
 		switch (layer)
 		{
 		case SortingLayer::BACKGROUND:
-			return "background";
+			return "BACKGROUND";
 		case SortingLayer::FLOOR:
-			return "floor";
+			return "FLOOR";
 		case SortingLayer::BACKGROUND_DECORATIONS:
-			return "background-decorations";
+			return "BACKGROUND_DECORATIONS";
 		case SortingLayer::ACTOR:
-			return "actor";
+			return "ACTOR";
 		case SortingLayer::EFFECTS:
-			return "effects";
+			return "EFFECTS";
 		case SortingLayer::FOREGROUND_WALLS:
-			return "foreground-walls";
+			return "FOREGROUND_WALLS";
 		case SortingLayer::FOREGROUND:
-			return "foreground";
+			return "FOREGROUND";
 		case SortingLayer::ITEM:
-			return "item";
+			return "ITEM";
 		case SortingLayer::UI:
-			return "ui";
+			return "UI";
 		default:
 			std::cout << "ERROR::GLOBALS::layer_to_string::UNDEFINED LAYER\n";
 			return "null";
@@ -88,23 +88,23 @@ public:
 
 	static SortingLayer string_to_layer(std::string layer)
 	{
-		if (layer == "background")
+		if (layer == "BACKGROUND")
 			return SortingLayer::BACKGROUND;
-		if (layer == "floor")
+		if (layer == "FLOOR")
 			return SortingLayer::FLOOR;
-		if (layer == "background-decorations")
+		if (layer == "BACKGROUND_DECORATIONS")
 			return SortingLayer::BACKGROUND_DECORATIONS;
-		if (layer == "actor")
+		if (layer == "ACTOR")
 			return SortingLayer::ACTOR;
-		if (layer == "item")
+		if (layer == "ITEM")
 			return SortingLayer::ITEM;
-		if (layer == "effects")
+		if (layer == "EFFECTS")
 			return SortingLayer::EFFECTS;
-		if (layer == "foreground-walls")
+		if (layer == "FOREGROUND_WALLS")
 			return SortingLayer::FOREGROUND_WALLS;
-		if (layer == "foreground")
+		if (layer == "FOREGROUND")
 			return SortingLayer::FOREGROUND;
-		if (layer == "ui")
+		if (layer == "UI")
 			return SortingLayer::UI;
 		std::cout << "ERROR::GLOBAL::string_to_layer::UNDEFINED STRING\n";
 		return SortingLayer::BACKGROUND;
@@ -185,7 +185,7 @@ public:
 			return "WALLS";
 		default:
 			std::cout << "ERROR::GLOBALS::physics_layer_to_string::UNDEFINED PHYISCS LAYER\n";
-			return "null";
+			return "DEFAULT";
 		}
 	}
 
@@ -222,14 +222,14 @@ public:
 
 	static std::vector<std::string> tiletypes_to_vector()
 	{
-		return { "Default", "Damaging" };
+		return { "DEFAULT", "DAMAGING" };
 	}
 
 	static TileType string_to_tiletype(std::string tile_type)
 	{
-		if (tile_type == "default")
+		if (tile_type == "DEFAULT")
 			return TileType::DEFAULT;
-		if (tile_type == "damaging")
+		if (tile_type == "DAMAGING")
 			return TileType::DAMAGING;
 
 		std::cout << "ERROR::GLOBALS::string_to_tiletype::UNDEFINED TILETYPE: " << tile_type << "\n";
@@ -241,12 +241,12 @@ public:
 		switch (tile_type)
 		{
 		case TileType::DEFAULT:
-			return "default";
+			return "DEFAULT";
 		case TileType::DAMAGING:
-			return "damaging";
+			return "DAMAGING";
 		default:
 			std::cout << "ERROR::GLOBALS::tiletype_to_string::UNDEFINED TILETYPE\n";
-			return "default";
+			return "DEFAULT";
 		}
 	}
 

@@ -9,7 +9,6 @@ using namespace core;
 
 RigidbodyComponent::RigidbodyComponent()
 {
-	name = "RigidbodyComponent";
 }
 
 RigidbodyComponent::RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
@@ -17,7 +16,6 @@ RigidbodyComponent::RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
 	:sprite(&sprite), max_velocity(max_velocity), acceleration(acceleration),
 	deceleration(deceleration)
 {
-	name = "RigidbodyComponent";
 	unhalt();
 }
 
@@ -58,7 +56,6 @@ Json::Value RigidbodyComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj["name"] = name;
 	obj["max-velocity"] = max_velocity;
 	obj["acceleration"] = acceleration;
 	obj["deceleration"] = deceleration;
@@ -68,7 +65,6 @@ Json::Value RigidbodyComponent::serialize_json()
 
 void RigidbodyComponent::unserialize_json(Json::Value obj)
 {
-	name = obj["name"].asString();
 	max_velocity = obj["max-velocity"].asFloat();
 	acceleration = obj["acceleration"].asFloat();
 	deceleration = obj["deceleration"].asFloat();

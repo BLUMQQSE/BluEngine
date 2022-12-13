@@ -20,6 +20,7 @@ public:
 	float& grid_size();
 	sf::Texture* tile_sheet(std::string key);
 
+	virtual void init() override;
 	virtual void update() override;
 	virtual void late_update() override;
 	virtual void fixed_update() override;
@@ -38,7 +39,7 @@ public:
 	void set_texture(std::string key);
 
 	void save_to_json(std::string file_path);
-	void load_from_json(std::string file_path);
+	void load_from_json(std::string file_path = "");
 	/// <summary>
 	/// Sets origin of tilemap.
 	/// </summary>
@@ -62,6 +63,9 @@ private:
 	std::vector<std::vector<std::vector<Tile*> > > map;
 	std::vector<Tile*> map_renderables;
 	std::vector<Tile*> map_updateables;
+
+	std::string file_path = "";
+	
 	// tile sheet will become a map
 	// can hold different texture sheets for choosing stuff
 	//sf::Texture* tile_sheet;

@@ -13,7 +13,6 @@ ChildAnimationComponent::ChildAnimationComponent(sf::Sprite& sprite, sf::Texture
 	AnimationComponent& parent_animation_component)
 	: sprite(&sprite), texture_sheet(&texture_sheet), parent_animation_component(&parent_animation_component)
 {
-	name = "ChildAnimationComponent";
 	add_animations();
 	parents_last_animation = parent_animation_component.get_active_animation_key();
 }
@@ -35,21 +34,25 @@ void ChildAnimationComponent::init()
 void ChildAnimationComponent::awake()
 {
 	if (game_object->get_parent())
-		if (&game_object->get_parent()->get_component<AnimationComponent>())
+	{
+		GameObject* g = game_object->get_parent();
+		while (g->get_parent() && !g->has_component<AnimationComponent>())
 		{
-			parent_animation_component = &game_object->get_parent()->get_component<AnimationComponent>();
+			g = g->get_parent();
+		}
+		if (&g->get_component<AnimationComponent>())
+		{
+			parent_animation_component = &g->get_component<AnimationComponent>();
 			add_animations();
 			parents_last_animation = parent_animation_component->get_active_animation_key();
 			return;
 		}
-
+	}
 	std::cout << "\nERROR::ChildAnimationComponent::ISSUE WITH PARENT AnimationComponent\n";
 }
 
 void ChildAnimationComponent::update()
 {
-	//handles playing same animation as parent 
-	//can confirm key is accurate
 	if (parents_last_animation != parent_animation_component->get_active_animation_key())
 	{
 		animations[parents_last_animation]->reset();
@@ -64,14 +67,11 @@ Json::Value ChildAnimationComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj["name"] = name;
-
 	return obj;
 }
 
 void ChildAnimationComponent::unserialize_json(Json::Value obj)
 {
-	obj["name"] = name;
 }
 
 void ChildAnimationComponent::add_animations()

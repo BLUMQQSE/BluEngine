@@ -177,6 +177,9 @@
     <ClCompile Include="SceneEditor.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -346,6 +349,9 @@
     </ClInclude>
     <ClInclude Include="PrefabEditor.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Scripts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

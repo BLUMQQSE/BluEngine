@@ -9,12 +9,11 @@ namespace bm98
 
 SpriteComponent::SpriteComponent()
 {
-	name = "SpriteComponent";
 }
 
 SpriteComponent::SpriteComponent(std::string file_path)
 {
-	name = "SpriteComponent";
+	this->file_path = file_path;
 	if (!this->texture_sheet.loadFromFile(sprite_path + file_path))
 	{
 		Debug::Log("ERROR::SpriteComponent::COULD NOT LOAD texture_sheet");
@@ -33,7 +32,14 @@ SpriteComponent::~SpriteComponent()
 
 void SpriteComponent::init()
 {
+	if (!this->texture_sheet.loadFromFile(sprite_path + file_path))
+	{
+		Debug::Log("ERROR::SpriteComponent::COULD NOT LOAD texture_sheet");
+		return;
+	};
 
+	sprite.setTexture(texture_sheet);
+	sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), size));
 }
 
 void SpriteComponent::update()
@@ -48,7 +54,6 @@ Json::Value SpriteComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj["name"] = name;
 	obj["layer"] = Global::layer_to_string(layer);
 	obj["z-order"] = z_order;
 	obj["sprite-file-path"] = file_path;
@@ -59,11 +64,8 @@ Json::Value SpriteComponent::serialize_json()
 void SpriteComponent::unserialize_json(Json::Value obj)
 {
 	file_path = obj["sprite-file-path"].asString();
-	name = obj["name"].asString();
 	layer = Global::string_to_layer(obj["layer"].asString());
 	z_order = obj["z-order"].asInt64();
-
-	std::cout << z_order << "z";
 
 	file_path = obj["sprite-file-path"].asString();
 	set_size(64, 64);
@@ -80,6 +82,16 @@ sf::Texture& SpriteComponent::get_texture_sheet()
 	return texture_sheet;
 }
 
+const std::string SpriteComponent::get_file_path() const
+{
+	return file_path;
+}
+
+const sf::Vector2i SpriteComponent::get_size() const
+{
+	return size;
+}
+
 SortingLayer SpriteComponent::get_layer()
 {
 	return layer;
@@ -93,15 +105,11 @@ int SpriteComponent::get_order()
 void SpriteComponent::set_sprite(std::string file_path)
 {
 	if (!this->texture_sheet.loadFromFile(sprite_path + file_path))
-	{
-		std::cout << file_path<<"\n";
-		Debug::Log("ERROR::SpriteComponent::COULD NOT LOAD texture_sheet");
 		return;
-	};
+	
 
 	this->file_path = file_path;
 	sprite.setTexture(texture_sheet);
-	//sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
 	sprite.setTextureRect(
 		sf::IntRect(sf::Vector2i(0, 0), 
 		sf::Vector2i(size))
@@ -121,6 +129,7 @@ void SpriteComponent::set_position(float x, float y)
 
 void SpriteComponent::set_layer(SortingLayer sorting_layer)
 {
+	std::cout << static_cast<int>(sorting_layer) << "\n";
 	this->layer = sorting_layer;
 }
 

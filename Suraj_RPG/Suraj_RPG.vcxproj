@@ -182,6 +182,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="IData.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Inventory.h" />
     <ClInclude Include="IObject.h" />
     <ClInclude Include="IRenderable.h" />
     <ClInclude Include="ItemData.h" />

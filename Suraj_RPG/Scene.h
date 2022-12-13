@@ -30,6 +30,7 @@ public:
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 
+
 private:
 	std::string name;
 

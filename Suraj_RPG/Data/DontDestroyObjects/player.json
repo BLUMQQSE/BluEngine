@@ -1,19 +1,15 @@
 {
-	"Components" : 
+	"components" : 
 	[
 		{
 			"name" : "class bm98::PlayerController",
-			"value" : 
-			{
-				"name" : "PlayerController"
-			}
+			"value" : null
 		},
 		{
 			"name" : "class bm98::SpriteComponent",
 			"value" : 
 			{
-				"layer" : "actor",
-				"name" : "SpriteComponent",
+				"layer" : "BACKGROUND",
 				"sprite-file-path" : "Player/player_sprite_sheet.png",
 				"z-order" : 0
 			}
@@ -24,36 +20,31 @@
 			{
 				"acceleration" : 15.0,
 				"deceleration" : 50.0,
-				"max-velocity" : 200.0,
-				"name" : "RigidbodyComponent"
+				"max-velocity" : 200.0
 			}
 		},
 		{
 			"name" : "class bm98::BoxColliderComponent",
 			"value" : 
 			{
-				"active" : true,
+				"active" : false,
 				"collision-check-type" : "DISCRETE",
 				"hitbox-height" : 50.0,
 				"hitbox-offsetX" : 16.0,
-				"hitbox-offsetY" : 14.0,
+				"hitbox-offsetY" : 7.0,
 				"hitbox-width" : 32.0,
-				"name" : "BoxColliderComponent",
 				"trigger" : false
 			}
 		},
 		{
 			"name" : "class bm98::AnimationComponent",
-			"value" : 
-			{
-				"name" : "AnimationComponent"
-			}
+			"value" : null
 		}
 	],
-	"Name" : "Player",
+	"name" : "",
 	"physics-layer" : "DEFAULT",
-	"position-x" : 468.85202026367188,
-	"position-y" : 333.1842041015625,
+	"position-x" : 193.04627990722656,
+	"position-y" : 260.93283081054688,
 	"rotation-x" : 0.0,
 	"rotation-y" : 0.0,
 	"scale-x" : 0.0,

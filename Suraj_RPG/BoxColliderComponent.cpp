@@ -10,18 +10,17 @@ using namespace core;
 
 BoxColliderComponent::BoxColliderComponent()
 {
-	name = "BoxColliderComponent";
 }
 
-BoxColliderComponent::BoxColliderComponent(sf::Sprite& sprite, float offset_x,
+BoxColliderComponent::BoxColliderComponent(float offset_x,
 	float offset_y, float width, float height, bool trigger,
 	CollisionDetection collision_check_type)
-	:sprite(&sprite), offsetX(offset_x), offsetY(-offset_y), trigger(trigger),
+	:offsetX(offset_x), offsetY(-offset_y), trigger(trigger),
 	collision_check_type(collision_check_type), width(width), height(height)
 {
-	name = "BoxColliderComponent";
 	active = true;
-	hitbox.setPosition(sprite.getPosition().x + offset_x, sprite.getPosition().y + offset_y);
+	hitbox.setPosition(game_object->get_transform().position.x + offsetX,
+		game_object->get_transform().position.y + offsetY);
 	hitbox.setSize(sf::Vector2f(width, height));
 	hitbox.setFillColor(sf::Color::Transparent);
 	hitbox.setOutlineThickness(2.f);
@@ -30,16 +29,13 @@ BoxColliderComponent::BoxColliderComponent(sf::Sprite& sprite, float offset_x,
 
 void BoxColliderComponent::init()
 {
-	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
-	collision_check_type = CollisionDetection::DISCRETE;
-	trigger = false;
-	active = true;
-	width = 32;
-	height = 50;
-	offsetY = 14;
-	offsetX = 16;
+	
+}
 
-	hitbox.setPosition(sprite->getPosition().x + offsetX, sprite->getPosition().y + offsetY);
+void BoxColliderComponent::awake()
+{	
+	hitbox.setPosition(game_object->get_transform().position.x + offsetX,
+		game_object->get_transform().position.y + offsetY);
 	hitbox.setSize(sf::Vector2f(width, height));
 	hitbox.setFillColor(sf::Color::Transparent);
 	hitbox.setOutlineThickness(2.f);
@@ -48,8 +44,8 @@ void BoxColliderComponent::init()
 
 void BoxColliderComponent::update()
 {
-	hitbox.setPosition(this->sprite->getPosition().x + offsetX,
-		this->sprite->getPosition().y + offsetY);
+	hitbox.setPosition(game_object->get_transform().position.x + offsetX,
+		game_object->get_transform().position.y + offsetY);
 }
 
 void BoxColliderComponent::fixed_update()
@@ -68,7 +64,6 @@ Json::Value BoxColliderComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj["name"] = name;
 	obj["trigger"] = trigger;
 	obj["active"] = active;
 	obj["collision-check-type"] = collisiondetection_to_string(collision_check_type);
@@ -81,7 +76,6 @@ Json::Value BoxColliderComponent::serialize_json()
 }
 void BoxColliderComponent::unserialize_json(Json::Value obj)
 {
-	name = obj["name"].asString();
 	trigger = obj["trigger"].asBool();
 	active = obj["active"].asBool();
 	collision_check_type = string_to_collisiondetection(obj["collision-check-type"].asString());

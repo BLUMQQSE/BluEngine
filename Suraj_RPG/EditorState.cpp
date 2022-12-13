@@ -67,6 +67,9 @@ void EditorState::update_input()
 	//{
 	//	isRequestingQuit = true;
    //}
+	if (Input::using_input_box())
+		return;
+
 	if (Input::get_action_down("SCENE_EDITOR"))
 	{
 		current_state = EditingState::SCENE;
@@ -104,6 +107,7 @@ void EditorState::update()
 		if (current_state == EditingState::SCENE)
 		{
 			editing_scene->update();
+			update_gui();
 			return;
 		}
 		if (current_state == EditingState::PREFAB)
@@ -131,7 +135,9 @@ void EditorState::update()
 		if (pmenu->is_button_pressed("BACK"))
 			isRequestingQuit = true;
 		if (pmenu->is_button_pressed("SAVE"))
+		{
 			tilemap->save_to_json("Data/Tilemaps/test.json");
+		}
 		//tilemap->save_to_file("test.tm");
 		if (pmenu->is_button_pressed("LOAD"))
 		{
@@ -227,86 +233,93 @@ void EditorState::update_gui()
 	if (sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position_window())))
 		return;
 
-	if (Input::get_action("CAM_UP"))
-		main_view.move(0, -camera_move_speed * Time::delta_time());
-	if (Input::get_action("CAM_DOWN"))
-		main_view.move(0, camera_move_speed * Time::delta_time());
-	if (Input::get_action("CAM_LEFT"))
-		main_view.move(-camera_move_speed * Time::delta_time(), 0);
-	if (Input::get_action("CAM_RIGHT"))
-		main_view.move(camera_move_speed * Time::delta_time(), 0);
-
-	if (texture_selector->mouse_in_container())
+	if (!Input::using_input_box())
 	{
-		tilemap->highlight_layer(texture_selector->get_layer());
-		texture_selector->update();
-		if (texture_selector->get_tileset_selector()->changed_selection())
-		{
-			// texture sheet change
-			std::string set_key = texture_selector->get_tileset_selector()->get_selected_button()->get_text();
-			texture_selector->set_texture_sheet(tilemap->tile_sheet(set_key));
-			tilemap->set_texture(set_key);
-			// below line did not fix changing the selector texture
-			selector_rect.setTexture(tilemap->get_texture());
+		if (Input::get_action("CAM_UP"))
+			main_view.move(0, -camera_move_speed * Time::delta_time());
+		if (Input::get_action("CAM_DOWN"))
+			main_view.move(0, camera_move_speed * Time::delta_time());
+		if (Input::get_action("CAM_LEFT"))
+			main_view.move(-camera_move_speed * Time::delta_time(), 0);
+		if (Input::get_action("CAM_RIGHT"))
+			main_view.move(camera_move_speed * Time::delta_time(), 0);
 
-		}
-		if (texture_selector->mouse_in_bounds())
+		if (Input::get_mouse_scroll_delta() > 0)
+			main_view.zoom(.9f);
+		if (Input::get_mouse_scroll_delta() < 0)
+			main_view.zoom(1.1);
+	}
+
+	if (current_state == EditingState::TILEMAP)
+	{
+
+		if (texture_selector->mouse_in_container())
 		{
-			// Here code to set selector size
-			if (Input::get_mouse(Input::Mouse::LEFT) ||
-				Input::get_mouse_down(Input::Mouse::LEFT) ||
-				Input::get_mouse_up(Input::Mouse::LEFT))
+			tilemap->highlight_layer(texture_selector->get_layer());
+			texture_selector->update();
+			if (texture_selector->get_tileset_selector()->changed_selection())
 			{
-				texture_selector->set_texture_rect();
-				texture_rect = texture_selector->get_texture_rect();
-			}
+				// texture sheet change
+				std::string set_key = texture_selector->get_tileset_selector()->get_selected_button()->get_text();
+				texture_selector->set_texture_sheet(tilemap->tile_sheet(set_key));
+				tilemap->set_texture(set_key);
+				// below line did not fix changing the selector texture
+				selector_rect.setTexture(tilemap->get_texture());
 
+			}
+			if (texture_selector->mouse_in_bounds())
+			{
+				// Here code to set selector size
+				if (Input::get_mouse(Input::Mouse::LEFT) ||
+					Input::get_mouse_down(Input::Mouse::LEFT) ||
+					Input::get_mouse_up(Input::Mouse::LEFT))
+				{
+					texture_selector->set_texture_rect();
+					texture_rect = texture_selector->get_texture_rect();
+				}
+
+				return;
+			}
 			return;
 		}
-		return;
-	}
-	if (texture_selector->get_animation_checkbox()->is_checked())
-	{
-		selector_rect.setOutlineColor(sf::Color::Red);
-		selector_rect.setSize(sf::Vector2f(tilemap->grid_size(), tilemap->grid_size()));
-	}
-	else
-	{
-		selector_rect.setOutlineColor(sf::Color::White);
-		selector_rect.setSize(sf::Vector2f(texture_rect.width, texture_rect.height));
-	}
-	selector_rect.setTexture(tilemap->get_texture());
-	selector_rect.setTextureRect(texture_rect);
+		if (texture_selector->get_animation_checkbox()->is_checked())
+		{
+			selector_rect.setOutlineColor(sf::Color::Red);
+			selector_rect.setSize(sf::Vector2f(tilemap->grid_size(), tilemap->grid_size()));
+		}
+		else
+		{
+			selector_rect.setOutlineColor(sf::Color::White);
+			selector_rect.setSize(sf::Vector2f(texture_rect.width, texture_rect.height));
+		}
+		selector_rect.setTexture(tilemap->get_texture());
+		selector_rect.setTextureRect(texture_rect);
 
-	selector_rect.setPosition(Input::mouse_position_grid(UNIT_SIZE, &main_view).x * UNIT_SIZE, Input::mouse_position_grid(UNIT_SIZE, &main_view).y * UNIT_SIZE);
+		selector_rect.setPosition(Input::mouse_position_grid(UNIT_SIZE, &main_view).x * UNIT_SIZE, Input::mouse_position_grid(UNIT_SIZE, &main_view).y * UNIT_SIZE);
 
-	if (Input::get_mouse_down(Input::Mouse::LEFT) || Input::get_mouse(Input::Mouse::LEFT))
-	{
-		tilemap->add_tiles(
-			Input::mouse_position_grid(UNIT_SIZE, &main_view).x,
-			Input::mouse_position_grid(UNIT_SIZE, &main_view).y,
-			texture_selector->get_layer(),
-			texture_rect,
-			(TileType)texture_selector->get_tiletype_selector()->get_selected_index(),
-			texture_selector->get_collision_checkbox()->is_checked(),
-			texture_selector->get_animation_checkbox()->is_checked()
-		);
+		if (Input::get_mouse_down(Input::Mouse::LEFT) || Input::get_mouse(Input::Mouse::LEFT))
+		{
+			tilemap->add_tiles(
+				Input::mouse_position_grid(UNIT_SIZE, &main_view).x,
+				Input::mouse_position_grid(UNIT_SIZE, &main_view).y,
+				texture_selector->get_layer(),
+				texture_rect,
+				(TileType)texture_selector->get_tiletype_selector()->get_selected_index(),
+				texture_selector->get_collision_checkbox()->is_checked(),
+				texture_selector->get_animation_checkbox()->is_checked()
+			);
+		}
+		if (Input::get_mouse_down(Input::Mouse::RIGHT) || Input::get_mouse(Input::Mouse::RIGHT))
+		{
+			tilemap->remove_tiles(
+				Input::mouse_position_grid(UNIT_SIZE, &main_view).x,
+				Input::mouse_position_grid(UNIT_SIZE, &main_view).y,
+				texture_selector->get_layer(),
+				texture_rect,
+				texture_selector->get_animation_checkbox()->is_checked()
+			);
+		}
 	}
-	if (Input::get_mouse_down(Input::Mouse::RIGHT) || Input::get_mouse(Input::Mouse::RIGHT))
-	{
-		tilemap->remove_tiles(
-			Input::mouse_position_grid(UNIT_SIZE, &main_view).x,
-			Input::mouse_position_grid(UNIT_SIZE, &main_view).y,
-			texture_selector->get_layer(),
-			texture_rect,
-			texture_selector->get_animation_checkbox()->is_checked()
-		);
-	}
-
-	if (Input::get_mouse_scroll_delta() > 0)
-		main_view.zoom(.9f);
-	if (Input::get_mouse_scroll_delta() < 0)
-		main_view.zoom(1.1);
 
 }
 

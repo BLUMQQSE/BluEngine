@@ -7,13 +7,11 @@ namespace bm98
 {
 AnimatedSpriteComponent::AnimatedSpriteComponent()
 {
-	name = "AnimatedSpriteComponent";
 }
 
 AnimatedSpriteComponent::AnimatedSpriteComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,
 	sf::IntRect animation_rect, float animation_timer, int frame_width, int frame_height)
 {
-	name = "AnimatedSpriteComponent";
 	int x = static_cast<int>(animation_rect.width / frame_width);
 
 	//need to convert animation_rect.left to be divided by frame_width
@@ -46,7 +44,6 @@ Json::Value AnimatedSpriteComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj["name"] = name;
 
 	//obj["animation"] = animation->serialize_json();
 
@@ -55,7 +52,6 @@ Json::Value AnimatedSpriteComponent::serialize_json()
 
 void AnimatedSpriteComponent::unserialize_json(Json::Value obj)
 {
-	name = obj["name"].asString();
 	//animation->unserialize_json(obj["animation"]);
 } 
 

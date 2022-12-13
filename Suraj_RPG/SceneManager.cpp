@@ -11,6 +11,7 @@ namespace bm98::core
 std::string SceneManager::scenes_file_path = "Data/Scenes/";
 std::vector<GameObject*> SceneManager::objects_to_add;
 Scene* SceneManager::active_scene = nullptr;
+//GameState* SceneManager::game_state = nullptr;
 
 SceneManager::SceneManager()
 {
@@ -23,6 +24,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::init(Scene* scene)
 {
+	//game_state = g_s;
 	active_scene = scene;
 }
 
@@ -42,8 +44,9 @@ void SceneManager::load_scene(std::string scene_name)
 {
 	if (active_scene)
 		save_scene();
-	Json::Value obj = FileManager::load_from_file(scenes_file_path + active_scene->get_name(), true);
-	//active_scene->unserialize_json(obj);
+	Json::Value obj = FileManager::load_from_file(scenes_file_path + scene_name, true);
+	std::cout << "NAME: " << obj["name"].asString() << "\n";
+	active_scene->unserialize_json(obj);
 }
 
 void SceneManager::save_scene()

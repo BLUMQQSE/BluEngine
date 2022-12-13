@@ -138,6 +138,16 @@ const short unsigned& Button::get_id() const
 	return id;
 }
 
+const float Button::get_height() const
+{
+	return shape.getGlobalBounds().height;
+}
+
+const sf::Vector2f Button::get_position() const
+{
+	return shape.getPosition();
+}
+
 void Button::set_pressed()
 {
 	button_state = ButtonState::BTN_PRESSED;
@@ -146,6 +156,10 @@ void Button::set_pressed()
 void Button::set_text(const std::string text)
 {
 	this->text.setString(text);
+	this->text.setPosition(
+		shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
+		shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height /*/ 2.f*/
+	);
 }
 
 void Button::set_id(const short unsigned id)
@@ -274,6 +288,12 @@ const bool DropDownList::mouse_in_bounds()
 			return true;
 	}
 	return false;
+}
+
+void DropDownList::set_selected_index(int index)
+{
+	active_selection->set_text(list[index]->get_text());
+	active_selection->set_id(list[index]->get_id());
 }
 
 const short unsigned& DropDownList::get_selected_index() const
@@ -829,9 +849,9 @@ void InputBox::update()
 	if (
 		Input::get_mouse_down(Input::Mouse::LEFT))
 	{
-		if (box.getGlobalBounds().contains(Input::mouse_position(view)))
+		if (box.getGlobalBounds().contains(Input::mouse_position(view)) && !selected)
 			set_selected(true);
-		else
+		else if(!box.getGlobalBounds().contains(Input::mouse_position(view)) && selected)
 			set_selected(false);
 	}
 
@@ -881,10 +901,15 @@ void InputBox::set_position(float x, float y)
 
 void InputBox::set_selected(bool sel)
 {
+	
 	selected = sel;
 
 	if (!selected)
+	{
 		text.setString(text_string.str());
+		tick_on = false;
+		tick_delta = 0;
+	}
 	else
 	{
 		text.setString(text_string.str() + "|");
@@ -943,10 +968,10 @@ void InputBox::input_logic(int char_typed)
 			delete_last_char();
 		}
 	}
-	else
+	else if (char_typed == ENTER_KEY || char_typed == ESCAPE_KEY)
 	{
-		selected = false;
-		tick_on = false;
+		set_selected(false);
+		//selected
 	}
 	if (tick_on)
 		text.setString(text_string.str() + "|");
@@ -1119,6 +1144,11 @@ InputBox* Panel::get_inputbox(std::string key)
 Checkbox* Panel::get_checkbox(std::string key)
 {
 	return dynamic_cast<Checkbox*>(content.at(key));
+}
+
+const bool Panel::mouse_in_bounds() const
+{
+	return panel_shape.getGlobalBounds().contains(Input::mouse_position(view));
 }
 
 Button* Panel::get_button(std::string key)

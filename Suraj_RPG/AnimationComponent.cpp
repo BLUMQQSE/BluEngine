@@ -9,13 +9,13 @@ namespace bm98
 
 AnimationComponent::AnimationComponent()
 {
-	name = "AnimationComponent";
+
 }
 
 AnimationComponent::AnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet)
 	:sprite(&sprite), texture_sheet(&texture_sheet), last_animation(NULL)
 {
-	name = "AnimationComponent";
+
 }
 
 AnimationComponent::~AnimationComponent()
@@ -94,8 +94,6 @@ Json::Value AnimationComponent::serialize_json()
 {
 	Json::Value obj;
 	
-	obj["name"] = name;
-
 	/* Currently useless to save animations
 	for (auto& a : animations)
 	{
@@ -111,7 +109,6 @@ Json::Value AnimationComponent::serialize_json()
 
 void AnimationComponent::unserialize_json(Json::Value obj)
 {
-	name = obj["name"].asString();
 
 	/* Currently useless to save animations
 	for (Json::Value anim : obj["animations"])

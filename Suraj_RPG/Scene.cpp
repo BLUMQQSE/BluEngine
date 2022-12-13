@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "TilemapComponent.h"
 #include "SceneManager.h"
+#include "FileManager.h"
 
 namespace bm98
 {
@@ -13,7 +14,7 @@ Scene::Scene()
 Scene::Scene(std::string name)
 	:name(name)
 {
-	init_tilemap();
+	//init_tilemap();
 }
 
 Scene::~Scene()
@@ -65,13 +66,13 @@ void Scene::set_name(std::string name)
 
 void Scene::insert_gameobject(GameObject* go)
 {
-	//read access violation... even tho its not null ptr
-	go->init();
-	go->awake();
-	go->start();
 	objects_in_scene.push_back(go);
 	Physics::add_to_physics(go);
 	insert_sort();
+
+	go->init();
+	go->awake();
+	go->start();
 }
 
 void Scene::remove_gameobject(GameObject* go)
@@ -90,10 +91,12 @@ Json::Value Scene::serialize_json()
 {
 	Json::Value obj;
 
-	obj["Name"] = name;
+	obj["name"] = name;
 	for (auto& o : objects_in_scene)
 	{
-		obj["GameObjects"].append(o->serialize_json());
+		//only save parent, parent will save children
+		if(!o->get_parent())
+			obj["gameobjects"].append(o->serialize_json());
 	}
 
 	return obj;
@@ -101,14 +104,21 @@ Json::Value Scene::serialize_json()
 
 void Scene::unserialize_json(Json::Value obj)
 {
-	name = obj["Name"].asString();
+	name = obj["name"].asString();
 
-	for (Json::Value game_object : obj["GameObjects"])
+	for (Json::Value game_object : obj["gameobjects"])
 	{
 		GameObject* go = new GameObject();
 		go->unserialize_json(game_object);
 		objects_in_scene.push_back(go);
 	}
+
+	for (auto& go : objects_in_scene)
+		go->init();
+	for (auto& go : objects_in_scene)
+		go->awake();
+	for (auto& go : objects_in_scene)
+		go->start();
 
 }
 

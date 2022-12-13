@@ -18,6 +18,8 @@ public:
 
     sf::Sprite& get_sprite();
     sf::Texture& get_texture_sheet();
+    const std::string get_file_path() const;
+    const sf::Vector2i get_size() const;
     SortingLayer get_layer();
     int get_order();
 

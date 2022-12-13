@@ -49,12 +49,10 @@ public:
 
 	void set_game_object(GameObject* go);
 	GameObject* get_game_object();
-	std::string get_name();
 
 
 protected:
 	bool active;
-	std::string name;
 	GameObject* game_object;
 
 

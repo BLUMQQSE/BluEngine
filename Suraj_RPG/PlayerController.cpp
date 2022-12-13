@@ -10,7 +10,6 @@ namespace bm98
 using namespace core;
 bm98::PlayerController::PlayerController()
 {
-	name = "PlayerController";
 
 }
 
@@ -70,14 +69,12 @@ Json::Value PlayerController::serialize_json()
 {
 	Json::Value obj;
 
-	obj["name"] = name;
 
 	return obj;
 }
 
 void PlayerController::unserialize_json(Json::Value obj)
 {
-	name = obj["name"].asString();
 }
 
 void PlayerController::init_animations()
