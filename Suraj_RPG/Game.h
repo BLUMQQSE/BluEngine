@@ -38,6 +38,8 @@ private:
 
 	sf::Clock deltaClock;
 	float fixed_delta_timer;
+	int fps_averager = 0;
+	float fps_col;
 	float fps;
 
 	//Input* input_handler;

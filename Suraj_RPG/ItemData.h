@@ -6,6 +6,7 @@ class ItemData :
     public DataAsset
 {
 public:
+    ItemData();
     ItemData(std::string name);
     virtual ~ItemData();
 

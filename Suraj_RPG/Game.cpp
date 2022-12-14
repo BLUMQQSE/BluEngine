@@ -95,9 +95,21 @@ void Game::update_delta_time()
     }
 
     Time::apply_time_scale();
-
-    fps = 1000 / (Time::delta_time() * 1000.f);
-    window->setTitle(std::to_string(fps));
+    if (fps_averager == 1000)
+    {
+        fps_averager = 0; 
+        fps = fps_col / 1000;
+        fps_col = 0;
+    }
+    else
+    {
+        fps_averager++;
+        fps_col += 1000 / (Time::delta_time() * 1000);
+    }
+    std::stringstream s;
+    s << std::fixed << std::setprecision(0) << fps;
+    window->setTitle(s.str());
+    s.str("");
 }
 
 

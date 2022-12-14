@@ -21,7 +21,8 @@
 #include <string>
 #include <memory>
 #include <typeinfo>
-
+#include <format>
+#include <iomanip>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
