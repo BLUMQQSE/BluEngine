@@ -11,6 +11,7 @@ using namespace core;
 SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings)
 	: State(window, states, graphics_settings)
 {
+	Renderer::clear();
 	state_name = "Settings_State";
 	init_variables();
 	init_fonts();
@@ -21,6 +22,7 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 
 SettingsState::~SettingsState()
 {
+	Renderer::clear();
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != buttons.end(); ++it)
 	{
@@ -92,7 +94,7 @@ void SettingsState::render()
 	{
 		it2.second->add_to_buffer();
 	}
-	Renderer::add(Renderer::RenderObject(&options_text, SortingLayer::UI));
+	Renderer::add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
 
 }
 

@@ -46,8 +46,10 @@ SceneEditor::~SceneEditor()
 	delete gameobject_editor;
 	delete gameobject_selector;
 	delete gameobject_heirarchy;
+
 	delete scene;
 	delete scene_name;
+	
 	for (auto& b : editor_buttons)
 		delete b.second;
 	for (auto& gis : gameobjects_in_scene)
@@ -129,8 +131,9 @@ void SceneEditor::remove_component(std::string key)
 	for (auto iter = editor_panel_order.rbegin(); iter != editor_panel_order.rend(); ++iter)
 	{
 		if (iter->second == key)
+		{
 			break;
-		
+		}
 		editor_panels.at(iter->second)->set_position(editor_panels.at(iter->second)->get_position().x,
 			editor_panels.at(iter->second)->get_position().y - editor_panels.at(std::next(iter)->second)->get_height());
 	}
@@ -416,7 +419,6 @@ void SceneEditor::create_animatedsprite_component_panel()
 }
 
 
-
 #pragma endregion
 
 
@@ -483,15 +485,54 @@ void SceneEditor::update_animatedsprite_component_panel()
 
 #pragma endregion
 
+void SceneEditor::update_info_panel()
+{
+
+	selected_gameobject->info.name = gameobject_editor->get_panel("info_panel")->get_inputbox("name_input")->get_text();
+
+	selected_gameobject->info.tag = Global::string_to_tag(
+		gameobject_editor->get_panel("info_panel")->get_dropdown("tag_drop")->get_selected_button()->get_text());
+
+	selected_gameobject->info.layer = Global::string_to_physics_layer(
+		gameobject_editor->get_panel("info_panel")->get_dropdown("layer_drop")->get_selected_button()->get_text());
+}
+
+void SceneEditor::update_transform_panel()
+{
+	float pos_x = gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_x_input")->get_text_value();
+	float pos_y = gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_y_input")->get_text_value();
+
+	if (selected_gameobject->get_parent())
+		selected_gameobject->set_local_position(
+			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_x_input")->get_text_value(),
+			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_y_input")->get_text_value()
+		);
+	else
+		selected_gameobject->set_position(
+			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_x_input")->get_text_value(),
+			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_y_input")->get_text_value()
+		);
+	selected_gameobject->transform.rotation = sf::Vector2f(
+		gameobject_editor->get_panel("transform_panel")->get_inputbox("rot_x_input")->get_text_value(),
+		gameobject_editor->get_panel("transform_panel")->get_inputbox("rot_y_input")->get_text_value()
+	);
+	selected_gameobject->transform.scale = sf::Vector2f(
+		gameobject_editor->get_panel("transform_panel")->get_inputbox("scale_x_input")->get_text_value(),
+		gameobject_editor->get_panel("transform_panel")->get_inputbox("scale_y_input")->get_text_value()
+	);
+}
 
 void SceneEditor::clear_editor()
 {
 	for (auto& ep : editor_panels)
 	{
-		gameobject_editor->remove_element(ep.first);
+		//gameobject_editor->remove_element(ep.first);
+		//Exception thrown on this delete statement
+		//std::cout << ep.second->get_position().x << "Pos x\n";
 		delete ep.second;
 	}
-	editor_panels.clear();
+	
+	//editor_panels.clear();
 }
 
 void SceneEditor::populate_editor()
@@ -532,30 +573,11 @@ float SceneEditor::get_next_gameobject_y()
 
 void SceneEditor::update_editor()
 {
-	//issue is here
 	if (!selected_gameobject)
 		return;
 
-	selected_gameobject->info.name = gameobject_editor->get_panel("info_panel")->get_inputbox("name_input")->get_text();
-
-	selected_gameobject->info.tag = Global::string_to_tag(
-		gameobject_editor->get_panel("info_panel")->get_dropdown("tag_drop")->get_selected_button()->get_text());
-
-	selected_gameobject->info.layer = Global::string_to_physics_layer(
-		gameobject_editor->get_panel("info_panel")->get_dropdown("layer_drop")->get_selected_button()->get_text());
-
-	selected_gameobject->set_position(
-		gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_x_input")->get_text_value(),
-		gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_y_input")->get_text_value()
-		);
-	selected_gameobject->transform.rotation = sf::Vector2f(
-		gameobject_editor->get_panel("transform_panel")->get_inputbox("rot_x_input")->get_text_value(),
-		gameobject_editor->get_panel("transform_panel")->get_inputbox("rot_y_input")->get_text_value()
-	);
-	selected_gameobject->transform.scale = sf::Vector2f(
-		gameobject_editor->get_panel("transform_panel")->get_inputbox("scale_x_input")->get_text_value(),
-		gameobject_editor->get_panel("transform_panel")->get_inputbox("scale_y_input")->get_text_value()
-	);
+	update_info_panel();
+	update_transform_panel();
 
 	update_sprite_component_panel();
 	update_boxcollider_component_panel();

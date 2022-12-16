@@ -10,12 +10,11 @@ public:
     MainMenuState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphic_settings);
     virtual ~MainMenuState();
 
+    virtual void init_state() override;
     virtual void on_end_state();
     virtual void update_input();
 
     virtual void update();
-    virtual void fixed_update();
-    virtual void late_update();
 
     virtual void render();
 
@@ -24,8 +23,12 @@ protected:
     void init_background();
     //void init_fonts();
     void init_buttons();
+    void delete_buttons();
 
 private:
+    bool _render = true;
+    SortingLayer background_layer = SortingLayer::BACKGROUND;
+    unsigned char z_order = 0;
     sf::Texture background_texture;
     sf::RectangleShape background;
     std::map<std::string, GUI::Button*> buttons;

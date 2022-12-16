@@ -1,4 +1,5 @@
 #pragma once
+#include "globals.h"
 #include "Input.h"
 #include "Renderer.h"
 namespace bm98::core
@@ -18,6 +19,8 @@ public:
 
 private:
 	static sf::Text text_display;
-
+	static bool active;
+	static SortingLayer layer;
+	static unsigned char z_order;
 };
 }

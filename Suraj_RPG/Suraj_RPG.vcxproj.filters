@@ -180,6 +180,9 @@
     <ClCompile Include="Inventory.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="IRenderable.cpp">
+      <Filter>Interfaces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -238,9 +241,6 @@
     </ClInclude>
     <ClInclude Include="SettingsState.h">
       <Filter>States</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderable.h">
-      <Filter>Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsSettings.h">
       <Filter>Header Files</Filter>
@@ -352,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="Inventory.h">
       <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderable.h">
+      <Filter>Interfaces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

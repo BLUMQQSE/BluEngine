@@ -47,7 +47,6 @@ void RigidbodyComponent::update()
 
 void RigidbodyComponent::fixed_update()
 {
-
 	apply_deceleration();
 }
 #pragma region IData

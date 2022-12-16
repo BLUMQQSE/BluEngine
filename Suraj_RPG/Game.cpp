@@ -79,7 +79,7 @@ void Game::update_sfml_events()
 void Game::update_delta_time()
 {
     Time::update_delta(deltaClock.restart().asSeconds());
-
+    
     if (!states.empty())
     {
         if (Time::fixed_delta_time() >= .02f)
@@ -95,21 +95,24 @@ void Game::update_delta_time()
     }
 
     Time::apply_time_scale();
-    if (fps_averager == 1000)
+    if (fps_averager == 700)
     {
         fps_averager = 0; 
-        fps = fps_col / 1000;
+        fps = fps_col /700;
         fps_col = 0;
+
+
+        std::stringstream s;
+        s << std::fixed << std::setprecision(0) << fps;
+        s << "       " << graphics_settings.game_title;
+        window->setTitle(s.str());
+        s.str("");
     }
     else
     {
         fps_averager++;
         fps_col += 1000 / (Time::delta_time() * 1000);
     }
-    std::stringstream s;
-    s << std::fixed << std::setprecision(0) << fps;
-    window->setTitle(s.str());
-    s.str("");
 }
 
 
@@ -120,6 +123,7 @@ void Game::update()
 
     if (!states.empty())
     {
+        
         states.top()->update();
         states.top()->late_update();
 
@@ -138,6 +142,7 @@ void Game::update()
             states.top()->init_state();
             Time::reset_time_since_state_change();
         }
+
     }
     else
     {
@@ -156,7 +161,7 @@ void Game::render()
         states.top()->render();
     Renderer::render();
     window->display();
-    Renderer::clear();
+    //Renderer::clear();
 }
 
 void Game::run()

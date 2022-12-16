@@ -24,7 +24,8 @@ public:
     virtual void late_update() override;
     virtual void fixed_update() override;
     virtual void render() override;
-
+    virtual void pause_state() override;
+    virtual void unpause_state() override;
 
     //void set_texture_rect();
 
@@ -57,8 +58,13 @@ private:
 
     EditingState current_state;
 
-    sf::View main_view;
+    sf::View* main_view;
     float camera_move_speed;
+    bool outline_render = true;
+    SortingLayer outline_layer = SortingLayer::UI;
+    bool text_select_render = false;
+    SortingLayer text_select_layer = SortingLayer::UI;
+    unsigned char z_order = 0;
 
     sf::Texture background_texture;
     sf::RectangleShape background;

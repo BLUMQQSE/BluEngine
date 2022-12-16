@@ -30,9 +30,9 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	init_fonts();
 	init_players();
 	init_view();
-	active_scene = new Scene("Dafuq.json");
+	active_scene = new Scene("comeon.json");
 	SceneManager::init(active_scene);
-	//SceneManager::load_scene("test.json");
+	SceneManager::load_scene("test.json");
 
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("QUIT", 900.f, 900.f, "Quit Game");
@@ -43,8 +43,9 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 GameState::~GameState()
 {
 	FileManager::save_to_file_styled(component_player->serialize_json(), "Data/DontDestroyObjects/player.json");
+	delete pmenu;
 	delete component_player;
-	
+	delete view;
 }
 
 void GameState::init_state()
@@ -71,11 +72,24 @@ void GameState::update_input()
 	}
 	if (Input::get_action_down("MENU"))
 	{
-		if (!paused)
+		if (!paused) 
 			pause_state();
 		else
 			unpause_state();
+		pmenu->set_render(paused);
 	}
+}
+
+void GameState::pause_state()
+{
+	State::pause_state();
+	pmenu->open();
+}
+
+void GameState::unpause_state()
+{
+	State::unpause_state();
+	pmenu->close();
 }
 
 void GameState::update()
@@ -91,8 +105,10 @@ void GameState::update()
 		active_scene->update();
 
 		//view.setCenter(player->get_transform().position);
-		view.setCenter(component_player->transform.position);
+		view->setCenter(component_player->transform.position);
 		particles->update();
+
+		//pmenu->update();
 	}
 	else
 	{
@@ -120,14 +136,15 @@ void GameState::late_update()
 void GameState::render()
 {
 	//player->add_to_buffer(&this->view);
-	component_player->add_to_buffer(&this->view);
-	active_scene->render(&this->view);
-	Renderer::add(Renderer::RenderObject(particles, SortingLayer::EFFECTS, 0, &this->view));
+	component_player->add_to_buffer(this->view);
+	active_scene->render(this->view);
+	
+	//Renderer::add(Renderer::RenderObject(particles, SortingLayer::EFFECTS, 0, &this->view));
 
-	if (paused)
-	{
-		pmenu->add_to_buffer();
-	}
+	//if (paused)
+	//{
+	//	pmenu->add_to_buffer();
+	//}
 }
 
 void GameState::init_players()
@@ -199,9 +216,10 @@ void GameState::init_players()
 
 void GameState::init_view()
 {
-	view.setSize(graphics_settings->resolution.width, graphics_settings->resolution.height);
-	view.setCenter(graphics_settings->resolution.width / 2.f, graphics_settings->resolution.height / 2.f);
-	view.zoom(.6f);
+	view = new sf::View();
+	view->setSize(graphics_settings->resolution.width, graphics_settings->resolution.height);
+	view->setCenter(graphics_settings->resolution.width / 2.f, graphics_settings->resolution.height / 2.f);
+	view->zoom(.6f);
 }
 
 }

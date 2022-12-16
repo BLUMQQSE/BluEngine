@@ -27,15 +27,19 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 MainMenuState::~MainMenuState()
 {
 	auto it = this->buttons.begin();
-	for (it = this->buttons.begin(); it != buttons.end(); ++it)
-	{
-		delete it->second;
-	}
+	delete_buttons();
+}
+
+void MainMenuState::init_state()
+{
+	init_background();
+	init_buttons();
 }
 
 void MainMenuState::on_end_state()
 {
 	Debug::Log("Will now clean up main menu state on exit");
+	delete_buttons();
 }
 
 void MainMenuState::update_input()
@@ -46,24 +50,29 @@ void MainMenuState::update_input()
 		//a new game
 		on_end_state();
 		states->push(new GameState(window, states, graphics_settings));
+		return;
 	}
 	if (buttons["LOAD_GAME"]->is_pressed())
 	{
 		//TODO: Add a load game state showing saved game files
+		return;
 	}
 	if (buttons["EDITOR"]->is_pressed())
 	{
 		//TODO: Add an editor state for dev purposes
 		states->push(new EditorState(window, states, graphics_settings));
+		return;
 	}
 	if (buttons["OPTIONS"]->is_pressed())
 	{
 		//TODO: Add an options state which gives players options to change things
 		states->push(new SettingsState(window, states, graphics_settings));
+		return;
 	}
 	if (buttons["QUIT"]->is_pressed())
 	{
 		isRequestingQuit = true;
+		return;
 	}
 }
 
@@ -79,22 +88,13 @@ void MainMenuState::update()
 	}
 }
 
-void MainMenuState::fixed_update()
-{
-
-}
-
-void MainMenuState::late_update()
-{
-}
-
 void MainMenuState::render()
 {
 	for (auto& it : buttons)
 	{
 		it.second->add_to_buffer();
 	}
-	Renderer::add(Renderer::RenderObject(&background, SortingLayer::BACKGROUND));
+	//Renderer::add(Renderer::RenderObject(&background, SortingLayer::BACKGROUND));
 }
 
 #pragma endregion
@@ -113,6 +113,7 @@ void MainMenuState::init_variables()
 
 void MainMenuState::init_background()
 {
+	Renderer::add(Renderer::RenderObject(&background, _render, background_layer, z_order));
 }
 
 void MainMenuState::init_buttons()
@@ -137,6 +138,15 @@ void MainMenuState::init_buttons()
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 
+}
+
+void MainMenuState::delete_buttons()
+{
+	for (auto& b : buttons)
+	{
+		delete b.second;
+	}
+	buttons.clear();
 }
 
 /*

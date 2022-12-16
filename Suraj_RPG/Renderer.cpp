@@ -1,11 +1,12 @@
 #include "pch.h"
+#include "globals.h"
 #include "Renderer.h"
 #include "Debug.h"
 
 namespace bm98::core
 {
 std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::render_objects;
-unsigned Renderer::id;
+unsigned Renderer::id = 0;
 sf::RenderTarget* Renderer::window;
 
 float UNIT_SIZE = 32.f;
@@ -19,6 +20,18 @@ void Renderer::init(RenderTarget* render_target)
 void Renderer::add(RenderObject render_object)
 {
 	render_objects.insert(render_object);
+}
+
+void Renderer::remove(sf::Drawable* drawable)
+{
+	for (const auto& f : render_objects)
+	{
+		if (f.drawable == drawable)
+		{
+			render_objects.erase(f);
+			return;
+		}
+	}
 }
 
 void Renderer::remove(RenderObject render_object)
@@ -42,10 +55,16 @@ void Renderer::render()
 		}
 		else
 		*/
+		
+		if (!f.render)
+			continue;
+
 		if (f.view)
-			window->setView(*f.view);
-		else
-			window->setView(window->getDefaultView());
+			if(*f.view)
+				window->setView(**f.view);
+			else
+				window->setView(window->getDefaultView());
+			
 		window->draw(*f.drawable);
 
 	}

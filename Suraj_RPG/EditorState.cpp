@@ -20,6 +20,7 @@ using namespace core;
 EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings)
 	:State(window, states, graphics_settings)
 {
+	main_view = new sf::View();
 	state_name = "Editor_State";
 	current_state = EditingState::TILEMAP;
 	init_variables();
@@ -43,11 +44,16 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	tile_modifier.tile_type = TileType::DEFAULT;
 	camera_move_speed = 120;
 
+	Renderer::add(Renderer::RenderObject(&sidebar, outline_render, outline_layer, z_order));
+	Renderer::add(Renderer::RenderObject(&selector_rect, text_select_render, text_select_layer, z_order, &main_view));
 }
 
 EditorState::~EditorState()
 {
+	Renderer::remove(&sidebar);
+	Renderer::remove(&selector_rect);
 	delete tilemap_go;
+	delete main_view;
 	delete texture_selector;
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != buttons.end(); ++it)
@@ -161,11 +167,11 @@ void EditorState::fixed_update()
 void EditorState::render()
 {
 	if (current_state == EditingState::SCENE)
-		editing_scene->render(&main_view);
+		editing_scene->render(main_view);
 	if (current_state == EditingState::PREFAB)
-		editing_prefab->render(&main_view);
-
-	tilemap->add_to_buffer(&main_view);
+		editing_prefab->render(main_view);
+	//return;
+	tilemap->add_to_buffer(main_view);
 
 	if (!paused)
 	{
@@ -181,6 +187,18 @@ void EditorState::render()
 	}
 }
 
+void EditorState::pause_state()
+{
+	State::pause_state();
+	pmenu->open();
+}
+
+void EditorState::unpause_state()
+{
+	State::unpause_state();
+	pmenu->close();
+}
+
 #pragma endregion
 
 #pragma region PROTECTED
@@ -192,12 +210,12 @@ void EditorState::init_variables()
 
 void EditorState::init_views()
 {
-	main_view.setSize(
+	main_view->setSize(
 		sf::Vector2f(
 			graphics_settings->resolution.width,
 			graphics_settings->resolution.height
 		));
-	main_view.setCenter(
+	main_view->setCenter(
 		graphics_settings->resolution.width / 2.f,
 		graphics_settings->resolution.height / 2.f
 	);
@@ -236,18 +254,18 @@ void EditorState::update_gui()
 	if (!Input::using_input_box())
 	{
 		if (Input::get_action("CAM_UP"))
-			main_view.move(0, -camera_move_speed * Time::delta_time());
+			main_view->move(0, -camera_move_speed * Time::delta_time());
 		if (Input::get_action("CAM_DOWN"))
-			main_view.move(0, camera_move_speed * Time::delta_time());
+			main_view->move(0, camera_move_speed * Time::delta_time());
 		if (Input::get_action("CAM_LEFT"))
-			main_view.move(-camera_move_speed * Time::delta_time(), 0);
+			main_view->move(-camera_move_speed * Time::delta_time(), 0);
 		if (Input::get_action("CAM_RIGHT"))
-			main_view.move(camera_move_speed * Time::delta_time(), 0);
+			main_view->move(camera_move_speed * Time::delta_time(), 0);
 
 		if (Input::get_mouse_scroll_delta() > 0)
-			main_view.zoom(.9f);
+			main_view->zoom(.9f);
 		if (Input::get_mouse_scroll_delta() < 0)
-			main_view.zoom(1.1);
+			main_view->zoom(1.1);
 	}
 
 	if (current_state == EditingState::TILEMAP)
@@ -295,13 +313,13 @@ void EditorState::update_gui()
 		selector_rect.setTexture(tilemap->get_texture());
 		selector_rect.setTextureRect(texture_rect);
 
-		selector_rect.setPosition(Input::mouse_position_grid(UNIT_SIZE, &main_view).x * UNIT_SIZE, Input::mouse_position_grid(UNIT_SIZE, &main_view).y * UNIT_SIZE);
+		selector_rect.setPosition(Input::mouse_position_grid(UNIT_SIZE, main_view).x * UNIT_SIZE, Input::mouse_position_grid(UNIT_SIZE, main_view).y * UNIT_SIZE);
 
 		if (Input::get_mouse_down(Input::Mouse::LEFT) || Input::get_mouse(Input::Mouse::LEFT))
 		{
 			tilemap->add_tiles(
-				Input::mouse_position_grid(UNIT_SIZE, &main_view).x,
-				Input::mouse_position_grid(UNIT_SIZE, &main_view).y,
+				Input::mouse_position_grid(UNIT_SIZE, main_view).x,
+				Input::mouse_position_grid(UNIT_SIZE, main_view).y,
 				texture_selector->get_layer(),
 				texture_rect,
 				(TileType)texture_selector->get_tiletype_selector()->get_selected_index(),
@@ -312,8 +330,8 @@ void EditorState::update_gui()
 		if (Input::get_mouse_down(Input::Mouse::RIGHT) || Input::get_mouse(Input::Mouse::RIGHT))
 		{
 			tilemap->remove_tiles(
-				Input::mouse_position_grid(UNIT_SIZE, &main_view).x,
-				Input::mouse_position_grid(UNIT_SIZE, &main_view).y,
+				Input::mouse_position_grid(UNIT_SIZE, main_view).x,
+				Input::mouse_position_grid(UNIT_SIZE, main_view).y,
 				texture_selector->get_layer(),
 				texture_rect,
 				texture_selector->get_animation_checkbox()->is_checked()
@@ -326,10 +344,13 @@ void EditorState::update_gui()
 
 void EditorState::render_gui()
 {
-	Renderer::add(Renderer::RenderObject(&sidebar, SortingLayer::UI));
+	//Renderer::add(Renderer::RenderObject(&sidebar, _render, SortingLayer::UI));
 	if (!texture_selector->mouse_in_bounds() &&
 		!sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position_window())))
-		Renderer::add(Renderer::RenderObject(&selector_rect, SortingLayer::UI, 0, &main_view));
+		text_select_render = true;
+	else
+		text_select_render = false;
+		//Renderer::add(Renderer::RenderObject(&selector_rect, _render, SortingLayer::UI, 0, &main_view));
 
 	texture_selector->add_to_buffer();
 }

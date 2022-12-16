@@ -20,16 +20,22 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 	this->layer = layer;
 
 	//this->render_object = new Renderer::RenderObject(&shape, layer);
-	this->render_object = new Renderer::RenderObject(&sprite, layer);
+	//this->render_object = new Renderer::RenderObject(&sprite, layer);
 	this->empty = true;
 	this->static_tile = true;
 	this->collision = false;
 	this->type = TileType::DEFAULT;
 	animated_sprite_component = nullptr;
+
+
+	this->render = false;
+	this->sorting_layer = layer;
+	//Renderer::add(Renderer::RenderObject(&sprite, this));
 }
 
 Tile::~Tile()
 {
+	Renderer::remove(&sprite);
 	delete animated_sprite_component;
 }
 
@@ -81,6 +87,16 @@ const AnimatedSpriteComponent* Tile::get_animated_sprite_component()
 void Tile::set_empty(const bool& empty)
 {
 	this->empty = empty;
+	if (empty)
+	{
+		this->render = false;
+		Renderer::remove(&sprite);
+	}
+	else
+	{
+		this->render = true;
+		Renderer::add(Renderer::RenderObject(&sprite, this));
+	}
 }
 
 void Tile::set_texture(std::string source_key, const sf::Texture* texture, const sf::IntRect rect)
@@ -136,18 +152,19 @@ void Tile::highlight(bool highlight)
 		//shape.setOutlineColor(sf::Color::Black);
 }
 
-
 void Tile::add_to_buffer(sf::View* view)
 {
-	if (render_object)
-	{
-		render_object->view = view;
-		if (collision)
-			sprite.setColor(sf::Color(255, 0, 0, 100));
-		else
-			sprite.setColor(sf::Color::White);
-		Renderer::add(*render_object);
-	}
+	set_view(view);
+	
+	//if (render_object)
+	//{
+		//render_object->view = &view;
+	if (collision)
+		sprite.setColor(sf::Color(255, 0, 0, 100));
+	else
+		sprite.setColor(sf::Color::White);
+		//Renderer::add(*render_object);
+	//}
 }
 
 Json::Value Tile::serialize_json()

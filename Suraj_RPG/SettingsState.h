@@ -32,6 +32,9 @@ protected:
     void init_buttons();
 
 private:
+    bool _render = true;
+    SortingLayer options_layer = SortingLayer::UI;
+    unsigned char z_order = 0;
     sf::Texture background_texture;
     sf::RectangleShape background;
     std::map<std::string, GUI::Button*> buttons;

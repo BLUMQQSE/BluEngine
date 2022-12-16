@@ -30,10 +30,20 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 	menu_text.setPosition(container.getPosition().x + container.getSize().x / 2.f
 		- menu_text.getGlobalBounds().width / 2.f
 		, container.getPosition().y + 20.f);
+
+
+	this->render = false;
+	this->sorting_layer = SortingLayer::UI;
+	Renderer::add(Renderer::RenderObject(&background, this));
+	Renderer::add(Renderer::RenderObject(&container, this));
+	Renderer::add(Renderer::RenderObject(&menu_text, this));
 }
 
 PauseMenu::~PauseMenu()
 {
+	Renderer::remove(&background);
+	Renderer::remove(&container);
+	Renderer::remove(&menu_text);
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != buttons.end(); ++it)
 	{
@@ -51,7 +61,7 @@ void PauseMenu::add_button(const std::string key, float x, float y, const std::s
 	buttons[key] = new GUI::Button(x, y, 150.f, 60.f, &font, text, 28,
 		sf::Color(150, 150, 150, 255), sf::Color(120, 120, 120, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
-
+	buttons.at(key)->set_render(false);
 }
 
 const bool PauseMenu::is_button_pressed(const std::string key)
@@ -63,18 +73,32 @@ void PauseMenu::update()
 {
 	for (auto& i : buttons)
 	{
+		i.second->set_render(this->render);
 		i.second->update();
 	}
 }
 
 void PauseMenu::add_to_buffer()
 {
-	Renderer::add(Renderer::RenderObject(&background, SortingLayer::UI, 0));
-	Renderer::add(Renderer::RenderObject(&container, SortingLayer::UI, 0));
+	
+	//Renderer::add(Renderer::RenderObject(&background, this));
+	//Renderer::add(Renderer::RenderObject(&container, this));
 	for (auto& i : buttons)
 	{
 		i.second->add_to_buffer();
 	}
-	Renderer::add(Renderer::RenderObject(&menu_text, SortingLayer::UI, 0));
+	//Renderer::add(Renderer::RenderObject(&menu_text, this));
+}
+void PauseMenu::close()
+{
+	render = false;
+	for (auto& i : buttons)
+		i.second->set_render(false);
+}
+void PauseMenu::open()
+{
+	render = true;
+	for (auto& i : buttons)
+		i.second->set_render(true);
 }
 }

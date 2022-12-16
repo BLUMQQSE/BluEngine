@@ -67,6 +67,9 @@ private:
     void create_childanimation_component_panel();
     void create_animatedsprite_component_panel();
 
+    void update_info_panel();
+    void update_transform_panel();
+
     void update_sprite_component_panel();
     void update_boxcollider_component_panel();
     void update_animation_component_panel();

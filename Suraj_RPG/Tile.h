@@ -6,7 +6,7 @@ namespace bm98
 {
 class AnimatedSpriteComponent;
 
-class Tile : IData, IObject
+class Tile : IData, IObject, public IRenderable
 {
 public:
 	Tile(int x_offset, int y_offset, int grid_x, int grid_y,

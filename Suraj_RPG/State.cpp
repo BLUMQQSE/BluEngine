@@ -14,6 +14,7 @@ using namespace core;
 
 State::State(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings)
 {
+    Renderer::clear();
     this->window = window;
     this->graphics_settings = graphics_settings;
     this->states = states;
@@ -25,7 +26,7 @@ State::State(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSetti
 
 State::~State()
 {
-
+    Renderer::clear();
 }
 
 void State::on_end_state()
@@ -66,6 +67,10 @@ void State::update()
 void State::fixed_update()
 {
 
+}
+
+void State::late_update()
+{
 }
 
 std::string State::get_state_name()

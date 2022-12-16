@@ -183,6 +183,7 @@
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="IRenderable.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuState.cpp" />

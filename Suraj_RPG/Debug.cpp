@@ -3,6 +3,9 @@
 namespace bm98::core
 {
 sf::Text Debug::text_display;
+bool Debug::active = true;
+SortingLayer Debug::layer = SortingLayer::UI;
+unsigned char Debug::z_order = 100;
 
 void Debug::Log(std::string message)
 {
@@ -22,7 +25,7 @@ void Debug::mouse_position_display(sf::Font& font, sf::View* view)
 	std::stringstream ss;
 	ss << "(" << Input::mouse_position(view).x << ", " << Input::mouse_position(view).y << ")";
 	text_display.setString(ss.str());
-	Renderer::add(Renderer::RenderObject(&text_display, SortingLayer::UI, 100));
+	Renderer::add(Renderer::RenderObject(&text_display, active, layer, z_order));
 }
 void Debug::mouse_position_display(sf::Font& font, sf::View* view, sf::Vector2f offset)
 {
@@ -32,7 +35,7 @@ void Debug::mouse_position_display(sf::Font& font, sf::View* view, sf::Vector2f 
 	std::stringstream ss;
 	ss << "(" << Input::mouse_position(view).x - offset.x << ", " << Input::mouse_position(view).y - offset.y << ")";
 	text_display.setString(ss.str());
-	Renderer::add(Renderer::RenderObject(&text_display, SortingLayer::UI, 100));
+	Renderer::add(Renderer::RenderObject(&text_display, active, layer, z_order));
 }
 
 }

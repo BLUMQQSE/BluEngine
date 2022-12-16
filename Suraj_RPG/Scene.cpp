@@ -94,6 +94,7 @@ Json::Value Scene::serialize_json()
 	obj["name"] = name;
 	for (auto& o : objects_in_scene)
 	{
+		std::cout << "object\n";
 		//only save parent, parent will save children
 		if(!o->get_parent())
 			obj["gameobjects"].append(o->serialize_json());

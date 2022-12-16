@@ -1,8 +1,9 @@
 #pragma once
 #include "Gui.h"
+#include "IRenderable.h"
 namespace bm98
 {
-class PauseMenu
+class PauseMenu : public IRenderable
 {
 public:
 	PauseMenu(sf::RenderWindow& window, sf::Font& font);
@@ -16,6 +17,8 @@ public:
 	void update();
 
 	void add_to_buffer();
+	void close();
+	void open();
 
 
 private:

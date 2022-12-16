@@ -84,6 +84,7 @@ public:
 	void remove_child(GameObject* child);
 
 	virtual void set_position(const float x, const float y);
+	virtual void set_local_position(const float x, const float y);
 
 	const size_t get_unique_runtime_id() const;
 	const Info& get_info() const;
@@ -137,7 +138,7 @@ public:
 	}
 
 protected:
-	bool active;
+	bool active = true;
 	GameObject* parent;
 	std::set<GameObject*> children;
 

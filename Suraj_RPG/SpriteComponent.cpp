@@ -5,10 +5,9 @@
 namespace bm98
 {
 
-
-
 SpriteComponent::SpriteComponent()
 {
+	Renderer::add(Renderer::RenderObject(&sprite, this));
 }
 
 SpriteComponent::SpriteComponent(std::string file_path)
@@ -28,6 +27,8 @@ SpriteComponent::SpriteComponent(std::string file_path)
 
 SpriteComponent::~SpriteComponent()
 {
+	std::cout << "sprite component removed\n";
+	Renderer::remove(&sprite);
 }
 
 void SpriteComponent::init()
@@ -44,6 +45,10 @@ void SpriteComponent::init()
 
 void SpriteComponent::update()
 {
+
+	if (Input::get_mouse_down(Input::Mouse::RIGHT))
+		this->render = false;
+
 	if (game_object->get_parent())
 		if (game_object->get_parent()->has_component<SpriteComponent>())
 			sprite.setPosition(game_object->get_parent()->transform.position + game_object->transform.local_position);
@@ -54,7 +59,7 @@ Json::Value SpriteComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj["layer"] = Global::layer_to_string(layer);
+	obj["layer"] = Global::layer_to_string(sorting_layer);
 	obj["z-order"] = z_order;
 	obj["sprite-file-path"] = file_path;
 
@@ -64,7 +69,7 @@ Json::Value SpriteComponent::serialize_json()
 void SpriteComponent::unserialize_json(Json::Value obj)
 {
 	file_path = obj["sprite-file-path"].asString();
-	layer = Global::string_to_layer(obj["layer"].asString());
+	sorting_layer = Global::string_to_layer(obj["layer"].asString());
 	z_order = obj["z-order"].asInt64();
 
 	file_path = obj["sprite-file-path"].asString();
@@ -82,6 +87,11 @@ sf::Texture& SpriteComponent::get_texture_sheet()
 	return texture_sheet;
 }
 
+void SpriteComponent::add_to_buffer(sf::View* view)
+{
+	set_view(view);
+}
+
 const std::string SpriteComponent::get_file_path() const
 {
 	return file_path;
@@ -94,7 +104,7 @@ const sf::Vector2i SpriteComponent::get_size() const
 
 SortingLayer SpriteComponent::get_layer()
 {
-	return layer;
+	return sorting_layer;
 }
 
 int SpriteComponent::get_order()
@@ -130,7 +140,7 @@ void SpriteComponent::set_position(float x, float y)
 void SpriteComponent::set_layer(SortingLayer sorting_layer)
 {
 	std::cout << static_cast<int>(sorting_layer) << "\n";
-	this->layer = sorting_layer;
+	this->sorting_layer = sorting_layer;
 }
 
 void SpriteComponent::set_z_order(int order)

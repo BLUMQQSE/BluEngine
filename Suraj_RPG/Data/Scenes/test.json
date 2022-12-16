@@ -12,7 +12,6 @@
 							"value" : 
 							{
 								"layer" : "FOREGROUND",
-								"name" : "SpriteComponent",
 								"sprite-file-path" : "sword.png",
 								"z-order" : 0
 							}
@@ -27,14 +26,13 @@
 								"hitbox-offsetX" : 0.0,
 								"hitbox-offsetY" : 0.0,
 								"hitbox-width" : 0.0,
-								"name" : "BoxColliderComponent",
 								"trigger" : false
 							}
 						}
 					],
 					"name" : "Sword",
 					"physics-layer" : "DEFAULT",
-					"position-x" : 1000.0,
+					"position-x" : 100.0,
 					"position-y" : 0.0,
 					"rotation-x" : 0.0,
 					"rotation-y" : 0.0,
@@ -50,7 +48,6 @@
 					"value" : 
 					{
 						"layer" : "ACTOR",
-						"name" : "SpriteComponent",
 						"sprite-file-path" : "Player/player.png",
 						"z-order" : 0
 					}
@@ -58,7 +55,7 @@
 			],
 			"name" : "Player",
 			"physics-layer" : "DEFAULT",
-			"position-x" : 1000.0,
+			"position-x" : 100.0,
 			"position-y" : 0.0,
 			"rotation-x" : 0.0,
 			"rotation-y" : 0.0,

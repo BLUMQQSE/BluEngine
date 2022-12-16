@@ -10,6 +10,8 @@ using namespace core;
 
 BoxColliderComponent::BoxColliderComponent()
 {
+	sorting_layer = SortingLayer::UI;
+	Renderer::add(Renderer::RenderObject(&hitbox, this));
 }
 
 BoxColliderComponent::BoxColliderComponent(float offset_x,
@@ -25,6 +27,11 @@ BoxColliderComponent::BoxColliderComponent(float offset_x,
 	hitbox.setFillColor(sf::Color::Transparent);
 	hitbox.setOutlineThickness(2.f);
 	hitbox.setOutlineColor(sf::Color::Blue);
+}
+
+BoxColliderComponent::~BoxColliderComponent()
+{
+	Renderer::remove(&hitbox);
 }
 
 void BoxColliderComponent::init()
@@ -55,7 +62,8 @@ void BoxColliderComponent::fixed_update()
 
 void BoxColliderComponent::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&hitbox, SortingLayer::UI, 0, view));
+	set_view(view);
+	//Renderer::add(Renderer::RenderObject(&hitbox, render, SortingLayer::UI, 0, &view));
 }
 
 #pragma region IData
@@ -87,10 +95,6 @@ void BoxColliderComponent::unserialize_json(Json::Value obj)
 }
 
 #pragma endregion
-
-BoxColliderComponent::~BoxColliderComponent()
-{
-}
 
 bool BoxColliderComponent::check_intersect(const sf::FloatRect& frect)
 {

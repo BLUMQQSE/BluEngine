@@ -141,28 +141,21 @@ void GameObject::on_trigger_exit(Collider info)
 
 void GameObject::add_to_buffer(sf::View* view)
 {
+	//if (has_component<SpriteComponent>())
+	//	get_component<SpriteComponent>().set_view(view);
+	//if (has_component<BoxColliderComponent>())
+	//	get_component<BoxColliderComponent>().set_view(view);
 	if (!active)
+	{
 		return;
-	if (has_component<SpriteComponent>())
-	{
-		Renderer::add(
-			Renderer::RenderObject(&get_component<SpriteComponent>().get_sprite(),
-				get_component<SpriteComponent>().get_layer(),
-				get_component<SpriteComponent>().get_order(),
-				view
-			));
 	}
-	else
-	{
-		//TODO: remove once components working correctly
-		//render_object->view = view;
-		//Renderer::add(get_render_object());
-		//Renderer::add(Renderer::RenderObject(&sprite, SortingLayer::ACTOR, 0, view));
-	}
-	
 	for (auto& c : components)
 	{
 		c->add_to_buffer(view);
+	}
+	for (auto& ch : children)
+	{
+		ch->add_to_buffer(view);
 	}
 }
 
@@ -179,6 +172,8 @@ const bool& GameObject::is_active()
 void GameObject::set_active(bool& active)
 {
 	this->active = active;
+	for (auto& ch : children)
+		ch->set_active(active);
 }
 
 void GameObject::set_parent(GameObject* parent)
@@ -201,6 +196,11 @@ void GameObject::set_position(const float x, const float y)
 	transform.position = Vector2f(x, y);
 	if (has_component<SpriteComponent>())
 		get_component<SpriteComponent>().set_position(x, y);
+}
+
+void GameObject::set_local_position(const float x, const float y)
+{
+	transform.local_position = Vector2f(x, y);
 }
 
 const size_t GameObject::get_unique_runtime_id() const
@@ -276,17 +276,17 @@ void GameObject::unserialize_json(Json::Value obj)
 	transform.scale.y = obj["scale-y"].asFloat();
 
 	std::unordered_map<std::string, Json::Value> comps;
-
+	std::cout << "Game object in scene added\n";
 	for (Json::Value component : obj["components"])
 	{
 		if (component["name"].asString() == typeid(TilemapComponent).name())
 		{
-			std::cout << "added tilemap component";
 			comps[typeid(TilemapComponent).name()] = component["value"];
 			add_component<TilemapComponent>();
 		}
 		if (component["name"].asString() == typeid(SpriteComponent).name())
 		{
+			std::cout << "Sprite component in gameobject added\n";
 			comps[typeid(SpriteComponent).name()] = component["value"];
 			add_component<SpriteComponent>();
 		}

@@ -47,12 +47,13 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 			}
 		}
 	}
-
+	Renderer::add(Renderer::RenderObject(&outline, this));
 	update_tilemap_changes();
 }
 
 TilemapComponent::~TilemapComponent()
 {
+	Renderer::remove(&outline);
 	clear();
 }
 
@@ -88,7 +89,8 @@ void TilemapComponent::fixed_update()
 
 void TilemapComponent::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&outline, SortingLayer::BACKGROUND, 0, view));
+	set_view(view);
+	//Renderer::add(Renderer::RenderObject(&outline, this));
 	for (auto& x : this->map_renderables)
 	{
 		x->add_to_buffer(view);
@@ -330,8 +332,6 @@ void TilemapComponent::unserialize_json(Json::Value obj)
 		map[x][y][z]->set_collision((bool)collision);
 		map[x][y][z]->set_type(type);
 		map[x][y][z]->set_empty(false);
-
-
 	}
 
 	update_tilemap_changes();

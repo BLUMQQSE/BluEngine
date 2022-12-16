@@ -1,5 +1,6 @@
 #pragma once
 #include "globals.h"
+#include "IRenderable.h"
 #include <limits>
 
 namespace bm98::core
@@ -13,8 +14,9 @@ class Renderer
 public:
 	struct RenderObject
 	{
-		RenderObject(sf::Drawable* drawable, SortingLayer sorting_layer,
-			unsigned char z_order = 0, sf::View* view = nullptr)
+		RenderObject(sf::Drawable* drawable, bool& render, SortingLayer& sorting_layer,
+			unsigned char& z_order, sf::View** view = nullptr)
+			:render(render), sorting_layer(sorting_layer), z_order(z_order)
 		{
 			this->sorting_layer = sorting_layer;
 			this->drawable = drawable;
@@ -24,10 +26,23 @@ public:
 			Renderer::increase_id();
 		}
 
-		SortingLayer sorting_layer;
+		RenderObject(sf::Drawable* drawable, IRenderable* renderable)
+			:render(renderable->get_render()), sorting_layer(renderable->get_sorting_layer()),
+			z_order(renderable->get_z_order())
+		{
+			this->sorting_layer = renderable->get_sorting_layer();
+			this->z_order = renderable->get_z_order();
+			this->view = renderable->get_view();
+			this->drawable = drawable;
+			this->private_entry_key = Renderer::get_id();
+			Renderer::increase_id();
+		}
+
+		SortingLayer& sorting_layer;
+		bool& render;
 		sf::Drawable* drawable;
-		unsigned z_order;
-		sf::View* view;
+		unsigned char& z_order;
+		sf::View** view;
 		unsigned private_entry_key;
 
 	};
@@ -35,6 +50,7 @@ public:
 	static void init(RenderTarget* render_target);
 
 	static void add(RenderObject render_object);
+	static void remove(sf::Drawable* drawable);
 	static void remove(RenderObject render_object);
 
 	static void set_view(sf::View view = window->getDefaultView());

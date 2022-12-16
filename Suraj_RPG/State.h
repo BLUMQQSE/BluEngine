@@ -17,8 +17,8 @@ public:
 	/// </summary>
 	virtual void on_end_state();
 
-	void pause_state();
-	void unpause_state();
+	virtual void pause_state();
+	virtual void unpause_state();
 
 	const bool& get_quit() const;
 
@@ -29,8 +29,8 @@ public:
 
 	virtual void update_sfml(sf::Event sfEvent);
 	virtual void update() = 0;
-	virtual void fixed_update() = 0;
-	virtual void late_update() = 0;
+	virtual void fixed_update();
+	virtual void late_update();
 
 	virtual void render() = 0;
 	std::string get_state_name();

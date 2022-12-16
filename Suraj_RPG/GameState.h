@@ -17,9 +17,12 @@ public:
     GameState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings);
     virtual ~GameState();
 
-    virtual void init_state();
-    virtual void on_end_state();
-    virtual void update_input();
+    virtual void init_state() override;
+    virtual void on_end_state() override;
+    virtual void update_input() override;
+
+    virtual void pause_state() override;
+    virtual void unpause_state() override;
 
     virtual void update();
     virtual void fixed_update();
@@ -34,7 +37,7 @@ protected:
 
 
 private:
-    sf::View view;
+    sf::View* view;
     //std::vector<Scene*> scenes;
     Scene* active_scene;
 

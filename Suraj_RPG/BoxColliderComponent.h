@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "IRenderable.h"
 #include "Math.h"
 namespace bm98
 {
@@ -45,7 +46,7 @@ static std::vector<std::string> collisiondetection_to_vector()
 }
 #pragma endregion
 
-class BoxColliderComponent : public Component
+class BoxColliderComponent : public Component, public IRenderable
 {
 public:
 	BoxColliderComponent();
@@ -85,6 +86,7 @@ protected:
 
 private:
 	//sf::Sprite* sprite;
+	sf::View* view = nullptr;
 	sf::RectangleShape hitbox;
 	CollisionDetection collision_check_type;
 

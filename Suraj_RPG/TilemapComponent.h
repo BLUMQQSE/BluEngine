@@ -1,14 +1,14 @@
 #pragma once
 #include "globals.h"
-
 #include "Component.h"
+#include "IRenderable.h"
 namespace bm98
 {
 class Tile;
 
 static const std::string tiles_file_path = "Resources/Images/Tiles/";
 
-class TilemapComponent : public Component
+class TilemapComponent : public Component, public IRenderable
 {
 
 public:

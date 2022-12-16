@@ -54,10 +54,16 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 	this->outline_active_color = outline_active_color;
 
 	shape.setFillColor(idle_color);
+	sorting_layer = SortingLayer::UI;
+	this->z_order = id + 10;
+	Renderer::add(Renderer::RenderObject(&shape, render, sorting_layer, z_order, &view));
+	Renderer::add(Renderer::RenderObject(&this->text, render, sorting_layer, z_order, &view));
 }
 
 Button::~Button()
 {
+	Renderer::remove(&shape);
+	Renderer::remove(&text);
 }
 
 void Button::update()
@@ -102,8 +108,10 @@ void Button::update()
 
 void Button::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&shape, SortingLayer::UI, id + 10, view));
-	Renderer::add(Renderer::RenderObject(&text, SortingLayer::UI, id + 10, view));
+	if(view)
+		this->view = view;
+	//Renderer::add(Renderer::RenderObject(&shape, SortingLayer::UI, id + 10, view));
+	//Renderer::add(Renderer::RenderObject(&text, SortingLayer::UI, id + 10, view));
 }
 
 void Button::set_position(float x, float y)
@@ -198,7 +206,9 @@ DropDownList::DropDownList(float x, float y, float width, float height, sf::Font
 				sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(20, 20, 20, 0), i
 			)
 		);
+		this->list[i]->set_render(false);
 	}
+
 	active_selection->set_id(default_index);
 }
 
@@ -217,7 +227,7 @@ void DropDownList::update()
 
 	if (active_selection->is_pressed())
 	{
-		show_list = !show_list;
+		toggle_list(!show_list);
 	}
 
 	if (show_list)
@@ -227,16 +237,16 @@ void DropDownList::update()
 			i->update();
 			if (i->is_pressed())
 			{
-				show_list = false;
+				toggle_list(false);
 				selection_change = true;
 				active_selection->set_text(i->get_text());
 				active_selection->set_id(i->get_id());
-			}
-			else if (Input::get_mouse_down(Input::Mouse::LEFT) && !active_selection->is_pressed())
-			{
-				show_list = false;
+				return;
 			}
 		}
+		if (Input::get_mouse_down(Input::Mouse::LEFT) && !active_selection->is_pressed())
+			toggle_list(false);
+		
 	}
 }
 
@@ -268,6 +278,15 @@ void DropDownList::set_view(sf::View* view)
 	active_selection->set_view(view);
 	for (auto& b : list)
 		b->set_view(view);
+}
+
+void DropDownList::toggle_list(bool toggle)
+{
+	show_list = toggle;
+	for (auto& l : list)
+	{
+		l->set_render(toggle);
+	}
 }
 
 bool DropDownList::changed_selection()
@@ -323,10 +342,16 @@ Checkbox::Checkbox(float x, float y, float size)
 	check.setFillColor(sf::Color::Transparent);
 	check.setRadius((size / 2 - check_offset));
 	checked = false;
+	sorting_layer = SortingLayer::UI;
+	this->z_order = 1;
+	Renderer::add(Renderer::RenderObject(&box, render, sorting_layer, z_order, &view));
+	Renderer::add(Renderer::RenderObject(&check, render, sorting_layer, z_order, &view));
 }
 
 Checkbox::~Checkbox()
 {
+	Renderer::remove(&box);
+	Renderer::remove(&check);
 }
 
 void Checkbox::update()
@@ -347,8 +372,9 @@ void Checkbox::update()
 
 void Checkbox::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&box, SortingLayer::UI, 1, view));
-	Renderer::add(Renderer::RenderObject(&check, SortingLayer::UI, 1, view));
+	set_view(view);
+	//Renderer::add(Renderer::RenderObject(&box, render, SortingLayer::UI, 1, &view));
+	//Renderer::add(Renderer::RenderObject(&check, render, SortingLayer::UI, 1, &view));
 }
 
 void Checkbox::set_position(float x, float y)
@@ -371,6 +397,7 @@ bool Checkbox::is_checked()
 
 ScrollView::ScrollView(float x, float y, float width, float height, bool vertical, bool horizontal)
 {
+	scroll_view = new sf::View();
 	this->position = sf::Vector2f(x, y);
 	this->width = width;
 	this->height = height;
@@ -381,8 +408,8 @@ ScrollView::ScrollView(float x, float y, float width, float height, bool vertica
 	bounds.setFillColor(sf::Color::Transparent);
 
 
-	scroll_view.setSize(bounds.getSize().x, bounds.getSize().y);
-	scroll_view.setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
+	scroll_view->setSize(bounds.getSize().x, bounds.getSize().y);
+	scroll_view->setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
 		bounds.getPosition().y + bounds.getSize().y / 2);
 
 	float left = bounds.getPosition().x / Renderer::get_window_size().x;
@@ -390,7 +417,7 @@ ScrollView::ScrollView(float x, float y, float width, float height, bool vertica
 	float w = bounds.getSize().x / Renderer::get_window_size().x;
 	float h = bounds.getSize().y / Renderer::get_window_size().y;
 
-	scroll_view.setViewport(sf::FloatRect(left, top, w, h));
+	scroll_view->setViewport(sf::FloatRect(left, top, w, h));
 
 	this->vertical = vertical;
 	this->horizontal = horizontal;
@@ -408,16 +435,24 @@ ScrollView::ScrollView(float x, float y, float width, float height, bool vertica
 		vertical_handle.setFillColor(sf::Color::Green);
 	if (horizontal)
 		horizontal_handle.setFillColor(sf::Color::Green);
+	sorting_layer = SortingLayer::UI;
+	z_order = 0;
+	Renderer::add(Renderer::RenderObject(&bounds, render, sorting_layer, z_order, &scroll_view));
+	if (vertical)
+		Renderer::add(Renderer::RenderObject(&vertical_handle, render, sorting_layer, z_order, &scroll_view));
+	if (horizontal)
+		Renderer::add(Renderer::RenderObject(&horizontal_handle, render, sorting_layer, z_order, &scroll_view));
 
 }
 
 ScrollView::~ScrollView()
 {
+	delete scroll_view;
 }
 
 sf::View& ScrollView::get_scroll_view()
 {
-	return scroll_view;
+	return *scroll_view;
 }
 
 void ScrollView::update()
@@ -451,11 +486,13 @@ void ScrollView::update()
 
 void ScrollView::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&bounds, SortingLayer::UI, 0, &scroll_view));
+	/*
+	Renderer::add(Renderer::RenderObject(&bounds, render, SortingLayer::UI, 0, &scroll_view));
 	if (vertical)
-		Renderer::add(Renderer::RenderObject(&vertical_handle, SortingLayer::UI, 0, &scroll_view));
+		Renderer::add(Renderer::RenderObject(&vertical_handle, render, SortingLayer::UI, 0, &scroll_view));
 	if (horizontal)
-		Renderer::add(Renderer::RenderObject(&horizontal_handle, SortingLayer::UI, 0, &scroll_view));
+		Renderer::add(Renderer::RenderObject(&horizontal_handle, render, SortingLayer::UI, 0, &scroll_view));
+*/
 }
 
 void ScrollView::set_position(float x, float y)
@@ -464,7 +501,7 @@ void ScrollView::set_position(float x, float y)
 	bounds.setPosition(x, y);
 
 
-	scroll_view.setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
+	scroll_view->setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
 		bounds.getPosition().y + bounds.getSize().y / 2);
 
 	float left = bounds.getPosition().x / Renderer::get_window_size().x;
@@ -472,7 +509,7 @@ void ScrollView::set_position(float x, float y)
 	float w = bounds.getSize().x / Renderer::get_window_size().x;
 	float h = bounds.getSize().y / Renderer::get_window_size().y;
 
-	scroll_view.setViewport(sf::FloatRect(left, top, w, h));
+	scroll_view->setViewport(sf::FloatRect(left, top, w, h));
 
 	this->vertical = vertical;
 	this->horizontal = horizontal;
@@ -502,6 +539,7 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 	: font(font)
 
 {
+	view = new sf::View();
 	this->position = sf::Vector2f(x, y);
 	this->hidden = false;
 	this->container.setSize(sf::Vector2f(width + 20, height + 20));
@@ -542,10 +580,10 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 	this->texture_rect.width = static_cast<int>(grid_size);
 	this->texture_rect.height = static_cast<int>(grid_size);
 
+	this->text_view = new sf::View();
 
-
-	this->view.setSize(bounds.getSize().x, bounds.getSize().y);
-	this->view.setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
+	this->text_view->setSize(bounds.getSize().x, bounds.getSize().y);
+	this->text_view->setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
 		bounds.getPosition().y + bounds.getSize().y / 2);
 
 	float left = bounds.getPosition().x / Renderer::get_window_size().x;
@@ -553,9 +591,15 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 	float w = bounds.getSize().x / Renderer::get_window_size().x;
 	float h = bounds.getSize().y / Renderer::get_window_size().y;
 
-	this->view.setViewport(sf::FloatRect(left, top, w, h));
+	this->text_view->setViewport(sf::FloatRect(left, top, w, h));
 
+	this->sorting_layer = SortingLayer::UI;
 
+	z_order = 0;
+	Renderer::add(Renderer::RenderObject(&container, this));
+	Renderer::add(Renderer::RenderObject(&bounds, this));
+	Renderer::add(Renderer::RenderObject(&sheet, text_view_render, sorting_layer, z_order, &this->text_view));
+	Renderer::add(Renderer::RenderObject(&selector, text_view_render, sorting_layer, z_order, &this->text_view));
 
 	init_buttons(x, y);
 	init_dropdowns(x, y, tile_sets);
@@ -564,6 +608,12 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 
 TextureSelector::~TextureSelector()
 {
+	Renderer::remove(&container);
+	Renderer::remove(&bounds);
+	Renderer::remove(&sheet);
+	Renderer::remove(&selector);
+
+	delete text_view;
 	delete layer_selector;
 	delete tile_collection_selector;
 	delete tile_type_selector;
@@ -652,9 +702,9 @@ void TextureSelector::set_texture_sheet(sf::Texture* texture)
 
 void TextureSelector::set_texture_rect()
 {
-	mouse_pos_grid.x = (Input::mouse_position(&this->view).x - static_cast<int>(bounds.getPosition().x))
+	mouse_pos_grid.x = (Input::mouse_position(this->view).x - static_cast<int>(bounds.getPosition().x))
 		/ static_cast<unsigned>(grid_size);
-	mouse_pos_grid.y = (Input::mouse_position(&this->view).y - static_cast<int>(bounds.getPosition().y))
+	mouse_pos_grid.y = (Input::mouse_position(this->view).y - static_cast<int>(bounds.getPosition().y))
 		/ static_cast<unsigned>(grid_size);
 
 	if (Input::get_mouse_down(Input::Mouse::LEFT))
@@ -750,13 +800,13 @@ void TextureSelector::update()
 	tile_collection_selector->update();
 
 	if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() < 0)
-		view.move(2000 * Time::delta_time(), 0);
+		view->move(2000 * Time::delta_time(), 0);
 	else if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() > 0)
-		view.move(-2000 * Time::delta_time(), 0);
+		view->move(-2000 * Time::delta_time(), 0);
 	else if (Input::get_mouse_scroll_delta() < 0)
-		view.move(0, 2000 * Time::delta_time());
+		view->move(0, 2000 * Time::delta_time());
 	else if (Input::get_mouse_scroll_delta() > 0)
-		view.move(0, -2000 * Time::delta_time());
+		view->move(0, -2000 * Time::delta_time());
 
 	/*
 	*  here need to change how this works entirely
@@ -769,19 +819,24 @@ void TextureSelector::update()
 
 void TextureSelector::add_to_buffer(sf::View* view)
 {
-	if (hidden)
-		return;
+	set_view(view);
+	
+	set_render(hidden);
+	
+
+
 	collision_checkbox->add_to_buffer(view);
 	animation_checkbox->add_to_buffer(view);
 
 	layer_selector->add_to_buffer(view);
 	tile_collection_selector->add_to_buffer(view);
 	tile_type_selector->add_to_buffer(view);
-	Renderer::add(Renderer::RenderObject(&container, SortingLayer::UI, 0, view));
-	Renderer::add(Renderer::RenderObject(&bounds, SortingLayer::UI, 0, view));
-	Renderer::add(Renderer::RenderObject(&sheet, SortingLayer::UI, 0, &this->view));
 
-	Renderer::add(Renderer::RenderObject(&selector, SortingLayer::UI, 0, &this->view));
+	//Renderer::add(Renderer::RenderObject(&container, render, SortingLayer::UI, 0, &view));
+	//Renderer::add(Renderer::RenderObject(&bounds, render, SortingLayer::UI, 0, &view));
+	//Renderer::add(Renderer::RenderObject(&sheet, text_view_render, SortingLayer::UI, 0, &this->text_view));
+	//Renderer::add(Renderer::RenderObject(&selector, text_view_render, SortingLayer::UI, 0, &this->text_view));
+
 }
 
 
@@ -825,11 +880,16 @@ InputBox::InputBox(float x, float y, float width, float height, float character_
 		tick_on = false;
 		text.setString(text_string.str());
 	}
+	sorting_layer = SortingLayer::UI;
+	z_order = 3;
+	Renderer::add(Renderer::RenderObject(&box, render, sorting_layer, z_order, &view));
+	Renderer::add(Renderer::RenderObject(&text, render, sorting_layer, z_order, &view));
 }
 
 InputBox::~InputBox()
 {
-
+	Renderer::remove(&text);
+	Renderer::remove(&box);
 }
 
 void InputBox::update_sfml(sf::Event sfEvent)
@@ -885,8 +945,9 @@ void InputBox::update()
 
 void InputBox::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&text, SortingLayer::UI, 3, view));
-	Renderer::add(Renderer::RenderObject(&box, SortingLayer::UI, 0, view));
+	set_view(view);
+	//Renderer::add(Renderer::RenderObject(&text, render, SortingLayer::UI, 3, &view));
+	//Renderer::add(Renderer::RenderObject(&box, render, SortingLayer::UI, 0, &view));
 }
 
 void InputBox::set_position(float x, float y)
@@ -1008,15 +1069,20 @@ Label::Label(float x, float y, float character_size,
 	text_content.setString(text);
 	text_content.setFillColor(color);
 	text_content.setPosition(sf::Vector2f(x, y));
+	sorting_layer = SortingLayer::UI;
+	z_order = 3;
+	Renderer::add(Renderer::RenderObject(&text_content, render, sorting_layer, z_order, &view));
 }
 
 Label::~Label()
 {
+	Renderer::remove(&text_content);
 }
 
 void Label::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&text_content, SortingLayer::UI, 3, view));
+	set_view(view);
+	//Renderer::add(Renderer::RenderObject(&text_content, render, SortingLayer::UI, 3, &view));
 }
 
 void Label::set_position(float x, float y)
@@ -1039,13 +1105,21 @@ Panel::Panel(float x, float y, float width, float height, sf::Color color)
 	panel_shape.setOutlineThickness(1.f);
 	panel_shape.setOutlineColor(sf::Color::Cyan);
 	active = false;
+	sorting_layer = SortingLayer::UI;
+	z_order = 0;
+	Renderer::add(Renderer::RenderObject(&panel_shape, render, sorting_layer, z_order, &view));
 }
 
 Panel::~Panel()
 {
+	
+	Renderer::remove(&panel_shape);
 	for (auto& c : content)
+	{
 		delete c.second;
+	}
 	content.clear();
+	
 }
 
 const bool Panel::is_active() const
@@ -1076,7 +1150,8 @@ void Panel::update()
 
 void Panel::add_to_buffer(sf::View* view)
 {
-	Renderer::add(Renderer::RenderObject(&panel_shape, SortingLayer::UI, 0, view));
+	return;
+	//Renderer::add(Renderer::RenderObject(&panel_shape, render, SortingLayer::UI, 0, &view));
 	for (auto& c : content)
 		c.second->add_to_buffer(this->view);
 }
@@ -1106,6 +1181,9 @@ void Panel::add_element(std::string key, GUIObject* gui_object)
 
 void Panel::remove_element(std::string key)
 {
+	std::unordered_map<std::string, GUIObject*>::iterator iter = content.find(key);
+	if (iter != content.end())
+		delete iter->second;
 	content.erase(key);
 }
 

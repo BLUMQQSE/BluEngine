@@ -1,4 +1,5 @@
 #pragma once
+#include "IRenderable.h"
 #include "globals.h"
 enum class ButtonState
 {
@@ -6,12 +7,22 @@ enum class ButtonState
 	BTN_HOVERED,
 	BTN_PRESSED
 };
-
+namespace bm98
+{
+class IRenderable;
+}
 namespace bm98::GUI
 {
-class GUIObject
+class GUIObject : public IRenderable
 {
 public:
+	GUIObject()
+	{
+
+	}
+	virtual ~GUIObject()
+	{
+	}
 	virtual void update()
 	{
 
@@ -40,7 +51,7 @@ public:
 	}
 protected:
 	sf::Vector2f position;
-	sf::View* view;
+	//sf::View* view;
 };
 
 class Button : public GUIObject
@@ -107,6 +118,8 @@ public:
 	virtual void set_position(float x, float y) override;
 	virtual void set_view(sf::View* view = nullptr) override;
 
+	void toggle_list(bool toggle);
+
 	bool changed_selection();
 
 	const bool mouse_in_bounds();
@@ -167,7 +180,7 @@ private:
 	sf::RectangleShape bounds;
 	sf::RectangleShape vertical_handle;
 	sf::RectangleShape horizontal_handle;
-	sf::View scroll_view;
+	sf::View* scroll_view;
 	sf::IntRect viewport;
 
 	float width;
@@ -215,7 +228,8 @@ public:
 protected:
 
 private:
-	sf::View view;
+	sf::View* text_view;
+	bool text_view_render = false;
 
 	sf::RectangleShape container;
 	sf::RectangleShape bounds;

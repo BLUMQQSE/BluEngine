@@ -1,9 +1,10 @@
 #pragma once
 #include "Component.h"
+#include "IRenderable.h"
 namespace bm98
 {
 class SpriteComponent :
-    public Component
+    public Component, public IRenderable
 {
 public:
     SpriteComponent();
@@ -18,6 +19,7 @@ public:
 
     sf::Sprite& get_sprite();
     sf::Texture& get_texture_sheet();
+    virtual void add_to_buffer(sf::View* view) override;
     const std::string get_file_path() const;
     const sf::Vector2i get_size() const;
     SortingLayer get_layer();
@@ -36,8 +38,6 @@ private:
     sf::Vector2i size = sf::Vector2i(32, 32);
     std::string file_path;
     const std::string sprite_path = "Resources/Images/Sprites/";
-    SortingLayer layer;
-    int z_order;
 
 };
 
