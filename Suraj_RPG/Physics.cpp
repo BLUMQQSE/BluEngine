@@ -71,9 +71,23 @@ void Physics::fixed_update()
 	check_collisions();
 }
 
-bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, LayerMask mask)
+bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, Global::LayerMask mask)
 {
 	return false;
+}
+
+std::vector<Collider> Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore)
+{
+	std::vector<Collider> colliders;
+	for (auto& obj : game_objects)
+	{
+		if (obj.first == object_to_ignore || !mask.layers[static_cast<int>(obj.first->get_info().layer)])
+			continue;
+		if (Vector2f::distance((obj.first->get_transform().position + obj.first->get_transform().local_position), pos) <= radius &&
+			obj.first->has_component<BoxColliderComponent>())
+			colliders.push_back(Collider(obj.first));
+	}
+	return colliders;
 }
 
 void Physics::init_matrix()
@@ -112,6 +126,7 @@ void Physics::check_collisions()
 		/*
 		* Here can handle tile collisions
 		*/
+		/*
 		if (!active_collider->is_trigger())
 		{
 			for (auto c : collidable_tiles)
@@ -163,6 +178,7 @@ void Physics::check_collisions()
 				}
 			}
 		}
+		*/
 
 		for (auto& checking_object : active_object.second.collisions)
 		{
@@ -227,6 +243,7 @@ void Physics::check_collisions()
 				continue;
 			}
 
+			/*
 			//here prevent moving into the collider and ensure does not phase through the object
 			if (active_rigid)
 			{
@@ -247,9 +264,7 @@ void Physics::check_collisions()
 				);
 
 			}
-
-
-
+			*/
 
 			if (checking_object.second == Collision_State::NOTHING)
 			{

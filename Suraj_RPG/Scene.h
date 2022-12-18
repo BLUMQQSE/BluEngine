@@ -19,13 +19,17 @@ public:
 
 	std::string get_name();
 	std::vector<GameObject*> get_objects();
+	std::vector<GameObject*> get_dont_destroy_objects();
 
 	void set_name(std::string name);
 
-	void insert_gameobject(GameObject* go);
+	void insert_gameobject(GameObject* go, bool initialize = true);
 	void remove_gameobject(GameObject* go);
 
 	void load_scene(Json::Value obj);
+	void clear_scene();
+
+
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;

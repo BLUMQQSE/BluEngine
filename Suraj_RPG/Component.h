@@ -56,7 +56,6 @@ protected:
 	GameObject* game_object;
 
 
-
 };
 
 }

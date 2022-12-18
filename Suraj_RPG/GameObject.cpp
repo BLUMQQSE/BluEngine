@@ -14,6 +14,9 @@
 #include "AnimatedSpriteComponent.h"
 #include "AnimationComponent.h"
 #include "PlayerController.h"
+#include "ButtonComponent.h"
+#include "DontDestroyOnLoad.h"
+#include "SceneChange.h"
 
 namespace bm98
 {
@@ -28,7 +31,7 @@ GameObject::~GameObject()
 {
 	for (auto& c : components)
 	{
-		c.reset();
+		delete c;
 	}
 	delete render_object;
 }
@@ -49,6 +52,7 @@ void GameObject::awake()
 
 void GameObject::start()
 {
+	initialized = true;
 	start_components();
 }
 
@@ -228,9 +232,14 @@ std::set<GameObject*> GameObject::get_children()
 	return children;
 }
 
-const bool& GameObject::check_for_child(GameObject* game_object) const
+const bool GameObject::check_for_child(GameObject* game_object) const
 {
 	return children.find(game_object) != children.end();
+}
+
+const bool GameObject::is_initialize() const
+{
+	return initialized;
 }
 
 #pragma region IDATA
@@ -243,6 +252,8 @@ Json::Value GameObject::serialize_json()
 	obj["physics-layer"] = Global::physics_layer_to_string(info.layer);
 	obj["position-x"] = transform.position.x;
 	obj["position-y"] = transform.position.y;
+	obj["local-position-x"] = transform.local_position.x;
+	obj["local-position-y"] = transform.local_position.y;
 	obj["rotation-x"] = transform.rotation.x;
 	obj["rotation-y"] = transform.rotation.y;
 	obj["scale-x"] = transform.scale.x;
@@ -251,10 +262,10 @@ Json::Value GameObject::serialize_json()
 	{
 		Json::Value obj2;
 		obj2["name"] = typeid(*c).name();
+		
 		obj2["value"] = c->serialize_json();
 		obj["components"].append(obj2);
 	}
-	std::cout << children.size() << "SIZE\n";
 	for (auto& o : children)
 	{
 		obj["children"].append(o->serialize_json());
@@ -270,13 +281,14 @@ void GameObject::unserialize_json(Json::Value obj)
 	info.layer = Global::string_to_physics_layer(obj["physics-layer"].asString());
 	transform.position.x = obj["position-x"].asFloat();
 	transform.position.y = obj["position-y"].asFloat();
+	transform.local_position.x = obj["local-position-x"].asFloat();
+	transform.local_position.y = obj["local-position-y"].asFloat();
 	transform.rotation.x = obj["rotation-x"].asFloat();
 	transform.rotation.y = obj["rotation-y"].asFloat();
 	transform.scale.x = obj["scale-x"].asFloat();
 	transform.scale.y = obj["scale-y"].asFloat();
 
 	std::unordered_map<std::string, Json::Value> comps;
-	std::cout << "Game object in scene added\n";
 	for (Json::Value component : obj["components"])
 	{
 		if (component["name"].asString() == typeid(TilemapComponent).name())
@@ -286,7 +298,6 @@ void GameObject::unserialize_json(Json::Value obj)
 		}
 		if (component["name"].asString() == typeid(SpriteComponent).name())
 		{
-			std::cout << "Sprite component in gameobject added\n";
 			comps[typeid(SpriteComponent).name()] = component["value"];
 			add_component<SpriteComponent>();
 		}
@@ -320,6 +331,21 @@ void GameObject::unserialize_json(Json::Value obj)
 			comps[typeid(PlayerController).name()] = component["value"];
 			add_component<PlayerController>();
 		}
+		if (component["name"].asString() == typeid(ButtonComponent).name())
+		{
+			comps[typeid(ButtonComponent).name()] = component["value"];
+			add_component<ButtonComponent>();
+		}
+		if (component["name"].asString() == typeid(DontDestroyOnLoad).name())
+		{
+			comps[typeid(DontDestroyOnLoad).name()] = component["value"];
+			add_component<DontDestroyOnLoad>();
+		}
+		if (component["name"].asString() == typeid(SceneChange).name())
+		{
+			comps[typeid(SceneChange).name()] = component["value"];
+			add_component<SceneChange>();
+		}
 	}
 
 
@@ -337,7 +363,7 @@ void GameObject::unserialize_json(Json::Value obj)
 		go->set_parent(this);
 		add_child(go);
 		go->unserialize_json(child);
-		SceneManager::instantiate_gameobject(go);
+		SceneManager::instantiate_gameobject_on_load(go);
 	}
 	
 	//for (auto& c : components)

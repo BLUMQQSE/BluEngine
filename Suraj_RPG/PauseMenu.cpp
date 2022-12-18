@@ -31,9 +31,8 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 		- menu_text.getGlobalBounds().width / 2.f
 		, container.getPosition().y + 20.f);
 
-
-	this->render = false;
-	this->sorting_layer = SortingLayer::UI;
+	set_render(false);
+	set_sorting_layer(SortingLayer::UI, false);
 	Renderer::add(Renderer::RenderObject(&background, this));
 	Renderer::add(Renderer::RenderObject(&container, this));
 	Renderer::add(Renderer::RenderObject(&menu_text, this));
@@ -73,7 +72,7 @@ void PauseMenu::update()
 {
 	for (auto& i : buttons)
 	{
-		i.second->set_render(this->render);
+		i.second->set_render( get_render() );
 		i.second->update();
 	}
 }
@@ -91,13 +90,13 @@ void PauseMenu::add_to_buffer()
 }
 void PauseMenu::close()
 {
-	render = false;
+	set_render(false);
 	for (auto& i : buttons)
 		i.second->set_render(false);
 }
 void PauseMenu::open()
 {
-	render = true;
+	set_render(true);
 	for (auto& i : buttons)
 		i.second->set_render(true);
 }

@@ -47,7 +47,7 @@ public:
 
 	virtual void set_view(sf::View* view)
 	{
-		this->view = view;
+		set_view(view);
 	}
 protected:
 	sf::Vector2f position;
@@ -73,7 +73,7 @@ public:
 	virtual void set_position(float x, float y) override;
 
 	const bool is_pressed() const;
-	const bool mouse_in_bounds() const;
+	bool mouse_in_bounds();
 	const std::string get_text() const;
 	const short unsigned& get_id() const;
 	const float get_height() const;
@@ -131,7 +131,7 @@ public:
 	const short unsigned& get_selected_index() const;
 	const Button* get_selected_button() const;
 private:
-	sf::Font& font;
+	sf::Font font;
 	Button* active_selection;
 	std::vector<Button*> list;
 	bool show_list;
@@ -345,7 +345,7 @@ public:
 
 	//temporary
 	void display_mouse_pos(sf::Font& font);
-	const bool mouse_in_bounds() const;
+	bool mouse_in_bounds();
 
 private:
 	bool active;

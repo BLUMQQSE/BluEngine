@@ -5,6 +5,7 @@
 #include "SceneManager.h"
 #include "Collisions.h"
 #include "SpriteComponent.h"
+#include "ButtonComponent.h"
 namespace bm98
 {
 using namespace core;
@@ -35,12 +36,13 @@ void bm98::PlayerController::update()
 
 	if (Input::get_action_down("INTERACT"))
 	{
-		GameObject* pants = new GameObject();
-		pants->add_component<SpriteComponent>("Items/pants.png");
-		pants->add_component<ChildAnimationComponent>();
-		pants->set_parent(this->game_object);
-		this->game_object->add_child(pants);
-		SceneManager::instantiate_gameobject(pants);
+		//GameObject* pants = new GameObject();
+		//pants->add_component<SpriteComponent>("Items/pants.png");
+		//pants->add_component<ChildAnimationComponent>();
+		//pants->set_parent(this->game_object);
+		//this->game_object->add_child(pants);
+		//SceneManager::instantiate_gameobject(pants);
+		SceneManager::load_scene("test.json");
 	}
 
 }
@@ -62,7 +64,12 @@ void bm98::PlayerController::add_to_buffer(sf::View*)
 void bm98::PlayerController::on_collision_enter(Collision info)
 {
 
-	std::cout << "Player enter collision with: " << info.game_object->get_info().name;
+	std::cout << "Player enter collision with: " << info.game_object->get_info().name << "\n";
+}
+
+void PlayerController::on_trigger_enter(Collider info)
+{
+	std::cout << "Player enter trigger of: " << info.game_object->get_info().name << "\n";
 }
 
 Json::Value PlayerController::serialize_json()

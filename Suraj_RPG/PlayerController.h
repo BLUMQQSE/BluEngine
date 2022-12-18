@@ -23,6 +23,7 @@ public:
     virtual void add_to_buffer(sf::View* = nullptr) override;
 
     virtual void on_collision_enter(Collision info) override;
+    virtual void on_trigger_enter(Collider info) override;
 
     // Inherited via IData
     virtual Json::Value serialize_json() override;

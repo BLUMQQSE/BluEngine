@@ -204,7 +204,7 @@ void TilemapComponent::load_from_json(std::string file_path)
 	clear();
 	load_tile_sheets();
 	layers = ((int)SortingLayer::UI);
-	Json::Value obj = FileManager::load_from_file(file_path, true);
+	Json::Value obj = FileManager::load_from_file(file_path);
 	unserialize_json(obj);
 
 }
@@ -275,7 +275,6 @@ Json::Value TilemapComponent::serialize_json()
 
 void TilemapComponent::unserialize_json(Json::Value obj)
 {
-	std::cout << "unserialize tilemap";
 	load_tile_sheets();
 	layers = ((int)SortingLayer::UI);
 	position = sf::Vector2i(obj["position.x"].asInt64(), obj["position.y"].asInt64());

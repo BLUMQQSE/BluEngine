@@ -23,16 +23,23 @@ namespace bm98
 {
 using namespace core;
 
-GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings)
+GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings,
+	std::string game_save_name)
 	: State(window, states, graphics_settings)
 {
 	state_name = "Game_State";
+	this->game_save_name = game_save_name;
+	
+	unserialize_json(FileManager::load_from_file("Saves/"+game_save_name+"/gamestate.json"));
+
+	active_scene = new Scene("default.json");
+	SceneManager::init("Saves/" + game_save_name + "/", active_scene);
+	SceneManager::load_scene("default.json");
+
 	init_fonts();
-	init_players();
 	init_view();
-	active_scene = new Scene("comeon.json");
-	SceneManager::init(active_scene);
-	SceneManager::load_scene("test.json");
+	//init_players();
+
 
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("QUIT", 900.f, 900.f, "Quit Game");
@@ -42,9 +49,9 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 GameState::~GameState()
 {
-	FileManager::save_to_file_styled(component_player->serialize_json(), "Data/DontDestroyObjects/player.json");
+	//FileManager::save_to_file_styled(component_player->serialize_json(), "Data/DontDestroyObjects/player.json");
 	delete pmenu;
-	delete component_player;
+	//delete component_player;
 	delete view;
 }
 
@@ -99,13 +106,14 @@ void GameState::update()
 	update_input();
 	if (!paused)
 	{
+
+		//component_player->update();
 		State::update();
 		//player->update(); 
-		component_player->update();
 		active_scene->update();
 
 		//view.setCenter(player->get_transform().position);
-		view->setCenter(component_player->transform.position);
+		view->setCenter(sf::Vector2f(0,0));
 		particles->update();
 
 		//pmenu->update();
@@ -122,7 +130,7 @@ void GameState::fixed_update()
 {
 	State::fixed_update();
 	//player->fixed_update();
-	component_player->fixed_update();
+	//component_player->fixed_update();
 	active_scene->fixed_update();
 }
 
@@ -136,7 +144,7 @@ void GameState::late_update()
 void GameState::render()
 {
 	//player->add_to_buffer(&this->view);
-	component_player->add_to_buffer(this->view);
+	//component_player->add_to_buffer(this->view);
 	active_scene->render(this->view);
 	
 	//Renderer::add(Renderer::RenderObject(particles, SortingLayer::EFFECTS, 0, &this->view));
@@ -147,31 +155,47 @@ void GameState::render()
 	//}
 }
 
+Json::Value GameState::serialize_json()
+{
+	Json::Value obj;
+
+	obj["save-name"] = game_save_name;
+	obj["active-scene-name"] = active_scene_name;
+
+	return obj;
+}
+
+void GameState::unserialize_json(Json::Value obj)
+{
+	if (obj == Json::Value::null)
+	{
+		active_scene_name = SceneManager::get_default_scene();
+		FileManager::save_to_file_styled(serialize_json(), "Data/Saves/" + game_save_name + "/gamestate.json");
+		return;
+	}
+
+	game_save_name = obj["save-name"].asString();
+	active_scene_name = obj["active-scene-name"].asString();
+}
+
 void GameState::init_players()
 {
 	//player = new Player(0.f, 200.f);
 	//init_components doing some interesting stuff
 	//player->init_components();
-
-	
-	component_player = new GameObject();
-	
-	
+	//component_player = new GameObject();	
 	//component_player->add_component<PlayerController>();
 	//component_player->add_component<SpriteComponent>("Player/player_sprite_sheet.png");
 	//component_player->add_component<RigidbodyComponent>();
 	//component_player->add_component<BoxColliderComponent>();
 	//component_player->add_component<AnimationComponent>();
 
-	
-	
-	component_player->unserialize_json(FileManager::load_from_file("Data/DontDestroyObjects/player.json", true));
-	
-	component_player->init();
-	component_player->awake();
-	component_player->start();
+	//component_player->unserialize_json(FileManager::load_from_file("Data/DontDestroyObjects/player.json", true));
+	//component_player->init();
+	//component_player->awake();
+	//component_player->start();
 
-	Physics::add_to_physics(component_player);
+	//Physics::add_to_physics(component_player);
 	/*
 	Dummy* root = new Dummy(0, 0);
 	Dummy* dummy_parent = new Dummy(0, 110);

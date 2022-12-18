@@ -2,107 +2,6 @@
 	"gameobjects" : 
 	[
 		{
-			"components" : 
-			[
-				{
-					"name" : "class bm98::SceneChange",
-					"value" : 
-					{
-						"destination-scene" : "test.json",
-						"destination-x" : -150.0,
-						"destination-y" : 300.0
-					}
-				},
-				{
-					"name" : "class bm98::BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 20.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 20.0,
-						"trigger" : true
-					}
-				}
-			],
-			"local-position-x" : 0.0,
-			"local-position-y" : 0.0,
-			"name" : "SceneChange",
-			"physics-layer" : "DEFAULT",
-			"position-x" : 250.966522216796875,
-			"position-y" : 0.0,
-			"rotation-x" : 0.0,
-			"rotation-y" : 0.0,
-			"scale-x" : 0.0,
-			"scale-y" : 0.0,
-			"tag" : "UNTAGGED"
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "class bm98::PlayerController",
-					"value" : null
-				},
-				{
-					"name" : "class bm98::SpriteComponent",
-					"value" : 
-					{
-						"class bm98::IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ACTOR",
-							"z-order" : 10
-						},
-						"sprite-file-path" : "player_sprite_sheet.png"
-					}
-				},
-				{
-					"name" : "class bm98::RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 15.0,
-						"deceleration" : 50.0,
-						"max-velocity" : 200.0
-					}
-				},
-				{
-					"name" : "class bm98::BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 100.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 50.0,
-						"trigger" : false
-					}
-				},
-				{
-					"name" : "class bm98::AnimationComponent",
-					"value" : null
-				},
-				{
-					"name" : "class bm98::DontDestroyOnLoad",
-					"value" : null
-				}
-			],
-			"local-position-x" : 0.0,
-			"local-position-y" : 0.0,
-			"name" : "Player",
-			"physics-layer" : "DEFAULT",
-			"position-x" : 50.966522216796875,
-			"position-y" : 0.0,
-			"rotation-x" : 0.0,
-			"rotation-y" : 0.0,
-			"scale-x" : 0.0,
-			"scale-y" : 0.0,
-			"tag" : "PLAYER"
-		},
-		{
 			"children" : 
 			[
 				{
@@ -169,6 +68,107 @@
 			"name" : "Dummy",
 			"physics-layer" : "DEFAULT",
 			"position-x" : 0.0,
+			"position-y" : 0.0,
+			"rotation-x" : 0.0,
+			"rotation-y" : 0.0,
+			"scale-x" : 0.0,
+			"scale-y" : 0.0,
+			"tag" : "UNTAGGED"
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::PlayerController",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::SpriteComponent",
+					"value" : 
+					{
+						"class bm98::IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ACTOR",
+							"z-order" : 10
+						},
+						"sprite-file-path" : "player_sprite_sheet.png"
+					}
+				},
+				{
+					"name" : "class bm98::RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 15.0,
+						"deceleration" : 50.0,
+						"max-velocity" : 200.0
+					}
+				},
+				{
+					"name" : "class bm98::BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 100.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 50.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "class bm98::AnimationComponent",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"local-position-x" : 0.0,
+			"local-position-y" : 0.0,
+			"name" : "Player",
+			"physics-layer" : "DEFAULT",
+			"position-x" : -113.01802825927734,
+			"position-y" : 14.936959266662598,
+			"rotation-x" : 0.0,
+			"rotation-y" : 0.0,
+			"scale-x" : 0.0,
+			"scale-y" : 0.0,
+			"tag" : "PLAYER"
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::SceneChange",
+					"value" : 
+					{
+						"destination-scene" : "test.json",
+						"destination-x" : 0.0,
+						"destination-y" : 300.0
+					}
+				},
+				{
+					"name" : "class bm98::BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 20.0,
+						"trigger" : true
+					}
+				}
+			],
+			"local-position-x" : 0.0,
+			"local-position-y" : 0.0,
+			"name" : "SceneChange",
+			"physics-layer" : "DEFAULT",
+			"position-x" : 250.96652221679688,
 			"position-y" : 0.0,
 			"rotation-x" : 0.0,
 			"rotation-y" : 0.0,

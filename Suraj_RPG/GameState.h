@@ -1,6 +1,6 @@
 #pragma once
 #include "State.h"
-
+#include "IData.h"
 namespace bm98
 {
 class Player;
@@ -10,11 +10,12 @@ class ParticleSystem;
 class PauseMenu;
 
 class GameState :
-    public State
+    public State, public IData
 {
 
 public:
-    GameState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings);
+    GameState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings,
+        std::string game_save_name);
     virtual ~GameState();
 
     virtual void init_state() override;
@@ -30,6 +31,10 @@ public:
 
     virtual void render();
 
+    // Inherited via IData
+    virtual Json::Value serialize_json() override;
+    virtual void unserialize_json(Json::Value obj) override;
+
 protected:
 
     void init_players();
@@ -37,6 +42,10 @@ protected:
 
 
 private:
+    std::string game_save_name;
+    std::string active_scene_name;
+
+
     sf::View* view;
     //std::vector<Scene*> scenes;
     Scene* active_scene;
@@ -47,6 +56,7 @@ private:
     PauseMenu* pmenu;
     // Tilemap* tilemap;
     ParticleSystem* particles;
+
 };
 
 }

@@ -5,6 +5,7 @@
 #include "TilemapComponent.h"
 #include "SceneManager.h"
 #include "FileManager.h"
+#include "DontDestroyOnLoad.h"
 
 namespace bm98
 {
@@ -19,6 +20,7 @@ Scene::Scene(std::string name)
 
 Scene::~Scene()
 {
+	int size = objects_in_scene.size();
 	SceneManager::save_scene();
 	for (auto& o : objects_in_scene)
 		delete o;
@@ -59,20 +61,36 @@ std::vector<GameObject*> Scene::get_objects()
 	return objects_in_scene;
 }
 
+std::vector<GameObject*> Scene::get_dont_destroy_objects()
+{
+	std::vector<GameObject*> objs;
+	for (auto& o : objects_in_scene)
+		if (o->has_component<DontDestroyOnLoad>())
+		{
+			objs.push_back(o);
+			for (auto& c : o->get_children())
+				objs.push_back(c);
+		}
+	return objs;
+}
+
 void Scene::set_name(std::string name)
 {
 	this->name = name;
 }
 
-void Scene::insert_gameobject(GameObject* go)
+void Scene::insert_gameobject(GameObject* go, bool initialize)
 {
 	objects_in_scene.push_back(go);
 	Physics::add_to_physics(go);
 	insert_sort();
 
-	go->init();
-	go->awake();
-	go->start();
+	if (initialize)
+	{
+		go->init();
+		go->awake();
+		go->start();
+	}
 }
 
 void Scene::remove_gameobject(GameObject* go)
@@ -85,6 +103,18 @@ void Scene::load_scene(Json::Value obj)
 {
 }
 
+void Scene::clear_scene()
+{
+	for (auto& o : objects_in_scene)
+	{
+		if (!o->has_component<DontDestroyOnLoad>())
+		{
+			delete o;
+		}
+	}
+	objects_in_scene.clear();
+}
+
 #pragma region IDATA
 
 Json::Value Scene::serialize_json()
@@ -94,7 +124,6 @@ Json::Value Scene::serialize_json()
 	obj["name"] = name;
 	for (auto& o : objects_in_scene)
 	{
-		std::cout << "object\n";
 		//only save parent, parent will save children
 		if(!o->get_parent())
 			obj["gameobjects"].append(o->serialize_json());
@@ -111,15 +140,23 @@ void Scene::unserialize_json(Json::Value obj)
 	{
 		GameObject* go = new GameObject();
 		go->unserialize_json(game_object);
-		objects_in_scene.push_back(go);
+
+		insert_gameobject(go, false);
 	}
 
+
+	//at this point children are already added and all initializers called,
+	//parents have yet to be initialized
+
 	for (auto& go : objects_in_scene)
-		go->init();
+		if(!go->is_initialize())
+			go->init();
 	for (auto& go : objects_in_scene)
-		go->awake();
+		if (!go->is_initialize())
+			go->awake();
 	for (auto& go : objects_in_scene)
-		go->start();
+		if (!go->is_initialize())
+			go->start();
 
 }
 

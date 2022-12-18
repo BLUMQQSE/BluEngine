@@ -34,9 +34,6 @@
     <Filter Include="Interfaces">
       <UniqueIdentifier>{c10982bf-a423-499c-90b6-1cb97d9b5e70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Map">
-      <UniqueIdentifier>{b42c4e57-2beb-4143-8acf-35ae0ee2d4a8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Entities\GameObjects">
       <UniqueIdentifier>{e0a43489-f210-4b2f-b8c9-454eef11b065}</UniqueIdentifier>
     </Filter>
@@ -48,6 +45,12 @@
     </Filter>
     <Filter Include="DataAssets">
       <UniqueIdentifier>{67fd264c-dce2-4712-8378-b9aac46d6923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\GUI">
+      <UniqueIdentifier>{83729e8f-d376-45e2-85b4-efca66e0f40f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Interaction">
+      <UniqueIdentifier>{2ba15b2c-4187-4d01-b632-d2ff83e16127}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -99,9 +102,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="Gui.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -147,9 +147,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SceneChange.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
     <ClCompile Include="DataAsset.cpp">
       <Filter>DataAssets</Filter>
     </ClCompile>
@@ -182,6 +179,30 @@
     </ClCompile>
     <ClCompile Include="IRenderable.cpp">
       <Filter>Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonComponent.cpp">
+      <Filter>Components\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="DontDestroyOnLoad.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="IInteractable.cpp">
+      <Filter>Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Interactor.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneChange.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInteractor.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DropDownComponent.cpp">
+      <Filter>Components\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,9 +250,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="Gui.h">
       <Filter>GUI</Filter>
@@ -317,9 +335,6 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneChange.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
     <ClInclude Include="DataAsset.h">
       <Filter>DataAssets</Filter>
     </ClInclude>
@@ -355,6 +370,30 @@
     </ClInclude>
     <ClInclude Include="IRenderable.h">
       <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonComponent.h">
+      <Filter>Components\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="DontDestroyOnLoad.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IInteractable.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Interactor.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneChange.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInteractor.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="DropDownComponent.h">
+      <Filter>Components\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

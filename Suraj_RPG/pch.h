@@ -23,6 +23,9 @@
 #include <typeinfo>
 #include <format>
 #include <iomanip>
+#include <filesystem>
+
+#include "json/json.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>

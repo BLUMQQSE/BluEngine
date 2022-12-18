@@ -3,17 +3,12 @@
 #include "Math.h"
 namespace bm98
 {
+class Collider;
 class GameObject;
 class Tile;
+class LayerMask;
 }
 
-struct LayerMask
-{
-	LayerMask(bool all)
-	{
-
-	}
-};
 
 struct RayCast
 {
@@ -56,7 +51,11 @@ public:
 	static void fixed_update();
 	
 	static bool raycast(Vector2f origin, Vector2f direction, 
-		float distance = std::numeric_limits<long>::infinity(), LayerMask mask = LayerMask(true));
+		float distance = std::numeric_limits<long>::infinity(), Global::LayerMask mask = Global::LayerMask());
+
+	// TODO: optimise this later after creating my own subclasses for shapes to check for overlaps.
+	static std::vector<Collider> OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, 
+		GameObject* object_to_ignore);
 
 private:
 

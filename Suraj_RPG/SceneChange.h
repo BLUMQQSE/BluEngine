@@ -1,26 +1,28 @@
 #pragma once
-#include "GameObject.h"
 #include "Math.h"
+#include "Component.h"
 namespace bm98
 {
 class SceneChange :
-    public GameObject, public IObject
+    public Component
 {
+
 public:
-    SceneChange(float pos_x, float pos_y, std::string scene_name,
-        float spawn_x, float spawn_y);
-    virtual ~SceneChange();
+	SceneChange();
+	virtual ~SceneChange();
 
-    virtual void on_collision_enter(Collision info) override;
+	virtual void on_collision_enter(Collision info) override;
+	virtual void on_collision_stay(Collision info) override;
+	virtual void on_collision_exit(Collision info) override; 
 
-    std::string get_scene();
-    sf::Vector2f get_scene_destination();
-
-
+	// Inherited via IData
+	virtual Json::Value serialize_json() override;
+	virtual void unserialize_json(Json::Value obj) override;
 
 private:
-    std::string scene_name;
-    Vector2f scene_destination;
+	Vector2f destination;
+	std::string destination_scene_name;
+	bool triggered = false;
 };
 
 }

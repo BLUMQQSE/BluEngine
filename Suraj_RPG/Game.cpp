@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "FileManager.h"
+#include "ResourceManager.h"
 #include "GameState.h"
 #include "MainMenuState.h"
 #include "Time.h"
@@ -27,7 +28,6 @@ Game::Game()
     Input::init(window);
     Physics::init();
 
-    init_states();
 
     //Set up input
     Input::load_supported_keybinds_from_file("Config/supported_keys.ini");
@@ -36,6 +36,12 @@ Game::Game()
     Input::load_keybinds_from_file("Game_State", "Config/gamestate_keybinds.ini");
     Input::load_keybinds_from_file("Settings_State", "Config/settingsstate_keybinds.ini");
     Input::change_keybinds_state("Main_Menu_State");
+
+    ResourceManager::load_resources();
+    //std::cout << ResourceManager::get_texture("mainmenu_bg.png").getSize().x << "SIZE\n";
+
+
+    init_states();
 }
 
 Game::~Game()

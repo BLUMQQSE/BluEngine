@@ -45,10 +45,24 @@ enum class Layer
 	_LAST_DONT_REMOVE
 };
 
+
+
 class Global
 {
-
 public:
+
+	struct LayerMask
+	{
+		std::bitset<static_cast<int>(Layer::_LAST_DONT_REMOVE)> layers;
+		LayerMask(bool all = true)
+		{
+
+		}
+		void add_layer(Layer l)
+		{
+			layers[static_cast<int>(l)] = true;
+		}
+	};
 
 #pragma region SortingLayer
 
@@ -81,7 +95,7 @@ public:
 		case SortingLayer::UI:
 			return "UI";
 		default:
-			std::cout << "ERROR::GLOBALS::layer_to_string::UNDEFINED LAYER\n";
+			std::cout << "ERROR::GLOBALS::layer_to_string::UNDEFINED LAYER: " << static_cast<int>(layer) << "\n";
 			return "null";
 		}
 	}
@@ -106,7 +120,7 @@ public:
 			return SortingLayer::FOREGROUND;
 		if (layer == "UI")
 			return SortingLayer::UI;
-		std::cout << "ERROR::GLOBAL::string_to_layer::UNDEFINED STRING\n";
+		std::cout << "ERROR::GLOBAL::string_to_layer::UNDEFINED STRING: " << layer << "\n";
 		return SortingLayer::BACKGROUND;
 	}
 
@@ -132,7 +146,7 @@ public:
 		case Tag::CAMERA:
 			return "CAMERA";
 		default:
-			std::cout << "ERROR::GLOBALS::tag_to_string::UNDEFINED TAG\n";
+			std::cout << "ERROR::GLOBALS::tag_to_string::UNDEFINED TAG: " << static_cast<int>(tag) << "\n";
 			return "null";
 		}
 	}
@@ -148,7 +162,7 @@ public:
 		if (tag == "CAMERA")
 			return Tag::CAMERA;
 
-		std::cout << "ERROR::GLOBAL::string_to_tag::UNDEFINED STRING\n";
+		std::cout << "ERROR::GLOBAL::string_to_tag::UNDEFINED STRING: "<< tag << "\n";
 		return Tag::UNTAGGED;
 	}
 
@@ -184,7 +198,7 @@ public:
 		case Layer::WALLS:
 			return "WALLS";
 		default:
-			std::cout << "ERROR::GLOBALS::physics_layer_to_string::UNDEFINED PHYISCS LAYER\n";
+			std::cout << "ERROR::GLOBALS::physics_layer_to_string::UNDEFINED PHYISCS LAYER: " << static_cast<int>(layer) << "\n";
 			return "DEFAULT";
 		}
 	}
@@ -210,7 +224,7 @@ public:
 		if (layer == "WALLS")
 			return Layer::WALLS;
 
-		std::cout << "ERROR::GLOBAL::string_to_physics_layer::UNDEFINED STRING\n";
+		std::cout << "ERROR::GLOBAL::string_to_physics_layer::UNDEFINED STRING: " << layer << "\n";
 		return Layer::DEFAULT;
 	}
 
@@ -245,7 +259,7 @@ public:
 		case TileType::DAMAGING:
 			return "DAMAGING";
 		default:
-			std::cout << "ERROR::GLOBALS::tiletype_to_string::UNDEFINED TILETYPE\n";
+			std::cout << "ERROR::GLOBALS::tiletype_to_string::UNDEFINED TILETYPE: " << static_cast<int>(tile_type) << "\n";
 			return "DEFAULT";
 		}
 	}

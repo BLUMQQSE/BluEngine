@@ -32,7 +32,7 @@ public:
 		{
 			this->sorting_layer = renderable->get_sorting_layer();
 			this->z_order = renderable->get_z_order();
-			this->view = renderable->get_view();
+			this->view = renderable->get_view_pointer();
 			this->drawable = drawable;
 			this->private_entry_key = Renderer::get_id();
 			Renderer::increase_id();
@@ -52,6 +52,11 @@ public:
 	static void add(RenderObject render_object);
 	static void remove(sf::Drawable* drawable);
 	static void remove(RenderObject render_object);
+
+	/// <summary>
+	/// Updates render objects after a change has been made to its sorting_layer or z_order
+	/// </summary>
+	static void refresh();
 
 	static void set_view(sf::View view = window->getDefaultView());
 	//static const bool& top_ui(const sf::Drawable& drawable);

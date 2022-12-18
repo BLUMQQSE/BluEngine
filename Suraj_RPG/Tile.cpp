@@ -27,9 +27,8 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 	this->type = TileType::DEFAULT;
 	animated_sprite_component = nullptr;
 
-
-	this->render = false;
-	this->sorting_layer = layer;
+	set_render(false);
+	set_sorting_layer(layer, false);
 	//Renderer::add(Renderer::RenderObject(&sprite, this));
 }
 
@@ -86,17 +85,23 @@ const AnimatedSpriteComponent* Tile::get_animated_sprite_component()
 
 void Tile::set_empty(const bool& empty)
 {
-	this->empty = empty;
+	
 	if (empty)
 	{
-		this->render = false;
-		Renderer::remove(&sprite);
+		//if this tile exists, remove its renderable
+		if(!this->empty)
+			Renderer::remove(&sprite);
+		set_render(false);
 	}
 	else
 	{
-		this->render = true;
+		//if this tile already exists, remove before adding new one
+		if(!this->empty)
+			Renderer::remove(&sprite);
+		set_render(true);
 		Renderer::add(Renderer::RenderObject(&sprite, this));
 	}
+	this->empty = empty;
 }
 
 void Tile::set_texture(std::string source_key, const sf::Texture* texture, const sf::IntRect rect)

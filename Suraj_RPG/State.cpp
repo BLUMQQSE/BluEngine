@@ -2,6 +2,7 @@
 #include "State.h"
 //#include "Game.h"
 #include "GraphicsSettings.h"
+#include "ResourceManager.h"
 #include "Input.h"
 #include "Debug.h"
 #include "Gui.h"
@@ -78,18 +79,9 @@ std::string State::get_state_name()
     return state_name;
 }
 
-
-void State::init_fonts_from_file(std::string file_path)
-{
-    if (!font.loadFromFile(file_path))
-    {
-        throw("ERROR::STATE::COULD NOT LOAD FONT FROM:: " + file_path);
-    }
-}
-
 void State::init_fonts()
 {
-    init_fonts_from_file("Fonts/calibri-regular.ttf");
+    font = ResourceManager::get_font("calibri-regular.ttf");
 }
 
 void State::init_buttons()

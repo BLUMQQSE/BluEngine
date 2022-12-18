@@ -39,6 +39,16 @@ void Renderer::remove(RenderObject render_object)
 	render_objects.erase(render_object);
 }
 
+void Renderer::refresh()
+{
+	std::vector<RenderObject> objects;
+	for (auto& f : render_objects)
+		objects.push_back(f);
+	render_objects.clear();
+	for (auto& o : objects)
+		add(o);
+}
+
 void Renderer::set_view(sf::View view)
 {
 	window->setView(view);
@@ -47,15 +57,7 @@ void Renderer::set_view(sf::View view)
 void Renderer::render()
 {
 	for (const auto& f : render_objects)
-	{
-		/* currently throws null errors... work in progress
-		if (f.alternate_target)
-		{
-			f.alternate_target->draw(*f.drawable);
-		}
-		else
-		*/
-		
+	{	
 		if (!f.render)
 			continue;
 
@@ -66,7 +68,6 @@ void Renderer::render()
 				window->setView(window->getDefaultView());
 			
 		window->draw(*f.drawable);
-
 	}
 }
 

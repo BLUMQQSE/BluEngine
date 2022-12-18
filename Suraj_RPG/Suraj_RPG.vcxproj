@@ -166,9 +166,12 @@
     <ClCompile Include="..\External\JSON\dist\jsoncpp.cpp" />
     <ClCompile Include="AnimatedSpriteComponent.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
+    <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="ChildAnimationComponent.cpp" />
     <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="DataAsset.cpp" />
+    <ClCompile Include="DontDestroyOnLoad.cpp" />
+    <ClCompile Include="DropDownComponent.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="globals.cpp" />
@@ -181,7 +184,9 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="IInteractable.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Interactor.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="IRenderable.cpp" />
     <ClCompile Include="ItemData.cpp" />
@@ -190,7 +195,9 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="PlayerInteractor.cpp" />
     <ClCompile Include="PrefabEditor.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="pch.cpp">
@@ -213,7 +220,6 @@
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TilemapComponent.cpp" />
     <ClCompile Include="Time.cpp" />
-    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\JSON\dist\json\json-forwards.h" />
@@ -231,9 +237,12 @@
     <ClInclude Include="AnimatedSpriteComponent.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="ChildAnimationComponent.h" />
     <ClInclude Include="Collisions.h" />
     <ClInclude Include="DataAsset.h" />
+    <ClInclude Include="DontDestroyOnLoad.h" />
+    <ClInclude Include="DropDownComponent.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="globals.h" />
@@ -247,7 +256,9 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="IData.h" />
+    <ClInclude Include="IInteractable.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Interactor.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="IObject.h" />
     <ClInclude Include="IRenderable.h" />
@@ -256,7 +267,9 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="PlayerInteractor.h" />
     <ClInclude Include="PrefabEditor.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="pch.h" />
@@ -272,7 +285,6 @@
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TilemapComponent.h" />
     <ClInclude Include="Time.h" />
-    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

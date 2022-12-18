@@ -112,6 +112,8 @@ void SceneEditor::update()
 
 void SceneEditor::render(sf::View* view)
 {
+	Renderer::refresh();
+
 	if (gameobject_editor->is_active())
 		gameobject_editor->add_to_buffer();
 	if (gameobject_selector->is_active())
@@ -140,12 +142,19 @@ void SceneEditor::remove_component(std::string key)
 
 	if (key == typeid(SpriteComponent).name())
 		selected_gameobject->remove_component<SpriteComponent>(&selected_gameobject->get_component<SpriteComponent>());
+	if (key == typeid(BoxColliderComponent).name())
+		selected_gameobject->remove_component<BoxColliderComponent>(&selected_gameobject->get_component<BoxColliderComponent>());
+	if (key == typeid(AnimationComponent).name())
+		selected_gameobject->remove_component<AnimationComponent>(&selected_gameobject->get_component<AnimationComponent>());
+	if (key == typeid(ChildAnimationComponent).name())
+		selected_gameobject->remove_component<ChildAnimationComponent>(&selected_gameobject->get_component<ChildAnimationComponent>());
+	if (key == typeid(AnimatedSpriteComponent).name())
+		selected_gameobject->remove_component<AnimatedSpriteComponent>(&selected_gameobject->get_component<AnimatedSpriteComponent>());
 
 
 	editor_panels.at(key)->clear();
 	gameobject_editor->remove_element(key);
 	editor_panels.erase(key);
-	
 }
 
 void SceneEditor::create_gameobject()	
@@ -526,9 +535,8 @@ void SceneEditor::clear_editor()
 {
 	for (auto& ep : editor_panels)
 	{
-		//gameobject_editor->remove_element(ep.first);
-		//Exception thrown on this delete statement
-		//std::cout << ep.second->get_position().x << "Pos x\n";
+		//STILL ISSUE HERE
+		gameobject_editor->remove_element(ep.first);
 		delete ep.second;
 	}
 	
@@ -860,7 +868,7 @@ void SceneEditor::save_scene()
 	scene->set_name("Unnamed.json");
 	if(scene_name->get_text() != "")
 		scene->set_name(scene_name->get_text() + ".json");
-	SceneManager::save_scene(scene);
+	SceneManager::save_scene_prefab(scene);
 }
 
 std::vector<std::pair<Button*, GameObject*>> SceneEditor::insert_sort(std::vector<std::pair<Button*, GameObject*>> vec)

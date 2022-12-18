@@ -9,9 +9,13 @@
 			"name" : "class bm98::SpriteComponent",
 			"value" : 
 			{
-				"layer" : "BACKGROUND",
-				"sprite-file-path" : "Player/player_sprite_sheet.png",
-				"z-order" : 0
+				"class bm98::IRenderable" : 
+				{
+					"render" : true,
+					"sorting-layer" : "ITEM",
+					"z-order" : 40
+				},
+				"sprite-file-path" : "Player/player_sprite_sheet.png"
 			}
 		},
 		{
@@ -29,10 +33,10 @@
 			{
 				"active" : false,
 				"collision-check-type" : "DISCRETE",
-				"hitbox-height" : 50.0,
-				"hitbox-offsetX" : 16.0,
-				"hitbox-offsetY" : 7.0,
-				"hitbox-width" : 32.0,
+				"hitbox-height" : 0.0,
+				"hitbox-offsetX" : 0.0,
+				"hitbox-offsetY" : 0.0,
+				"hitbox-width" : 0.0,
 				"trigger" : false
 			}
 		},
@@ -41,10 +45,12 @@
 			"value" : null
 		}
 	],
+	"local-position-x" : 0.0,
+	"local-position-y" : 0.0,
 	"name" : "",
 	"physics-layer" : "DEFAULT",
-	"position-x" : 25.8,
-	"position-y" : 20.88861083984375,
+	"position-x" : 107.69342803955078,
+	"position-y" : -0.68430870771408081,
 	"rotation-x" : 0.0,
 	"rotation-y" : 0.0,
 	"scale-x" : 0.0,

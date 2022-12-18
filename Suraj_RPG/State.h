@@ -48,11 +48,6 @@ protected:
 	sf::Font font;
 	std::map<std::string, sf::Texture> textures;
 
-	/// <summary>
-	/// Assigns keybinds map to sf::Keyboard::Key(s) from file_path.
-	/// </summary>
-	/// <param name="file_path">Path to file containing keybinds.</param>
-	void init_fonts_from_file(std::string file_path);
 	virtual void init_fonts();
 	virtual void init_buttons();
 

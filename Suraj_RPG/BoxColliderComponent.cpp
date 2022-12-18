@@ -10,8 +10,7 @@ using namespace core;
 
 BoxColliderComponent::BoxColliderComponent()
 {
-	sorting_layer = SortingLayer::UI;
-	Renderer::add(Renderer::RenderObject(&hitbox, this));
+	set_sorting_layer(SortingLayer::UI, false);
 }
 
 BoxColliderComponent::BoxColliderComponent(float offset_x,
@@ -36,7 +35,7 @@ BoxColliderComponent::~BoxColliderComponent()
 
 void BoxColliderComponent::init()
 {
-	
+	Renderer::add(Renderer::RenderObject(&hitbox, this));
 }
 
 void BoxColliderComponent::awake()

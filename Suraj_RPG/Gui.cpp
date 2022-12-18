@@ -54,10 +54,13 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 	this->outline_active_color = outline_active_color;
 
 	shape.setFillColor(idle_color);
-	sorting_layer = SortingLayer::UI;
-	this->z_order = id + 10;
-	Renderer::add(Renderer::RenderObject(&shape, render, sorting_layer, z_order, &view));
-	Renderer::add(Renderer::RenderObject(&this->text, render, sorting_layer, z_order, &view));
+
+	set_sorting_layer(SortingLayer::UI, false);
+	set_z_order(id+10, false);
+	Renderer::add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer()));
+	Renderer::add(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer()));
 }
 
 Button::~Button()
@@ -68,12 +71,12 @@ Button::~Button()
 
 void Button::update()
 {
-	if (shape.getGlobalBounds().contains(Input::mouse_position(view)) &&
+	if (shape.getGlobalBounds().contains(Input::mouse_position(get_view())) &&
 		Input::get_mouse_down(Input::Mouse::LEFT))
 	{
 		button_state = ButtonState::BTN_PRESSED;
 	}
-	else if (shape.getGlobalBounds().contains(Input::mouse_position(view)))
+	else if (shape.getGlobalBounds().contains(Input::mouse_position(get_view())))
 	{
 		button_state = ButtonState::BTN_HOVERED;
 	}
@@ -108,8 +111,8 @@ void Button::update()
 
 void Button::add_to_buffer(sf::View* view)
 {
-	if(view)
-		this->view = view;
+	if (view)
+		set_view(view);
 	//Renderer::add(Renderer::RenderObject(&shape, SortingLayer::UI, id + 10, view));
 	//Renderer::add(Renderer::RenderObject(&text, SortingLayer::UI, id + 10, view));
 }
@@ -131,9 +134,9 @@ const bool Button::is_pressed() const
 	return button_state == ButtonState::BTN_PRESSED;
 }
 
-const bool Button::mouse_in_bounds() const
+bool Button::mouse_in_bounds() 
 {
-	return shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position(view)));
+	return shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position( get_view() )));
 }
 
 const std::string Button::get_text() const
@@ -342,10 +345,13 @@ Checkbox::Checkbox(float x, float y, float size)
 	check.setFillColor(sf::Color::Transparent);
 	check.setRadius((size / 2 - check_offset));
 	checked = false;
-	sorting_layer = SortingLayer::UI;
-	this->z_order = 1;
-	Renderer::add(Renderer::RenderObject(&box, render, sorting_layer, z_order, &view));
-	Renderer::add(Renderer::RenderObject(&check, render, sorting_layer, z_order, &view));
+
+	set_sorting_layer(SortingLayer::UI, false);
+	set_z_order(1, false);
+	Renderer::add(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer()));
+	Renderer::add(Renderer::RenderObject(&check, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer()));
 }
 
 Checkbox::~Checkbox()
@@ -356,7 +362,7 @@ Checkbox::~Checkbox()
 
 void Checkbox::update()
 {
-	if (box.getGlobalBounds().contains(Input::mouse_position(view)) &&
+	if (box.getGlobalBounds().contains(Input::mouse_position( get_view() )) &&
 		Input::get_mouse_down(Input::Mouse::LEFT))
 	{
 		checked = !checked;
@@ -435,13 +441,17 @@ ScrollView::ScrollView(float x, float y, float width, float height, bool vertica
 		vertical_handle.setFillColor(sf::Color::Green);
 	if (horizontal)
 		horizontal_handle.setFillColor(sf::Color::Green);
-	sorting_layer = SortingLayer::UI;
-	z_order = 0;
-	Renderer::add(Renderer::RenderObject(&bounds, render, sorting_layer, z_order, &scroll_view));
+
+	set_sorting_layer(SortingLayer::UI, false);
+	set_z_order(0, false);
+	Renderer::add(Renderer::RenderObject(&bounds, get_render(), get_sorting_layer(),
+		get_z_order(), &scroll_view));
 	if (vertical)
-		Renderer::add(Renderer::RenderObject(&vertical_handle, render, sorting_layer, z_order, &scroll_view));
+		Renderer::add(Renderer::RenderObject(&vertical_handle, get_render(), get_sorting_layer(),
+			get_z_order(), &scroll_view));
 	if (horizontal)
-		Renderer::add(Renderer::RenderObject(&horizontal_handle, render, sorting_layer, z_order, &scroll_view));
+		Renderer::add(Renderer::RenderObject(&horizontal_handle, get_render(), get_sorting_layer(),
+			get_z_order(), &scroll_view));
 
 }
 
@@ -539,7 +549,6 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 	: font(font)
 
 {
-	view = new sf::View();
 	this->position = sf::Vector2f(x, y);
 	this->hidden = false;
 	this->container.setSize(sf::Vector2f(width + 20, height + 20));
@@ -593,13 +602,14 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 
 	this->text_view->setViewport(sf::FloatRect(left, top, w, h));
 
-	this->sorting_layer = SortingLayer::UI;
 
-	z_order = 0;
+	set_view(new sf::View());
+	set_sorting_layer(SortingLayer::UI, false);
+	set_z_order(0, false);
 	Renderer::add(Renderer::RenderObject(&container, this));
 	Renderer::add(Renderer::RenderObject(&bounds, this));
-	Renderer::add(Renderer::RenderObject(&sheet, text_view_render, sorting_layer, z_order, &this->text_view));
-	Renderer::add(Renderer::RenderObject(&selector, text_view_render, sorting_layer, z_order, &this->text_view));
+	Renderer::add(Renderer::RenderObject(&sheet, text_view_render, get_sorting_layer(), get_z_order(), &this->text_view));
+	Renderer::add(Renderer::RenderObject(&selector, text_view_render, get_sorting_layer(), get_z_order(), &this->text_view));
 
 	init_buttons(x, y);
 	init_dropdowns(x, y, tile_sets);
@@ -702,9 +712,9 @@ void TextureSelector::set_texture_sheet(sf::Texture* texture)
 
 void TextureSelector::set_texture_rect()
 {
-	mouse_pos_grid.x = (Input::mouse_position(this->view).x - static_cast<int>(bounds.getPosition().x))
+	mouse_pos_grid.x = (Input::mouse_position(get_view()).x - static_cast<int>(bounds.getPosition().x))
 		/ static_cast<unsigned>(grid_size);
-	mouse_pos_grid.y = (Input::mouse_position(this->view).y - static_cast<int>(bounds.getPosition().y))
+	mouse_pos_grid.y = (Input::mouse_position(get_view()).y - static_cast<int>(bounds.getPosition().y))
 		/ static_cast<unsigned>(grid_size);
 
 	if (Input::get_mouse_down(Input::Mouse::LEFT))
@@ -800,13 +810,13 @@ void TextureSelector::update()
 	tile_collection_selector->update();
 
 	if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() < 0)
-		view->move(2000 * Time::delta_time(), 0);
+		get_view()->move(2000 * Time::delta_time(), 0);
 	else if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() > 0)
-		view->move(-2000 * Time::delta_time(), 0);
+		get_view()->move(-2000 * Time::delta_time(), 0);
 	else if (Input::get_mouse_scroll_delta() < 0)
-		view->move(0, 2000 * Time::delta_time());
+		get_view()->move(0, 2000 * Time::delta_time());
 	else if (Input::get_mouse_scroll_delta() > 0)
-		view->move(0, -2000 * Time::delta_time());
+		get_view()->move(0, -2000 * Time::delta_time());
 
 	/*
 	*  here need to change how this works entirely
@@ -820,7 +830,6 @@ void TextureSelector::update()
 void TextureSelector::add_to_buffer(sf::View* view)
 {
 	set_view(view);
-	
 	set_render(hidden);
 	
 
@@ -880,10 +889,13 @@ InputBox::InputBox(float x, float y, float width, float height, float character_
 		tick_on = false;
 		text.setString(text_string.str());
 	}
-	sorting_layer = SortingLayer::UI;
-	z_order = 3;
-	Renderer::add(Renderer::RenderObject(&box, render, sorting_layer, z_order, &view));
-	Renderer::add(Renderer::RenderObject(&text, render, sorting_layer, z_order, &view));
+
+	set_sorting_layer(SortingLayer::UI, false);
+	set_z_order(3, false);
+	Renderer::add(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer()));
+	Renderer::add(Renderer::RenderObject(&text, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer()));
 }
 
 InputBox::~InputBox()
@@ -909,9 +921,9 @@ void InputBox::update()
 	if (
 		Input::get_mouse_down(Input::Mouse::LEFT))
 	{
-		if (box.getGlobalBounds().contains(Input::mouse_position(view)) && !selected)
+		if (box.getGlobalBounds().contains(Input::mouse_position( get_view() )) && !selected)
 			set_selected(true);
-		else if(!box.getGlobalBounds().contains(Input::mouse_position(view)) && selected)
+		else if(!box.getGlobalBounds().contains(Input::mouse_position( get_view() )) && selected)
 			set_selected(false);
 	}
 
@@ -1069,9 +1081,11 @@ Label::Label(float x, float y, float character_size,
 	text_content.setString(text);
 	text_content.setFillColor(color);
 	text_content.setPosition(sf::Vector2f(x, y));
-	sorting_layer = SortingLayer::UI;
-	z_order = 3;
-	Renderer::add(Renderer::RenderObject(&text_content, render, sorting_layer, z_order, &view));
+
+	set_sorting_layer(SortingLayer::UI, false);
+	set_z_order(3, false);
+	Renderer::add(Renderer::RenderObject(&text_content, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer()));
 }
 
 Label::~Label()
@@ -1105,9 +1119,11 @@ Panel::Panel(float x, float y, float width, float height, sf::Color color)
 	panel_shape.setOutlineThickness(1.f);
 	panel_shape.setOutlineColor(sf::Color::Cyan);
 	active = false;
-	sorting_layer = SortingLayer::UI;
-	z_order = 0;
-	Renderer::add(Renderer::RenderObject(&panel_shape, render, sorting_layer, z_order, &view));
+
+	set_sorting_layer(SortingLayer::UI, false);
+	set_z_order(0, false);
+	Renderer::add(Renderer::RenderObject(&panel_shape, get_render(), get_sorting_layer(), 
+		get_z_order(), get_view_pointer()));
 }
 
 Panel::~Panel()
@@ -1134,14 +1150,14 @@ void Panel::toggle_active()
 
 void Panel::update()
 {
-	if (view)
+	if ( get_view() )
 	{
 		if (Input::get_mouse_scroll_delta() < 0 && 
 			panel_shape.getGlobalBounds().contains(Input::mouse_position()))
-			view->move(0, 5000 * Time::delta_time());
+			get_view()->move(0, 5000 * Time::delta_time());
 		else if (Input::get_mouse_scroll_delta() > 0 &&
 			panel_shape.getGlobalBounds().contains(Input::mouse_position()))
-			view->move(0, -5000 * Time::delta_time());
+			get_view()->move(0, -5000 * Time::delta_time());
 	}
 
 	for (auto& c : content)
@@ -1153,7 +1169,7 @@ void Panel::add_to_buffer(sf::View* view)
 	return;
 	//Renderer::add(Renderer::RenderObject(&panel_shape, render, SortingLayer::UI, 0, &view));
 	for (auto& c : content)
-		c.second->add_to_buffer(this->view);
+		c.second->add_to_buffer( get_view() );
 }
 
 void Panel::set_position(float x, float y)
@@ -1174,7 +1190,7 @@ void Panel::update_sfml(sf::Event sfEvent)
 void Panel::add_element(std::string key, GUIObject* gui_object)
 {
 	gui_object->set_position(position.x + gui_object->get_position().x, position.y + gui_object->get_position().y);
-	gui_object->set_view(this->view);
+	gui_object->set_view( get_view() );
 	
 	content[key] = gui_object;
 }
@@ -1194,14 +1210,14 @@ std::unordered_map<std::string, GUIObject*> Panel::get_content()
 
 void Panel::set_view(sf::View* view)
 {
-	this->view = view;
+	set_view(view);
 	for (auto& c : content)
 		c.second->set_view(view);
 }
 
 void Panel::display_mouse_pos(sf::Font& font)
 {
-	Debug::mouse_position_display(font, view, position);
+	Debug::mouse_position_display(font, get_view(), position);
 }
 
 GUIObject* Panel::get_element(std::string key)
@@ -1224,9 +1240,9 @@ Checkbox* Panel::get_checkbox(std::string key)
 	return dynamic_cast<Checkbox*>(content.at(key));
 }
 
-const bool Panel::mouse_in_bounds() const
+bool Panel::mouse_in_bounds()
 {
-	return panel_shape.getGlobalBounds().contains(Input::mouse_position(view));
+	return panel_shape.getGlobalBounds().contains(Input::mouse_position( get_view() ));
 }
 
 Button* Panel::get_button(std::string key)

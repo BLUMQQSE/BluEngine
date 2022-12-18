@@ -2,7 +2,6 @@
 #include "FileManager.h"
 namespace bm98::core
 {
-bool FileManager::restart_on_launch = true;
 
 void FileManager::save_to_file_styled(Json::Value obj, std::string file_path)
 {
@@ -13,7 +12,7 @@ void FileManager::save_to_file_styled(Json::Value obj, std::string file_path)
 }
 
 
-Json::Value FileManager::load_from_file(std::string file_path, bool ignore_reset_on_launch)
+Json::Value FileManager::load_from_file(std::string file_path)
 {
 	std::ifstream ifs(file_path);
 	Json::Reader reader;
@@ -21,7 +20,8 @@ Json::Value FileManager::load_from_file(std::string file_path, bool ignore_reset
 	reader.parse(ifs, obj);
 	ifs.close();
 
-	if ((obj.empty() || restart_on_launch) && !ignore_reset_on_launch)
+	//not sure about functionality of this if statement...
+	if (obj.empty())
 	{
 		FileManager::save_to_file_styled(serialize_json(), file_path);
 		std::ifstream ifs(file_path);

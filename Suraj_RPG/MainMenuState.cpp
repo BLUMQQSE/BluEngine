@@ -8,6 +8,9 @@
 #include "GameState.h"
 #include "EditorState.h"
 #include "SettingsState.h"
+#include "FileManager.h"
+#include "ResourceManager.h"
+
 namespace bm98
 {
 using namespace core;
@@ -48,13 +51,37 @@ void MainMenuState::update_input()
 	{
 		//TODO: Add a new game state which options for creating
 		//a new game
+
+		//Need to create a directory:
+		/*
+		Default_Save
+			Data
+				Scenes
+			Backups
+		*/
+		//std::filesystem::current_path(std::filesystem::temp_directory_path());
+		// 
+		std::filesystem::remove_all("Saves");
+
+		std::filesystem::create_directories("Saves/DefaultSave/Data/Scenes");
+		std::filesystem::create_directory("Saves/DefaultSave/Backups");
+
+		std::string path = "Data/Scenes/";
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			std::string file_name = entry.path().string().substr(path.size(), entry.path().string().size() - 1);
+			if (!entry.is_directory())
+				FileManager::save_to_file_styled(FileManager::load_from_file(entry.path().string()), "Saves/DefaultSave/Data/Scenes/" + file_name);
+		}
 		on_end_state();
-		states->push(new GameState(window, states, graphics_settings));
+		states->push(new GameState(window, states, graphics_settings, "DefaultSave"));
 		return;
 	}
 	if (buttons["LOAD_GAME"]->is_pressed())
 	{
 		//TODO: Add a load game state showing saved game files
+		on_end_state();
+		states->push(new GameState(window, states, graphics_settings, "DefaultSave"));
 		return;
 	}
 	if (buttons["EDITOR"]->is_pressed())
@@ -104,11 +131,7 @@ void MainMenuState::render()
 void MainMenuState::init_variables()
 {
 	background.setSize((sf::Vector2f)window->getSize());
-	if (!background_texture.loadFromFile("Resources/Images/Backgrounds/mainmenu_bg.png"))
-	{
-		throw("ERROR::MAIN_MENU_STATE::COULD NOT LOAD BACKGROUND TEXTURE");
-	}
-	background.setTexture(&background_texture);
+	background.setTexture(&ResourceManager::get_texture("mainmenu_bg.png"));
 }
 
 void MainMenuState::init_background()
