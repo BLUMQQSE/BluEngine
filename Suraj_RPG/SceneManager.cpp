@@ -52,17 +52,15 @@ void SceneManager::update()
 
 void SceneManager::load_scene(std::string scene_name)
 {
-	// changing scene, save prior
 	if (active_scene->get_name() != scene_name)
 		save_scene();
-	std::vector<GameObject*> dont_destroy_objects = active_scene->get_dont_destroy_objects();
+	
+	// clear scene is clearly the issue...
 	active_scene->clear_scene();
 
 	Json::Value obj = FileManager::load_from_file(save_name + scenes_file_path + scene_name);
 	
 	active_scene->set_name(scene_name);
-	for (auto& dd : dont_destroy_objects)
-		active_scene->insert_gameobject(dd, false);
 
 	active_scene->unserialize_json(obj);
 }
@@ -79,14 +77,26 @@ void SceneManager::load_scene_prefab(std::string scene_name)
 	active_scene->unserialize_json(obj);
 }
 
-void SceneManager::save_scene()
+void SceneManager::save_scene(bool save_everything)
 {
-	FileManager::save_to_file_styled(active_scene->serialize_json(), save_name + scenes_file_path + active_scene->get_name());
+	if (save_everything)
+	{
+		FileManager::save_to_file_styled(active_scene->serialize_json(), save_name + scenes_file_path + active_scene->get_name());
+		active_scene->clear_scene();
+		return;
+	}
+
+	FileManager::save_to_file_styled(active_scene->serialize_destroyed_objects(), save_name + scenes_file_path + active_scene->get_name());
 }
 
 void SceneManager::save_scene(Scene* scene)
 {
 	FileManager::save_to_file_styled(scene->serialize_json(), save_name + scenes_file_path + scene->get_name());
+}
+
+void SceneManager::clear_active_scene()
+{
+	active_scene->clear_scene(true);
 }
 
 void SceneManager::save_scene_prefab(Scene* scene)

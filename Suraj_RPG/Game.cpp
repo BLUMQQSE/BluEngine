@@ -23,6 +23,7 @@ Game::Game()
     init_graphics_settings();
     init_window();
 
+    ResourceManager::load_resources();
     //renderer = new Renderer(window);
     Renderer::init(window);
     Input::init(window);
@@ -37,8 +38,8 @@ Game::Game()
     Input::load_keybinds_from_file("Settings_State", "Config/settingsstate_keybinds.ini");
     Input::change_keybinds_state("Main_Menu_State");
 
-    ResourceManager::load_resources();
     //std::cout << ResourceManager::get_texture("mainmenu_bg.png").getSize().x << "SIZE\n";
+
 
 
     init_states();
@@ -75,9 +76,10 @@ void Game::update_sfml_events()
         {
             Input::update_mouse_scroll(sfevent.mouseWheel.delta);
         }
+
+
         if(sfevent.type == sf::Event::TextEntered)
             states.top()->update_sfml(sfevent);
-
     }
 
 }
@@ -200,7 +202,6 @@ void Game::init_window()
 {
     if (graphics_settings.full_screen)
     {
-        Debug::Log("fullscreen");
         window = new sf::RenderWindow(graphics_settings.resolution, graphics_settings.game_title,
             sf::Style::Fullscreen, graphics_settings.context_settings);
     }
@@ -211,8 +212,6 @@ void Game::init_window()
     window->setFramerateLimit(graphics_settings.framerate_limit);
     window->setVerticalSyncEnabled(graphics_settings.vertical_sync);
     window->setKeyRepeatEnabled(false);
-
-
 }
 
 void Game::init_states()

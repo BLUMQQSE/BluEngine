@@ -38,6 +38,7 @@ GameObject::~GameObject()
 
 void GameObject::init()
 {
+
 	init_components();
 }
 
@@ -58,6 +59,18 @@ void GameObject::start()
 
 void GameObject::update()
 {
+	/*
+	for (auto& c_t_a : components_to_add)
+		components.push_back(c_t_a);
+	components_to_add.clear();
+
+	for (auto& c_t_r : components_to_remove)
+	{
+		components.erase(std::find(components.begin(), components.end(), c_t_r));
+		delete c_t_r;
+	}
+	components_to_remove.clear();
+	*/
 	if (!active)
 		return;
 	for (auto& c : components)
@@ -237,7 +250,7 @@ const bool GameObject::check_for_child(GameObject* game_object) const
 	return children.find(game_object) != children.end();
 }
 
-const bool GameObject::is_initialize() const
+const bool GameObject::is_initialized() const
 {
 	return initialized;
 }

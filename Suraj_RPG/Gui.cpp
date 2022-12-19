@@ -257,6 +257,12 @@ void DropDownList::update()
 void DropDownList::add_to_buffer(sf::View* view)
 {
 	active_selection->add_to_buffer(view);
+
+	active_selection->set_view(view);
+	if(show_list)
+		for (auto& b : list)
+			b->set_view(view);
+	/*
 	if (show_list)
 	{
 		for (auto& i : list)
@@ -264,6 +270,7 @@ void DropDownList::add_to_buffer(sf::View* view)
 			i->add_to_buffer(view);
 		}
 	}
+	*/
 }
 
 void DropDownList::set_position(float x, float y)
@@ -274,13 +281,6 @@ void DropDownList::set_position(float x, float y)
 		list[i]->set_position(x, y + ((i + 1) * height));
 		
 	
-}
-
-void DropDownList::set_view(sf::View* view)
-{
-	active_selection->set_view(view);
-	for (auto& b : list)
-		b->set_view(view);
 }
 
 void DropDownList::toggle_list(bool toggle)
@@ -545,7 +545,7 @@ void ScrollView::set_position(float x, float y)
 #pragma region TEXTURE_SELECTOR
 
 TextureSelector::TextureSelector(float x, float y, float width, float height, float grid_size,
-	const sf::Texture* texture_sheet, sf::Font& font, std::vector<std::string> tile_sets)
+	const sf::Texture* texture_sheet, sf::Font& font, std::vector<std::string> tile_sets, sf::View* texture_view)
 	: font(font)
 
 {
@@ -578,7 +578,6 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 		this->sheet.setTextureRect(sf::IntRect(0, 0, this->bounds.getGlobalBounds().width,
 			this->sheet.getGlobalBounds().height));
 	}
-
 	this->selector.setPosition(x, y);
 	this->selector.setSize(sf::Vector2f(grid_size, grid_size));
 	this->selector.setFillColor(sf::Color::Transparent);
@@ -589,7 +588,7 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 	this->texture_rect.width = static_cast<int>(grid_size);
 	this->texture_rect.height = static_cast<int>(grid_size);
 
-	this->text_view = new sf::View();
+	this->text_view = texture_view;
 
 	this->text_view->setSize(bounds.getSize().x, bounds.getSize().y);
 	this->text_view->setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
@@ -603,7 +602,8 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 	this->text_view->setViewport(sf::FloatRect(left, top, w, h));
 
 
-	set_view(new sf::View());
+	//set_view(new sf::View());
+
 	set_sorting_layer(SortingLayer::UI, false);
 	set_z_order(0, false);
 	Renderer::add(Renderer::RenderObject(&container, this));
@@ -623,7 +623,6 @@ TextureSelector::~TextureSelector()
 	Renderer::remove(&sheet);
 	Renderer::remove(&selector);
 
-	delete text_view;
 	delete layer_selector;
 	delete tile_collection_selector;
 	delete tile_type_selector;
@@ -667,7 +666,9 @@ const SortingLayer TextureSelector::get_layer() const
 
 void TextureSelector::toggle_hidden()
 {
+	std::cout << "before: " << hidden <<"\n";
 	hidden = !hidden;
+	std::cout << "after: " << hidden << "\n";
 }
 
 void TextureSelector::init_buttons(float x, float y)
@@ -829,17 +830,15 @@ void TextureSelector::update()
 
 void TextureSelector::add_to_buffer(sf::View* view)
 {
-	set_view(view);
+	text_view = view;
+
 	set_render(hidden);
-	
+	collision_checkbox->add_to_buffer();
+	animation_checkbox->add_to_buffer();
 
-
-	collision_checkbox->add_to_buffer(view);
-	animation_checkbox->add_to_buffer(view);
-
-	layer_selector->add_to_buffer(view);
-	tile_collection_selector->add_to_buffer(view);
-	tile_type_selector->add_to_buffer(view);
+	layer_selector->add_to_buffer();
+	tile_collection_selector->add_to_buffer();
+	tile_type_selector->add_to_buffer();
 
 	//Renderer::add(Renderer::RenderObject(&container, render, SortingLayer::UI, 0, &view));
 	//Renderer::add(Renderer::RenderObject(&bounds, render, SortingLayer::UI, 0, &view));
@@ -1166,10 +1165,9 @@ void Panel::update()
 
 void Panel::add_to_buffer(sf::View* view)
 {
-	return;
-	//Renderer::add(Renderer::RenderObject(&panel_shape, render, SortingLayer::UI, 0, &view));
+	set_view(view);
 	for (auto& c : content)
-		c.second->add_to_buffer( get_view() );
+		c.second->set_view(view);
 }
 
 void Panel::set_position(float x, float y)
@@ -1208,12 +1206,6 @@ std::unordered_map<std::string, GUIObject*> Panel::get_content()
 	return content;
 }
 
-void Panel::set_view(sf::View* view)
-{
-	set_view(view);
-	for (auto& c : content)
-		c.second->set_view(view);
-}
 
 void Panel::display_mouse_pos(sf::Font& font)
 {

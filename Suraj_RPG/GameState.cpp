@@ -50,9 +50,11 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 GameState::~GameState()
 {
 	//FileManager::save_to_file_styled(component_player->serialize_json(), "Data/DontDestroyObjects/player.json");
+	SceneManager::save_scene();
 	delete pmenu;
 	//delete component_player;
 	delete view;
+	delete active_scene;
 }
 
 void GameState::init_state()
@@ -67,7 +69,6 @@ void GameState::on_end_state()
 	SceneManager::save_scene();
 	Physics::remove_from_physics(component_player);
 	State::on_end_state();
-
 }
 
 void GameState::update_input()

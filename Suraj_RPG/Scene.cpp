@@ -28,8 +28,10 @@ Scene::~Scene()
 
 void Scene::update()
 {
+	std::cout << objects_in_scene.size() << "\n";
 	for (auto& o : objects_in_scene)
 		o->update();
+	
 }
 
 void Scene::late_update()
@@ -95,24 +97,58 @@ void Scene::insert_gameobject(GameObject* go, bool initialize)
 
 void Scene::remove_gameobject(GameObject* go)
 {
+	Physics::remove_from_physics(go);
 	objects_in_scene.erase(std::remove(objects_in_scene.begin(), objects_in_scene.end(), go));
 	delete go;
 }
 
-void Scene::load_scene(Json::Value obj)
+void Scene::clear_scene(bool remove_everything)
 {
-}
 
-void Scene::clear_scene()
-{
-	for (auto& o : objects_in_scene)
+	if (remove_everything)
 	{
-		if (!o->has_component<DontDestroyOnLoad>())
-		{
+		for (auto& o : objects_in_scene)
 			delete o;
+		objects_in_scene.clear();
+		return;
+	}
+	std::vector<GameObject*> objects_to_remove;
+
+	for (auto& o : objects_in_scene)
+	{	
+		bool dont_destroy = false;
+
+		if (o->has_component<DontDestroyOnLoad>())
+			dont_destroy = true;
+		else
+		{
+			GameObject* obj = o;
+			while (obj->get_parent())
+			{
+				obj = obj->get_parent();
+				if (obj->has_component<DontDestroyOnLoad>())
+				{
+					dont_destroy = true;
+					break;
+				}
+			}
+		}
+
+		if (!dont_destroy)
+		{
+			std::cout << "Removing: " << o->get_info().name << "\n";
+			objects_to_remove.push_back(o);
+			//remove_gameobject(o);
+		}
+		else
+		{
+			std::cout << "Not Removing: " << o->get_info().name << "\n";
 		}
 	}
-	objects_in_scene.clear();
+	for (auto& otr : objects_to_remove)
+		remove_gameobject(otr);
+	
+
 }
 
 #pragma region IDATA
@@ -132,6 +168,22 @@ Json::Value Scene::serialize_json()
 	return obj;
 }
 
+Json::Value Scene::serialize_destroyed_objects()
+{
+	Json::Value obj;
+	
+	obj["name"] = name;
+	for (auto& o : objects_in_scene)
+	{
+		//only save parent, parent will save children
+		if (!o->get_parent() && !o->has_component<DontDestroyOnLoad>())
+			obj["gameobjects"].append(o->serialize_json());
+	}
+
+	return obj;
+
+}
+
 void Scene::unserialize_json(Json::Value obj)
 {
 	name = obj["name"].asString();
@@ -144,18 +196,14 @@ void Scene::unserialize_json(Json::Value obj)
 		insert_gameobject(go, false);
 	}
 
-
-	//at this point children are already added and all initializers called,
-	//parents have yet to be initialized
-
 	for (auto& go : objects_in_scene)
-		if(!go->is_initialize())
+		if(!go->is_initialized())
 			go->init();
 	for (auto& go : objects_in_scene)
-		if (!go->is_initialize())
+		if (!go->is_initialized())
 			go->awake();
 	for (auto& go : objects_in_scene)
-		if (!go->is_initialize())
+		if (!go->is_initialized())
 			go->start();
 
 }

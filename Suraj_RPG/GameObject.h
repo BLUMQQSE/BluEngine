@@ -92,7 +92,7 @@ public:
 	GameObject* get_parent();
 	std::set<GameObject*> get_children();
 	const bool check_for_child(GameObject* game_object) const;
-	const bool is_initialize() const;
+	const bool is_initialized() const;
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
@@ -111,8 +111,10 @@ public:
 		//c->game_object = this;
 		c->set_game_object(this);
 		//std::unique_ptr<Component> uPtr{ c };
-		components.emplace_back(c);
-		
+		//components_to_add.emplace_back(c);
+		components.push_back(c);
+
+
 		component_array[get_component_type_id<T>()] = c;
 		component_bitset[get_component_type_id<T>()] = true;
 		return *c;
@@ -130,7 +132,8 @@ public:
 			std::vector<Component*>::iterator iter = std::find(components.begin(), components.end(), comp);
 			if (iter != components.end())
 			{
-				components.erase(iter);
+				//components_to_remove.push_back(comp);
+				//components.erase(iter);
 				delete comp;
 
 				component_array[get_component_type_id<T>()] = nullptr;
@@ -201,6 +204,8 @@ protected:
 
 	//std::vector<std::unique_ptr<Component>> components;
 	std::vector<Component*> components;
+	std::vector<Component*> components_to_add;
+	std::vector<Component*> components_to_remove;
 
 private:
 	size_t unique_runtime_id;

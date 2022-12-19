@@ -42,19 +42,19 @@ void bm98::PlayerController::update()
 		//pants->set_parent(this->game_object);
 		//this->game_object->add_child(pants);
 		//SceneManager::instantiate_gameobject(pants);
-		SceneManager::load_scene("test.json");
 	}
 
 }
 
 void bm98::PlayerController::late_update()
 {
-
+	
 }
 
 void bm98::PlayerController::fixed_update()
 {
 	rigid->apply_acceleration(movement_input.x, movement_input.y);
+	
 }
 
 void bm98::PlayerController::add_to_buffer(sf::View*)

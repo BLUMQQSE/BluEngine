@@ -17,9 +17,9 @@ void SceneChange::on_collision_enter(Collision info)
 	if (info.game_object->get_info().tag == Tag::PLAYER)
 	{
 		info.game_object->set_position(destination.x, destination.y);
-
-		//if (destination_scene_name != SceneManager::get_active_scene_name())
-		//	SceneManager::load_scene(destination_scene_name);
+		std::cout << "destination : " << destination_scene_name<<"\n";
+		if (destination_scene_name != SceneManager::get_active_scene_name())
+			SceneManager::load_scene(destination_scene_name);
 	}
 }
 

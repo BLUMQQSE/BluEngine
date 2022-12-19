@@ -29,8 +29,18 @@ public:
 	/// </summary>
 	/// <param name="scene_name"></param>
 	static void load_scene_prefab(std::string scene_name);
-	static void save_scene();
+	/// <summary>
+	/// Saves scene to json file.
+	/// </summary>
+	/// <param name="save_everything">If true, will save DontDestroyOnLoad objects and delete all objects in scene.
+	///  This is defaulted to false, and should only be true on exiting gamestate.</param>
+	static void save_scene(bool save_everything = false);
 	static void save_scene(Scene* scene);
+	/// <summary>
+	/// Clears everything out of the active scene. Used when exiting gamestate to 
+	/// ensure all memory gets removed.
+	/// </summary>
+	static void clear_active_scene();
 	/// <summary>
 	/// Saves a scene prefab. Should only be used by editor state.
 	/// </summary>

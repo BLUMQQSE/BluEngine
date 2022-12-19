@@ -19,6 +19,7 @@ void Physics::add_to_physics(GameObject* game_object)
 {
 	// Could move code to check for game_object parent and child here
 	// to prevent them from ever being added to a game objects collisions list
+	/*
 	GameObjects object_to_add;
 
 	object_to_add.game_object = game_object;
@@ -34,7 +35,10 @@ void Physics::add_to_physics(GameObject* game_object)
 
 	object_to_add.collisions = collisions_to_add;
 
+	//std::cout << "gameobjects before adding " << game_objects.size() <<"\n";
 	game_objects[game_object] = object_to_add;
+	//std::cout << "gameobjects after adding " << game_objects.size() << "\n";
+	*/
 }
 
 void Physics::add_tiles_to_physics(std::vector<Tile*> tiles)
@@ -45,13 +49,21 @@ void Physics::add_tiles_to_physics(std::vector<Tile*> tiles)
 
 void Physics::remove_from_physics(GameObject* game_object)
 {
+	/*
 	// to remove first we must remove reference from all game_objects collisions
+	std::cout << "removing " << game_object->get_info().name << "\n";
 	for (auto i : game_objects)
 	{
+		std::cout << "before: " << i.first->get_info().name << " " << i.second.collisions.size() << "\n";
 		i.second.collisions.erase(game_object);
+		std::cout << "after: " << i.first->get_info().name << " " << i.second.collisions.size() <<"\n";
 	}
 	// then remove from game_objects itself
 	game_objects.erase(game_object);
+	
+	//std::cout << "GameObjects in physics: " << game_objects.size() << " after removing " << game_object->get_info().name << "\n";
+	//std::cout << "GameObjects each GameObject sees: " << game_objects[0].collisions.size() << " after removing " << game_object->get_info().name <<  "\n";
+	*/
 }
 
 void Physics::remove_tiles_from_physics()

@@ -45,10 +45,6 @@ public:
 
 	}
 
-	virtual void set_view(sf::View* view)
-	{
-		set_view(view);
-	}
 protected:
 	sf::Vector2f position;
 	//sf::View* view;
@@ -116,7 +112,6 @@ public:
 	virtual void update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 	virtual void set_position(float x, float y) override;
-	virtual void set_view(sf::View* view = nullptr) override;
 
 	void toggle_list(bool toggle);
 
@@ -197,7 +192,7 @@ class TextureSelector : public GUIObject
 public:
 	TextureSelector(float x, float y, float width, float height,
 		float grid_size, const sf::Texture* texture_sheet, sf::Font& font,
-		std::vector<std::string> tile_sets);
+		std::vector<std::string> tile_sets, sf::View* texture_view);
 	virtual ~TextureSelector();
 
 	const bool& mouse_in_bounds() const;
@@ -322,7 +317,6 @@ public:
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 	virtual void set_position(float x, float y);
 	virtual void update_sfml(sf::Event sfEvent) override;
-	virtual void set_view(sf::View* view = nullptr) override;
 
 	std::unordered_map<std::string, GUIObject*> get_content();
 	void add_element(std::string key, GUIObject* gui_object);

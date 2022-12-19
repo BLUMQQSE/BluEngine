@@ -26,12 +26,12 @@ public:
 	void insert_gameobject(GameObject* go, bool initialize = true);
 	void remove_gameobject(GameObject* go);
 
-	void load_scene(Json::Value obj);
-	void clear_scene();
+	void clear_scene(bool remove_everything = false);
 
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
+	Json::Value serialize_destroyed_objects();
 	virtual void unserialize_json(Json::Value obj) override;
 
 

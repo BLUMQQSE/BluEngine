@@ -21,8 +21,6 @@ public:
 
     virtual void update_sfml(sf::Event sfEvent) override;
     virtual void update() override;
-    virtual void late_update() override;
-    virtual void fixed_update() override;
     virtual void render() override;
     virtual void pause_state() override;
     virtual void unpause_state() override;
@@ -32,7 +30,6 @@ public:
 protected:
     void init_variables();
     void init_views();
-    void init_background();
     //void init_fonts();
     void init_gui();
     void update_gui();
@@ -45,7 +42,6 @@ private:
 
     enum class EditingState
     {
-        TILEMAP,
         SCENE,
         PREFAB
     };
@@ -56,9 +52,19 @@ private:
         TileType tile_type;
     };
 
+    sf::View* scene_view;
+
+    sf::View* object_heir_view;
+    sf::View* component_view;
+    sf::View* prefab_view;
+    sf::View* inspector_view;
+
+    sf::View* tile_selector_view;
+
     EditingState current_state;
 
-    sf::View* main_view;
+    GameObject* selected_gameobject = nullptr;
+
     float camera_move_speed;
     bool outline_render = true;
     SortingLayer outline_layer = SortingLayer::UI;
@@ -80,13 +86,9 @@ private:
     GUI::TextureSelector* texture_selector;
     TileModifier tile_modifier;
 
-    TilemapComponent* tilemap;
-    GameObject* tilemap_go;
+    //TilemapComponent* tilemap;
+    //GameObject* tilemap_go;
 
-    // contain scene which is saved or loaded
-    SceneEditor* editing_scene;
-
-    PrefabEditor* editing_prefab;
 
 
 };
