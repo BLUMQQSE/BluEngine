@@ -21,36 +21,69 @@ Scene::Scene(std::string name)
 Scene::~Scene()
 {
 	int size = objects_in_scene.size();
-	SceneManager::save_scene();
 	for (auto& o : objects_in_scene)
 		delete o;
 }
 
 void Scene::update()
 {
-	std::cout << objects_in_scene.size() << "\n";
-	for (auto& o : objects_in_scene)
-		o->update();
+
+	//remove destroyed objects
+	for (auto& o_t_r : objects_to_remove)
+	{
+		Physics::remove_from_physics(o_t_r);
+		objects_in_scene.erase(std::find(objects_in_scene.begin(),
+			objects_in_scene.end(), o_t_r));
+		if (o_t_r->get_parent())
+			o_t_r->get_parent()->remove_child(o_t_r);
+
+		// destroy all posterity of object
+		if (o_t_r->get_children().size() > 0)
+		{
+			std::vector<GameObject*> posterity = o_t_r->get_all_posterity();
+			while (posterity.size() > 0)
+			{
+				Physics::remove_from_physics(posterity[0]);
+				objects_in_scene.erase(std::find(objects_in_scene.begin(),
+					objects_in_scene.end(), posterity[0]));
+				delete posterity[0];
+				posterity.erase(posterity.begin());
+			}
+		}
+		delete o_t_r;
+	}
+	objects_to_remove.clear();
+
+	// add new objects
+	for (auto& o_t_a : objects_to_add)
+		objects_in_scene.push_back(o_t_a);
+	
+	if (objects_to_add.size() > 0)
+		insert_sort();
+	objects_to_add.clear();
+
+	// update objects
+	for(std::size_t i = 0; i != objects_in_scene.size(); i++)
+		objects_in_scene[i]->update();
 	
 }
 
 void Scene::late_update()
 {
-	for (auto& o : objects_in_scene)
-		o->late_update();
+	for (std::size_t i = 0; i != objects_in_scene.size(); i++)
+		objects_in_scene[i]->late_update();
 }
 
 void Scene::fixed_update()
 {
-
-	for (auto& o : objects_in_scene)
-		o->fixed_update();
+	for (std::size_t i = 0; i != objects_in_scene.size(); i++)
+		objects_in_scene[i]->fixed_update();
 }
 
 void Scene::render(sf::View* view)
 {
-	for (auto& o : objects_in_scene)
-		o->add_to_buffer(view);
+	for (std::size_t i = 0; i != objects_in_scene.size(); i++)
+		objects_in_scene[i]->add_to_buffer(view);
 }
 
 std::string Scene::get_name()
@@ -78,28 +111,32 @@ std::vector<GameObject*> Scene::get_dont_destroy_objects()
 
 void Scene::set_name(std::string name)
 {
+	std::cout << "setting scene name to: " << name << "\n";
 	this->name = name;
 }
 
 void Scene::insert_gameobject(GameObject* go, bool initialize)
 {
-	objects_in_scene.push_back(go);
 	Physics::add_to_physics(go);
-	insert_sort();
-
 	if (initialize)
 	{
+		objects_to_add.push_back(go);
+		
 		go->init();
 		go->awake();
 		go->start();
+	}
+	else
+	{
+		objects_in_scene.push_back(go);
+		
+		insert_sort();
 	}
 }
 
 void Scene::remove_gameobject(GameObject* go)
 {
-	Physics::remove_from_physics(go);
-	objects_in_scene.erase(std::remove(objects_in_scene.begin(), objects_in_scene.end(), go));
-	delete go;
+	objects_to_remove.push_back(go);
 }
 
 void Scene::clear_scene(bool remove_everything)
@@ -112,41 +149,22 @@ void Scene::clear_scene(bool remove_everything)
 		objects_in_scene.clear();
 		return;
 	}
-	std::vector<GameObject*> objects_to_remove;
 
+	std::vector<GameObject*> objects;
 	for (auto& o : objects_in_scene)
 	{	
-		bool dont_destroy = false;
+		//only need to get parents, there children will be removed later in update
+		if (o->get_parent())
+			continue;
 
-		if (o->has_component<DontDestroyOnLoad>())
-			dont_destroy = true;
-		else
+		if (!o->has_component<DontDestroyOnLoad>())
 		{
-			GameObject* obj = o;
-			while (obj->get_parent())
-			{
-				obj = obj->get_parent();
-				if (obj->has_component<DontDestroyOnLoad>())
-				{
-					dont_destroy = true;
-					break;
-				}
-			}
-		}
-
-		if (!dont_destroy)
-		{
-			std::cout << "Removing: " << o->get_info().name << "\n";
-			objects_to_remove.push_back(o);
-			//remove_gameobject(o);
-		}
-		else
-		{
-			std::cout << "Not Removing: " << o->get_info().name << "\n";
+			objects.push_back(o);
 		}
 	}
-	for (auto& otr : objects_to_remove)
-		remove_gameobject(otr);
+
+	for (std::size_t i = 0; i != objects.size(); i++)
+		remove_gameobject(objects[i]);
 	
 
 }

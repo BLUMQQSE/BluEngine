@@ -37,26 +37,16 @@ public:
 
 protected:
 
-    void init_players();
     void init_view();
 
 
 private:
-    std::string game_save_name;
     std::string active_scene_name;
 
-
     sf::View* view;
-    //std::vector<Scene*> scenes;
     Scene* active_scene;
 
-    Player* player;
-    GameObject* component_player;
-
     PauseMenu* pmenu;
-    // Tilemap* tilemap;
-    ParticleSystem* particles;
-
 };
 
 }

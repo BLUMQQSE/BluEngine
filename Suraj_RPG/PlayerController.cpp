@@ -6,6 +6,8 @@
 #include "Collisions.h"
 #include "SpriteComponent.h"
 #include "ButtonComponent.h"
+#include "Physics.h"
+#include "CameraComponent.h"
 namespace bm98
 {
 using namespace core;
@@ -27,23 +29,26 @@ void bm98::PlayerController::init()
 void PlayerController::awake()
 {
 	init_animations();
+	camera = &SceneManager::find_with_tag(Tag::CAMERA, this->game_object)->get_component<CameraComponent>();
 }
 
 void bm98::PlayerController::update()
 {
 	update_input();
 	update_animations();
-
 	if (Input::get_action_down("INTERACT"))
 	{
-		//GameObject* pants = new GameObject();
-		//pants->add_component<SpriteComponent>("Items/pants.png");
-		//pants->add_component<ChildAnimationComponent>();
-		//pants->set_parent(this->game_object);
-		//this->game_object->add_child(pants);
-		//SceneManager::instantiate_gameobject(pants);
+		GameObject* pants = new GameObject();
+		pants->add_component<SpriteComponent>("pants.png");
+		SpriteComponent* sc = &pants->get_component<SpriteComponent>();
+		pants->add_component<ChildAnimationComponent>();
+		sc->set_layer(SortingLayer::ACTOR);
+		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
+		pants->set_parent(this->game_object);
+		this->game_object->add_child(pants);
+		SceneManager::instantiate_gameobject(pants);
 	}
-
+	camera->set_position(game_object->transform.position);
 }
 
 void bm98::PlayerController::late_update()

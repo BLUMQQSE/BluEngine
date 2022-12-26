@@ -3,6 +3,18 @@
 namespace bm98::core
 {
 
+std::string FileManager::save_name = "GameState_Should_Change_This";
+
+std::string FileManager::get_save_name()
+{
+	return save_name;
+}
+
+void FileManager::set_save_name(std::string s_n)
+{
+	save_name = s_n;
+}
+
 void FileManager::save_to_file_styled(Json::Value obj, std::string file_path)
 {
 	std::ofstream ofs(file_path);
@@ -21,6 +33,7 @@ Json::Value FileManager::load_from_file(std::string file_path)
 	ifs.close();
 
 	//not sure about functionality of this if statement...
+	/*
 	if (obj.empty())
 	{
 		FileManager::save_to_file_styled(serialize_json(), file_path);
@@ -32,6 +45,7 @@ Json::Value FileManager::load_from_file(std::string file_path)
 
 		return obj;
 	}
+	*/
 	return obj;
 }
 

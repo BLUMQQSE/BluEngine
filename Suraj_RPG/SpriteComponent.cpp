@@ -14,18 +14,6 @@ SpriteComponent::SpriteComponent()
 SpriteComponent::SpriteComponent(std::string file_path)
 {
 	this->file_path = file_path;
-	//if (!this->texture_sheet.loadFromFile(sprite_path + file_path))
-	//{
-	//	Debug::Log("ERROR::SpriteComponent::COULD NOT LOAD texture_sheet");
-	//	return;
-	//};
-	if (!ResourceManager::has_texture(file_path))
-		return;
-	texture_sheet = ResourceManager::get_texture(file_path);
-	//file_path = "Data/player.json";
-
-	sprite.setTexture(texture_sheet);
-	sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
 
 }
 
@@ -43,9 +31,12 @@ void SpriteComponent::init()
 	//	return;
 	//};
 	if (!ResourceManager::has_texture(file_path))
+	{
+		std::cout << "issue finding texut\n";
 		return;
+	}
 	texture_sheet = ResourceManager::get_texture(file_path);
-	
+
 	sprite.setTexture(texture_sheet);
 	sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), size));
 	Renderer::add(Renderer::RenderObject(&sprite, this));
@@ -141,6 +132,8 @@ void SpriteComponent::set_size(int size_x, int size_y)
 {
 	size.x = size_x;
 	size.y = size_y;
+	sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0),
+		sf::Vector2i(size)));
 }
 
 void SpriteComponent::set_position(float x, float y)
@@ -150,12 +143,12 @@ void SpriteComponent::set_position(float x, float y)
 
 void SpriteComponent::set_layer(SortingLayer sorting_layer)
 {
-	set_sorting_layer(sorting_layer);
+	IRenderable::set_sorting_layer(sorting_layer);
 }
 
 void SpriteComponent::set_z_order(int order)
 {
-	set_z_order(order);
+	IRenderable::set_z_order(order);
 }
 
 

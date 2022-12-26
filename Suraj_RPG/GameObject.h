@@ -74,11 +74,9 @@ public:
 
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
-	Renderer::RenderObject& get_render_object();
 	const bool& is_active();
 	void set_active(bool& active);
 
-	void set_sprite_texture(sf::Texture& texture);
 	void set_parent(GameObject* parent);
 	void add_child(GameObject* child);
 	void remove_child(GameObject* child);
@@ -90,7 +88,16 @@ public:
 	const Info& get_info() const;
 	const Transform& get_transform() const;
 	GameObject* get_parent();
-	std::set<GameObject*> get_children();
+	/// <summary>
+	/// Returns the highest parent of a game object.
+	/// </summary>
+	GameObject* get_greatest_ancestor();
+	std::vector<GameObject*> get_children();
+	/// <summary>
+	/// Returns all children, grandchildren, great-grandchildren...
+	/// </summary>
+	/// <returns></returns>
+	std::vector<GameObject*> get_all_posterity();
 	const bool check_for_child(GameObject* game_object) const;
 	const bool is_initialized() const;
 
@@ -105,36 +112,29 @@ public:
 	}
 
 
-	template <typename T, typename... TArgs> T& add_component(TArgs&&...mArgs)
+	template <typename T, typename... TArgs> void add_component(TArgs&&...mArgs)
 	{
+		//if allready has component, ignore adding it again
+		if (component_bitset[get_component_type_id<T>()] == true)
+			return;
 		T* c(new T(std::forward<TArgs>(mArgs)...));
-		//c->game_object = this;
 		c->set_game_object(this);
-		//std::unique_ptr<Component> uPtr{ c };
-		//components_to_add.emplace_back(c);
 		components.push_back(c);
 
 
 		component_array[get_component_type_id<T>()] = c;
 		component_bitset[get_component_type_id<T>()] = true;
-		return *c;
+		//return c;
 	}
 
 	template <typename T> void remove_component(T* comp)
 	{
 		if (component_bitset[get_component_type_id<T>()])
 		{
-
-			//auto itr = std::find_if(std::begin(components),
-				//std::end(components),
-				//[comp](auto& element) { return element.get() == comp; });
-			
 			std::vector<Component*>::iterator iter = std::find(components.begin(), components.end(), comp);
 			if (iter != components.end())
 			{
-				//components_to_remove.push_back(comp);
-				//components.erase(iter);
-				delete comp;
+				components_to_remove.push_back(comp);
 
 				component_array[get_component_type_id<T>()] = nullptr;
 				component_bitset[get_component_type_id<T>()] = false;
@@ -147,64 +147,14 @@ public:
 		auto ptr(component_array[get_component_type_id<T>()]);
 		return *static_cast<T*>(ptr);
 	}
-	/*
-	template <typename T> bool has_component() const
-	{
-		return component_bitset[get_component_type_id<T>()];
-	}
-	
-
-	template <typename T, typename... TArgs> T& add_component(TArgs&&...mArgs)
-	{
-		T* c(new T(std::forward<TArgs>(mArgs)...));
-		//c->game_object = this;
-		c->set_game_object(this);
-		std::unique_ptr<Component> uPtr{ c };
-		components.emplace_back(std::move(uPtr));
-
-		component_array[get_component_type_id<T>()] = c;
-		component_bitset[get_component_type_id<T>()] = true;
-		return *c;
-	}
-
-	template <typename T> void remove_component(T* comp)
-	{
-		if (component_bitset[get_component_type_id<T>()])
-		{
-
-			auto itr = std::find_if(std::begin(components),
-				std::end(components),
-				[comp](auto& element) { return element.get() == comp; });
-			
-			
-			components.erase(itr);
-
-			delete component_array[get_component_type_id<T>()];
-
-			component_array[get_component_type_id<T>()] = nullptr;
-			component_bitset[get_component_type_id<T>()] = false;
-		}
-	}
-
-	template <typename T> T& get_component() const
-	{
-		auto ptr(component_array[get_component_type_id<T>()]);
-		return *static_cast<T*>(ptr);
-	}
-	*/
 
 protected:
 	bool active = true;
 	GameObject* parent;
-	std::set<GameObject*> children;
-
-	Renderer::RenderObject* render_object;
-	sf::Sprite sprite;
-	sf::Texture texture_sheet;
+	std::vector<GameObject*> children;
 
 	//std::vector<std::unique_ptr<Component>> components;
 	std::vector<Component*> components;
-	std::vector<Component*> components_to_add;
 	std::vector<Component*> components_to_remove;
 
 private:

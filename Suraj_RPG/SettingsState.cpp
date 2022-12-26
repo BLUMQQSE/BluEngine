@@ -133,7 +133,7 @@ void SettingsState::init_drop_downs()
 	{
 		modes_str.push_back(std::to_string(i.width) + 'x' + std::to_string(i.height));
 	}
-	drop_downs["RESOLUTION"] = new GUI::DropDownList(600, 100, 150, 30, font,
+	drop_downs["RESOLUTION"] = new GUI::DropDownList(100, 100, 150, 30, font,
 		modes_str);
 
 	//drop_downs["FULLSCREEN"] = new GUI::DropDownList(800, 175, 150, 30, font, screen_list, 2);

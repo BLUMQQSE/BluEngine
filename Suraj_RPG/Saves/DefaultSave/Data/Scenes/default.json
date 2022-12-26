@@ -79,6 +79,94 @@
 			"components" : 
 			[
 				{
+					"name" : "class bm98::PlayerController",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::SpriteComponent",
+					"value" : 
+					{
+						"class bm98::IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ACTOR",
+							"z-order" : 10
+						},
+						"sprite-file-path" : "player_sprite_sheet.png"
+					}
+				},
+				{
+					"name" : "class bm98::RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 15.0,
+						"deceleration" : 50.0,
+						"max-velocity" : 200.0,
+						"orientation" : "RIGHT"
+					}
+				},
+				{
+					"name" : "class bm98::BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 100.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 50.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "class bm98::AnimationComponent",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"local-position-x" : 0.0,
+			"local-position-y" : 0.0,
+			"name" : "Player",
+			"physics-layer" : "DEFAULT",
+			"position-x" : 74.920150756835938,
+			"position-y" : 47.996318817138672,
+			"rotation-x" : 0.0,
+			"rotation-y" : 0.0,
+			"scale-x" : 0.0,
+			"scale-y" : 0.0,
+			"tag" : "PLAYER"
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::CameraComponent",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"local-position-x" : 0.0,
+			"local-position-y" : 0.0,
+			"name" : "MainCamera",
+			"physics-layer" : "PHYSICS_IGNORE",
+			"position-x" : 0.0,
+			"position-y" : 0.0,
+			"rotation-x" : 0.0,
+			"rotation-y" : 0.0,
+			"scale-x" : 0.0,
+			"scale-y" : 0.0,
+			"tag" : "CAMERA"
+		},
+		{
+			"components" : 
+			[
+				{
 					"name" : "class bm98::SceneChange",
 					"value" : 
 					{

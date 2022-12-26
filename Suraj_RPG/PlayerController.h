@@ -4,6 +4,7 @@
 namespace bm98
 {
 
+class CameraComponent;
 class AnimationComponent;
 class RigidbodyComponent;
 
@@ -35,6 +36,8 @@ private:
     bool attack;
     AnimationComponent* anim;
     RigidbodyComponent* rigid;
+
+    CameraComponent* camera;
 
     void init_animations();
 

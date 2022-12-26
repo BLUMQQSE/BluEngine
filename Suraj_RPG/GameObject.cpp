@@ -17,6 +17,7 @@
 #include "ButtonComponent.h"
 #include "DontDestroyOnLoad.h"
 #include "SceneChange.h"
+#include "CameraComponent.h"
 
 namespace bm98
 {
@@ -33,12 +34,11 @@ GameObject::~GameObject()
 	{
 		delete c;
 	}
-	delete render_object;
+	components.clear();
 }
 
 void GameObject::init()
 {
-
 	init_components();
 }
 
@@ -59,24 +59,18 @@ void GameObject::start()
 
 void GameObject::update()
 {
-	/*
-	for (auto& c_t_a : components_to_add)
-		components.push_back(c_t_a);
-	components_to_add.clear();
-
 	for (auto& c_t_r : components_to_remove)
 	{
 		components.erase(std::find(components.begin(), components.end(), c_t_r));
 		delete c_t_r;
 	}
 	components_to_remove.clear();
-	*/
+	
 	if (!active)
 		return;
-	for (auto& c : components)
-	{
-		c->update();
-	}
+	for(std::size_t i = 0; i != components.size(); i++)
+		components[i]->update();
+	
 
 	//if(!parent)
 		//transform.position = sprite.getPosition();
@@ -92,68 +86,64 @@ void GameObject::late_update()
 {
 	if (!active)
 		return;
-	for (auto& c : components)
-	{
-		c->late_update();
-	}
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->late_update();
 }
 
 void GameObject::fixed_update()
 {
 	if (!active)
 		return;
-	for (auto& c : components)
-	{
-		c->fixed_update();
-	}
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->fixed_update();
 }
 
 void GameObject::on_collision_enter(Collision info)
 {
 	if (parent)
 		parent->on_collision_enter(info);
-	for (auto& c : components)
-		c->on_collision_enter(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_collision_enter(info);
 }
 
 void GameObject::on_collision_stay(Collision info)
 {
 	if (parent)
 		parent->on_collision_stay(info);
-	for (auto& c : components)
-		c->on_collision_stay(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_collision_stay(info);
 }
 
 void GameObject::on_collision_exit(Collision info)
 {
 	if (parent)
 		parent->on_collision_exit(info);
-	for (auto& c : components)
-		c->on_collision_exit(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_collision_exit(info);
 }
 
 void GameObject::on_trigger_enter(Collider info)
 {
 	if (parent)
 		parent->on_trigger_enter(info);
-	for (auto& c : components)
-		c->on_trigger_enter(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_trigger_enter(info);
 }
 
 void GameObject::on_trigger_stay(Collider info)
 {
 	if (parent)
 		parent->on_trigger_stay(info);
-	for (auto& c : components)
-		c->on_trigger_stay(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_trigger_stay(info);
 }
 
 void GameObject::on_trigger_exit(Collider info)
 {
 	if (parent)
 		parent->on_trigger_exit(info);
-	for (auto& c : components)
-		c->on_trigger_exit(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_trigger_exit(info);
 }
 
 void GameObject::add_to_buffer(sf::View* view)
@@ -166,19 +156,12 @@ void GameObject::add_to_buffer(sf::View* view)
 	{
 		return;
 	}
-	for (auto& c : components)
-	{
-		c->add_to_buffer(view);
-	}
-	for (auto& ch : children)
-	{
-		ch->add_to_buffer(view);
-	}
-}
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->add_to_buffer(view);
 
-Renderer::RenderObject& GameObject::get_render_object()
-{
-	return *render_object;
+	for (auto& ch : children)
+		ch->add_to_buffer(view);
+	
 }
 
 const bool& GameObject::is_active()
@@ -200,12 +183,12 @@ void GameObject::set_parent(GameObject* parent)
 
 void GameObject::add_child(GameObject* child)
 {
-	children.insert(child);
+	children.push_back(child);
 }
 
 void GameObject::remove_child(GameObject* child)
 {
-	children.erase(child);
+	children.erase(std::find(children.begin(), children.end(), child));
 }
 
 void GameObject::set_position(const float x, const float y)
@@ -240,14 +223,39 @@ GameObject* GameObject::get_parent()
 	return parent;
 }
 
-std::set<GameObject*> GameObject::get_children()
+GameObject* GameObject::get_greatest_ancestor()
+{
+	GameObject* o = parent;
+	while (o->get_parent())
+	{
+		o = o->get_parent();
+	}
+	return o;
+}
+
+std::vector<GameObject*> GameObject::get_children()
 {
 	return children;
 }
 
+std::vector<GameObject*> GameObject::get_all_posterity()
+{
+	std::vector<GameObject*> all_children = children;
+	for (std::size_t i = 0; i < children.size(); i++)
+	{
+		if(children[i]->get_children().size() > 0)
+			all_children.insert(all_children.end(), children[i]->get_all_posterity().begin(), children[i]->get_all_posterity().end());
+	}
+	return all_children;
+}
+
 const bool GameObject::check_for_child(GameObject* game_object) const
 {
-	return children.find(game_object) != children.end();
+	for (std::size_t i = 0; i != children.size(); i++)
+		if (children[i] == game_object)
+			return true;
+
+	return false;
 }
 
 const bool GameObject::is_initialized() const
@@ -301,73 +309,74 @@ void GameObject::unserialize_json(Json::Value obj)
 	transform.scale.x = obj["scale-x"].asFloat();
 	transform.scale.y = obj["scale-y"].asFloat();
 
-	std::unordered_map<std::string, Json::Value> comps;
+	std::unordered_map<std::string, Json::Value> comps_data;
 	for (Json::Value component : obj["components"])
 	{
 		if (component["name"].asString() == typeid(TilemapComponent).name())
 		{
-			comps[typeid(TilemapComponent).name()] = component["value"];
+			comps_data[typeid(TilemapComponent).name()] = component["value"];
 			add_component<TilemapComponent>();
 		}
 		if (component["name"].asString() == typeid(SpriteComponent).name())
 		{
-			comps[typeid(SpriteComponent).name()] = component["value"];
+			comps_data[typeid(SpriteComponent).name()] = component["value"];
 			add_component<SpriteComponent>();
 		}
 		if (component["name"].asString() == typeid(AnimatedSpriteComponent).name())
 		{
-			comps[typeid(AnimatedSpriteComponent).name()] = component["value"];
+			comps_data[typeid(AnimatedSpriteComponent).name()] = component["value"];
 			add_component<AnimatedSpriteComponent>();
 		}
 		if (component["name"].asString() == typeid(AnimationComponent).name())
 		{
-			comps[typeid(AnimationComponent).name()] = component["value"];
+			comps_data[typeid(AnimationComponent).name()] = component["value"];
 			add_component<AnimationComponent>();
 		}
 		if (component["name"].asString() == typeid(BoxColliderComponent).name())
 		{
-			comps[typeid(BoxColliderComponent).name()] = component["value"];
+			comps_data[typeid(BoxColliderComponent).name()] = component["value"];
 			add_component<BoxColliderComponent>();
 		}
 		if (component["name"].asString() == typeid(ChildAnimationComponent).name())
 		{
-			comps[typeid(ChildAnimationComponent).name()] = component["value"];
+			comps_data[typeid(ChildAnimationComponent).name()] = component["value"];
 			add_component<ChildAnimationComponent>();
 		}
 		if (component["name"].asString() == typeid(RigidbodyComponent).name())
 		{
-			comps[typeid(RigidbodyComponent).name()] = component["value"];
+			comps_data[typeid(RigidbodyComponent).name()] = component["value"];
 			add_component<RigidbodyComponent>();
 		}
 		if (component["name"].asString() == typeid(PlayerController).name())
 		{
-			comps[typeid(PlayerController).name()] = component["value"];
+			comps_data[typeid(PlayerController).name()] = component["value"];
 			add_component<PlayerController>();
 		}
 		if (component["name"].asString() == typeid(ButtonComponent).name())
 		{
-			comps[typeid(ButtonComponent).name()] = component["value"];
+			comps_data[typeid(ButtonComponent).name()] = component["value"];
 			add_component<ButtonComponent>();
 		}
 		if (component["name"].asString() == typeid(DontDestroyOnLoad).name())
 		{
-			comps[typeid(DontDestroyOnLoad).name()] = component["value"];
+			comps_data[typeid(DontDestroyOnLoad).name()] = component["value"];
 			add_component<DontDestroyOnLoad>();
 		}
 		if (component["name"].asString() == typeid(SceneChange).name())
 		{
-			comps[typeid(SceneChange).name()] = component["value"];
+			comps_data[typeid(SceneChange).name()] = component["value"];
 			add_component<SceneChange>();
+		}
+		if (component["name"].asString() == typeid(CameraComponent).name())
+		{
+			comps_data[typeid(CameraComponent).name()] = component["value"];
+			add_component<CameraComponent>();
 		}
 	}
 
-
-
-	//init_components();
-
 	for (auto& c : components)
 	{
-		c->unserialize_json(comps.at(typeid(*c).name()));
+		c->unserialize_json(comps_data.at(typeid(*c).name()));
 	}
 
 	for (Json::Value child : obj["children"])
@@ -378,13 +387,6 @@ void GameObject::unserialize_json(Json::Value obj)
 		go->unserialize_json(child);
 		SceneManager::instantiate_gameobject_on_load(go);
 	}
-	
-	//for (auto& c : components)
-	//	c->unserialize_json(obj["Components"][c->get_name()]);
-
-
-	//awake_components();
-	//start_components();
 
 }
 

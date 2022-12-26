@@ -39,6 +39,8 @@ private:
 	std::string name;
 
 	std::vector<GameObject*> objects_in_scene;
+	std::vector<GameObject*> objects_to_add;
+	std::vector<GameObject*> objects_to_remove;
 
 
 	void init_tilemap();

@@ -14,13 +14,6 @@ class Game : IData
 public:
 	Game();
 	virtual ~Game();
-
-	void update_sfml_events();
-	void update_delta_time();
-
-	void update();
-
-	void render();
 	void run();
 
 protected:
@@ -29,8 +22,13 @@ protected:
 private:
 	bool successful_shutdown;
 
+	bool in_dev_window = false;
+
 	GraphicsSettings graphics_settings;
+	GraphicsSettings dev_graphics_settings;
+
 	sf::RenderWindow* window;
+	sf::RenderWindow* dev_window;
 	sf::Event sfevent;
 
 
@@ -46,6 +44,13 @@ private:
 
 	std::stack <State*> states;
 	int state_count;
+
+	void update_sfml_events();
+	void update_delta_time();
+
+	void update();
+
+	void render();
 
 	void init_variables();
 	void init_graphics_settings();

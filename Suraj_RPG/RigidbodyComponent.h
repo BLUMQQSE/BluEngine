@@ -10,14 +10,6 @@ enum class MovementState
 	WALKING
 };
 
-enum class Orientation
-{
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
 class RigidbodyComponent : public Component
 {
 public:

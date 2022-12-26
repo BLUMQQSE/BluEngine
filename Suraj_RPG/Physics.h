@@ -7,6 +7,7 @@ class Collider;
 class GameObject;
 class Tile;
 class LayerMask;
+class BoxColliderComponent;
 }
 
 
@@ -54,7 +55,7 @@ public:
 		float distance = std::numeric_limits<long>::infinity(), Global::LayerMask mask = Global::LayerMask());
 
 	// TODO: optimise this later after creating my own subclasses for shapes to check for overlaps.
-	static std::vector<Collider> OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, 
+	static std::vector<BoxColliderComponent*> OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, 
 		GameObject* object_to_ignore);
 
 private:

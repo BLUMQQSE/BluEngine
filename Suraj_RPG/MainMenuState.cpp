@@ -144,7 +144,6 @@ void MainMenuState::init_buttons()
 	buttons["NEW_GAME"] = new GUI::Button(800.f, 380.f, 250.f, 100.f, &font, "New Game", 42,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
-
 	buttons["LOAD_GAME"] = new GUI::Button(800.f, 500.f, 250.f, 100.f, &font, "Load Game", 42,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));

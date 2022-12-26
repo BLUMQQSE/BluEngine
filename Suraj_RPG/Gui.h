@@ -68,7 +68,7 @@ public:
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 	virtual void set_position(float x, float y) override;
 
-	const bool is_pressed() const;
+	const bool is_pressed();
 	bool mouse_in_bounds();
 	const std::string get_text() const;
 	const short unsigned& get_id() const;

@@ -42,10 +42,17 @@ enum class Layer
 	DAMAGEABLE,
 	PLAYER,
 	WALLS,
+	PHYSICS_IGNORE,
 	_LAST_DONT_REMOVE
 };
 
-
+enum class Orientation
+{
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};
 
 class Global
 {
@@ -54,13 +61,30 @@ public:
 	struct LayerMask
 	{
 		std::bitset<static_cast<int>(Layer::_LAST_DONT_REMOVE)> layers;
-		LayerMask(bool all = true)
+		LayerMask(bool all = false)
 		{
-
+			for (std::size_t i = 0; i < layers.size(); i++)
+			{
+				layers[i] = all;
+			}
 		}
 		void add_layer(Layer l)
 		{
 			layers[static_cast<int>(l)] = true;
+		}
+		void add_layers(std::vector<Layer> l)
+		{
+			for (std::size_t i = 0; i < layers.size(); i++)
+				layers[static_cast<int>(l[i])] = true;
+		}
+		void remove_layer(Layer l)
+		{
+			layers[static_cast<int>(l)] = false;
+		}
+		void remove_layers(std::vector<Layer> l)
+		{
+			for (std::size_t i = 0; i < layers.size(); i++)
+				layers[static_cast<int>(l[i])] = false;
 		}
 	};
 
@@ -126,6 +150,7 @@ public:
 
 #pragma endregion
 
+
 #pragma region Tags
 
 	static std::vector<std::string> tags_to_vector()
@@ -168,11 +193,13 @@ public:
 
 #pragma endregion
 
+
 #pragma region Physics_Layers
 
 	static std::vector<std::string> physics_layer_to_vector()
 	{
-		return { "DEFAULT", "UI", "COLLISION", "ACTOR", "TILE", "INTERACTABLE", "DAMAGEABLE", "PLAYER", "WALLS"};
+		return { "DEFAULT", "UI", "COLLISION", "ACTOR", "TILE", 
+			"INTERACTABLE", "DAMAGEABLE", "PLAYER", "WALLS", "PHYSICS_IGNORE"};
 	}
 
 	static std::string physics_layer_to_string(Layer layer)
@@ -197,6 +224,8 @@ public:
 			return "PLAYER";
 		case Layer::WALLS:
 			return "WALLS";
+		case Layer::PHYSICS_IGNORE:
+			return "PHYSICS_IGNORE";
 		default:
 			std::cout << "ERROR::GLOBALS::physics_layer_to_string::UNDEFINED PHYISCS LAYER: " << static_cast<int>(layer) << "\n";
 			return "DEFAULT";
@@ -223,13 +252,14 @@ public:
 			return Layer::PLAYER;
 		if (layer == "WALLS")
 			return Layer::WALLS;
+		if (layer == "PHYSICS_IGNORE")
+			return Layer::PHYSICS_IGNORE;
 
 		std::cout << "ERROR::GLOBAL::string_to_physics_layer::UNDEFINED STRING: " << layer << "\n";
 		return Layer::DEFAULT;
 	}
 
 #pragma endregion
-
 
 
 #pragma region TileType
@@ -262,6 +292,44 @@ public:
 			std::cout << "ERROR::GLOBALS::tiletype_to_string::UNDEFINED TILETYPE: " << static_cast<int>(tile_type) << "\n";
 			return "DEFAULT";
 		}
+	}
+
+#pragma endregion
+
+#pragma region Oritentation
+
+	static std::string orientation_to_string(Orientation orientation)
+	{
+		switch (orientation)
+		{
+		case Orientation::DOWN:
+			return "DOWN";
+		case Orientation::UP:
+			return "UP";
+		case Orientation::LEFT:
+			return "LEFT";
+		case Orientation::RIGHT:
+			return "RIGHT";
+		default:
+			std::cout << "ERROR::GLOBALS::orientation_to_string::UNDEFINED LAYER: " << 
+				static_cast<int>(orientation) << "\n";
+			return "DOWN";
+		}
+	}
+
+	static Orientation string_to_orientation(std::string orientation)
+	{
+		if (orientation == "DOWN")
+			return Orientation::DOWN;
+		if (orientation == "UP")
+			return Orientation::UP;
+		if (orientation == "LEFT")
+			return Orientation::LEFT;
+		if (orientation == "RIGHT")
+			return Orientation::RIGHT;
+
+		std::cout << "ERROR::GLOBAL::string_to_orientation::UNDEFINED STRING: " << orientation << "\n";
+		return Orientation::DOWN;
 	}
 
 #pragma endregion

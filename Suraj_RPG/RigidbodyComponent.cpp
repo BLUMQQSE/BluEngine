@@ -58,6 +58,7 @@ Json::Value RigidbodyComponent::serialize_json()
 	obj["max-velocity"] = max_velocity;
 	obj["acceleration"] = acceleration;
 	obj["deceleration"] = deceleration;
+	obj["orientation"] = Global::orientation_to_string(current_orientation);
 
 	return obj;
 }
@@ -67,6 +68,7 @@ void RigidbodyComponent::unserialize_json(Json::Value obj)
 	max_velocity = obj["max-velocity"].asFloat();
 	acceleration = obj["acceleration"].asFloat();
 	deceleration = obj["deceleration"].asFloat();
+	current_orientation = Global::string_to_orientation(obj["orientation"].asString());
 }
 
 #pragma endregion

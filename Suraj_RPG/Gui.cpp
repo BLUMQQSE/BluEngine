@@ -111,8 +111,7 @@ void Button::update()
 
 void Button::add_to_buffer(sf::View* view)
 {
-	if (view)
-		set_view(view);
+	set_view(view);
 	//Renderer::add(Renderer::RenderObject(&shape, SortingLayer::UI, id + 10, view));
 	//Renderer::add(Renderer::RenderObject(&text, SortingLayer::UI, id + 10, view));
 }
@@ -129,7 +128,7 @@ void Button::set_position(float x, float y)
 	
 }
 
-const bool Button::is_pressed() const
+const bool Button::is_pressed() 
 {
 	return button_state == ButtonState::BTN_PRESSED;
 }
@@ -917,8 +916,7 @@ void InputBox::update_sfml(sf::Event sfEvent)
 
 void InputBox::update()
 {
-	if (
-		Input::get_mouse_down(Input::Mouse::LEFT))
+	if (Input::get_mouse_down(Input::Mouse::LEFT))
 	{
 		if (box.getGlobalBounds().contains(Input::mouse_position( get_view() )) && !selected)
 			set_selected(true);

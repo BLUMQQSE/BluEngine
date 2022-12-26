@@ -37,7 +37,6 @@ private:
 
     sf::Vector2i size = sf::Vector2i(32, 32);
     std::string file_path;
-    const std::string sprite_path = "Resources/Images/Sprites/";
 
 };
 

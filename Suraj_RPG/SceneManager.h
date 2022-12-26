@@ -14,14 +14,12 @@ class SceneManager
 public:
 
 	static std::string get_default_scene();
-	static std::string get_save_name();
 	static std::string get_active_scene_name();
 
-	static void init(std::string save_name, Scene* active_scene);
+	static void init(Scene* active_scene);
+	static void destroy();
 
 	static Scene* active_scene;
-
-	static void update();
 
 	static void load_scene(std::string scene_name);
 	/// <summary>
@@ -49,9 +47,7 @@ public:
 	/// <summary>
 	/// Instantiates game objects into the active scene.
 	/// </summary>
-	/// <param name="on_next_update">If true, delays adding the game object until the next scene. This should be set when
-	/// instantiating game objects while in a game object constructor to avoid memory access issues.</param>
-	static void instantiate_gameobject(GameObject* game_object, bool on_next_update = false);
+	static void instantiate_gameobject(GameObject* game_object);
 	static void instantiate_gameobject_on_load(GameObject* game_object);
 	static void destroy_gameobject(GameObject* game_object);
 
@@ -63,9 +59,7 @@ public:
 	//static void set_active_scene(std::string scene_name);
 
 private:
-	static std::string save_name;
 	static std::string scenes_file_path;
-
 	//static GameState* game_state;
 	static std::vector<GameObject*> objects_to_add;
 

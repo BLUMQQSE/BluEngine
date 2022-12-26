@@ -26,7 +26,7 @@ public:
 	static sf::Vector2f mouse_position(sf::View* view = NULL);
 	static sf::Vector2i mouse_position_screen();
 	static sf::Vector2i mouse_position_window();
-	static sf::Vector2u mouse_position_grid(float& grid_size, sf::View* view = NULL);
+	static sf::Vector2i mouse_position_grid(float& grid_size, sf::View* view = NULL);
 
 	/// <summary>
 	/// Returns true if the specified key is pressed. The provided key

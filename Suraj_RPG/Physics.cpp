@@ -19,7 +19,7 @@ void Physics::add_to_physics(GameObject* game_object)
 {
 	// Could move code to check for game_object parent and child here
 	// to prevent them from ever being added to a game objects collisions list
-	/*
+	
 	GameObjects object_to_add;
 
 	object_to_add.game_object = game_object;
@@ -38,7 +38,7 @@ void Physics::add_to_physics(GameObject* game_object)
 	//std::cout << "gameobjects before adding " << game_objects.size() <<"\n";
 	game_objects[game_object] = object_to_add;
 	//std::cout << "gameobjects after adding " << game_objects.size() << "\n";
-	*/
+	
 }
 
 void Physics::add_tiles_to_physics(std::vector<Tile*> tiles)
@@ -49,21 +49,13 @@ void Physics::add_tiles_to_physics(std::vector<Tile*> tiles)
 
 void Physics::remove_from_physics(GameObject* game_object)
 {
-	/*
-	// to remove first we must remove reference from all game_objects collisions
-	std::cout << "removing " << game_object->get_info().name << "\n";
-	for (auto i : game_objects)
+	for (auto& i : game_objects)
 	{
-		std::cout << "before: " << i.first->get_info().name << " " << i.second.collisions.size() << "\n";
 		i.second.collisions.erase(game_object);
-		std::cout << "after: " << i.first->get_info().name << " " << i.second.collisions.size() <<"\n";
 	}
 	// then remove from game_objects itself
 	game_objects.erase(game_object);
 	
-	//std::cout << "GameObjects in physics: " << game_objects.size() << " after removing " << game_object->get_info().name << "\n";
-	//std::cout << "GameObjects each GameObject sees: " << game_objects[0].collisions.size() << " after removing " << game_object->get_info().name <<  "\n";
-	*/
 }
 
 void Physics::remove_tiles_from_physics()
@@ -88,26 +80,37 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, Globa
 	return false;
 }
 
-std::vector<Collider> Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore)
+std::vector<BoxColliderComponent*> Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore)
 {
-	std::vector<Collider> colliders;
+	std::vector<BoxColliderComponent*> colliders;
 	for (auto& obj : game_objects)
 	{
-		if (obj.first == object_to_ignore || !mask.layers[static_cast<int>(obj.first->get_info().layer)])
+		if (obj.first == nullptr)
 			continue;
+		if (!obj.first->has_component<BoxColliderComponent>())
+			continue;
+		if (obj.first == object_to_ignore || !mask.layers[static_cast<int>(obj.first->get_info().layer)] ||
+			obj.first->get_info().layer == Layer::PHYSICS_IGNORE)
+			continue;
+
 		if (Vector2f::distance((obj.first->get_transform().position + obj.first->get_transform().local_position), pos) <= radius &&
 			obj.first->has_component<BoxColliderComponent>())
-			colliders.push_back(Collider(obj.first));
+			colliders.push_back(&obj.first->get_component<BoxColliderComponent>());
 	}
 	return colliders;
 }
 
 void Physics::init_matrix()
 {
-	for (int i = 0; i < (int)Layer::_LAST_DONT_REMOVE; i++)
+	for (int i = 0; i < static_cast<int>(Layer::_LAST_DONT_REMOVE); i++)
 	{
 		for (int x = 0; x < (int)Layer::_LAST_DONT_REMOVE; x++)
 		{
+			if (i == static_cast<int>(Layer::PHYSICS_IGNORE) || x == static_cast<int>(Layer::PHYSICS_IGNORE))
+			{
+				collision_matrix[i][x] = false;
+				continue;
+			}
 			collision_matrix[i][x] = true;
 		}
 	}
@@ -115,10 +118,14 @@ void Physics::init_matrix()
 
 void Physics::check_collisions()
 {
+	// need to work out how I'll iterate over this
 	for (auto& active_object : game_objects)
 	{
 		if (active_object.first == nullptr)
+		{
+			std::cout << "null object as active object\n";
 			continue;
+		}
 		if (!active_object.first->has_component<BoxColliderComponent>())
 			continue;
 		if (!active_object.first->is_active())
@@ -135,9 +142,8 @@ void Physics::check_collisions()
 			continue;
 
 
-		/*
-		* Here can handle tile collisions
-		*/
+		// Here can handle tile collisions
+		
 		/*
 		if (!active_collider->is_trigger())
 		{
@@ -195,7 +201,10 @@ void Physics::check_collisions()
 		for (auto& checking_object : active_object.second.collisions)
 		{
 			if (checking_object.first == nullptr)
+			{
+				std::cout << "checking object is null\n";
 				continue;
+			}
 			if (!checking_object.first->has_component<BoxColliderComponent>())
 				continue;
 			if (!checking_object.first->is_active())
@@ -217,6 +226,8 @@ void Physics::check_collisions()
 
 			if (!checking_collider)
 				continue;
+
+
 			if (!checking_collider->is_active())
 				continue;
 			if (active_collider->is_trigger() && checking_collider->is_trigger())
@@ -255,6 +266,7 @@ void Physics::check_collisions()
 				continue;
 			}
 
+			// when it comes to freezing position, should freeze by parent most object
 			/*
 			//here prevent moving into the collider and ensure does not phase through the object
 			if (active_rigid)

@@ -6,7 +6,6 @@
 
 namespace bm98::core
 {
-std::string SceneManager::save_name = "GameState_Should_Change_This";
 std::string SceneManager::scenes_file_path = "Data/Scenes/";
 std::vector<GameObject*> SceneManager::objects_to_add;
 Scene* SceneManager::active_scene = nullptr;
@@ -17,52 +16,43 @@ std::string SceneManager::get_default_scene()
 	return "default.json";
 }
 
-std::string SceneManager::get_save_name()
-{
-	return save_name;
-}
 
 std::string SceneManager::get_active_scene_name()
 {
 	if (active_scene)
+	{
 		return active_scene->get_name();
+	}
 
 	return get_default_scene();
 }
 
-void SceneManager::init(std::string s_n, Scene* scene)
+void SceneManager::init(Scene* scene)
 {
 	//game_state = g_s;
 	active_scene = scene;
-	save_name = s_n;
 }
 
-/// <summary>
-/// TODO: This may need safety checks later to not load objects into next scene
-/// </summary>
-void SceneManager::update()
+void SceneManager::destroy()
 {
-	for (auto& obj : objects_to_add)
-		active_scene->insert_gameobject(obj);
-
-	objects_to_add.clear();
-
-
+	active_scene = nullptr;
 }
 
 void SceneManager::load_scene(std::string scene_name)
 {
 	if (active_scene->get_name() != scene_name)
+	{
 		save_scene();
-	
-	// clear scene is clearly the issue...
+	}
 	active_scene->clear_scene();
 
-	Json::Value obj = FileManager::load_from_file(save_name + scenes_file_path + scene_name);
-	
+
+	Json::Value obj = FileManager::load_from_file(FileManager::get_save_name() + scenes_file_path + scene_name);
+
 	active_scene->set_name(scene_name);
 
 	active_scene->unserialize_json(obj);
+
 }
 
 void SceneManager::load_scene_prefab(std::string scene_name)
@@ -79,19 +69,20 @@ void SceneManager::load_scene_prefab(std::string scene_name)
 
 void SceneManager::save_scene(bool save_everything)
 {
+	std::cout << "save_scene()\n";
 	if (save_everything)
 	{
-		FileManager::save_to_file_styled(active_scene->serialize_json(), save_name + scenes_file_path + active_scene->get_name());
+		FileManager::save_to_file_styled(active_scene->serialize_json(), FileManager::get_save_name() + scenes_file_path + active_scene->get_name());
 		active_scene->clear_scene();
 		return;
 	}
 
-	FileManager::save_to_file_styled(active_scene->serialize_destroyed_objects(), save_name + scenes_file_path + active_scene->get_name());
+	FileManager::save_to_file_styled(active_scene->serialize_destroyed_objects(), FileManager::get_save_name() + scenes_file_path + active_scene->get_name());
 }
 
 void SceneManager::save_scene(Scene* scene)
 {
-	FileManager::save_to_file_styled(scene->serialize_json(), save_name + scenes_file_path + scene->get_name());
+	FileManager::save_to_file_styled(scene->serialize_json(), FileManager::get_save_name() + scenes_file_path + scene->get_name());
 }
 
 void SceneManager::clear_active_scene()
@@ -105,14 +96,9 @@ void SceneManager::save_scene_prefab(Scene* scene)
 
 }
 
-void SceneManager::instantiate_gameobject(GameObject* game_object, bool on_next_update)
+void SceneManager::instantiate_gameobject(GameObject* game_object)
 {
-	if (on_next_update)
-	{
-		objects_to_add.push_back(game_object);
-	}
-	else
-		active_scene->insert_gameobject(game_object);
+	active_scene->insert_gameobject(game_object);
 }
 
 void SceneManager::instantiate_gameobject_on_load(GameObject* game_object)

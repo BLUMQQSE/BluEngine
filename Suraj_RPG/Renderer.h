@@ -47,11 +47,21 @@ public:
 
 	};
 
-	static void init(RenderTarget* render_target);
+	static void init(RenderTarget* render_target, RenderTarget* dev_render_target);
 
 	static void add(RenderObject render_object);
 	static void remove(sf::Drawable* drawable);
 	static void remove(RenderObject render_object);
+
+	/// <summary>
+	/// Returns true if element is top ui element under the mouse.
+	/// ASSUMES ALL UI ELEMENTS USE A RECTANGLE SHAPE. ACCOUNT FOR THIS WHEN CHANGING UI
+	/// IN FUTURE.
+	/// </summary>
+	/// <param name="drawable"></param>
+	/// <param name=""></param>
+	/// <returns></returns>
+	static bool top_ui_under_mouse(sf::Drawable* drawable, sf::View* view = nullptr);
 
 	/// <summary>
 	/// Updates render objects after a change has been made to its sorting_layer or z_order
@@ -68,6 +78,7 @@ public:
 	static void clear();
 
 	static sf::Vector2u get_window_size();
+	static sf::RenderTarget* get_dev_window();
 
 	static const unsigned& get_id();
 	static void increase_id();
@@ -76,6 +87,7 @@ protected:
 
 private:
 	static RenderTarget* window;
+	static RenderTarget* dev_window;
 
 	struct cmpStruct
 	{

@@ -90,16 +90,16 @@ sf::Vector2i Input::mouse_position_window()
     return mouse_pos_window;
 }
 
-sf::Vector2u Input::mouse_position_grid(float& grid_size, sf::View* view)
+sf::Vector2i Input::mouse_position_grid(float& grid_size, sf::View* view)
 {
     if (view)
     {
         window->setView(*view);
         sf::Vector2f temp = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
-        sf::Vector2u grid_view = sf::Vector2u(
-            static_cast<unsigned>(temp.x) / static_cast<unsigned>(grid_size),
-            static_cast<unsigned>(temp.y) / static_cast<unsigned>(grid_size)
+        sf::Vector2i grid_view = sf::Vector2i(
+            static_cast<int>(temp.x) / static_cast<int>(grid_size),
+            static_cast<int>(temp.y) / static_cast<int>(grid_size)
         );
 
         window->setView(window->getDefaultView());
@@ -107,24 +107,33 @@ sf::Vector2u Input::mouse_position_grid(float& grid_size, sf::View* view)
         return grid_view;
     }
 
-    return sf::Vector2u(
-        static_cast<unsigned>(mouse_pos_view.x) / static_cast<unsigned>(grid_size),
-        static_cast<unsigned>(mouse_pos_view.y) / static_cast<unsigned>(grid_size)
+    return sf::Vector2i(
+        static_cast<int>(mouse_pos_view.x) / static_cast<int>(grid_size),
+        static_cast<int>(mouse_pos_view.y) / static_cast<int>(grid_size)
     );
 }
 
 bool Input::get_action(std::string key)
 {
+    if (key_states.find(key) == key_states.end())
+        return false;
+    
     return key_states.at(key) == PressedState::PRESSED;
 }
 
 bool Input::get_action_down(std::string key)
 {
+    if (key_states.find(key) == key_states.end())
+        return false;
+    
     return key_states.at(key) == PressedState::PRESSED_FRAME;
 }
 
 bool Input::get_action_up(std::string key)
 {
+    if (key_states.find(key) == key_states.end())
+        return false;
+    
     return key_states.at(key) == PressedState::RELEASED_FRAME;
 }
 

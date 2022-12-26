@@ -34,9 +34,6 @@
     <Filter Include="Interfaces">
       <UniqueIdentifier>{c10982bf-a423-499c-90b6-1cb97d9b5e70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Entities\GameObjects">
-      <UniqueIdentifier>{e0a43489-f210-4b2f-b8c9-454eef11b065}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripts">
       <UniqueIdentifier>{98f24351-850e-4551-a204-9a495bbd5011}</UniqueIdentifier>
     </Filter>
@@ -203,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="DropDownComponent.cpp">
       <Filter>Components\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="DropDownComponent.h">
       <Filter>Components\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,7 +13,7 @@ class Component : public IData
 {
 public:
 	Component();
-	~Component();
+	virtual ~Component();
 
 	/// <summary>
 	/// First function called when a game object is being initialized in a scene.
@@ -52,7 +52,7 @@ public:
 
 
 protected:
-	bool active;
+	bool active = true;
 	GameObject* game_object;
 
 

@@ -8,10 +8,9 @@
 #include "Input.h"
 #include "Physics.h"
 #include "Debug.h"
+#include <windows.h>
 namespace bm98::core
 {
-#pragma region GAME
-#pragma region PUBLIC
 
 Game::Game()
 {
@@ -25,7 +24,7 @@ Game::Game()
 
     ResourceManager::load_resources();
     //renderer = new Renderer(window);
-    Renderer::init(window);
+    Renderer::init(window, dev_window);
     Input::init(window);
     Physics::init();
 
@@ -36,11 +35,10 @@ Game::Game()
     Input::load_keybinds_from_file("Editor_State", "Config/editorstate_keybinds.ini");
     Input::load_keybinds_from_file("Game_State", "Config/gamestate_keybinds.ini");
     Input::load_keybinds_from_file("Settings_State", "Config/settingsstate_keybinds.ini");
+    
+    Input::load_keybinds_from_file("Dev_Window", "Config/dev_window_keybinds.ini");
+
     Input::change_keybinds_state("Main_Menu_State");
-
-    //std::cout << ResourceManager::get_texture("mainmenu_bg.png").getSize().x << "SIZE\n";
-
-
 
     init_states();
 }
@@ -54,8 +52,19 @@ Game::~Game()
     }
 
     delete window;
+    delete dev_window;
     //delete renderer;
     FileManager::save_to_file_styled(serialize_json(), "Data/game.json");
+}
+
+void Game::run()
+{
+    while (window->isOpen())
+    {
+        update_delta_time();
+        update();
+        render();
+    }
 }
 
 void Game::update_sfml_events()
@@ -77,9 +86,15 @@ void Game::update_sfml_events()
             Input::update_mouse_scroll(sfevent.mouseWheel.delta);
         }
 
-
-        if(sfevent.type == sf::Event::TextEntered)
-            states.top()->update_sfml(sfevent);
+        if (sfevent.type == sf::Event::GainedFocus)
+            if(states.size() > 0)
+                Input::change_keybinds_state(states.top()->get_state_name());
+        
+    }
+    while (dev_window->pollEvent(sfevent))
+    {
+        if (sfevent.type == sf::Event::GainedFocus)
+            Input::change_keybinds_state("Dev_Window");
     }
 
 }
@@ -158,33 +173,26 @@ void Game::update()
         window->close();
     }
 
+    if (in_dev_window)
+    {
+        //here handle moving in dev view movement
+    }
+
 }
 
 
 void Game::render()
 {
     window->clear();
+    dev_window->clear();
 
     if (!states.empty())
         states.top()->render();
     Renderer::render();
     window->display();
+    dev_window->display();
     //Renderer::clear();
 }
-
-void Game::run()
-{
-    while (window->isOpen())
-    {
-        update_delta_time();
-        update();
-        render();
-    }
-}
-
-#pragma endregion
-
-#pragma region PRIVATE
 
 void Game::init_variables()
 {
@@ -196,10 +204,31 @@ void Game::init_variables()
 void Game::init_graphics_settings()
 {
     graphics_settings.load_from_file("Config/graphics.ini");
+    dev_graphics_settings.load_from_file("Config/dev_window_graphics.ini");
 }
 
 void Game::init_window()
 {
+
+
+    if (dev_graphics_settings.full_screen)
+    {
+        dev_window = new sf::RenderWindow(dev_graphics_settings.resolution, dev_graphics_settings.game_title,
+            sf::Style::Fullscreen, dev_graphics_settings.context_settings);
+    }
+    else
+        dev_window = new sf::RenderWindow(dev_graphics_settings.resolution, dev_graphics_settings.game_title,
+            sf::Style::Titlebar | sf::Style::Close, dev_graphics_settings.context_settings);
+
+    dev_window->setFramerateLimit(dev_graphics_settings.framerate_limit);
+    dev_window->setVerticalSyncEnabled(dev_graphics_settings.vertical_sync);
+    dev_window->setKeyRepeatEnabled(false);
+    dev_window->setPosition(sf::Vector2i(-2500, 1200));
+
+    HWND console = GetConsoleWindow();
+    SetWindowPos(console, 0, -2500 + dev_window->getSize().x, 1200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+
     if (graphics_settings.full_screen)
     {
         window = new sf::RenderWindow(graphics_settings.resolution, graphics_settings.game_title,
@@ -212,6 +241,8 @@ void Game::init_window()
     window->setFramerateLimit(graphics_settings.framerate_limit);
     window->setVerticalSyncEnabled(graphics_settings.vertical_sync);
     window->setKeyRepeatEnabled(false);
+
+    
 }
 
 void Game::init_states()
@@ -268,9 +299,5 @@ void Game::check_first_launch()
     }
 }
 */
-#pragma endregion
 
-
-#pragma endregion
-#pragma endregion
 }
