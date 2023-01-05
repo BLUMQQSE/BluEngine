@@ -3,6 +3,8 @@
 #include "Collisions.h"
 #include "GameObject.h"
 #include "Tile.h"
+#include "Math.h"
+#include "CapsuleColliderComponent.h"
 namespace bm98::core
 {
 std::unordered_map<GameObject*, Physics::GameObjects> Physics::game_objects;
@@ -19,7 +21,7 @@ void Physics::add_to_physics(GameObject* game_object)
 {
 	// Could move code to check for game_object parent and child here
 	// to prevent them from ever being added to a game objects collisions list
-	
+
 	GameObjects object_to_add;
 
 	object_to_add.game_object = game_object;
@@ -38,7 +40,7 @@ void Physics::add_to_physics(GameObject* game_object)
 	//std::cout << "gameobjects before adding " << game_objects.size() <<"\n";
 	game_objects[game_object] = object_to_add;
 	//std::cout << "gameobjects after adding " << game_objects.size() << "\n";
-	
+
 }
 
 void Physics::add_tiles_to_physics(std::vector<Tile*> tiles)
@@ -55,7 +57,7 @@ void Physics::remove_from_physics(GameObject* game_object)
 	}
 	// then remove from game_objects itself
 	game_objects.erase(game_object);
-	
+
 }
 
 void Physics::remove_tiles_from_physics()
@@ -77,29 +79,50 @@ void Physics::fixed_update()
 
 bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, Global::LayerMask mask)
 {
-	return false;
-}
+	FloatConvex ray = FloatConvex::polygon(origin, { Vector2f::zero(), direction * distance });
 
-std::vector<BoxColliderComponent*> Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore)
-{
-	std::vector<BoxColliderComponent*> colliders;
 	for (auto& obj : game_objects)
 	{
 		if (obj.first == nullptr)
 			continue;
-		if (!obj.first->has_component<BoxColliderComponent>())
+		if (!mask.layers[static_cast<int>(obj.first->get_info().layer)] ||
+			obj.first->get_info().layer == Layer::PHYSICS_IGNORE)
 			continue;
+
+		if (!obj.first->has_component<BoxColliderComponent>() && !obj.first->has_component<CapsuleColliderComponent>())
+			continue;
+
+		if (obj.first->has_component<BoxColliderComponent>())
+			return obj.first->get_component<BoxColliderComponent>().intersects(ray);
+		else
+			return obj.first->get_component<CapsuleColliderComponent>().intersects(ray);
+		
+	}
+	return false;
+}
+/*
+std::vector<ColliderComponent*> Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore)
+{
+	FloatConvex circle = FloatConvex::circle(pos, radius);
+	std::vector<ColliderComponent*> colliders;
+	for (auto& obj : game_objects)
+	{
+		if (obj.first == nullptr)
+			continue;
+		
+		if (!obj.first->has_component<ColliderComponent>())
+			continue;
+		// will need to improve so we ignore object_to_ignore, all its ancestors, and all its posterity
 		if (obj.first == object_to_ignore || !mask.layers[static_cast<int>(obj.first->get_info().layer)] ||
 			obj.first->get_info().layer == Layer::PHYSICS_IGNORE)
 			continue;
 
-		if (Vector2f::distance((obj.first->get_transform().position + obj.first->get_transform().local_position), pos) <= radius &&
-			obj.first->has_component<BoxColliderComponent>())
-			colliders.push_back(&obj.first->get_component<BoxColliderComponent>());
+		if(circle.intersects(obj.first->get_component<ColliderComponent>().get_collider_bounds()))
+			colliders.push_back(&obj.first->get_component<ColliderComponent>());
 	}
 	return colliders;
 }
-
+*/
 void Physics::init_matrix()
 {
 	for (int i = 0; i < static_cast<int>(Layer::_LAST_DONT_REMOVE); i++)
@@ -143,7 +166,7 @@ void Physics::check_collisions()
 
 
 		// Here can handle tile collisions
-		
+
 		/*
 		if (!active_collider->is_trigger())
 		{
@@ -201,10 +224,8 @@ void Physics::check_collisions()
 		for (auto& checking_object : active_object.second.collisions)
 		{
 			if (checking_object.first == nullptr)
-			{
-				std::cout << "checking object is null\n";
 				continue;
-			}
+			
 			if (!checking_object.first->has_component<BoxColliderComponent>())
 				continue;
 			if (!checking_object.first->is_active())

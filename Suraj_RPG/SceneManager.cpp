@@ -40,6 +40,7 @@ void SceneManager::destroy()
 
 void SceneManager::load_scene(std::string scene_name)
 {
+	std::cout << "load_scene(" << scene_name << ")\n";
 	if (active_scene->get_name() != scene_name)
 	{
 		save_scene();
@@ -69,15 +70,13 @@ void SceneManager::load_scene_prefab(std::string scene_name)
 
 void SceneManager::save_scene(bool save_everything)
 {
-	std::cout << "save_scene()\n";
-	if (save_everything)
-	{
-		FileManager::save_to_file_styled(active_scene->serialize_json(), FileManager::get_save_name() + scenes_file_path + active_scene->get_name());
-		active_scene->clear_scene();
-		return;
-	}
+	std::cout << "save_scene("<<active_scene->get_name()<<")\n";
 
+	FileManager::save_to_file_styled(active_scene->serialize_undestroyed_objects(), FileManager::get_save_name() + scenes_file_path + "dont_destroy_on_load_objects.json");
 	FileManager::save_to_file_styled(active_scene->serialize_destroyed_objects(), FileManager::get_save_name() + scenes_file_path + active_scene->get_name());
+
+	if (save_everything)
+		active_scene->clear_scene(true);
 }
 
 void SceneManager::save_scene(Scene* scene)

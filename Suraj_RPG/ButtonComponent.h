@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "IRenderable.h"
+#include "Math.h"
 namespace bm98
 {
 enum class ButtonState
@@ -16,7 +17,7 @@ public:
 
     ButtonComponent();
 	ButtonComponent(float width, float height, std::string text, unsigned character_size, 
-		sf::Color text_idle, sf::Color text_hover, short unsigned id = 0);
+		short unsigned id = 0);
 	virtual ~ButtonComponent();
 
 	virtual void init() override;
@@ -26,6 +27,8 @@ public:
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
+
+	virtual void set_active(bool active) override;
 
 	const bool is_pressed() const;
 	bool mouse_in_bounds();

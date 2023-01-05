@@ -17,7 +17,7 @@ void SceneChange::on_collision_enter(Collision info)
 	if (info.game_object->get_info().tag == Tag::PLAYER)
 	{
 		info.game_object->set_position(destination.x, destination.y);
-		//std::cout << "destination : " << destination_scene_name<<"\n";
+		std::cout << "destination : " << destination_scene_name<<"\n";
 		if (destination_scene_name != SceneManager::get_active_scene_name())
 			SceneManager::load_scene(destination_scene_name);
 	}
@@ -35,8 +35,7 @@ Json::Value SceneChange::serialize_json()
 {
 	Json::Value obj;
 
-	obj["destination-x"] = destination.x;
-	obj["destination-y"] = destination.y;
+	obj["destination"] = destination.serialize_json();
 	obj["destination-scene"] = destination_scene_name;
 
 	return obj;
@@ -44,7 +43,7 @@ Json::Value SceneChange::serialize_json()
 
 void SceneChange::unserialize_json(Json::Value obj)
 {
-	destination = Vector2f(obj["desination-x"].asFloat(), obj["destination-y"].asFloat());
+	destination.unserialize_json(obj["destination"]);
 	destination_scene_name = obj["destination-scene"].asString();
 }
 

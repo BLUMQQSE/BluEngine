@@ -1102,6 +1102,11 @@ void Label::set_position(float x, float y)
 	text_content.setPosition(sf::Vector2f(x, y));
 }
 
+void Label::set_text(std::string new_text)
+{
+	text_content.setString(new_text);
+}
+
 #pragma endregion
 
 
@@ -1273,6 +1278,126 @@ void Panel::clear()
 
 #pragma endregion
 
+
+#pragma region SLIDER
+
+Slider::Slider()
+{
+}
+
+Slider::Slider(float x, float y, float width, float min_value, float max_value, 
+	float default_value, bool whole_numbers)
+{
+	set_position(x, y);
+	shape.setPosition(position);
+	shape.setSize(Vector2f(width, SLIDER_HEIGHT));
+	shape.setOutlineThickness(1.f);
+	shape.setFillColor(sf::Color::Transparent);
+	shape.setOutlineColor(sf::Color::Black);
+
+	slider_back.setPosition(position.x, position.y + 12);
+	slider_back.setSize(Vector2f(width, SLIDER_HEIGHT / 4));
+	slider_back.setOutlineThickness(1.f);
+	slider_back.setFillColor(sf::Color(180, 180, 180, 255));
+	slider_back.setOutlineColor(sf::Color::Black);
+
+	this->width = width;
+	this->min_val = min_value;
+	this->max_val = max_value;
+	this->current_val = default_value;
+	this->whole_numbers = whole_numbers;
+
+	float perc = default_value / (max_value - min_value);
+	slider.setPosition( x + ((width * perc) - (slider.getSize().x / 2)), y - 5);
+	slider.setFillColor(sf::Color::Black);
+	slider.setSize(Vector2f(SLIDER_HEIGHT / 1.5, SLIDER_HEIGHT + 10));
+	slider.setOutlineThickness(1.f);
+	slider.setOutlineColor(sf::Color::White);
+
+	set_sorting_layer(SortingLayer::UI, false);
+	Renderer::add(Renderer::RenderObject(&slider_back, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
+	Renderer::add(Renderer::RenderObject(&slider, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
+
+}
+
+Slider::~Slider()
+{
+	Renderer::remove(&slider_back);
+	Renderer::remove(&slider);
+}
+
+void Slider::update()
+{
+	if (!mouse_in_bounds())
+		return;
+
+	if (mouse_on_slider() && Input::get_mouse(Input::Mouse::LEFT))
+		held = true;
+	if (Input::get_mouse_up(Input::Mouse::LEFT))
+		held = false;
+
+	if (held)
+	{
+		float x = Input::mouse_position(get_view()).x;
+
+		if (x < position.x)
+			x = position.x;
+		if (x > position.x + width)
+			x = position.x + width;
+
+		float perc = (x - position.x) / width;
+		current_val = (max_val - min_val) * perc;
+
+		if (whole_numbers)
+		{
+			current_val = std::round(current_val);
+		}
+
+		slider.setPosition(x-8, position.y - 5);
+		return;
+	}
+	
+	if (mouse_in_bounds() && Input::get_mouse_down(Input::Mouse::LEFT))
+	{
+		float x = std::max(Input::mouse_position(get_view()).x, position.x);
+		x = std::min(x, position.x + width);
+
+		float perc = (x - position.x) / width;
+		current_val = (max_val - min_val) * perc;
+
+		if (whole_numbers)
+		{
+			current_val = std::round(current_val);
+		}
+
+		slider.setPosition(x-8, position.y - 5);
+		
+	}
+	
+}
+
+bool Slider::mouse_in_bounds()
+{
+	return shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position(get_view())));
+}
+
+bool Slider::mouse_on_slider()
+{
+	return slider.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position(get_view())));
+}
+
+const float Slider::get_value() const
+{
+	return current_val;
+}
+
+const float Slider::get_width() const
+{
+	return width;
+}
+
+
+#pragma endregion
 
 
 

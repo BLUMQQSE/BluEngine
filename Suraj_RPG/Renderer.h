@@ -15,13 +15,14 @@ public:
 	struct RenderObject
 	{
 		RenderObject(sf::Drawable* drawable, bool& render, SortingLayer& sorting_layer,
-			unsigned char& z_order, sf::View** view = nullptr)
+			unsigned char& z_order, sf::View** view = nullptr, sf::Shader** shader = nullptr)
 			:render(render), sorting_layer(sorting_layer), z_order(z_order)
 		{
 			this->sorting_layer = sorting_layer;
 			this->drawable = drawable;
 			this->z_order = z_order;
 			this->view = view;
+			this->shader = shader;
 			this->private_entry_key = Renderer::get_id();
 			Renderer::increase_id();
 		}
@@ -33,6 +34,7 @@ public:
 			this->sorting_layer = renderable->get_sorting_layer();
 			this->z_order = renderable->get_z_order();
 			this->view = renderable->get_view_pointer();
+			this->shader = renderable->get_shader_pointer();
 			this->drawable = drawable;
 			this->private_entry_key = Renderer::get_id();
 			Renderer::increase_id();
@@ -43,6 +45,7 @@ public:
 		sf::Drawable* drawable;
 		unsigned char& z_order;
 		sf::View** view;
+		sf::Shader** shader;
 		unsigned private_entry_key;
 
 	};

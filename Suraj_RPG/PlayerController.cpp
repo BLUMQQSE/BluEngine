@@ -8,6 +8,13 @@
 #include "ButtonComponent.h"
 #include "Physics.h"
 #include "CameraComponent.h"
+#include "AudioSource.h"
+#include "ResourceManager.h"
+#include "DropDownComponent.h"
+#include "ItemData.h"
+#include "DataAsset.h"
+#include "Inventory.h"
+#include "CapsuleColliderComponent.h"
 namespace bm98
 {
 using namespace core;
@@ -18,12 +25,22 @@ bm98::PlayerController::PlayerController()
 
 bm98::PlayerController::~PlayerController()
 {
+	//delete inv;
 }
 
 void bm98::PlayerController::init()
 {
 	anim = &game_object->get_component<AnimationComponent>();
 	rigid = &game_object->get_component<RigidbodyComponent>();
+	//inv = &game_object->get_component<Inventory>();
+
+	//std::cout << "inventory size: " << inv->get_size();
+	//std::cout << "first item capacity" << inv->get();
+
+	std::cout << "has_component<ColliderComponent>() : " << std::boolalpha << game_object->has_component<ColliderComponent>() << "\n";
+	std::cout << "has_component<BoxColliderComponent>() : " << std::boolalpha << game_object->has_component<BoxColliderComponent>() << "\n";
+	std::cout << "has_component<CapsuleColliderComponent>() : " << std::boolalpha << game_object->has_component<CapsuleColliderComponent>() << "\n";
+	std::cout << game_object->get_info().name << "\n";
 }
 
 void PlayerController::awake()
@@ -34,19 +51,29 @@ void PlayerController::awake()
 
 void bm98::PlayerController::update()
 {
+	
 	update_input();
 	update_animations();
 	if (Input::get_action_down("INTERACT"))
 	{
+		if (game_object->check_for_child("pants"))
+		{
+			SceneManager::destroy_gameobject(SceneManager::find("pants", game_object));
+			return;
+		}
 		GameObject* pants = new GameObject();
+		pants->info.name = "pants";
 		pants->add_component<SpriteComponent>("pants.png");
+		pants->add_component<AudioSource>();
 		SpriteComponent* sc = &pants->get_component<SpriteComponent>();
 		pants->add_component<ChildAnimationComponent>();
-		sc->set_layer(SortingLayer::ACTOR);
+		sc->set_sorting_layer(SortingLayer::ACTOR);
 		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
 		pants->set_parent(this->game_object);
 		this->game_object->add_child(pants);
+
 		SceneManager::instantiate_gameobject(pants);
+
 	}
 	camera->set_position(game_object->transform.position);
 }
@@ -59,7 +86,11 @@ void bm98::PlayerController::late_update()
 void bm98::PlayerController::fixed_update()
 {
 	rigid->apply_acceleration(movement_input.x, movement_input.y);
-	
+
+	//Global::LayerMask mask = Global::LayerMask(true);
+	//if (Physics::raycast(game_object->get_transform().position, movement_input.get_normalized(), 80,
+		//mask))
+		//std::cout << "raycast working...\n";
 }
 
 void bm98::PlayerController::add_to_buffer(sf::View*)
@@ -114,8 +145,7 @@ void bm98::PlayerController::update_input()
 
 	if (Input::get_action_down("INTERACT"))
 	{
-		//SceneManager::destroy_gameobject(dummy);
-		//dummy = nullptr;
+
 	}
 	if (Input::get_action("LEFT"))
 		movement_input.x = -1;
@@ -130,6 +160,17 @@ void bm98::PlayerController::update_input()
 	{
 		attack = true;
 	}
+
+	if (movement_input != Vector2f::zero())
+	{
+		game_object->get_component<AudioSource>().set_sound("footsteps.wav");
+		game_object->get_component<AudioSource>().play();
+	}
+	else
+	{
+		game_object->get_component<AudioSource>().stop();
+	}
+
 }
 void PlayerController::update_animations()
 {

@@ -29,16 +29,20 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 {
 	state_name = "Game_State";
 
-	//issue lies somewhere in constructor
-
 	FileManager::set_save_name("Saves/" +game_save_name + "/");
 
-	// issue with unserializing 
 	unserialize_json(FileManager::load_from_file(FileManager::get_save_name() + "gamestate.json"));
 
 	active_scene = new Scene(active_scene_name);
 	SceneManager::init(active_scene);
 	SceneManager::load_scene(active_scene_name);
+	//load in dont destroy objects on load
+	// 
+	std::string n = active_scene->get_name();
+	active_scene->unserialize_json(FileManager::load_from_file(FileManager::get_save_name() + "Data/Scenes/dont_destroy_on_load_objects.json"));
+	active_scene->set_name(n);
+
+	active_scene->init();
 
 	init_fonts();
 	init_view();
@@ -124,6 +128,7 @@ void GameState::fixed_update()
 {
 	State::fixed_update();
 
+
 	active_scene->fixed_update();
 }
 
@@ -141,9 +146,7 @@ void GameState::render()
 Json::Value GameState::serialize_json()
 {
 	Json::Value obj;
-	std::cout << "flag 1  ";
 	obj["active-scene-name"] = SceneManager::get_active_scene_name();
-	std::cout << "flag 2\n";
 	return obj;
 }
 
@@ -151,13 +154,10 @@ void GameState::unserialize_json(Json::Value obj)
 {
 	if (obj == Json::Value::null)
 	{
-		std::cout << "obj was null\n";
 		active_scene_name = SceneManager::get_default_scene();
 
-		std::cout << "set name to default\n";
 		FileManager::save_to_file_styled(serialize_json(), FileManager::get_save_name() + "/gamestate.json");
 
-		std::cout << "saved to file\n";
 		return;
 	}
 	active_scene_name = obj["active-scene-name"].asString();

@@ -7,6 +7,8 @@ namespace bm98::core
 class Debug
 {
 public:
+
+	static void init();
 	/// <summary>
 	/// Log provided string to the console.
 	/// </summary>

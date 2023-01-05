@@ -79,7 +79,7 @@ void AnimationComponent::add_animation(const std::string key,
 	float anim_timer, int start_frame_x, int start_frame_y, int frames_x, int frames_y,
 	int frame_width, int frame_height, bool loop_animation, bool must_complete)
 {
-	animations[key] = new Animation(*this->sprite, *this->texture_sheet, anim_timer,
+	animations[key] = new Animation(*this->sprite, *this->texture_sheet, anim_timer * UNIT_SIZE,
 		start_frame_x, start_frame_y, frames_x, frames_y, frame_width, frame_height,
 		loop_animation, must_complete);
 }

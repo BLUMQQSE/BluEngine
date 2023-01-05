@@ -96,25 +96,20 @@ void Renderer::render()
 				window->setView(**f.view);
 			else
 				window->setView(window->getDefaultView());
-			
+		
+		if(f.shader)
+		{
+			window->draw(*f.drawable, *f.shader);
+			dev_window->draw(*f.drawable, *f.shader);
+			continue;
+		}
 		window->draw(*f.drawable);
-		dev_window->setView(dev_window->getDefaultView());
 		dev_window->draw(*f.drawable);
 	}
 }
 
 void Renderer::clear()
 {
-	/*
-	std::set<RenderObject, cmpStruct>::reverse_iterator rit;
-
-	for (rit = render_objects.rbegin(); rit != render_objects.rend(); rit++)
-	{
-		if (rit->sorting_layer != SortingLayer::UI)
-			break;
-		if(rit->drawable)
-	}
-	*/
 	render_objects.clear();
 	id = 0;
 }

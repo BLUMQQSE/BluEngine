@@ -2,9 +2,11 @@
 #include "SettingsState.h"
 #include "GraphicsSettings.h"
 #include "Input.h"
+#include "Time.h"
 #include "Debug.h"
 #include "Gui.h"
 #include "Physics.h"
+#include "Game.h"
 namespace bm98
 {
 using namespace core;
@@ -17,7 +19,9 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 	init_fonts();
 	init_text();
 	init_gui();
-
+	Debug::init();
+	Renderer::add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
+	
 }
 
 SettingsState::~SettingsState()
@@ -34,6 +38,16 @@ SettingsState::~SettingsState()
 	{
 		delete it2->second;
 	}
+
+	for (auto& it3 : volume_sliders)
+		delete it3.second;
+
+	for (auto v : volume_displays)
+	{
+		delete v.second.first;
+		delete v.second.second;
+	}
+
 }
 
 void SettingsState::init_variables()
@@ -61,9 +75,12 @@ void SettingsState::on_end_state()
 
 void SettingsState::update()
 {
+
 	State::update();
 	update_input();
+	
 	Debug::mouse_position_display(font);
+	
 	for (auto& it : buttons)
 	{
 		it.second->update();
@@ -74,34 +91,38 @@ void SettingsState::update()
 		it2.second->update();
 
 	}
+	for (auto& it3 : volume_sliders)
+		it3.second->update();
+
+	Game::get_game_settings().audio_settings.master_volume = volume_sliders.at("MASTER")->get_value() / 100.f;
+	Game::get_game_settings().audio_settings.music_volume = volume_sliders.at("MUSIC")->get_value() / 100.f;
+	Game::get_game_settings().audio_settings.sound_volume = volume_sliders.at("SOUND")->get_value() / 100.f;
+	Game::get_game_settings().audio_settings.ambient_volume = volume_sliders.at("AMBIENT")->get_value() / 100.f;
+
+	for (auto& v : volume_displays)
+		v.second.second->set_text(std::to_string(static_cast<int>(std::round(volume_sliders.at(v.first)->get_value()))) + "%");
 }
 
 void SettingsState::late_update()
 {
+	
 }
 
 void SettingsState::fixed_update()
 {
+
 }
 
 void SettingsState::render()
 {
-	for (auto& it : buttons)
-	{
-		it.second->add_to_buffer();
-	}
-	for (auto& it2 : drop_downs)
-	{
-		it2.second->add_to_buffer();
-	}
-	Renderer::add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
-
+	
 }
 
 void SettingsState::init_gui()
 {
 	init_buttons();
 	init_drop_downs();
+	init_volume_display();
 }
 
 void SettingsState::init_text()
@@ -126,6 +147,24 @@ void SettingsState::init_buttons()
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 }
 
+void SettingsState::init_volume_display()
+{
+	volume_sliders["MASTER"] = new GUI::Slider(700, 400, 400, 0, 100, 100, true);
+	volume_sliders["MUSIC"] = new GUI::Slider(700, 500, 400, 0, 100, 100, true);
+	volume_sliders["SOUND"] = new GUI::Slider(700, 600, 400, 0, 100, 100, true);
+	volume_sliders["AMBIENT"] = new GUI::Slider(700, 700, 400, 0, 100, 100, true);
+
+	volume_displays["MASTER"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 400, 22, font, "MASTER", sf::Color::White),
+		new GUI::Label(700 + volume_sliders.at("MASTER")->get_width() + 10, 400, 22, font, "100%", sf::Color::White));
+	volume_displays["MUSIC"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 500, 22, font, "MUSIC", sf::Color::White),
+		new GUI::Label(700 + volume_sliders.at("MUSIC")->get_width() + 10, 500, 22, font, "100%", sf::Color::White));
+	volume_displays["SOUND"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 600, 22, font, "SOUND", sf::Color::White),
+		new GUI::Label(700 + volume_sliders.at("SOUND")->get_width() + 10, 600, 22, font, "100%", sf::Color::White));
+	volume_displays["AMBIENT"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 700, 22, font, "AMBIENT", sf::Color::White),
+		new GUI::Label(700 + volume_sliders.at("AMBIENT")->get_width() + 10, 700, 22, font, "100%", sf::Color::White));
+
+}
+
 void SettingsState::init_drop_downs()
 {
 	std::vector<std::string> modes_str;
@@ -133,7 +172,7 @@ void SettingsState::init_drop_downs()
 	{
 		modes_str.push_back(std::to_string(i.width) + 'x' + std::to_string(i.height));
 	}
-	drop_downs["RESOLUTION"] = new GUI::DropDownList(100, 100, 150, 30, font,
+	drop_downs["RESOLUTION"] = new GUI::DropDownList(900, 100, 150, 30, font,
 		modes_str);
 
 	//drop_downs["FULLSCREEN"] = new GUI::DropDownList(800, 175, 150, 30, font, screen_list, 2);

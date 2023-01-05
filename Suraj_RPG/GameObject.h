@@ -38,6 +38,25 @@ public:
 		std::string name;
 		Tag tag;
 		Layer layer;
+
+		Json::Value serialize_json()
+		{
+			Json::Value obj;
+
+			obj["name"] = name;
+			obj["tag"] = Global::tag_to_string(tag);
+			obj["physics-layer"] = Global::physics_layer_to_string(layer);
+
+			return obj;
+		}
+
+		void unserialize_json(Json::Value obj)
+		{
+			name = obj["name"].asString();
+			tag = Global::string_to_tag(obj["tag"].asString());
+			layer = Global::string_to_physics_layer(obj["physics-layer"].asString());
+		}
+
 	};
 	struct Transform
 	{
@@ -46,6 +65,27 @@ public:
 		Vector2f local_position;
 		Vector2f rotation;
 		Vector2f scale;
+
+		Json::Value serialize_json()
+		{
+			Json::Value obj;
+
+			obj["position"] = position.serialize_json();
+			obj["local-position"] = local_position.serialize_json();
+			obj["rotation"] = rotation.serialize_json();
+			obj["scale"] = scale.serialize_json();
+
+			return obj;
+		}
+
+		void unserialize_json(Json::Value obj)
+		{
+			position.unserialize_json(obj["position"]);
+			local_position.unserialize_json(obj["local-position"]);
+			rotation.unserialize_json(obj["rotation"]);
+			scale.unserialize_json(obj["scale"]);
+		}
+
 	};
 
 	GameObject();
@@ -53,8 +93,6 @@ public:
 
 
 	Info info;
-	//this transform thing may be a bad idea
-	//difficult to ensure insync with sprite position at all times
 	Transform transform;
 
 	virtual void init();
@@ -75,7 +113,8 @@ public:
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
 	const bool& is_active();
-	void set_active(bool& active);
+	void set_active(bool active);
+	void set_render(bool render);
 
 	void set_parent(GameObject* parent);
 	void add_child(GameObject* child);
@@ -87,6 +126,7 @@ public:
 	const size_t get_unique_runtime_id() const;
 	const Info& get_info() const;
 	const Transform& get_transform() const;
+	const sf::Vector2f get_center() const;
 	GameObject* get_parent();
 	/// <summary>
 	/// Returns the highest parent of a game object.
@@ -99,6 +139,8 @@ public:
 	/// <returns></returns>
 	std::vector<GameObject*> get_all_posterity();
 	const bool check_for_child(GameObject* game_object) const;
+	const bool check_for_child(std::string name) const;
+	GameObject* get_child(std::string name);
 	const bool is_initialized() const;
 
 	// Inherited via IData
@@ -108,23 +150,23 @@ public:
 
 	template <typename T> bool has_component() const
 	{
+		
 		return component_bitset[get_component_type_id<T>()];
 	}
-
 
 	template <typename T, typename... TArgs> void add_component(TArgs&&...mArgs)
 	{
 		//if allready has component, ignore adding it again
 		if (component_bitset[get_component_type_id<T>()] == true)
 			return;
+
 		T* c(new T(std::forward<TArgs>(mArgs)...));
 		c->set_game_object(this);
 		components.push_back(c);
 
-
 		component_array[get_component_type_id<T>()] = c;
 		component_bitset[get_component_type_id<T>()] = true;
-		//return c;
+
 	}
 
 	template <typename T> void remove_component(T* comp)
@@ -169,7 +211,6 @@ private:
 	void init_components();
 	void awake_components();
 	void start_components();
-
 
 	static size_t get_unique_id()
 	{

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Inventory.h"
+#include "ResourceManager.h"
+
 namespace bm98
 {
 Inventory::Inventory()
@@ -9,7 +11,7 @@ Inventory::Inventory()
 
 Inventory::~Inventory()
 {
-	//delete[] content;
+	delete[] content;
 }
 
 void Inventory::init()
@@ -32,7 +34,9 @@ Json::Value Inventory::serialize_json()
 	{
 		Json::Value obj2;
 		obj2["current-capacity"] = content[i].current_capacity;
-		obj2["item"] = content[i].item.serialize_json();
+		if(content[i].current_capacity > 0)
+		obj2["item"] = content[i].item.get_name();
+		obj2["index"] = i;
 		obj["content"].append(obj2);
 	}
 	return obj;
@@ -41,13 +45,16 @@ Json::Value Inventory::serialize_json()
 void Inventory::unserialize_json(Json::Value obj)
 {
 	size = obj["size"].asInt64();
-	int i = 0;
+	
+	content = new InventoryItem[size];
+	
 	for (Json::Value item : obj["content"])
 	{
+		int i = item["index"].asInt64();
 		content[i].current_capacity = item["current-capacity"].asInt64();
-		content[i].item.unserialize_json(item["item"]);
-		//obj["content"].append(content[i].item.serialize_json());
-		i++;
+		if(content[i].current_capacity > 0)
+			content[i].item = *dynamic_cast<ItemData*>(core::ResourceManager::get_data_asset(item["item"].asString()));
+		
 	}
 }
 

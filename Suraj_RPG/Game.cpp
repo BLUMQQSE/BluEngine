@@ -12,6 +12,8 @@
 namespace bm98::core
 {
 
+GameSettings Game::game_settings;
+
 Game::Game()
 {
     //restart_on_launch = true;
@@ -27,6 +29,7 @@ Game::Game()
     Renderer::init(window, dev_window);
     Input::init(window);
     Physics::init();
+    Debug::init();
 
 
     //Set up input
@@ -41,6 +44,8 @@ Game::Game()
     Input::change_keybinds_state("Main_Menu_State");
 
     init_states();
+
+
 }
 
 Game::~Game()
@@ -52,8 +57,7 @@ Game::~Game()
     }
 
     delete window;
-    delete dev_window;
-    //delete renderer;
+    //delete dev_window;
     FileManager::save_to_file_styled(serialize_json(), "Data/game.json");
 }
 
@@ -65,6 +69,11 @@ void Game::run()
         update();
         render();
     }
+}
+
+GameSettings& Game::get_game_settings()
+{
+    return game_settings;
 }
 
 void Game::update_sfml_events()
@@ -107,8 +116,8 @@ void Game::update_delta_time()
     {
         if (Time::fixed_delta_time() >= .02f)
         {
-            states.top()->fixed_update();
             Physics::fixed_update();
+            states.top()->fixed_update();
             Time::reset_fixed_delta();
         }
         else
@@ -188,10 +197,12 @@ void Game::render()
 
     if (!states.empty())
         states.top()->render();
+   
     Renderer::render();
+
     window->display();
     dev_window->display();
-    //Renderer::clear();
+
 }
 
 void Game::init_variables()
@@ -210,7 +221,7 @@ void Game::init_graphics_settings()
 void Game::init_window()
 {
 
-
+    
     if (dev_graphics_settings.full_screen)
     {
         dev_window = new sf::RenderWindow(dev_graphics_settings.resolution, dev_graphics_settings.game_title,
@@ -225,10 +236,14 @@ void Game::init_window()
     dev_window->setKeyRepeatEnabled(false);
     dev_window->setPosition(sf::Vector2i(-2500, 1200));
 
+    dev_window->setView(dev_window->getDefaultView());
+
     HWND console = GetConsoleWindow();
     SetWindowPos(console, 0, -2500 + dev_window->getSize().x, 1200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-
-
+    if (!open_dev_window)
+    {
+        dev_window->close();
+    }
     if (graphics_settings.full_screen)
     {
         window = new sf::RenderWindow(graphics_settings.resolution, graphics_settings.game_title,

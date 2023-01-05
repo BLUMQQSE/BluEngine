@@ -4,10 +4,30 @@
 
 namespace bm98
 {
-
+IRenderable::IRenderable()
+{
+	shader = new sf::Shader();
+}
+IRenderable::~IRenderable()
+{
+	delete shader;
+}
 void IRenderable::set_view(sf::View* view)
 {
 	this->view = view;
+}
+void IRenderable::set_shader(std::pair<std::string, std::string> shader_files, sf::Vector2f light_pos)
+{
+	this->shader->loadFromFile(shader_files.first, shader_files.second);
+	
+	this->shader->setUniform("hasTexture", true);
+	this->shader->setUniform("lightPos", light_pos);
+
+
+}
+void IRenderable::set_uniforms(sf::Vector2f light_pos)
+{
+	shader->setUniform("lightPos", light_pos);
 }
 void IRenderable::set_render(bool render)
 {
@@ -45,6 +65,16 @@ sf::View** IRenderable::get_view_pointer()
 sf::View* IRenderable::get_view()
 {
 	return view;
+}
+
+sf::Shader** IRenderable::get_shader_pointer()
+{
+	return &shader;
+}
+
+sf::Shader* IRenderable::get_shader()
+{
+	return shader;
 }
 
 Json::Value bm98::IRenderable::serialize_json()

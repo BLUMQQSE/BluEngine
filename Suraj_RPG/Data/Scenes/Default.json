@@ -2,26 +2,6 @@
 	"gameobjects" : 
 	[
 		{
-			"components" :
-			[
-				{
-					"name" : "class bm98::CameraComponent",
-					"value" : null
-				}
-			],
-			"local-position-x" : 0.0,
-			"local-position-y" : 0.0,
-			"name" : "MainCamera",
-			"physics-layer" : "PHYSICS_IGNORE",
-			"position-x" : 0,
-			"position-y" : 0.0,
-			"rotation-x" : 0.0,
-			"rotation-y" : 0.0,
-			"scale-x" : 0.0,
-			"scale-y" : 0.0,
-			"tag" : "CAMERA"
-		},
-		{
 			"components" : 
 			[
 				{
@@ -29,8 +9,11 @@
 					"value" : 
 					{
 						"destination-scene" : "test.json",
-						"destination-x" : -150.0,
-						"destination-y" : 300.0
+						"destination" :
+						{
+							"x" : -150.0,
+							"y" : 300.0
+						}
 					}
 				},
 				{
@@ -47,80 +30,35 @@
 					}
 				}
 			],
-			"local-position-x" : 0.0,
-			"local-position-y" : 0.0,
-			"name" : "SceneChange",
-			"physics-layer" : "DEFAULT",
-			"position-x" : 250.966522216796875,
-			"position-y" : 0.0,
-			"rotation-x" : 0.0,
-			"rotation-y" : 0.0,
-			"scale-x" : 0.0,
-			"scale-y" : 0.0,
-			"tag" : "UNTAGGED"
-		},
-		{
-			"components" : 
-			[
+			"info" :
+			{
+				"name" : "SceneChange",
+				"tag" : "UNTAGGED",
+				"physics-layer" : "DEFAULT"
+			},
+			"transform" :
+			{
+				"position" :
 				{
-					"name" : "class bm98::PlayerController",
-					"value" : null
+					"x" : 450.0,
+					"y" : 0.0
 				},
+				"local-position" :
 				{
-					"name" : "class bm98::SpriteComponent",
-					"value" : 
-					{
-						"class bm98::IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ACTOR",
-							"z-order" : 10
-						},
-						"sprite-file-path" : "player_sprite_sheet.png"
-					}
+					"x" : 0.0,
+					"y" : 0.0
 				},
+				"rotation" :
 				{
-					"name" : "class bm98::RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 15.0,
-						"deceleration" : 50.0,
-						"max-velocity" : 200.0
-					}
+					"x" : 0.0,
+					"y" : 0.0
 				},
+				"scale" :
 				{
-					"name" : "class bm98::BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 100.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 50.0,
-						"trigger" : false
-					}
-				},
-				{
-					"name" : "class bm98::AnimationComponent",
-					"value" : null
-				},
-				{
-					"name" : "class bm98::DontDestroyOnLoad",
-					"value" : null
+					"x" : 0.0,
+					"y" : 0.0
 				}
-			],
-			"local-position-x" : 0.0,
-			"local-position-y" : 0.0,
-			"name" : "Player",
-			"physics-layer" : "DEFAULT",
-			"position-x" : 50.966522216796875,
-			"position-y" : 0.0,
-			"rotation-x" : 0.0,
-			"rotation-y" : 0.0,
-			"scale-x" : 0.0,
-			"scale-y" : 0.0,
-			"tag" : "PLAYER"
+			}
 		},
 		{
 			"children" : 
@@ -155,17 +93,35 @@
 							}
 						}
 					],
-					"local-position-x" : 10.0,
-					"local-position-y" : 0.0,
-					"name" : "Sword",
-					"physics-layer" : "DEFAULT",
-					"position-x" : 10.0,
-					"position-y" : 0.0,
-					"rotation-x" : 0.0,
-					"rotation-y" : 0.0,
-					"scale-x" : 0.0,
-					"scale-y" : 0.0,
-					"tag" : "UNTAGGED"
+					"info" :
+					{
+						"name" : "Sword",
+						"tag" : "UNTAGGED",
+						"physics-layer" : "DEFAULT"
+					},
+					"transform" :
+					{
+						"position" :
+						{
+							"x" : 10.0,
+							"y" : 0.0
+						},
+						"local-position" :
+						{
+							"x" : 10.0,
+							"y" : 0.0
+						},
+						"rotation" :
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						"scale" :
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						}
+					}
 				}
 			],
 			"components" : 
@@ -184,17 +140,35 @@
 					}
 				}
 			],
-			"local-position-x" : 0.0,
-			"local-position-y" : 0.0,
-			"name" : "Dummy",
-			"physics-layer" : "DEFAULT",
-			"position-x" : 0.0,
-			"position-y" : 0.0,
-			"rotation-x" : 0.0,
-			"rotation-y" : 0.0,
-			"scale-x" : 0.0,
-			"scale-y" : 0.0,
-			"tag" : "UNTAGGED"
+			"info" :
+			{
+				"name" : "Dummy",
+				"tag" : "UNTAGGED",
+				"physics-layer" : "DEFAULT"
+			},
+			"transform" :
+			{
+				"position" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"local-position" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"rotation" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"scale" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				}
+			}
 		}
 	],
 	"name" : "default.json"

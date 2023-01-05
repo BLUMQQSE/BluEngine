@@ -16,42 +16,56 @@ BoxColliderComponent::BoxColliderComponent()
 BoxColliderComponent::BoxColliderComponent(float offset_x,
 	float offset_y, float width, float height, bool trigger,
 	CollisionDetection collision_check_type)
-	:offsetX(offset_x), offsetY(-offset_y), trigger(trigger),
-	collision_check_type(collision_check_type), width(width), height(height)
+	: width(width), height(height)
 {
-	active = true;
-	hitbox.setPosition(game_object->get_transform().position.x + offsetX,
-		game_object->get_transform().position.y + offsetY);
-	hitbox.setSize(sf::Vector2f(width, height));
-	hitbox.setFillColor(sf::Color::Transparent);
-	hitbox.setOutlineThickness(2.f);
-	hitbox.setOutlineColor(sf::Color::Blue);
+	this->offsetX = offset_x;
+	this->offsetY = offset_y;
+	this->trigger = trigger;
+	this->active = true;
+	this->collision_check_type = collision_check_type;
+
+	collider_bounds = FloatConvex::polygon
+	(
+		Vector2f(game_object->get_transform().position.x + offsetX,
+			game_object->get_transform().position.y + offsetY),
+		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
+	);
+
+	collider_bounds.setFillColor(sf::Color::Transparent);
+	collider_bounds.setOutlineThickness(-1.f);
+	collider_bounds.setOutlineColor(sf::Color::Red);
+
 }
 
 BoxColliderComponent::~BoxColliderComponent()
 {
-	Renderer::remove(&hitbox);
+	Renderer::remove(&collider_bounds);
 }
 
 void BoxColliderComponent::init()
 {
-	Renderer::add(Renderer::RenderObject(&hitbox, this));
+	Renderer::add(Renderer::RenderObject(&collider_bounds, this));
 }
 
 void BoxColliderComponent::awake()
 {	
-	hitbox.setPosition(game_object->get_transform().position.x + offsetX,
-		game_object->get_transform().position.y + offsetY);
-	hitbox.setSize(sf::Vector2f(width, height));
-	hitbox.setFillColor(sf::Color::Transparent);
-	hitbox.setOutlineThickness(2.f);
-	hitbox.setOutlineColor(sf::Color::Blue);
+	collider_bounds = FloatConvex::polygon
+	(
+		Vector2f(game_object->get_transform().position.x + offsetX,
+			game_object->get_transform().position.y + offsetY),
+		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
+	);
+
+	collider_bounds.setFillColor(sf::Color::Transparent);
+	collider_bounds.setOutlineThickness(-1.f);
+	collider_bounds.setOutlineColor(sf::Color::Red);
+
 }
 
 void BoxColliderComponent::update()
 {
-	hitbox.setPosition(game_object->get_transform().position.x + offsetX,
-		game_object->get_transform().position.y + offsetY);
+	collider_bounds.set_position(Vector2f(game_object->get_transform().position.x + offsetX,
+		game_object->get_transform().position.y + offsetY));
 }
 
 void BoxColliderComponent::fixed_update()
@@ -71,25 +85,19 @@ Json::Value BoxColliderComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj["trigger"] = trigger;
-	obj["active"] = active;
-	obj["collision-check-type"] = collisiondetection_to_string(collision_check_type);
-	obj["hitbox-width"] = hitbox.getSize().x;
-	obj["hitbox-height"] = hitbox.getSize().y;
-	obj["hitbox-offsetX"] = offsetX;
-	obj["hitbox-offsetY"] = offsetY;
+	obj = ColliderComponent::serialize_json();
+
+	obj["hitbox-width"] = width;
+	obj["hitbox-height"] = height;
 
 	return obj;
 }
 void BoxColliderComponent::unserialize_json(Json::Value obj)
 {
-	trigger = obj["trigger"].asBool();
-	active = obj["active"].asBool();
-	collision_check_type = string_to_collisiondetection(obj["collision-check-type"].asString());
+	ColliderComponent::unserialize_json(obj);
+
 	width = obj["hitbox-width"].asFloat();
 	height = obj["hitbox-height"].asFloat();
-	offsetX = obj["hitbox-offsetX"].asFloat();
-	offsetY = obj["hitbox-offsetY"].asFloat();
 
 }
 
@@ -97,57 +105,42 @@ void BoxColliderComponent::unserialize_json(Json::Value obj)
 
 bool BoxColliderComponent::check_intersect(const sf::FloatRect& frect)
 {
-	return hitbox.getGlobalBounds().intersects(frect);
+	return false;
 }
 
 bool BoxColliderComponent::check_outer_intersect(const sf::FloatRect& frect)
 {
-	return get_outer_bounds().intersects(frect);
+	return false;
 }
 
 const sf::FloatRect BoxColliderComponent::get_bounds() const
 {
-	return hitbox.getGlobalBounds();
+	return sf::FloatRect();
 }
 
 const sf::FloatRect BoxColliderComponent::get_outer_bounds() const
 {
-	return sf::FloatRect(
-		hitbox.getGlobalBounds().left - 1,
-		hitbox.getGlobalBounds().top - 1,
-		hitbox.getGlobalBounds().width + 2,
-		hitbox.getGlobalBounds().height + 2
-	);;
+	return sf::FloatRect();
 }
 
-const bool BoxColliderComponent::is_trigger() const
-{
-	return trigger;
-}
-
-const bool BoxColliderComponent::is_active()
-{
-	return active;
-}
-
-void BoxColliderComponent::set_active(const bool& active)
-{
-	this->active = active;
-}
-
-void BoxColliderComponent::set_hitbox(float x, float y, float width, float height, float offset_x, float offset_y)
+void BoxColliderComponent::set_hitbox(float width, float height, 
+	float offset_x, float offset_y)
 {
 	active = true;
-	hitbox.setFillColor(sf::Color::Transparent);
-	hitbox.setOutlineThickness(2.f);
-	hitbox.setOutlineColor(sf::Color::Blue);
-
 	this->offsetX = offset_x;
 	this->offsetY = offset_y;
 	this->width = width;
 	this->height = height;
-	hitbox.setPosition(sf::Vector2f(x + offset_x, y + offset_y));
-	hitbox.setSize(sf::Vector2f(width, height));
+	collider_bounds = FloatConvex::polygon
+	(
+		Vector2f(game_object->get_transform().position.x + offsetX,
+			game_object->get_transform().position.y + offsetY),
+		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
+	);
+
+	collider_bounds.setFillColor(sf::Color::Transparent);
+	collider_bounds.setOutlineThickness(-1.f);
+	collider_bounds.setOutlineColor(sf::Color::Red);
 }
 
 void BoxColliderComponent::set_collision_detection(CollisionDetection col)

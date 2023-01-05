@@ -1,5 +1,6 @@
 #pragma once
 #include "State.h"
+#include "Math.h"
 namespace bm98
 {
 class SettingsState :
@@ -30,6 +31,7 @@ public:
 protected:
     //void init_fonts();
     void init_buttons();
+    void init_volume_display();
 
 private:
     bool _render = true;
@@ -39,8 +41,12 @@ private:
     sf::RectangleShape background;
     std::map<std::string, GUI::Button*> buttons;
     std::map<std::string, GUI::DropDownList*> drop_downs;
-
+   
     sf::Text options_text;
+
+    std::map<std::string, GUI::Slider*> volume_sliders;
+    std::map < std::string, 
+        std::pair<GUI::Label*, GUI::Label*>> volume_displays;
 
     std::vector<sf::VideoMode> modes;
 

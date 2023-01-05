@@ -25,8 +25,16 @@ public:
     virtual Json::Value serialize_json() override;
     virtual void unserialize_json(Json::Value obj) override;
 
+    int get_size()
+    {
+        return size;
+    }
+    int get()
+    {
+        return content[0].current_capacity;
+    }
+
 private:
-    //ItemData content[];
     InventoryItem* content;
     int size = 0;
 };

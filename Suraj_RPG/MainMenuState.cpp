@@ -10,7 +10,7 @@
 #include "SettingsState.h"
 #include "FileManager.h"
 #include "ResourceManager.h"
-
+#include "Game.h"
 namespace bm98
 {
 using namespace core;
@@ -20,11 +20,22 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 	: State(window, states, graphics_settings)
 {
 	state_name = "Main_Menu_State";
+
+	// do sahder work here
+
 	init_variables();
 	init_background();
 	init_fonts();
 	init_buttons();
 
+
+
+	if (!music.openFromFile("Resources/Audio/Music/mainmenu.wav"))
+		std::cout << "failure\n";
+
+	music.setVolume(30.f * Game::get_game_settings().audio_settings.master_volume * Game::get_game_settings().audio_settings.music_volume);
+	music.setLoop(true);
+	music.play();
 }
 
 MainMenuState::~MainMenuState()
@@ -37,10 +48,13 @@ void MainMenuState::init_state()
 {
 	init_background();
 	init_buttons();
+
+	music.setVolume(30.f * Game::get_game_settings().audio_settings.master_volume * Game::get_game_settings().audio_settings.music_volume);
 }
 
 void MainMenuState::on_end_state()
 {
+	music.stop();
 	Debug::Log("Will now clean up main menu state on exit");
 	delete_buttons();
 }

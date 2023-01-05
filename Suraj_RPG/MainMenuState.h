@@ -33,6 +33,9 @@ private:
     sf::RectangleShape background;
     std::map<std::string, GUI::Button*> buttons;
 
+    sf::Shader shader;
+    sf::Music music;
+
 };
 
 }

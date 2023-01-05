@@ -1,0 +1,133 @@
+{
+	"gameobjects" : 
+	[
+		{
+			"components" :
+			[
+				{
+					"name" : "class bm98::CameraComponent",
+					"value" : null
+				}
+			],
+			"info" :
+			{
+				"name" : "MainCamera",
+				"tag" : "CAMERA",
+				"physics-layer" : "PHYSICS_IGNORE"
+			},
+			"transform" :
+			{
+				"position" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"local-position" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"rotation" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"scale" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				}
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::PlayerController",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::AudioSource",
+					"value" : 
+					{
+						"current-audio-clip" : "footsteps.wav"
+					}
+				},
+				{
+					"name" : "class bm98::SpriteComponent",
+					"value" : 
+					{
+						"class bm98::IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ACTOR",
+							"z-order" : 10
+						},
+						"sprite-file-path" : "player_sprite_sheet.png"
+					}
+				},
+				{
+					"name" : "class bm98::RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.5,
+						"deceleration" : 2.0,
+						"max-velocity" : 7.0,
+						"orientation" : "DOWN"
+					}
+				},
+				{
+					"name" : "class bm98::BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 100.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 50.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "class bm98::AnimationComponent",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"info" :
+			{
+				"name" : "Player",
+				"tag" : "PLAYER",
+				"physics-layer" : "DEFAULT"
+			},
+			"transform" :
+			{
+				"position" :
+				{
+					"x" : 50.0,
+					"y" : 0.0
+				},
+				"local-position" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"rotation" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"scale" :
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				}
+			}
+		}
+	],
+	"name" : "dont_destroy_on_load_objects.json"
+}

@@ -27,9 +27,6 @@ RigidbodyComponent::~RigidbodyComponent()
 void RigidbodyComponent::init()
 {
 	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
-	max_velocity = 200;
-	acceleration = 15;
-	deceleration = 50;
 	unhalt();
 }
 
@@ -40,7 +37,8 @@ void RigidbodyComponent::update()
 	update_movement_state();
 	update_orientation();
 	//Final movement
-	sprite->move(velocity * Time::delta_time());
+	//std::cout << velocity.get_normalized().x * (max_velocity) * Time::delta_time() << "\n";
+	sprite->move(velocity.get_normalized() * max_velocity * UNIT_SIZE * Time::delta_time());
 	//TODO: here we can update gameobject transform to reflect this position
 	game_object->transform.position = sprite->getPosition();
 }
@@ -59,6 +57,7 @@ Json::Value RigidbodyComponent::serialize_json()
 	obj["acceleration"] = acceleration;
 	obj["deceleration"] = deceleration;
 	obj["orientation"] = Global::orientation_to_string(current_orientation);
+	obj["body-type"] = body_type_to_string(body_type);
 
 	return obj;
 }
@@ -69,6 +68,7 @@ void RigidbodyComponent::unserialize_json(Json::Value obj)
 	acceleration = obj["acceleration"].asFloat();
 	deceleration = obj["deceleration"].asFloat();
 	current_orientation = Global::string_to_orientation(obj["orientation"].asString());
+	body_type = string_to_body_type(obj["body-type"].asString());
 }
 
 #pragma endregion
@@ -82,6 +82,11 @@ const sf::Vector2f RigidbodyComponent::get_velocity() const
 const float RigidbodyComponent::get_max_velocity() const
 {
 	return max_velocity;
+}
+
+const RigidbodyComponent::BodyType RigidbodyComponent::get_body_type() const
+{
+	return body_type;
 }
 
 void RigidbodyComponent::set_velocity(sf::Vector2f velocity)
@@ -102,6 +107,11 @@ void RigidbodyComponent::set_acceleration(float acceleration)
 void RigidbodyComponent::set_deceleration(float deceleration)
 {
 	this->deceleration = deceleration;
+}
+
+void RigidbodyComponent::set_body_type(BodyType body_type)
+{
+	this->body_type = body_type;
 }
 
 void RigidbodyComponent::halt_right()
@@ -146,51 +156,51 @@ void RigidbodyComponent::apply_acceleration(const float dir_x, const float dir_y
 {
 	//Acceleration
 	if ((!halted_right && dir_x > 0) || (!halted_left && dir_x < 0))
-		velocity.x += acceleration * dir_x * 100;
+		velocity.x += (acceleration * UNIT_SIZE) * dir_x * 100;
 	if ((!halted_down && dir_y > 0) || (!halted_up && dir_y < 0))
-		velocity.y += acceleration * dir_y * 100;
+		velocity.y += (acceleration * UNIT_SIZE) * dir_y * 100;
 
 	if(velocity.x > 0)
-		if (velocity.x > max_velocity)
-			velocity.x = max_velocity;
+		if (velocity.x > max_velocity * UNIT_SIZE)
+			velocity.x = max_velocity * UNIT_SIZE;
 	if(velocity.x < 0)
-		if (velocity.x < -max_velocity)
-			velocity.x = -max_velocity;
+		if (velocity.x < -max_velocity * UNIT_SIZE)
+			velocity.x = -max_velocity * UNIT_SIZE;
 	
 	if(velocity.y > 0)
-		if (velocity.y > max_velocity)
-			velocity.y = max_velocity; 
+		if (velocity.y > max_velocity * UNIT_SIZE)
+			velocity.y = max_velocity * UNIT_SIZE;
 	if(velocity.y < 0)
-		if (velocity.y < -max_velocity)
-			velocity.y = -max_velocity;
+		if (velocity.y < -max_velocity * UNIT_SIZE)
+			velocity.y = -max_velocity * UNIT_SIZE;
 }
 
 void RigidbodyComponent::apply_deceleration()
 {
 	if (velocity.x > 0.f)
 	{
-		velocity.x -= deceleration;
+		velocity.x -= deceleration * UNIT_SIZE;
 		if (velocity.x < 0.f)
 			velocity.x = 0.f;
 
 	}
 	else if (velocity.x < 0.f)
 	{
-		velocity.x += deceleration;
+		velocity.x += deceleration * UNIT_SIZE;
 		if (velocity.x > 0.f)
 			velocity.x = 0.f;
 
 	}
 	if (velocity.y > 0.f)
 	{
-		velocity.y -= deceleration;
+		velocity.y -= deceleration * UNIT_SIZE;
 		if (velocity.y < 0.f)
 			velocity.y = 0.f;
 
 	}
 	else if (velocity.y < 0.f)
 	{
-		velocity.y += deceleration;
+		velocity.y += deceleration * UNIT_SIZE;
 		if (velocity.y > 0.f)
 			velocity.y = 0.f;
 	}
@@ -206,19 +216,20 @@ void RigidbodyComponent::update_orientation()
 	if (velocity.x > 0.f && velocity.y == 0.f)
 	{
 		current_orientation = Orientation::RIGHT;
+		return;
 	}
-	else if (velocity.x < 0.f && velocity.y == 0.f)
+	if (velocity.x < 0.f && velocity.y == 0.f)
 	{
 		current_orientation = Orientation::LEFT;
+		return;
 	}
-	else if (velocity.y > 0.f)
+	if (velocity.y > 0.f)
 	{
 		current_orientation = Orientation::DOWN;
+		return;
 	}
-	else
-	{
-		current_orientation = Orientation::UP;
-	}
+	current_orientation = Orientation::UP;
+	
 }
 
 void RigidbodyComponent::update_movement_state()
@@ -227,25 +238,6 @@ void RigidbodyComponent::update_movement_state()
 		current_movement_state = MovementState::IDLE;
 	else
 		current_movement_state = MovementState::WALKING;
-}
-
-void RigidbodyComponent::normalize_velocity()
-{
-	// Currently does normalize the velocity,
-	// However causing weird movement when decelerating
-	// (decelerates in diagonal direction then continues straight)
-	float v1 = velocity.x;
-	float v2 = velocity.y;
-
-	if (velocity.x != 0 && velocity.y != 0)
-	{
-		velocity.x = velocity.x / std::sqrt(std::pow(velocity.x, 2) +
-			std::pow(velocity.y, 2));
-		velocity.x *= std::abs(v1);
-		velocity.y = velocity.y / std::sqrt(std::pow(velocity.x, 2) +
-			std::pow(velocity.y, 2));
-		velocity.y *= std::abs(v2);
-	}
 }
 
 }

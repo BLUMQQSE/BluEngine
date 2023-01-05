@@ -46,7 +46,8 @@ ButtonComponent::ButtonComponent()
 	set_z_order(id + 10, false);
 	
 }
-ButtonComponent::ButtonComponent(float width, float height, std::string text, unsigned character_size, sf::Color text_idle, sf::Color text_hover, short unsigned id)
+ButtonComponent::ButtonComponent(float width, float height, std::string text, 
+	unsigned character_size, short unsigned id)
 {
 	this->id = id;
 	this->button_state = ButtonState::BTN_IDLE;
@@ -105,6 +106,8 @@ void ButtonComponent::init()
 
 void ButtonComponent::update()
 {
+	if (!active)
+		return;
 	if (shape.getGlobalBounds().contains(Input::mouse_position(get_view())) &&
 		Input::get_mouse_down(Input::Mouse::LEFT))
 	{
@@ -168,6 +171,12 @@ void ButtonComponent::unserialize_json(Json::Value obj)
 	shape.setSize(sf::Vector2f(obj["width"].asFloat(), obj["height"].asFloat()));
 	id = static_cast<short>(obj["id"].asInt64());
 	text.setString(obj["text"].asString());
+}
+
+void ButtonComponent::set_active(bool active)
+{
+	Component::set_active(active);
+	set_render(active);
 }
 
 const bool ButtonComponent::is_pressed() const

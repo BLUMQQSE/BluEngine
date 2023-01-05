@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "ResourceManager.h"
 #include "FileManager.h"
+#include "DataAsset.h"
+#include "ItemData.h"
 namespace bm98::core 
 {
-std::unordered_map<std::string, Json::Value> ResourceManager::asset_data;
+std::unordered_map<std::string, DataAsset*> ResourceManager::asset_data;
 std::unordered_map<std::string, Json::Value> ResourceManager::prefab_data;
+std::unordered_map<std::string, sf::SoundBuffer> ResourceManager::sound_buffers;
+std::unordered_map<std::string, Json::Value> ResourceManager::sound_data;
 std::unordered_map<std::string, sf::Texture> ResourceManager::textures;
 std::unordered_map<std::string, sf::Font> ResourceManager::fonts;
 
@@ -12,10 +16,29 @@ void ResourceManager::load_resources()
 {
 	iterate_data_asset_directory("Data/DataAssets/");
 	iterate_prefab_directory("Data/Prefabs/");
+	iterate_audio_directory("Resources/Audio/Sounds/");
 	iterate_textures_directory("Resources/Images/");
 	iterate_fonts_directory("Fonts/");
-	//for (auto& c : textures)
-		//std::cout << c.first << "\n";
+}
+
+void ResourceManager::reload()
+{
+	/*
+	asset_data.clear();
+	prefab_data.clear();
+	sound_buffers.clear();
+	sound_data.clear();
+	textures.clear();
+	fonts.clear();
+
+
+
+	iterate_data_asset_directory("Data/DataAssets/");
+	iterate_prefab_directory("Data/Prefabs/");
+	iterate_audio_directory("Resources/Audio/Sounds/");
+	iterate_textures_directory("Resources/Images/");
+	iterate_fonts_directory("Fonts/");
+	*/
 }
 
 Json::Value ResourceManager::get_prefab_data(std::string prefab_file_name)
@@ -31,7 +54,7 @@ bool ResourceManager::has_prefab_data(std::string prefab_file_name)
 	return true;
 }
 
-Json::Value ResourceManager::get_data_asset(std::string asset_file_name)
+DataAsset* ResourceManager::get_data_asset(std::string asset_file_name)
 {
 	return asset_data.at(asset_file_name);
 }
@@ -39,6 +62,32 @@ Json::Value ResourceManager::get_data_asset(std::string asset_file_name)
 bool ResourceManager::has_data_asset(std::string asset_file_name)
 {
 	if (asset_data.find(asset_file_name) == asset_data.end())
+		return false;
+
+	return true;
+}
+
+sf::SoundBuffer& ResourceManager::get_sound_buffer(std::string audio_file_name)
+{
+	return sound_buffers.at(audio_file_name);
+}
+
+bool ResourceManager::has_sound_buffer(std::string audio_file_name)
+{
+	if (sound_buffers.find(audio_file_name) == sound_buffers.end())
+		return false;
+
+	return true;
+}
+
+Json::Value ResourceManager::get_sound_data(std::string audio_data_file_name)
+{
+	return sound_data.at(audio_data_file_name);
+}
+
+bool ResourceManager::has_sound_data(std::string audio_data_file_name)
+{
+	if (sound_data.find(audio_data_file_name) == sound_data.end())
 		return false;
 
 	return true;
@@ -78,11 +127,11 @@ void ResourceManager::iterate_prefab_directory(std::string dir_path)
 		if (!entry.is_directory())
 		{
 			prefab_data[file_name] = FileManager::load_from_file(dir_path + file_name);
+			continue;
 		}
-		else
-		{
-			iterate_prefab_directory(dir_path + file_name + "/");
-		}
+	
+		iterate_prefab_directory(dir_path + file_name + "/");
+		
 	}
 }
 
@@ -93,12 +142,49 @@ void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 		std::string file_name = entry.path().string().substr(dir_path.size(), entry.path().string().size() - 1);
 		if (!entry.is_directory())
 		{
-			asset_data[file_name] = FileManager::load_from_file(dir_path + file_name);
+			if (entry.path().string().find("ItemData"))
+			{
+				asset_data[file_name] = new ItemData();
+				asset_data.at(file_name)->unserialize_json(FileManager::load_from_file(dir_path + file_name));
+			}
+			else
+			{
+				asset_data[file_name] = new DataAsset();
+				asset_data.at(file_name)->unserialize_json(FileManager::load_from_file(dir_path + file_name));
+			}
+			continue;
 		}
-		else
+		
+		iterate_data_asset_directory(dir_path + file_name + "/");
+		
+	}
+}
+
+void ResourceManager::iterate_audio_directory(std::string dir_path)
+{
+	for (const auto& entry : std::filesystem::directory_iterator(dir_path))
+	{
+		std::string file_name = entry.path().string().substr(dir_path.size(), entry.path().string().size() - 1);
+		if (!entry.is_directory())
 		{
-			iterate_data_asset_directory(dir_path + file_name + "/");
+			if (file_name.substr(file_name.find_last_of(".") + 1) == "json")
+			{
+				sound_data[file_name] = FileManager::load_from_file(dir_path + file_name);
+
+				continue;
+			}
+
+			sf::SoundBuffer sound_to_add;
+			if (!sound_to_add.loadFromFile(dir_path + file_name))
+			{
+				std::cout << "ERROR::RESOURCE_MANAGER::FAILED LOADING FILE: " << dir_path << file_name << "\n";
+			}
+			sound_buffers[file_name] = sound_to_add;
+			continue;
 		}
+		
+		iterate_textures_directory(dir_path + file_name + "/");
+		
 	}
 }
 
@@ -110,17 +196,16 @@ void ResourceManager::iterate_textures_directory(std::string dir_path)
 		if (!entry.is_directory())
 		{
 			sf::Texture texture_to_add;
-			std::string address = dir_path + file_name;
-			if (!texture_to_add.loadFromFile(address))
+			if (!texture_to_add.loadFromFile(dir_path + file_name))
 			{
-				std::cout << "ERROR::RESOURCEMANAGER::FAILED LOADING FILE: " << address << "\n";
+				std::cout << "ERROR::RESOURCE_MANAGER::FAILED LOADING FILE: " << dir_path << file_name << "\n";
 			}
 			textures[file_name] = texture_to_add;
+			continue;
 		}
-		else
-		{
-			iterate_textures_directory(dir_path + file_name + "/");
-		}
+		
+		iterate_textures_directory(dir_path + file_name + "/");
+		
 	}
 }
 
@@ -132,17 +217,17 @@ void ResourceManager::iterate_fonts_directory(std::string dir_path)
 		if (!entry.is_directory())
 		{
 			sf::Font font_to_add;
-			std::string address = dir_path + file_name;
-			if (!font_to_add.loadFromFile(address))
+			if (!font_to_add.loadFromFile(dir_path + file_name))
 			{
-				std::cout << "ERROR::RESOURCEMANAGER::FAILED LOADING FILE: " << address << "\n";
+				std::cout << "ERROR::RESOURCEMANAGER::FAILED LOADING FILE: " << dir_path << file_name << "\n";
 			}
 			fonts[file_name] = font_to_add;
+
+			continue;
 		}
-		else
-		{
-			iterate_textures_directory(dir_path + file_name + "/");
-		}
+		
+		iterate_textures_directory(dir_path + file_name + "/");
+		
 	}
 }
 

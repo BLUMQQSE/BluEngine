@@ -166,9 +166,12 @@
     <ClCompile Include="..\External\JSON\dist\jsoncpp.cpp" />
     <ClCompile Include="AnimatedSpriteComponent.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
+    <ClCompile Include="AudioSource.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="CapsuleColliderComponent.cpp" />
     <ClCompile Include="ChildAnimationComponent.cpp" />
+    <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="DontDestroyOnLoad.cpp" />
@@ -218,6 +221,7 @@
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="TestClass.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TilemapComponent.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -238,9 +242,12 @@
     <ClInclude Include="AnimatedSpriteComponent.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="AudioSource.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="CapsuleColliderComponent.h" />
     <ClInclude Include="ChildAnimationComponent.h" />
+    <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Collisions.h" />
     <ClInclude Include="DataAsset.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />
@@ -271,6 +278,7 @@
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PlayerInteractor.h" />
     <ClInclude Include="PrefabEditor.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="PauseMenu.h" />
@@ -284,9 +292,13 @@
     <ClInclude Include="SettingsState.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="TestClass.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TilemapComponent.h" />
     <ClInclude Include="Time.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Suraj_RPG.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,7 +9,7 @@ class DropDownComponent : public Component
 public:
 	DropDownComponent();
 	DropDownComponent(float width, float height, std::vector<std::string> list,
-		unsigned default_index, int char_size);
+		int char_size, unsigned default_index = 0);
 	virtual ~DropDownComponent();
 
 	virtual void init() override;
@@ -19,6 +19,8 @@ public:
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
+
+	virtual void set_active(bool active) override;
 	
 
 	void toggle_list(bool toggle);
@@ -38,6 +40,9 @@ private:
 	sf::Font font;
 	ButtonComponent* active_selection;
 	std::vector<ButtonComponent*> list;
+	std::vector<std::string> text_list;
+	unsigned char_size;
+	unsigned default_index;
 	bool show_list;
 	bool selection_change;
 	float width;

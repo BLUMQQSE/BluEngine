@@ -311,10 +311,10 @@ void SceneEditor::create_sprite_component_panel()
 
 	Label* layer = new Label(5, 90, 18, font, "Sorting Layer:");
 	DropDownList* dropdown = new DropDownList(250, 90, 150, 20, font, Global::layers_to_vector(), 0, 12);
-	dropdown->set_selected_index(static_cast<int>(sc.get_layer()));
+	dropdown->set_selected_index(static_cast<int>(sc.get_sorting_layer()));
 	Label* order = new Label(5, 120, 18, font, "Order in layer:");
 	InputBox* z = new InputBox(300, 120, 40, 20, 16, font);
-	z->set_text(std::to_string(sc.get_order()));
+	z->set_text(std::to_string(sc.get_z_order()));
 
 	editor_panels.at(typeid(SpriteComponent).name())->add_element("delete", del);
 	editor_panels.at(typeid(SpriteComponent).name())->add_element("name", name);
@@ -443,7 +443,7 @@ void SceneEditor::update_sprite_component_panel()
 	sc->set_sprite(
 		editor_panels.at(
 		typeid(SpriteComponent).name())->get_inputbox("sprite_file_path")->get_text());
-	sc->set_layer(
+	sc->set_sorting_layer(
 		Global::string_to_layer(editor_panels.at(typeid(SpriteComponent).name())->get_dropdown("layer_drop")->get_selected_button()->get_text()));
 	sc->set_z_order(
 		static_cast<int>(editor_panels.at(typeid(SpriteComponent).name())->get_inputbox("order_input")->get_text_value()));
@@ -465,8 +465,6 @@ void SceneEditor::update_boxcollider_component_panel()
 		string_to_collisiondetection(editor_panels.at(typeid(BoxColliderComponent).name())->get_dropdown("collision_type_drop")->get_selected_button()->get_text()));
 	
 	selected_gameobject->get_component<BoxColliderComponent>().set_hitbox(
-		selected_gameobject->get_transform().position.x,
-		selected_gameobject->get_transform().position.y,
 		editor_panels.at(typeid(BoxColliderComponent).name())->get_inputbox("width_input")->get_text_value(),
 		editor_panels.at(typeid(BoxColliderComponent).name())->get_inputbox("height_input")->get_text_value(),
 		editor_panels.at(typeid(BoxColliderComponent).name())->get_inputbox("x_offset_input")->get_text_value(),

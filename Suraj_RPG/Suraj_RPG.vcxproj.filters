@@ -49,6 +49,9 @@
     <Filter Include="Scripts\Interaction">
       <UniqueIdentifier>{2ba15b2c-4187-4d01-b632-d2ff83e16127}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components\Physics">
+      <UniqueIdentifier>{1e42d633-89d6-4ee2-a091-52c6dc2b465f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -66,9 +69,6 @@
     <ClCompile Include="MainMenuState.cpp">
       <Filter>States</Filter>
     </ClCompile>
-    <ClCompile Include="RigidbodyComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="AnimationComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -80,9 +80,6 @@
     </ClCompile>
     <ClCompile Include="EditorState.cpp">
       <Filter>States</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxColliderComponent.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>Core</Filter>
@@ -140,9 +137,6 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DataAsset.cpp">
       <Filter>DataAssets</Filter>
@@ -204,6 +198,27 @@
     <ClCompile Include="CameraComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSource.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TestClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxColliderComponent.cpp">
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidbodyComponent.cpp">
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderComponent.cpp">
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="CapsuleColliderComponent.cpp">
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -218,9 +233,6 @@
     <ClInclude Include="MainMenuState.h">
       <Filter>States</Filter>
     </ClInclude>
-    <ClInclude Include="RigidbodyComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="AnimationComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -232,9 +244,6 @@
     </ClInclude>
     <ClInclude Include="EditorState.h">
       <Filter>States</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxColliderComponent.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
       <Filter>Core</Filter>
@@ -332,9 +341,6 @@
     <ClInclude Include="SceneManager.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DataAsset.h">
       <Filter>DataAssets</Filter>
     </ClInclude>
@@ -398,5 +404,34 @@
     <ClInclude Include="CameraComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSource.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TestClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxColliderComponent.h">
+      <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidbodyComponent.h">
+      <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderComponent.h">
+      <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="CapsuleColliderComponent.h">
+      <Filter>Components\Physics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Suraj_RPG.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

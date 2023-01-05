@@ -10,7 +10,7 @@ public:
     ItemData(std::string name);
     virtual ~ItemData();
 
-
+    int get_stackable_limit();
 
     // Inherited via IData
     virtual Json::Value serialize_json() override;

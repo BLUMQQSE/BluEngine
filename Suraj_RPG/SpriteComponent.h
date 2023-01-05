@@ -17,19 +17,17 @@ public:
     virtual Json::Value serialize_json() override;
     virtual void unserialize_json(Json::Value obj) override;
 
+    virtual void set_active(bool active) override;
+
     sf::Sprite& get_sprite();
     sf::Texture& get_texture_sheet();
     virtual void add_to_buffer(sf::View* view) override;
     const std::string get_file_path() const;
     const sf::Vector2i get_size() const;
-    SortingLayer get_layer();
-    int get_order();
 
     void set_sprite(std::string file_path);
     void set_size(int size_x, int size_y);
     void set_position(float x, float y);
-    void set_layer(SortingLayer sorting_layer);
-    void set_z_order(int order);
 
 private:
     sf::Sprite sprite;

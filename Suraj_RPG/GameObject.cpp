@@ -18,6 +18,8 @@
 #include "DontDestroyOnLoad.h"
 #include "SceneChange.h"
 #include "CameraComponent.h"
+#include "AudioSource.h"
+#include "Inventory.h"
 
 namespace bm98
 {
@@ -148,10 +150,6 @@ void GameObject::on_trigger_exit(Collider info)
 
 void GameObject::add_to_buffer(sf::View* view)
 {
-	//if (has_component<SpriteComponent>())
-	//	get_component<SpriteComponent>().set_view(view);
-	//if (has_component<BoxColliderComponent>())
-	//	get_component<BoxColliderComponent>().set_view(view);
 	if (!active)
 	{
 		return;
@@ -169,11 +167,22 @@ const bool& GameObject::is_active()
 	return active;
 }
 
-void GameObject::set_active(bool& active)
+void GameObject::set_active(bool active)
 {
 	this->active = active;
+	for (std::size_t i = 0; i < components.size(); i++)
+		components[i]->set_active(active);
 	for (auto& ch : children)
 		ch->set_active(active);
+}
+
+void GameObject::set_render(bool render)
+{
+	for (auto& c : components)
+	{
+		if (dynamic_cast<IRenderable*>(c))
+			dynamic_cast<IRenderable*>(c)->set_render(render);
+	}
 }
 
 void GameObject::set_parent(GameObject* parent)
@@ -218,6 +227,27 @@ const GameObject::Transform& GameObject::get_transform() const
 	return transform;
 }
 
+const sf::Vector2f GameObject::get_center() const
+{
+	if (has_component<SpriteComponent>())
+	{
+		sf::FloatRect sc = get_component<SpriteComponent>().get_sprite().getGlobalBounds();
+		return sf::Vector2f(
+			sc.left + sc.width / 2,
+			sc.top + sc.height / 2
+		);
+	}
+	if (has_component<BoxColliderComponent>())
+	{
+		sf::FloatRect bc = get_component<BoxColliderComponent>().get_bounds();
+		return sf::Vector2f(
+			bc.left + bc.width / 2,
+			bc.top + bc.height / 2
+		);
+	}
+	return get_transform().position + get_transform().local_position;
+}
+
 GameObject* GameObject::get_parent()
 {
 	return parent;
@@ -241,10 +271,11 @@ std::vector<GameObject*> GameObject::get_children()
 std::vector<GameObject*> GameObject::get_all_posterity()
 {
 	std::vector<GameObject*> all_children = children;
-	for (std::size_t i = 0; i < children.size(); i++)
+	for (std::size_t i = 0; i != children.size(); i++)
 	{
-		if(children[i]->get_children().size() > 0)
-			all_children.insert(all_children.end(), children[i]->get_all_posterity().begin(), children[i]->get_all_posterity().end());
+		std::vector<GameObject*> posterity = children[i]->get_all_posterity();
+		all_children.insert(all_children.end(), posterity.begin(), posterity.end());
+		
 	}
 	return all_children;
 }
@@ -258,6 +289,23 @@ const bool GameObject::check_for_child(GameObject* game_object) const
 	return false;
 }
 
+const bool GameObject::check_for_child(std::string name) const
+{
+	for (std::size_t i = 0; i != children.size(); i++)
+		if (children[i]->get_info().name == name)
+			return true;
+
+	return false;
+}
+
+GameObject* GameObject::get_child(std::string name)
+{
+	for (std::size_t i = 0; i != children.size(); i++)
+		if (children[i]->get_info().name == name)
+			return children[i];
+	return nullptr;
+}
+
 const bool GameObject::is_initialized() const
 {
 	return initialized;
@@ -268,17 +316,10 @@ const bool GameObject::is_initialized() const
 Json::Value GameObject::serialize_json()
 {
 	Json::Value obj;
-	obj["name"] = info.name;
-	obj["tag"] = Global::tag_to_string(info.tag);
-	obj["physics-layer"] = Global::physics_layer_to_string(info.layer);
-	obj["position-x"] = transform.position.x;
-	obj["position-y"] = transform.position.y;
-	obj["local-position-x"] = transform.local_position.x;
-	obj["local-position-y"] = transform.local_position.y;
-	obj["rotation-x"] = transform.rotation.x;
-	obj["rotation-y"] = transform.rotation.y;
-	obj["scale-x"] = transform.scale.x;
-	obj["scale-y"] = transform.scale.y;
+
+	obj["info"] = info.serialize_json();
+	obj["transform"] = transform.serialize_json();
+
 	for (auto& c : components)
 	{
 		Json::Value obj2;
@@ -297,17 +338,8 @@ Json::Value GameObject::serialize_json()
 
 void GameObject::unserialize_json(Json::Value obj)
 {
-	info.name = obj["name"].asString();
-	info.tag = Global::string_to_tag(obj["tag"].asString());
-	info.layer = Global::string_to_physics_layer(obj["physics-layer"].asString());
-	transform.position.x = obj["position-x"].asFloat();
-	transform.position.y = obj["position-y"].asFloat();
-	transform.local_position.x = obj["local-position-x"].asFloat();
-	transform.local_position.y = obj["local-position-y"].asFloat();
-	transform.rotation.x = obj["rotation-x"].asFloat();
-	transform.rotation.y = obj["rotation-y"].asFloat();
-	transform.scale.x = obj["scale-x"].asFloat();
-	transform.scale.y = obj["scale-y"].asFloat();
+	info.unserialize_json(obj["info"]);
+	transform.unserialize_json(obj["transform"]);
 
 	std::unordered_map<std::string, Json::Value> comps_data;
 	for (Json::Value component : obj["components"])
@@ -371,6 +403,16 @@ void GameObject::unserialize_json(Json::Value obj)
 		{
 			comps_data[typeid(CameraComponent).name()] = component["value"];
 			add_component<CameraComponent>();
+		}
+		if (component["name"].asString() == typeid(AudioSource).name())
+		{
+			comps_data[typeid(AudioSource).name()] = component["value"];
+			add_component<AudioSource>();
+		}
+		if (component["name"].asString() == typeid(Inventory).name())
+		{
+			comps_data[typeid(Inventory).name()] = component["value"];
+			add_component<Inventory>();
 		}
 	}
 

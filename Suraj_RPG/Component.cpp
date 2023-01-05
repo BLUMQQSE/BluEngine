@@ -85,6 +85,11 @@ void Component::set_game_object(GameObject* go)
 	this->game_object = go;
 }
 
+void Component::set_active(bool active)
+{
+	this->active = active;
+}
+
 GameObject* Component::get_game_object()
 {
 	return game_object;

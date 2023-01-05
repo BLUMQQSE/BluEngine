@@ -12,6 +12,9 @@ public:
 	Scene(std::string name);
 	virtual ~Scene();
 
+	void init();
+	void scene_change();
+
 	void update();
 	void late_update();
 	void fixed_update();
@@ -31,7 +34,15 @@ public:
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
+	/// <summary>
+	/// Serializes gameobjects not containing DontDestroyOnLoad.
+	/// </summary>
 	Json::Value serialize_destroyed_objects();
+	/// <summary>
+	/// Serializes gameobject containing DontDestroyOnLoad.
+	/// </summary>
+	/// <returns></returns>
+	Json::Value serialize_undestroyed_objects();
 	virtual void unserialize_json(Json::Value obj) override;
 
 
@@ -42,8 +53,7 @@ private:
 	std::vector<GameObject*> objects_to_add;
 	std::vector<GameObject*> objects_to_remove;
 
-
-	void init_tilemap();
+	sf::View* scene_view;
 	void insert_sort();
 
 

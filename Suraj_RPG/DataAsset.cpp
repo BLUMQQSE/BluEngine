@@ -23,5 +23,6 @@ Json::Value DataAsset::serialize_json()
 
 void DataAsset::unserialize_json(Json::Value obj)
 {
+    name = obj["name"].asString();
 }
 }

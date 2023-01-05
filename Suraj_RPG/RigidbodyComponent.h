@@ -13,6 +13,46 @@ enum class MovementState
 class RigidbodyComponent : public Component
 {
 public:
+
+#pragma region BodyType
+	enum class BodyType
+	{
+		KINEMATIC,
+		DYNAMIC
+	};
+
+	static std::vector<std::string> body_type_to_vector()
+	{
+		return { "KINEMATIC", "DYNAMIC" };
+	}
+
+	static std::string body_type_to_string(BodyType type)
+	{
+		switch (type)
+		{
+		case BodyType::KINEMATIC:
+			return "KINEMATIC";
+		case BodyType::DYNAMIC:
+			return "DYNAMIC";
+		default:
+			std::cout << "ERROR::RIGIDBODY::body_type_to_string::UNDEFINED BODYTYPE: " << static_cast<int>(type) << "\n";
+			return "null";
+		}
+	}
+
+	static BodyType string_to_body_type(std::string type)
+	{
+		if (type == "KINEMATIC")
+			return BodyType::KINEMATIC;
+		if (type == "DYNAMIC")
+			return BodyType::DYNAMIC;
+
+		std::cout << "ERROR::RIGIDBODY::string_to_body_type::UNDEFINED STRING: " << type << "\n";
+		return BodyType::KINEMATIC;
+	}
+
+#pragma endregion
+
 	RigidbodyComponent();
 	RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
 		float acceleration, float deceleration);
@@ -27,11 +67,13 @@ public:
 
 	const sf::Vector2f get_velocity() const;
 	const float get_max_velocity() const;
+	const BodyType get_body_type() const;
 
 	void set_velocity(sf::Vector2f velocity);
 	void set_max_velocity(float velocity);
 	void set_acceleration(float acceleration);
 	void set_deceleration(float deceleration);
+	void set_body_type(BodyType body_type);
 
 	void halt_right();
 	void halt_left();
@@ -52,6 +94,7 @@ protected:
 
 	MovementState current_movement_state;
 	Orientation current_orientation;
+	BodyType body_type = BodyType::KINEMATIC;
 
 private:
 	sf::Sprite* sprite;
@@ -70,7 +113,6 @@ private:
 
 	void update_orientation();
 	void update_movement_state();
-	void normalize_velocity();
 
 
 };

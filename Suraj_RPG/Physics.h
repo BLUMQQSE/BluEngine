@@ -8,6 +8,7 @@ class GameObject;
 class Tile;
 class LayerMask;
 class BoxColliderComponent;
+class FloatConvex;
 }
 
 
@@ -52,11 +53,11 @@ public:
 	static void fixed_update();
 	
 	static bool raycast(Vector2f origin, Vector2f direction, 
-		float distance = std::numeric_limits<long>::infinity(), Global::LayerMask mask = Global::LayerMask());
+		float distance = INFINITY, Global::LayerMask mask = Global::LayerMask());
 
 	// TODO: optimise this later after creating my own subclasses for shapes to check for overlaps.
-	static std::vector<BoxColliderComponent*> OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, 
-		GameObject* object_to_ignore);
+	//static std::vector<ColliderComponent*> OverlapCircle
+	//(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore);
 
 private:
 

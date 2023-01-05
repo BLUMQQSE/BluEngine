@@ -1,6 +1,7 @@
 #pragma once
 #include "IRenderable.h"
 #include "globals.h"
+#include "Math.h"
 enum class ButtonState
 {
 	BTN_IDLE = 0,
@@ -298,6 +299,7 @@ public:
 
 	virtual void add_to_buffer(sf::View* = nullptr) override;
 	virtual void set_position(float x, float y) override;
+	void set_text(std::string new_text);
 
 private:
 	sf::Text text_content;
@@ -348,6 +350,39 @@ private:
 
 };
 
+#define SLIDER_HEIGHT 30
+
+class Slider : public GUIObject
+{
+public:
+	Slider();
+	Slider(float x, float y, float width, float min_vlaue, float max_value,
+		float default_value = 0, bool whole_numbers = false);
+	virtual ~Slider();
+
+	virtual void update() override;
+
+	bool mouse_in_bounds();
+	bool mouse_on_slider();
+	const float get_value() const;
+	const float get_width() const;
+
+
+private:
+	sf::RectangleShape shape;
+	sf::RectangleShape slider_back;
+	sf::RectangleShape slider;
+
+	bool whole_numbers;
+	bool held = false;
+	
+	float width;
+
+	float min_val;
+	float max_val;
+	float current_val;
+	
+};
 
 
 }

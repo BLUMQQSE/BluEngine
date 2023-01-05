@@ -47,6 +47,7 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 			}
 		}
 	}
+	
 	Renderer::add(Renderer::RenderObject(&outline, this));
 	update_tilemap_changes();
 }

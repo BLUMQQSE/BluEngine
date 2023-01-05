@@ -48,6 +48,7 @@ public:
 	virtual void unserialize_json(Json::Value obj) override;
 
 	void set_game_object(GameObject* go);
+	virtual void set_active(bool active);
 	GameObject* get_game_object();
 
 

@@ -1,0 +1,8 @@
+{
+    "loop" : true,
+    "min-distance" : 2,
+    "pitch" : 1,
+    "play-on-awake" : false,
+    "relative-listener" : false,
+    "volume" : 10.0
+}

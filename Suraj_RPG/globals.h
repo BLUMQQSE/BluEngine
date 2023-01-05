@@ -151,7 +151,7 @@ public:
 #pragma endregion
 
 
-#pragma region Tags
+#pragma region Tag
 
 	static std::vector<std::string> tags_to_vector()
 	{
@@ -194,7 +194,7 @@ public:
 #pragma endregion
 
 
-#pragma region Physics_Layers
+#pragma region Physics_Layer
 
 	static std::vector<std::string> physics_layer_to_vector()
 	{
@@ -295,6 +295,7 @@ public:
 	}
 
 #pragma endregion
+
 
 #pragma region Oritentation
 

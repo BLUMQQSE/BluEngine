@@ -77,6 +77,12 @@ void SpriteComponent::unserialize_json(Json::Value obj)
 	set_sprite(file_path);
 }
 
+void SpriteComponent::set_active(bool active)
+{
+	Component::set_active(active);
+	set_render(active);
+}
+
 sf::Sprite& SpriteComponent::get_sprite()
 {
     return sprite;
@@ -100,16 +106,6 @@ const std::string SpriteComponent::get_file_path() const
 const sf::Vector2i SpriteComponent::get_size() const
 {
 	return size;
-}
-
-SortingLayer SpriteComponent::get_layer()
-{
-	return get_sorting_layer();
-}
-
-int SpriteComponent::get_order()
-{
-	return get_z_order();
 }
 
 void SpriteComponent::set_sprite(std::string file_path)
@@ -139,16 +135,6 @@ void SpriteComponent::set_size(int size_x, int size_y)
 void SpriteComponent::set_position(float x, float y)
 {
 	sprite.setPosition(x, y);
-}
-
-void SpriteComponent::set_layer(SortingLayer sorting_layer)
-{
-	IRenderable::set_sorting_layer(sorting_layer);
-}
-
-void SpriteComponent::set_z_order(int order)
-{
-	IRenderable::set_z_order(order);
 }
 
 

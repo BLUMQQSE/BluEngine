@@ -7,6 +7,7 @@ namespace bm98
 class CameraComponent;
 class AnimationComponent;
 class RigidbodyComponent;
+class Inventory;
 
 class PlayerController :
     public Component
@@ -38,6 +39,7 @@ private:
     RigidbodyComponent* rigid;
 
     CameraComponent* camera;
+    Inventory* inv;
 
     void init_animations();
 
