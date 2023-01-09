@@ -38,15 +38,9 @@ protected:
 
 private:
 	bool successful_shutdown;
-
-	bool in_dev_window = false;
-	bool open_dev_window = false;
-
 	GraphicsSettings graphics_settings;
-	GraphicsSettings dev_graphics_settings;
 
 	sf::RenderWindow* window;
-	sf::RenderWindow* dev_window;
 	sf::Event sfevent;
 	/// <summary>
 	/// No idea why this needs to exist... but loading a sound variable in this file

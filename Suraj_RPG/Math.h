@@ -26,17 +26,46 @@ public:
 	static float distance(sf::Vector2f a, sf::Vector2f b);
 	static float sqr_distance(sf::Vector2f a, sf::Vector2f b);
 	static float dot_product(sf::Vector2f a, sf::Vector2f b);
+	static bool equal(sf::Vector2f a, sf::Vector2f b);
 
 	/// <summary>
 	/// Returns a normalized copy of vector.
 	/// </summary>
 	Vector2f get_normalized();
 	void normalize();
+	bool equals(sf::Vector2f a);
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 
+};
+
+class Vector2i : public sf::Vector2i, IData
+{
+public:
+	Vector2i();
+	Vector2i(int x, int y);
+	Vector2i(sf::Vector2i vec);
+
+	int sqr_magnitude();
+
+	static Vector2i down();
+	static Vector2i up();
+	static Vector2i left();
+	static Vector2i right();
+	static Vector2i zero();
+
+	static int distance(sf::Vector2i a, sf::Vector2i b);
+	static int sqr_distance(sf::Vector2i a, sf::Vector2i b);
+	static int dot_product(sf::Vector2i a, sf::Vector2i b);
+	static bool equal(sf::Vector2i a, sf::Vector2i b);
+
+	bool equals(sf::Vector2i a);
+
+	// Inherited via IData
+	virtual Json::Value serialize_json() override;
+	virtual void unserialize_json(Json::Value obj) override;
 };
 
 /// <summary>

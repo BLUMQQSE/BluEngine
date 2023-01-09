@@ -8,20 +8,19 @@ namespace bm98::core
 std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::render_objects;
 unsigned Renderer::id = 0;
 sf::RenderTarget* Renderer::window;
-sf::RenderTarget* Renderer::dev_window;
 
 float UNIT_SIZE = 32.f;
 float SCALE = 2.f;
 
-void Renderer::init(RenderTarget* render_target, RenderTarget* dev_render_target)
+void Renderer::init(RenderTarget* render_target)
 {
 	window = render_target;
-	dev_window = dev_render_target;
 }
 
 void Renderer::add(RenderObject render_object)
 {
 	render_objects.insert(render_object);
+
 }
 
 void Renderer::remove(sf::Drawable* drawable)
@@ -42,6 +41,7 @@ void Renderer::remove(RenderObject render_object)
 }
 
 //Work in progress
+/*
 bool Renderer::top_ui_under_mouse(sf::Drawable* drawable, sf::View* view)
 {
 	
@@ -68,6 +68,7 @@ bool Renderer::top_ui_under_mouse(sf::Drawable* drawable, sf::View* view)
 	}
 	return true;
 }
+*/
 
 void Renderer::refresh()
 {
@@ -86,6 +87,7 @@ void Renderer::set_view(sf::View view)
 
 void Renderer::render()
 {
+	
 	for (const auto& f : render_objects)
 	{	
 		if (!f.render)
@@ -100,12 +102,11 @@ void Renderer::render()
 		if(f.shader)
 		{
 			window->draw(*f.drawable, *f.shader);
-			dev_window->draw(*f.drawable, *f.shader);
 			continue;
 		}
 		window->draw(*f.drawable);
-		dev_window->draw(*f.drawable);
 	}
+	
 }
 
 void Renderer::clear()
@@ -119,11 +120,6 @@ sf::Vector2u Renderer::get_window_size()
 	return window->getSize();
 }
 
-sf::RenderTarget* Renderer::get_dev_window()
-{
-	return dev_window;
-}
-
 const unsigned& Renderer::get_id()
 {
 	return id;
@@ -133,4 +129,6 @@ void Renderer::increase_id()
 {
 	id++;
 }
+
+
 }

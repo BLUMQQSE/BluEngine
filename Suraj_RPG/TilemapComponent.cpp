@@ -6,23 +6,25 @@
 #include "Tile.h"
 #include "FileManager.h"
 #include "GameObject.h"
+#include "ResourceManager.h"
 namespace bm98
 {
 using namespace core;
 TilemapComponent::TilemapComponent()
 {
+
 }
 
 TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_size,
 	unsigned width, unsigned height)
 {
-	this->position = sf::Vector2i(position_x, position_y);
+	this->position = Vector2i(position_x, position_y);
 	this->grid_size_f = grid_size;
 	this->grid_size_u = static_cast<unsigned>(this->grid_size_f);
 	this->max_size.x = width;
 	this->max_size.y = height;
 	load_tile_sheets();
-	this->layers = ((int)SortingLayer::UI);
+	this->layers = static_cast<int>(SortingLayer::UI);
 
 	this->outline.setPosition(position_x, position_y);
 	this->outline.setSize(sf::Vector2f(width * grid_size, height * grid_size));
@@ -49,6 +51,7 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 	}
 	
 	Renderer::add(Renderer::RenderObject(&outline, this));
+
 	update_tilemap_changes();
 }
 
@@ -72,6 +75,7 @@ void TilemapComponent::init()
 {
 	load_tile_sheets();
 	layers = ((int)SortingLayer::UI);
+	
 }
 
 void TilemapComponent::update()
@@ -108,9 +112,11 @@ void TilemapComponent::add_tiles(const unsigned x, const unsigned y, SortingLaye
 		//map[x][y][(int)layer]->set_texture(current_tileset_key, 
 			//&tile_sheets.at(current_tileset_key), texture_rect);
 		map[x][y][static_cast<int>(layer)]->add_animated_sprite_component(current_tileset_key, &tile_sheets.at(current_tileset_key), texture_rect, animation_timer);
-		map[x][y][static_cast<int>(layer)]->set_empty(false);
 		map[x][y][static_cast<int>(layer)]->set_collision(collision);
 		map[x][y][static_cast<int>(layer)]->set_type(tile_type);
+
+		//set empty needed last so we can check if is animated to add to renderer
+		map[x][y][static_cast<int>(layer)]->set_empty(false);
 		update_tilemap_changes();
 		return;
 	}
@@ -210,8 +216,19 @@ void TilemapComponent::load_from_json(std::string file_path)
 
 }
 
-void TilemapComponent::set_position(sf::Vector2f pos)
+void TilemapComponent::set_position(Vector2i pos)
 {
+	if (position.equals(pos))
+		return;
+
+	this->position = pos;
+	outline.setPosition(Vector2f(pos.x, pos.y));
+
+	for (auto& x : this->map)
+		for (auto& y : x)
+			for (auto& z : y)
+				z->set_position(pos);
+		
 }
 
 std::vector<Tile*> TilemapComponent::get_collidable_tiles()
@@ -227,6 +244,55 @@ std::vector<Tile*> TilemapComponent::get_collidable_tiles()
 
 void TilemapComponent::update_tilemap_changes()
 {
+	// Render Textures
+	for (int i = 0; i < render_sprites.size(); i++)
+	{
+		Renderer::remove(&render_sprites[i]);
+		if(render_textures[i])
+			delete render_textures[i];
+	}
+	render_textures.clear();
+	render_sprites.clear();
+	render_layers.clear();
+	
+	for (int i = 0; i < static_cast<int>(SortingLayer::UI) - 1; i++)
+	{
+		//sf::RenderTexture rt;
+		render_layers.push_back(static_cast<SortingLayer>(i));
+		render_textures.push_back(new sf::RenderTexture());
+
+		render_textures[i]->create(grid_size_u * max_size.x, grid_size_u * max_size.y);
+		
+		//rt.clear();
+
+		for (size_t x = 0; x < this->max_size.x; x++)
+		{
+			for (size_t y = 0; y < this->max_size.y; y++)
+			{
+				if (!this->map[x][y][i]->get_animated_sprite_component() && !this->map[x][y][i]->is_empty())
+				{
+					render_textures[i]->draw(this->map[x][y][i]->get_sprite());
+				}
+			}
+		}
+		render_textures[i]->display();
+		sf::Sprite sprite(render_textures[i]->getTexture());
+		sprite.setPosition(position.x, position.y);
+		//sprite.setColor(sf::Color::Transparent);
+
+		render_sprites.push_back(sprite);
+
+	}
+	//this x will need to be set back to < render_sprites.size()
+	for (int x = 0; x < render_sprites.size(); x++)
+	{
+		//render_sprites[x] = this->map[0][0][0]->get_sprite();
+		set_z_order(-2, false);
+		Renderer::add(Renderer::RenderObject(&render_sprites[x], get_render(), render_layers[x], get_z_order(), get_view_pointer()));
+	}
+
+
+	//return;
 	map_renderables.clear();
 	map_updateables.clear();
 	for (auto& x : this->map)

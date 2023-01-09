@@ -21,7 +21,6 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 	init_gui();
 	Debug::init();
 	Renderer::add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
-	
 }
 
 SettingsState::~SettingsState()
@@ -78,7 +77,6 @@ void SettingsState::update()
 
 	State::update();
 	update_input();
-	
 	Debug::mouse_position_display(font);
 	
 	for (auto& it : buttons)
@@ -115,7 +113,6 @@ void SettingsState::fixed_update()
 
 void SettingsState::render()
 {
-	
 }
 
 void SettingsState::init_gui()

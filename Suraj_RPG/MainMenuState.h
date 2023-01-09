@@ -28,7 +28,7 @@ protected:
 private:
     bool _render = true;
     SortingLayer background_layer = SortingLayer::BACKGROUND;
-    unsigned char z_order = 0;
+    char z_order = 0;
     sf::Texture background_texture;
     sf::RectangleShape background;
     std::map<std::string, GUI::Button*> buttons;

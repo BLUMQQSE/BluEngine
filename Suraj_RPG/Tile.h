@@ -25,6 +25,7 @@ public:
 	const bool get_collision() const;
 	const sf::FloatRect get_bounds() const;
 	const AnimatedSpriteComponent* get_animated_sprite_component();
+	sf::Sprite& get_sprite();
 
 	void set_empty(const bool& empty);
 	/// <summary>
@@ -34,6 +35,8 @@ public:
 	void set_texture(std::string source_key, const sf::Texture* texture, const sf::IntRect rect);
 	void set_collision(bool collision);
 	void set_type(TileType tile_type);
+	void set_position(Vector2i pos);
+
 	void add_animated_sprite_component(std::string source_key, sf::Texture* texture,
 		sf::IntRect animation_rect,
 		float animation_timer);
@@ -54,6 +57,10 @@ protected:
 
 	int grid_x;
 	int grid_y;
+
+	int x_offset;
+	int y_offset;
+
 	bool collision;
 	bool empty;
 	bool static_tile;

@@ -6,13 +6,11 @@ namespace bm98
 {
 Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f, SortingLayer layer)
 {
-	//this->shape.setSize(sf::Vector2f(grid_size_f, grid_size_f));
-	//this->shape.setFillColor(sf::Color::White);
-	//this->shape.setOutlineThickness(0.f);
-	//this->shape.setOutlineColor(sf::Color::Black);
-	//this->shape.setPosition(static_cast<float>(grid_x) * grid_size_f, static_cast<float>(grid_y) * grid_size_f);
+	this->x_offset = x_offset;
+	this->y_offset = y_offset;
 
-	this->sprite.setPosition(std::floor(static_cast<float>(x_offset + grid_x) * grid_size_f), std::floor(static_cast<float>(y_offset + grid_y) * grid_size_f));
+	this->sprite.setPosition(std::floor(static_cast<float>(x_offset + grid_x) * grid_size_f), 
+		std::floor(static_cast<float>(y_offset + grid_y) * grid_size_f));
 
 	this->grid_x = grid_x;
 	this->grid_y = grid_y;
@@ -29,6 +27,7 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 
 	set_render(false);
 	set_sorting_layer(layer, false);
+	set_z_order(-1, false);
 	//Renderer::add(Renderer::RenderObject(&sprite, this));
 }
 
@@ -83,13 +82,18 @@ const AnimatedSpriteComponent* Tile::get_animated_sprite_component()
 	return animated_sprite_component;
 }
 
+sf::Sprite& Tile::get_sprite()
+{
+	return sprite;
+}
+
 void Tile::set_empty(const bool& empty)
 {
 	
 	if (empty)
 	{
 		//if this tile exists, remove its renderable
-		if(!this->empty)
+		//if(!this->empty && animated_sprite_component)
 			Renderer::remove(&sprite);
 		set_render(false);
 	}
@@ -99,8 +103,10 @@ void Tile::set_empty(const bool& empty)
 		if(!this->empty)
 			Renderer::remove(&sprite);
 		set_render(true);
-		Renderer::add(Renderer::RenderObject(&sprite, this));
-	}
+		//this add causing issues with sprite renderers in tilemapcomponent
+		if(animated_sprite_component)
+			Renderer::add(Renderer::RenderObject(&sprite, this));
+	} 
 	this->empty = empty;
 }
 
@@ -108,9 +114,7 @@ void Tile::set_texture(std::string source_key, const sf::Texture* texture, const
 {
 	texture_source = source_key;
 	texture_rect = rect;
-	//shape.setTexture(texture);
 	sprite.setTexture(*texture);
-	//shape.setTextureRect(rect);
 	sprite.setTextureRect(rect);
 }
 
@@ -122,6 +126,20 @@ void Tile::set_collision(bool collision)
 void Tile::set_type(TileType tile_type)
 {
 	type = tile_type;
+}
+
+void Tile::set_position(Vector2i pos)
+{
+	//x_offset = pos.x;
+	//y_offset = pos.y;
+
+
+
+	//sprite.setPosition(Vector2f(grid_x + x_offset, grid_y + y_offset));
+	this->sprite.setPosition(std::floor(static_cast<float>(pos.x + x_offset + (grid_x * UNIT_SIZE))), 
+		std::floor(static_cast<float>(pos.y + y_offset + (grid_y * UNIT_SIZE))));
+
+
 }
 
 void Tile::add_animated_sprite_component(std::string source_key, sf::Texture* texture_sheet, sf::IntRect animation_rect, float animation_timer)

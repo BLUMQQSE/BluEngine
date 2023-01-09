@@ -70,7 +70,7 @@ private:
     SortingLayer outline_layer = SortingLayer::UI;
     bool text_select_render = false;
     SortingLayer text_select_layer = SortingLayer::UI;
-    unsigned char z_order = 0;
+    char z_order = 0;
 
     sf::Texture background_texture;
     sf::RectangleShape background;

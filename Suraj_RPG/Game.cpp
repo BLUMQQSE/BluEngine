@@ -26,7 +26,7 @@ Game::Game()
 
     ResourceManager::load_resources();
     //renderer = new Renderer(window);
-    Renderer::init(window, dev_window);
+    Renderer::init(window);
     Input::init(window);
     Physics::init();
     Debug::init();
@@ -39,7 +39,7 @@ Game::Game()
     Input::load_keybinds_from_file("Game_State", "Config/gamestate_keybinds.ini");
     Input::load_keybinds_from_file("Settings_State", "Config/settingsstate_keybinds.ini");
     
-    Input::load_keybinds_from_file("Dev_Window", "Config/dev_window_keybinds.ini");
+    Input::load_keybinds_from_file("Dev_Keybinds", "Config/dev_keybinds.ini");
 
     Input::change_keybinds_state("Main_Menu_State");
 
@@ -57,7 +57,6 @@ Game::~Game()
     }
 
     delete window;
-    //delete dev_window;
     FileManager::save_to_file_styled(serialize_json(), "Data/game.json");
 }
 
@@ -99,11 +98,6 @@ void Game::update_sfml_events()
             if(states.size() > 0)
                 Input::change_keybinds_state(states.top()->get_state_name());
         
-    }
-    while (dev_window->pollEvent(sfevent))
-    {
-        if (sfevent.type == sf::Event::GainedFocus)
-            Input::change_keybinds_state("Dev_Window");
     }
 
 }
@@ -182,18 +176,12 @@ void Game::update()
         window->close();
     }
 
-    if (in_dev_window)
-    {
-        //here handle moving in dev view movement
-    }
-
 }
 
 
 void Game::render()
 {
     window->clear();
-    dev_window->clear();
 
     if (!states.empty())
         states.top()->render();
@@ -201,7 +189,6 @@ void Game::render()
     Renderer::render();
 
     window->display();
-    dev_window->display();
 
 }
 
@@ -215,35 +202,14 @@ void Game::init_variables()
 void Game::init_graphics_settings()
 {
     graphics_settings.load_from_file("Config/graphics.ini");
-    dev_graphics_settings.load_from_file("Config/dev_window_graphics.ini");
 }
 
 void Game::init_window()
 {
 
-    
-    if (dev_graphics_settings.full_screen)
-    {
-        dev_window = new sf::RenderWindow(dev_graphics_settings.resolution, dev_graphics_settings.game_title,
-            sf::Style::Fullscreen, dev_graphics_settings.context_settings);
-    }
-    else
-        dev_window = new sf::RenderWindow(dev_graphics_settings.resolution, dev_graphics_settings.game_title,
-            sf::Style::Titlebar | sf::Style::Close, dev_graphics_settings.context_settings);
-
-    dev_window->setFramerateLimit(dev_graphics_settings.framerate_limit);
-    dev_window->setVerticalSyncEnabled(dev_graphics_settings.vertical_sync);
-    dev_window->setKeyRepeatEnabled(false);
-    dev_window->setPosition(sf::Vector2i(-2500, 1200));
-
-    dev_window->setView(dev_window->getDefaultView());
-
     HWND console = GetConsoleWindow();
-    SetWindowPos(console, 0, -2500 + dev_window->getSize().x, 1200, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-    if (!open_dev_window)
-    {
-        dev_window->close();
-    }
+    SetWindowPos(console, 0, 20, 400, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    
     if (graphics_settings.full_screen)
     {
         window = new sf::RenderWindow(graphics_settings.resolution, graphics_settings.game_title,
@@ -257,21 +223,15 @@ void Game::init_window()
     window->setVerticalSyncEnabled(graphics_settings.vertical_sync);
     window->setKeyRepeatEnabled(false);
 
-    
+
+   
 }
 
 void Game::init_states()
 {
     state_count = 1;
 
-    //    state_data.window = window;
-      //  state_data.graphics_settings = &graphics_settings;
-        //state_data.grid_size = 32.f;
-        //state_data.renderer = renderer;
-        //state_data.states = &states;
-
     states.push(new MainMenuState(window, &states, &graphics_settings));
-    //states.push(new GameState(window, &supported_keys));
 }
 
 void Game::end_application()
@@ -301,18 +261,5 @@ void Game::unserialize_json(Json::Value obj)
 {
     Time::init(obj["Time"]["total-real-time"].asFloat());
 }
-/*
-void Game::check_first_launch()
-{
-    Json::Value obj;
-    obj = FileManager::load_from_file(file_path);
-    if (obj.empty() || restart_on_launch)
-    {
-
-        Debug::Log("first");
-        FileManager::save_to_file_styled(serialize_json(), file_path);
-    }
-}
-*/
 
 }

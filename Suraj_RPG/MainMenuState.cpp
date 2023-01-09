@@ -34,6 +34,7 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 		std::cout << "failure\n";
 
 	music.setVolume(30.f * Game::get_game_settings().audio_settings.master_volume * Game::get_game_settings().audio_settings.music_volume);
+	music.setVolume(0.0);
 	music.setLoop(true);
 	music.play();
 }
@@ -101,12 +102,14 @@ void MainMenuState::update_input()
 	if (buttons["EDITOR"]->is_pressed())
 	{
 		//TODO: Add an editor state for dev purposes
+		on_end_state();
 		states->push(new EditorState(window, states, graphics_settings));
 		return;
 	}
 	if (buttons["OPTIONS"]->is_pressed())
 	{
 		//TODO: Add an options state which gives players options to change things
+		on_end_state();
 		states->push(new SettingsState(window, states, graphics_settings));
 		return;
 	}

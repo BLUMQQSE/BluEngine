@@ -27,7 +27,8 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	init_views();
 	init_fonts();
 	init_buttons();
-	
+
+
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("BACK", 900.f, 900.f, "Back");
 	pmenu->add_button("SAVE", 900, 840, "Save");
@@ -35,7 +36,8 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	
 	init_tilemap();
 	init_gui();
-	texture_selector->toggle_hidden();
+	
+	//texture_selector->toggle_hidden();
 
 	tile_modifier.collision = false;
 	tile_modifier.tile_type = TileType::DEFAULT;
@@ -192,6 +194,7 @@ void EditorState::init_views()
 	);
 
 	tile_selector_view = new sf::View();
+	
 	tile_selector_view->setSize
 	(
 		500.f, 500.f
@@ -209,7 +212,7 @@ void EditorState::init_gui()
 	texture_selector = new GUI::TextureSelector(120.f + 800, 20.f, 500.f, 500.f, UNIT_SIZE,
 		selected_gameobject->get_component<TilemapComponent>().get_texture(), font, 
 		selected_gameobject->get_component<TilemapComponent>().get_tileset_keys(), tile_selector_view);
-	texture_selector->toggle_hidden();
+	//texture_selector->toggle_hidden();
 
 	selector_rect.setSize(sf::Vector2f(selected_gameobject->get_component<TilemapComponent>().grid_size(), 
 		selected_gameobject->get_component<TilemapComponent>().grid_size()));
@@ -222,10 +225,14 @@ void EditorState::init_gui()
 
 void EditorState::update_gui()
 {
+	if (Input::get_mouse_down(Input::Mouse::RIGHT))
+	{
+		selected_gameobject->get_component<TilemapComponent>().set_position(Vector2i(300, 0));
+	}
 	if (sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position_window())))
+	{
 		return;
-
-	texture_selector->update();
+	}
 
 	if (!Input::using_input_box())
 	{
@@ -238,12 +245,14 @@ void EditorState::update_gui()
 		if (Input::get_action("CAM_RIGHT"))
 			scene_view->move(camera_move_speed * Time::delta_time(), 0);
 
-		if (Input::get_mouse_scroll_delta() > 0.f)
-			scene_view->zoom(.9f);
-		if (Input::get_mouse_scroll_delta() < 0.f)
-			scene_view->zoom(1.1f);
+		if (!texture_selector->mouse_in_container())
+		{
+			if (Input::get_mouse_scroll_delta() > 0.f)
+				scene_view->zoom(.9f);
+			if (Input::get_mouse_scroll_delta() < 0.f)
+				scene_view->zoom(1.1f);
+		}
 	}
-
 	if (texture_selector->mouse_in_container())
 	{
 		
@@ -318,24 +327,18 @@ void EditorState::update_gui()
 
 void EditorState::render_gui()
 {
-	//Renderer::add(Renderer::RenderObject(&sidebar, _render, SortingLayer::UI));
 	if (!texture_selector->mouse_in_bounds() &&
 		!sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position_window())))
 		text_select_render = true;
 	else
 		text_select_render = false;
-		//Renderer::add(Renderer::RenderObject(&selector_rect, _render, SortingLayer::UI, 0, &main_view));
 
 	texture_selector->add_to_buffer(tile_selector_view);
+	//texture_selector->add_to_buffer();
 }
 
 void EditorState::init_buttons()
 {
-	/*
-	buttons["BACK"] = new GUI::Button(100.f, 540.f, 150.f, 60.f, &font, "BACK", 28,
-		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
-		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
-	*/
 	buttons["TS_BTN"] = new GUI::Button(20, 20, 50.f, 50.f, &font, "T", 36,
 		sf::Color(270, 270, 270, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 255), sf::Color(150, 150, 150, 255), sf::Color(20, 20, 20, 255));
@@ -343,9 +346,12 @@ void EditorState::init_buttons()
 
 void EditorState::init_tilemap()
 {
-	//tilemap = new TilemapComponent(0, 0, UNIT_SIZE, 32, 32);
 	selected_gameobject = new GameObject();
-	selected_gameobject->add_component<TilemapComponent>(0, 0, UNIT_SIZE, 32, 32);
+	selected_gameobject->add_component<TilemapComponent>(0, 0, UNIT_SIZE, 100, 50);
+	selected_gameobject->init();
+	selected_gameobject->awake();
+	selected_gameobject->start();
+	//selected_gameobject->get_component<TilemapComponent>().set_position(Vector2i(100, 0));
 }
 
 }

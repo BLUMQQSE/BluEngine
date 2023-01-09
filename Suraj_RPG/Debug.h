@@ -23,6 +23,6 @@ private:
 	static sf::Text text_display;
 	static bool active;
 	static SortingLayer layer;
-	static unsigned char z_order;
+	static char z_order;
 };
 }

@@ -70,6 +70,14 @@ float Vector2f::dot_product(sf::Vector2f a, sf::Vector2f b)
 	return a.x * b.x + a.y * b.y;
 }
 
+bool Vector2f::equal(sf::Vector2f a, sf::Vector2f b)
+{
+	if (a.x == b.x && a.y == b.y)
+		return true;
+
+	return false;
+}
+
 Vector2f Vector2f::get_normalized()
 {
 	if (sqr_magnitude() != 0)
@@ -88,6 +96,13 @@ void Vector2f::normalize()
 	}
 }
 
+bool Vector2f::equals(sf::Vector2f a)
+{
+	if (x == a.x && y == a.y)
+		return true;
+	return false;
+}
+
 Json::Value Vector2f::serialize_json()
 {
 	Json::Value obj;
@@ -99,6 +114,104 @@ Json::Value Vector2f::serialize_json()
 }
 
 void Vector2f::unserialize_json(Json::Value obj)
+{
+	x = obj["x"].asFloat();
+	y = obj["y"].asFloat();
+}
+
+#pragma endregion
+
+
+#pragma region Vector2i
+
+Vector2i::Vector2i()
+{
+	x = 0;
+	y = 0;
+}
+
+Vector2i::Vector2i(int x, int y)
+	: sf::Vector2i(x, y)
+{
+
+}
+
+Vector2i::Vector2i(sf::Vector2i vec)
+{
+	this->x = vec.x;
+	this->y = vec.y;
+}
+
+int Vector2i::sqr_magnitude()
+{
+	return std::pow(x, 2) + std::pow(y, 2);
+}
+
+Vector2i Vector2i::down()
+{
+	return Vector2i(0.f, 1.f);
+}
+
+Vector2i Vector2i::up()
+{
+	return Vector2i(0.f, -1.f);
+}
+
+Vector2i Vector2i::left()
+{
+	return Vector2i(-1.f, 0);
+}
+
+Vector2i Vector2i::right()
+{
+	return Vector2i(1.f, 0.f);
+}
+
+Vector2i Vector2i::zero()
+{
+	return Vector2i(0, 0);
+}
+
+int Vector2i::distance(sf::Vector2i a, sf::Vector2i b)
+{
+	return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
+}
+
+int Vector2i::sqr_distance(sf::Vector2i a, sf::Vector2i b)
+{
+	return std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2);
+}
+
+int Vector2i::dot_product(sf::Vector2i a, sf::Vector2i b)
+{
+	return a.x * b.x + a.y * b.y;
+}
+
+bool Vector2i::equal(sf::Vector2i a, sf::Vector2i b)
+{
+	if (a.x == b.x && a.y == b.y)
+		return true;
+	return false;
+}
+
+bool Vector2i::equals(sf::Vector2i a)
+{
+	if (x == a.x && y == a.y)
+		return true;
+	return false;
+}
+
+Json::Value Vector2i::serialize_json()
+{
+	Json::Value obj;
+
+	obj["x"] = x;
+	obj["y"] = y;
+
+	return obj;
+}
+
+void Vector2i::unserialize_json(Json::Value obj)
 {
 	x = obj["x"].asInt64();
 	y = obj["y"].asInt64();

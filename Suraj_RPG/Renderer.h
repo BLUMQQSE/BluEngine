@@ -15,7 +15,7 @@ public:
 	struct RenderObject
 	{
 		RenderObject(sf::Drawable* drawable, bool& render, SortingLayer& sorting_layer,
-			unsigned char& z_order, sf::View** view = nullptr, sf::Shader** shader = nullptr)
+			char& z_order, sf::View** view = nullptr, sf::Shader** shader = nullptr)
 			:render(render), sorting_layer(sorting_layer), z_order(z_order)
 		{
 			this->sorting_layer = sorting_layer;
@@ -43,14 +43,14 @@ public:
 		SortingLayer& sorting_layer;
 		bool& render;
 		sf::Drawable* drawable;
-		unsigned char& z_order;
+		char& z_order;
 		sf::View** view;
 		sf::Shader** shader;
 		unsigned private_entry_key;
 
 	};
 
-	static void init(RenderTarget* render_target, RenderTarget* dev_render_target);
+	static void init(RenderTarget* render_target);
 
 	static void add(RenderObject render_object);
 	static void remove(sf::Drawable* drawable);
@@ -64,7 +64,7 @@ public:
 	/// <param name="drawable"></param>
 	/// <param name=""></param>
 	/// <returns></returns>
-	static bool top_ui_under_mouse(sf::Drawable* drawable, sf::View* view = nullptr);
+	//static bool top_ui_under_mouse(sf::Drawable* drawable, sf::View* view = nullptr);
 
 	/// <summary>
 	/// Updates render objects after a change has been made to its sorting_layer or z_order
@@ -81,7 +81,6 @@ public:
 	static void clear();
 
 	static sf::Vector2u get_window_size();
-	static sf::RenderTarget* get_dev_window();
 
 	static const unsigned& get_id();
 	static void increase_id();
@@ -90,7 +89,6 @@ protected:
 
 private:
 	static RenderTarget* window;
-	static RenderTarget* dev_window;
 
 	struct cmpStruct
 	{
@@ -108,6 +106,7 @@ private:
 
 	static unsigned id;
 	static std::set<RenderObject, cmpStruct> render_objects;
+
 	//static sf::Drawable* _top_ui;
 
 };

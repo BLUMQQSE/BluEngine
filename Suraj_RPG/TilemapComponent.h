@@ -1,5 +1,6 @@
 #pragma once
 #include "globals.h"
+#include "Math.h"
 #include "Component.h"
 #include "IRenderable.h"
 namespace bm98
@@ -43,18 +44,17 @@ public:
 	/// <summary>
 	/// Sets origin of tilemap.
 	/// </summary>
-	void set_position(sf::Vector2f pos);
+	void set_position(Vector2i pos);
 
 
 	std::vector<Tile*> get_collidable_tiles();
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
-
 	virtual void unserialize_json(Json::Value obj) override;
 
 private:
-	sf::Vector2i position;
+	Vector2i position;
 	float grid_size_f;
 	unsigned grid_size_u;
 	unsigned int layers;
@@ -62,6 +62,14 @@ private:
 	sf::RectangleShape outline;
 	std::vector<std::vector<std::vector<Tile*> > > map;
 	std::vector<Tile*> map_renderables;
+
+	std::vector<sf::Sprite> render_sprites;
+	std::vector<sf::RenderTexture*> render_textures;
+	std::vector<SortingLayer> render_layers;
+	//this will need to be a vector of layers...
+	//one for each layer in tilemap
+	SortingLayer layer = SortingLayer::BACKGROUND;
+
 	std::vector<Tile*> map_updateables;
 
 	std::string file_path = "";

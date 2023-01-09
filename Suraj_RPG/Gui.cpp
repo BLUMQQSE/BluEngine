@@ -343,6 +343,9 @@ Checkbox::Checkbox(float x, float y, float size)
 	check.setPosition(x + check_offset, y + check_offset);
 	check.setFillColor(sf::Color::Transparent);
 	check.setRadius((size / 2 - check_offset));
+
+	//check = FloatConvex::circle(Vector2f(x + check_offset, y + check_offset), size / 2 - check_offset);
+
 	checked = false;
 
 	set_sorting_layer(SortingLayer::UI, false);
@@ -364,6 +367,7 @@ void Checkbox::update()
 	if (box.getGlobalBounds().contains(Input::mouse_position( get_view() )) &&
 		Input::get_mouse_down(Input::Mouse::LEFT))
 	{
+		//std::cout << "check\n";
 		checked = !checked;
 		if (checked)
 		{
@@ -387,7 +391,7 @@ void Checkbox::set_position(float x, float y)
 	//GUIObject::set_position(x, y);
 	float check_offset = size * .2f;
 	box.setPosition(x, y);
-	check.setPosition(x + check_offset, y + check_offset);
+	check.setPosition(Vector2f(x + check_offset, y + check_offset));
 }
 
 bool Checkbox::is_checked()
@@ -589,9 +593,9 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 
 	this->text_view = texture_view;
 
-	this->text_view->setSize(bounds.getSize().x, bounds.getSize().y);
-	this->text_view->setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
-		bounds.getPosition().y + bounds.getSize().y / 2);
+	//this->text_view->setSize(bounds.getSize().x, bounds.getSize().y);
+	//this->text_view->setCenter(bounds.getPosition().x + bounds.getSize().x / 2,
+	//	bounds.getPosition().y + bounds.getSize().y / 2);
 
 	float left = bounds.getPosition().x / Renderer::get_window_size().x;
 	float top = bounds.getPosition().y / Renderer::get_window_size().y;
@@ -607,8 +611,9 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 	set_z_order(0, false);
 	Renderer::add(Renderer::RenderObject(&container, this));
 	Renderer::add(Renderer::RenderObject(&bounds, this));
-	Renderer::add(Renderer::RenderObject(&sheet, text_view_render, get_sorting_layer(), get_z_order(), &this->text_view));
-	Renderer::add(Renderer::RenderObject(&selector, text_view_render, get_sorting_layer(), get_z_order(), &this->text_view));
+	// following two need reset to use text_view
+	Renderer::add(Renderer::RenderObject(&sheet, this));
+	Renderer::add(Renderer::RenderObject(&selector, this));
 
 	init_buttons(x, y);
 	init_dropdowns(x, y, tile_sets);
@@ -665,9 +670,7 @@ const SortingLayer TextureSelector::get_layer() const
 
 void TextureSelector::toggle_hidden()
 {
-	std::cout << "before: " << hidden <<"\n";
 	hidden = !hidden;
-	std::cout << "after: " << hidden << "\n";
 }
 
 void TextureSelector::init_buttons(float x, float y)
@@ -768,8 +771,6 @@ void TextureSelector::set_texture_rect()
 		texture_rect.top = static_cast<int>(selector.getPosition().y - bounds.getPosition().y);
 
 	}
-
-
 }
 
 DropDownList* TextureSelector::get_layer_dropdown()
@@ -810,13 +811,13 @@ void TextureSelector::update()
 	tile_collection_selector->update();
 
 	if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() < 0)
-		get_view()->move(2000 * Time::delta_time(), 0);
+		text_view->move(2000 * Time::delta_time(), 0);
 	else if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() > 0)
-		get_view()->move(-2000 * Time::delta_time(), 0);
+		text_view->move(-2000 * Time::delta_time(), 0);
 	else if (Input::get_mouse_scroll_delta() < 0)
-		get_view()->move(0, 2000 * Time::delta_time());
+		text_view->move(0, 2000 * Time::delta_time());
 	else if (Input::get_mouse_scroll_delta() > 0)
-		get_view()->move(0, -2000 * Time::delta_time());
+		text_view->move(0, -2000 * Time::delta_time());
 
 	/*
 	*  here need to change how this works entirely
@@ -829,21 +830,16 @@ void TextureSelector::update()
 
 void TextureSelector::add_to_buffer(sf::View* view)
 {
-	text_view = view;
+	//text_view = view;
 
-	set_render(hidden);
+	set_render(!hidden);
 	collision_checkbox->add_to_buffer();
 	animation_checkbox->add_to_buffer();
 
 	layer_selector->add_to_buffer();
 	tile_collection_selector->add_to_buffer();
 	tile_type_selector->add_to_buffer();
-
-	//Renderer::add(Renderer::RenderObject(&container, render, SortingLayer::UI, 0, &view));
-	//Renderer::add(Renderer::RenderObject(&bounds, render, SortingLayer::UI, 0, &view));
-	//Renderer::add(Renderer::RenderObject(&sheet, text_view_render, SortingLayer::UI, 0, &this->text_view));
-	//Renderer::add(Renderer::RenderObject(&selector, text_view_render, SortingLayer::UI, 0, &this->text_view));
-
+	
 }
 
 

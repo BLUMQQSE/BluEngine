@@ -33,7 +33,7 @@ void IRenderable::set_render(bool render)
 {
 	this->render = render;
 }
-void IRenderable::set_z_order(unsigned char order, bool refresh_renderer)
+void IRenderable::set_z_order(char order, bool refresh_renderer)
 {
 	this->z_order = order;
 	if(refresh_renderer)
@@ -54,7 +54,7 @@ SortingLayer& IRenderable::get_sorting_layer()
 {
 	return sorting_layer;
 }
-unsigned char& IRenderable::get_z_order()
+char& IRenderable::get_z_order()
 {
 	return z_order;
 }
