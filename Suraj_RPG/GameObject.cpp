@@ -263,6 +263,11 @@ GameObject* GameObject::get_greatest_ancestor()
 	return o;
 }
 
+std::vector<Component*> GameObject::get_components()
+{
+	return components;
+}
+
 std::vector<GameObject*> GameObject::get_children()
 {
 	return children;

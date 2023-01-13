@@ -112,6 +112,11 @@ void SceneManager::destroy_gameobject(GameObject* game_object)
 	active_scene->remove_gameobject(game_object);
 }
 
+std::vector<GameObject*> SceneManager::get_objects_in_scene()
+{
+	return active_scene->get_objects();
+}
+
 GameObject* SceneManager::find(std::string name, GameObject* object_to_ignore)
 {
 	std::vector<GameObject*> objects = active_scene->get_objects();

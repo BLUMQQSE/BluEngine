@@ -37,9 +37,6 @@ void bm98::PlayerController::init()
 	//std::cout << "inventory size: " << inv->get_size();
 	//std::cout << "first item capacity" << inv->get();
 
-	std::cout << "has_component<ColliderComponent>() : " << std::boolalpha << game_object->has_component<ColliderComponent>() << "\n";
-	std::cout << "has_component<BoxColliderComponent>() : " << std::boolalpha << game_object->has_component<BoxColliderComponent>() << "\n";
-	std::cout << "has_component<CapsuleColliderComponent>() : " << std::boolalpha << game_object->has_component<CapsuleColliderComponent>() << "\n";
 	std::cout << game_object->get_info().name << "\n";
 }
 

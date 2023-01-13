@@ -89,13 +89,10 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, Globa
 			obj.first->get_info().layer == Layer::PHYSICS_IGNORE)
 			continue;
 
-		if (!obj.first->has_component<BoxColliderComponent>() && !obj.first->has_component<CapsuleColliderComponent>())
+		if (!obj.first->has_component_of_type<ColliderComponent>())
 			continue;
 
-		if (obj.first->has_component<BoxColliderComponent>())
-			return obj.first->get_component<BoxColliderComponent>().intersects(ray);
-		else
-			return obj.first->get_component<CapsuleColliderComponent>().intersects(ray);
+		obj.first->get_component_of_type<ColliderComponent>()->intersects(ray);
 		
 	}
 	return false;

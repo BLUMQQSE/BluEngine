@@ -48,7 +48,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	init_view();
 
 	pmenu = new PauseMenu(*window, font);
-	pmenu->add_button("QUIT", 900.f, 900.f, "Quit Game");
+	pmenu->add_button("QUIT", 500.f, 500.f, "Quit Game");
 }
 
 GameState::~GameState()
@@ -168,7 +168,7 @@ void GameState::init_view()
 	view = new sf::View();
 	view->setSize(graphics_settings->resolution.width, graphics_settings->resolution.height);
 	view->setCenter(graphics_settings->resolution.width / 2.f, graphics_settings->resolution.height / 2.f);
-	view->zoom(.6f);
+	view->zoom(.2f);
 }
 
 }

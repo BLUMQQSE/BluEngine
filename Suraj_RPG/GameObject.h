@@ -132,6 +132,7 @@ public:
 	/// Returns the highest parent of a game object.
 	/// </summary>
 	GameObject* get_greatest_ancestor();
+	std::vector<Component*> get_components();
 	std::vector<GameObject*> get_children();
 	/// <summary>
 	/// Returns all children, grandchildren, great-grandchildren...
@@ -152,6 +153,16 @@ public:
 	{
 		
 		return component_bitset[get_component_type_id<T>()];
+	}
+
+	template <typename T> bool has_component_of_type() const
+	{
+		for (std::size_t i = 0; i < components.size(); i++)
+		{
+			if (dynamic_cast<T*>(components[i]))
+				return true;
+		}
+		return false;
 	}
 
 	template <typename T, typename... TArgs> void add_component(TArgs&&...mArgs)
@@ -188,6 +199,16 @@ public:
 	{
 		auto ptr(component_array[get_component_type_id<T>()]);
 		return *static_cast<T*>(ptr);
+	}
+
+	template <typename T> T* get_component_of_type() 
+	{
+		for (std::size_t i = 0; i < components.size(); i++)
+		{
+			if (dynamic_cast<T*>(components[i]))
+				return dynamic_cast<T*>(components[i]);
+		}
+		return nullptr;
 	}
 
 protected:

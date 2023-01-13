@@ -219,6 +219,9 @@
     <ClCompile Include="CapsuleColliderComponent.cpp">
       <Filter>Components\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="GameEditorView.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -427,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="CapsuleColliderComponent.h">
       <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEditorView.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

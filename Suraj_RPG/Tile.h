@@ -19,7 +19,6 @@ public:
 	virtual void fixed_update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
-	const bool is_empty() const;
 	const bool is_static() const;
 	const SortingLayer get_layer() const;
 	const bool get_collision() const;
@@ -27,7 +26,6 @@ public:
 	const AnimatedSpriteComponent* get_animated_sprite_component();
 	sf::Sprite& get_sprite();
 
-	void set_empty(const bool& empty);
 	/// <summary>
 	/// Saves source file for texture, updates texture of tile with regard to rect
 	///  location on texture sheet.
@@ -62,12 +60,10 @@ protected:
 	int y_offset;
 
 	bool collision;
-	bool empty;
 	bool static_tile;
 	TileType type;
 	SortingLayer layer;
 	std::string texture_source;
-	Renderer::RenderObject* render_object;
 	AnimatedSpriteComponent* animated_sprite_component;
 	float animation_timer;
 

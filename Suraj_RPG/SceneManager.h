@@ -51,6 +51,8 @@ public:
 	static void instantiate_gameobject_on_load(GameObject* game_object);
 	static void destroy_gameobject(GameObject* game_object);
 
+	static std::vector<GameObject*> get_objects_in_scene();
+
 	static GameObject* find(std::string name, GameObject* object_to_ignore);
 	static GameObject* find_with_tag(Tag tag, GameObject* object_to_ignore);
 	static std::vector<GameObject*> find_all_with_tag(Tag tag, GameObject* object_to_ignore);

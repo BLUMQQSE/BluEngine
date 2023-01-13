@@ -30,9 +30,9 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 
 
 	pmenu = new PauseMenu(*window, font);
-	pmenu->add_button("BACK", 900.f, 900.f, "Back");
-	pmenu->add_button("SAVE", 900, 840, "Save");
-	pmenu->add_button("LOAD", 900, 780, "Load");
+	pmenu->add_button("BACK", 500.f, 500.f, "Back");
+	pmenu->add_button("SAVE", 500, 440, "Save");
+	pmenu->add_button("LOAD", 500, 380, "Load");
 	
 	init_tilemap();
 	init_gui();
@@ -225,10 +225,6 @@ void EditorState::init_gui()
 
 void EditorState::update_gui()
 {
-	if (Input::get_mouse_down(Input::Mouse::RIGHT))
-	{
-		selected_gameobject->get_component<TilemapComponent>().set_position(Vector2i(300, 0));
-	}
 	if (sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position_window())))
 	{
 		return;
@@ -347,7 +343,7 @@ void EditorState::init_buttons()
 void EditorState::init_tilemap()
 {
 	selected_gameobject = new GameObject();
-	selected_gameobject->add_component<TilemapComponent>(0, 0, UNIT_SIZE, 100, 50);
+	selected_gameobject->add_component<TilemapComponent>(0, 0, UNIT_SIZE, 20, 20);
 	selected_gameobject->init();
 	selected_gameobject->awake();
 	selected_gameobject->start();

@@ -59,16 +59,13 @@ private:
 	unsigned grid_size_u;
 	unsigned int layers;
 	sf::Vector2u max_size;
-	sf::RectangleShape outline;
+	FloatConvex outline;
 	std::vector<std::vector<std::vector<Tile*> > > map;
 	std::vector<Tile*> map_renderables;
 
 	std::vector<sf::Sprite> render_sprites;
 	std::vector<sf::RenderTexture*> render_textures;
 	std::vector<SortingLayer> render_layers;
-	//this will need to be a vector of layers...
-	//one for each layer in tilemap
-	SortingLayer layer = SortingLayer::BACKGROUND;
 
 	std::vector<Tile*> map_updateables;
 
@@ -94,8 +91,9 @@ private:
 
 	void update_tilemap_changes();
 	void load_tile_sheets();
-	void clear();
-
+	
+	void clear_map();
+	void create_empty_map();
 };
 
 }

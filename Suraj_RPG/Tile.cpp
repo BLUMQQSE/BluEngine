@@ -16,10 +16,6 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 	this->grid_y = grid_y;
 
 	this->layer = layer;
-
-	//this->render_object = new Renderer::RenderObject(&shape, layer);
-	//this->render_object = new Renderer::RenderObject(&sprite, layer);
-	this->empty = true;
 	this->static_tile = true;
 	this->collision = false;
 	this->type = TileType::DEFAULT;
@@ -28,20 +24,21 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 	set_render(false);
 	set_sorting_layer(layer, false);
 	set_z_order(-1, false);
-	//Renderer::add(Renderer::RenderObject(&sprite, this));
 }
 
 Tile::~Tile()
 {
-	Renderer::remove(&sprite);
-	delete animated_sprite_component;
+	if (animated_sprite_component)
+	{
+		Renderer::remove(&sprite);
+		delete animated_sprite_component;
+	}
 }
 
 void Tile::update()
 {
 	if (animated_sprite_component)
 		animated_sprite_component->update();
-
 }
 
 void Tile::late_update()
@@ -50,11 +47,6 @@ void Tile::late_update()
 
 void Tile::fixed_update()
 {
-}
-
-const bool Tile::is_empty() const
-{
-	return empty;
 }
 
 const bool Tile::is_static() const
@@ -87,29 +79,6 @@ sf::Sprite& Tile::get_sprite()
 	return sprite;
 }
 
-void Tile::set_empty(const bool& empty)
-{
-	
-	if (empty)
-	{
-		//if this tile exists, remove its renderable
-		//if(!this->empty && animated_sprite_component)
-			Renderer::remove(&sprite);
-		set_render(false);
-	}
-	else
-	{
-		//if this tile already exists, remove before adding new one
-		if(!this->empty)
-			Renderer::remove(&sprite);
-		set_render(true);
-		//this add causing issues with sprite renderers in tilemapcomponent
-		if(animated_sprite_component)
-			Renderer::add(Renderer::RenderObject(&sprite, this));
-	} 
-	this->empty = empty;
-}
-
 void Tile::set_texture(std::string source_key, const sf::Texture* texture, const sf::IntRect rect)
 {
 	texture_source = source_key;
@@ -130,35 +99,36 @@ void Tile::set_type(TileType tile_type)
 
 void Tile::set_position(Vector2i pos)
 {
-	//x_offset = pos.x;
-	//y_offset = pos.y;
+	x_offset = pos.x;
+	y_offset = pos.y;
 
-
-
-	//sprite.setPosition(Vector2f(grid_x + x_offset, grid_y + y_offset));
-	this->sprite.setPosition(std::floor(static_cast<float>(pos.x + x_offset + (grid_x * UNIT_SIZE))), 
-		std::floor(static_cast<float>(pos.y + y_offset + (grid_y * UNIT_SIZE))));
-
-
+	this->sprite.setPosition(std::floor(static_cast<float>(x_offset + (grid_x * UNIT_SIZE))), 
+		std::floor(static_cast<float>(y_offset + (grid_y * UNIT_SIZE))));
 }
 
 void Tile::add_animated_sprite_component(std::string source_key, sf::Texture* texture_sheet, sf::IntRect animation_rect, float animation_timer)
 {
 	remove_animated_sprite_component();
-
 	texture_rect = animation_rect;
 	texture_source = source_key;
 	this->animation_timer = animation_timer;
 	animation_rect.width -= UNIT_SIZE;
 	animated_sprite_component = new AnimatedSpriteComponent(sprite, *texture_sheet, animation_rect,
 		animation_timer, UNIT_SIZE, UNIT_SIZE);
+
+	Renderer::add(Renderer::RenderObject(&sprite, this));
 }
 
 void Tile::remove_animated_sprite_component()
 {
-	delete animated_sprite_component;
-	animation_timer = 0;
+	if (animated_sprite_component)
+	{
+		Renderer::remove(&sprite);
+		delete animated_sprite_component;
+		animation_timer = 0;
+	}
 	animated_sprite_component = nullptr;
+	
 }
 
 void Tile::remove_texture()
@@ -179,15 +149,11 @@ void Tile::add_to_buffer(sf::View* view)
 {
 	set_view(view);
 	
-	//if (render_object)
-	//{
-		//render_object->view = &view;
 	if (collision)
 		sprite.setColor(sf::Color(255, 0, 0, 100));
 	else
 		sprite.setColor(sf::Color::White);
-		//Renderer::add(*render_object);
-	//}
+		
 }
 
 Json::Value Tile::serialize_json()
