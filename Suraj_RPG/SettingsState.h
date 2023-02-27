@@ -28,6 +28,13 @@ public:
     virtual void fixed_update();
     virtual void render();
 
+    FloatConvex circle = FloatConvex::circle(Vector2f(300, 300), 40);
+    FloatConvex circle2 = FloatConvex::circle(Vector2f(600, 600), 40);
+    
+    FloatConvex concave = FloatConvex::polygon(Vector2f(20, 20),
+        {Vector2f(0,0), Vector2f(400, 0), 
+        Vector2f(400, 200), Vector2f(0, 400)});
+
 protected:
     //void init_fonts();
     void init_buttons();

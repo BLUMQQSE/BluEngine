@@ -52,6 +52,12 @@
     <Filter Include="Components\Physics">
       <UniqueIdentifier>{1e42d633-89d6-4ee2-a091-52c6dc2b465f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components\AI">
+      <UniqueIdentifier>{afb44cdc-8a63-4066-b981-bff53b367bc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Rendering">
+      <UniqueIdentifier>{da86aae8-6d4b-47c7-96b1-5aebf243eee3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,9 +74,6 @@
     </ClCompile>
     <ClCompile Include="MainMenuState.cpp">
       <Filter>States</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationComponent.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Core</Filter>
@@ -123,17 +126,11 @@
     <ClCompile Include="globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedSpriteComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="FileManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\External\JSON\dist\jsoncpp.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ChildAnimationComponent.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Core</Filter>
@@ -150,14 +147,8 @@
     <ClCompile Include="Math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerController.cpp">
       <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="TilemapComponent.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="PrefabEditor.cpp">
       <Filter>GUI</Filter>
@@ -195,9 +186,6 @@
     <ClCompile Include="DropDownComponent.cpp">
       <Filter>Components\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="CameraComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -222,6 +210,39 @@
     <ClCompile Include="GameEditorView.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="SensoryComponent.cpp">
+      <Filter>Components\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="HearingComponent.cpp">
+      <Filter>Components\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualComponent.cpp">
+      <Filter>Components\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AgentComponent.cpp">
+      <Filter>Components\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedSpriteComponent.cpp">
+      <Filter>Components\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationComponent.cpp">
+      <Filter>Components\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildAnimationComponent.cpp">
+      <Filter>Components\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Components\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TilemapComponent.cpp">
+      <Filter>Components\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraComponent.cpp">
+      <Filter>Components\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TilemapColliderComponent.cpp">
+      <Filter>Components\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -235,9 +256,6 @@
     </ClInclude>
     <ClInclude Include="MainMenuState.h">
       <Filter>States</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationComponent.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Core</Filter>
@@ -290,9 +308,6 @@
     <ClInclude Include="globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedSpriteComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -338,9 +353,6 @@
     <ClInclude Include="..\External\JSON\include\json\version.h">
       <Filter>Header Files\JSON</Filter>
     </ClInclude>
-    <ClInclude Include="ChildAnimationComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -359,14 +371,8 @@
     <ClInclude Include="Math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerController.h">
       <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="TilemapComponent.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="SceneEditor.h">
       <Filter>GUI</Filter>
@@ -404,9 +410,6 @@
     <ClInclude Include="DropDownComponent.h">
       <Filter>Components\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="CameraComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -433,6 +436,39 @@
     </ClInclude>
     <ClInclude Include="GameEditorView.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="SensoryComponent.h">
+      <Filter>Components\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="HearingComponent.h">
+      <Filter>Components\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualComponent.h">
+      <Filter>Components\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AgentComponent.h">
+      <Filter>Components\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedSpriteComponent.h">
+      <Filter>Components\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationComponent.h">
+      <Filter>Components\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildAnimationComponent.h">
+      <Filter>Components\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>Components\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TilemapComponent.h">
+      <Filter>Components\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraComponent.h">
+      <Filter>Components\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TilemapColliderComponent.h">
+      <Filter>Components\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

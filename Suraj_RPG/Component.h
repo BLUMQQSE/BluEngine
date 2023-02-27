@@ -31,6 +31,9 @@ public:
 	/// solely be used by scripts, and is used to link with other scripts and dedicated components.
 	/// </summary>
 	virtual void start();
+
+	virtual void on_destroy();
+
 	virtual void update();
 	virtual void late_update();
 	virtual void fixed_update();

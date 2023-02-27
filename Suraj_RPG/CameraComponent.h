@@ -20,6 +20,7 @@ public:
 
     void set_viewport(sf::FloatRect viewport);
     void set_position(Vector2f pos);
+    void move(Vector2f move);
 
 private:
     sf::View camera_view;

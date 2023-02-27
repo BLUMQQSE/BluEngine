@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "IRenderable.h"
 #include <limits>
+#include "Math.h"
 
 namespace bm98::core
 {
@@ -50,9 +51,22 @@ public:
 
 	};
 
+	struct GizmoObject
+	{
+		GizmoObject(FloatConvex drawable)
+		{
+			this->drawable = drawable;
+		}
+
+		FloatConvex drawable;
+
+
+	};
+
 	static void init(RenderTarget* render_target);
 
 	static void add(RenderObject render_object);
+	static void add_gizmo(GizmoObject gizmo);
 	static void remove(sf::Drawable* drawable);
 	static void remove(RenderObject render_object);
 
@@ -78,7 +92,10 @@ public:
 
 
 	static void render();
+	static void render_gizmos();
 	static void clear();
+
+	static void fixed_update();
 
 	static sf::Vector2u get_window_size();
 
@@ -105,7 +122,9 @@ private:
 	};
 
 	static unsigned id;
+	static bool draw_gizmos;
 	static std::set<RenderObject, cmpStruct> render_objects;
+	static std::vector<GizmoObject> gizmos;
 
 	//static sf::Drawable* _top_ui;
 

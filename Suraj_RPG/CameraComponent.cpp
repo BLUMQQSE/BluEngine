@@ -37,6 +37,7 @@ void CameraComponent::start()
 void CameraComponent::update()
 {
 	sf::Listener::setPosition(sf::Vector3f(game_object->get_transform().position.x, game_object->get_transform().position.y, 0));
+	
 }
 
 sf::View& CameraComponent::get_camera_view()
@@ -63,6 +64,14 @@ void CameraComponent::set_position(Vector2f pos)
 {
 	game_object->set_position(pos.x, pos.y);
 	camera_view.setCenter(pos);
+
+}
+
+void CameraComponent::move(Vector2f move)
+{
+	if(move.sqr_magnitude() / UNIT_SIZE > 25)
+		camera_view.move(move * Time::delta_time() * 2.f);
+	game_object->set_position(camera_view.getCenter().x, camera_view.getCenter().y);
 }
 
 

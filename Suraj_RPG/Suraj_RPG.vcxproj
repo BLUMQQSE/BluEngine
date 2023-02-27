@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\External\JSON\dist\jsoncpp.cpp" />
+    <ClCompile Include="AgentComponent.cpp" />
     <ClCompile Include="AnimatedSpriteComponent.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AudioSource.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
+    <ClCompile Include="HearingComponent.cpp" />
     <ClCompile Include="IInteractable.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Interactor.cpp" />
@@ -219,13 +221,16 @@
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneEditor.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SensoryComponent.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="TestClass.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="TilemapColliderComponent.cpp" />
     <ClCompile Include="TilemapComponent.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="VisualComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\JSON\dist\json\json-forwards.h" />
@@ -240,6 +245,7 @@
     <ClInclude Include="..\External\JSON\include\json\value.h" />
     <ClInclude Include="..\External\JSON\include\json\version.h" />
     <ClInclude Include="..\External\JSON\include\json\writer.h" />
+    <ClInclude Include="AgentComponent.h" />
     <ClInclude Include="AnimatedSpriteComponent.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
@@ -266,6 +272,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="BoxColliderComponent.h" />
+    <ClInclude Include="HearingComponent.h" />
     <ClInclude Include="IData.h" />
     <ClInclude Include="IInteractable.h" />
     <ClInclude Include="Input.h" />
@@ -291,13 +298,16 @@
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneEditor.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SensoryComponent.h" />
     <ClInclude Include="SettingsState.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="TestClass.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="TilemapColliderComponent.h" />
     <ClInclude Include="TilemapComponent.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="VisualComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Suraj_RPG.rc" />

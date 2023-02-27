@@ -47,6 +47,7 @@ static std::vector<std::string> collisiondetection_to_vector()
 }
 #pragma endregion
 
+
 class ColliderComponent :
     public Component , public IRenderable
 {
@@ -54,8 +55,7 @@ public:
 	ColliderComponent();
 	virtual ~ColliderComponent();
 
-	bool intersects(const FloatConvex collider);
-	bool outer_intersects(const FloatConvex collider);
+	virtual bool intersects(const FloatConvex collider);
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
@@ -64,13 +64,11 @@ public:
 	virtual void set_active(bool active) override;
 
 	FloatConvex get_collider_bounds();
-	FloatConvex get_outer_collider_bounds();
 	const bool is_trigger() const;
 	const bool is_active();
 
 protected:
 	FloatConvex collider_bounds;
-	FloatConvex outer_collider_bounds;
 
 	bool trigger;
 	float offsetX, offsetY;

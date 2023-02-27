@@ -2,7 +2,7 @@
 namespace bm98
 {
 class GameObject;
-class BoxColliderComponent;
+class ColliderComponent;
 class RigidbodyComponent;
 
 class Collisions
@@ -12,14 +12,14 @@ class Collisions
 class Collision
 {
 public:
-	Collision(GameObject* game_object, BoxColliderComponent* collider)
+	Collision(GameObject* game_object, ColliderComponent* collider)
 	{
 		this->game_object = game_object;
 		this->collider = collider;
 	}
 
 	GameObject* game_object;
-	BoxColliderComponent* collider;
+	ColliderComponent* collider;
 	int contact_count;
 };
 

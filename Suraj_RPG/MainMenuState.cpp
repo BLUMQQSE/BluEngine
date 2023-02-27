@@ -37,6 +37,7 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 	music.setVolume(0.0);
 	music.setLoop(true);
 	music.play();
+
 }
 
 MainMenuState::~MainMenuState()
@@ -62,6 +63,7 @@ void MainMenuState::on_end_state()
 
 void MainMenuState::update_input()
 {
+	
 	if (buttons["NEW_GAME"]->is_pressed())
 	{
 		//TODO: Add a new game state which options for creating

@@ -59,6 +59,16 @@ void GameObject::start()
 	start_components();
 }
 
+void GameObject::on_destroy()
+{
+	if (!active)
+		return;
+	for (auto& c : components)
+	{
+		c->on_destroy();
+	}
+}
+
 void GameObject::update()
 {
 	for (auto& c_t_r : components_to_remove)
@@ -251,6 +261,22 @@ const sf::Vector2f GameObject::get_center() const
 GameObject* GameObject::get_parent()
 {
 	return parent;
+}
+
+std::vector<GameObject*> GameObject::get_all_relatives()
+{
+	std::vector<GameObject*> relatives;
+	GameObject* p = get_parent();
+	while (p)
+	{
+		relatives.push_back(p);
+		p = p->get_parent();
+	}
+
+	std::vector<GameObject*> posterity = get_all_posterity();
+	relatives.insert(relatives.end(), posterity.begin(), posterity.end());
+
+	return relatives;
 }
 
 GameObject* GameObject::get_greatest_ancestor()

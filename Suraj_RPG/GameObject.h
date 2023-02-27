@@ -66,6 +66,11 @@ public:
 		Vector2f rotation;
 		Vector2f scale;
 
+		const Vector2f get_world_position() const
+		{
+			return position + local_position;
+		}
+
 		Json::Value serialize_json()
 		{
 			Json::Value obj;
@@ -99,6 +104,8 @@ public:
 	virtual void awake();
 	virtual void start();
 
+	virtual void on_destroy();
+
 	virtual void update() override;
 	virtual void late_update() override;
 	virtual void fixed_update() override;
@@ -128,6 +135,11 @@ public:
 	const Transform& get_transform() const;
 	const sf::Vector2f get_center() const;
 	GameObject* get_parent();
+	/// <summary>
+	/// Returns all parents to root ancestor, as well as all children.
+	/// </summary>
+	/// <returns></returns>
+	std::vector<GameObject*> get_all_relatives();
 	/// <summary>
 	/// Returns the highest parent of a game object.
 	/// </summary>
@@ -209,6 +221,19 @@ public:
 				return dynamic_cast<T*>(components[i]);
 		}
 		return nullptr;
+	}
+
+	template <typename T> std::vector<T*> get_components_of_type()
+	{
+		std::vector<T*> components_of_type;
+		for (std::size_t i = 0; i < components.size(); i++)
+		{
+			if (dynamic_cast<T*>(components[i]))
+				components_of_type.push_back(dynamic_cast<T*>(components[i]));
+		}
+		
+		return components_of_type;
+
 	}
 
 protected:

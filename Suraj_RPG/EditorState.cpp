@@ -8,10 +8,12 @@
 #include "Physics.h"
 #include "PauseMenu.h"
 #include "TilemapComponent.h"
+#include "TilemapColliderComponent.h"
 #include "Time.h"
 #include "GameObject.h"
 #include "SceneEditor.h"
 #include "PrefabEditor.h"
+#include "FileManager.h"
 namespace bm98
 {
 using namespace core;
@@ -85,6 +87,12 @@ void EditorState::update_input()
 			pause_state();
 		else
 			unpause_state();
+	}
+	if (Input::get_action_down("SPACE"))
+	{
+		FileManager::save_to_file_styled(selected_gameobject->get_component<TilemapComponent>().serialize_json(),
+			"test_file.json");
+
 	}
 }
 
@@ -344,6 +352,7 @@ void EditorState::init_tilemap()
 {
 	selected_gameobject = new GameObject();
 	selected_gameobject->add_component<TilemapComponent>(0, 0, UNIT_SIZE, 20, 20);
+	selected_gameobject->add_component<TilemapColliderComponent>();
 	selected_gameobject->init();
 	selected_gameobject->awake();
 	selected_gameobject->start();

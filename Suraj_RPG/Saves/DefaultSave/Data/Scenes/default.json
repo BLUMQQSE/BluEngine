@@ -61,12 +61,23 @@
 								"hitbox-width" : 20.0,
 								"trigger" : false
 							}
+						},
+						{
+							"name" : "class bm98::RigidbodyComponent",
+							"value" : 
+							{
+								"acceleration" : 0.5,
+								"body-type" : "KINEMATIC",
+								"deceleration" : 2.0,
+								"max-velocity" : 7.0,
+								"orientation" : "DOWN"
+							}
 						}
 					],
 					"info" : 
 					{
 						"name" : "Sword",
-						"physics-layer" : "DEFAULT",
+						"physics-layer" : "ACTOR",
 						"tag" : "UNTAGGED"
 					},
 					"transform" : 

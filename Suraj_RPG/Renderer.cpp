@@ -6,6 +6,8 @@
 namespace bm98::core
 {
 std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::render_objects;
+std::vector<Renderer::GizmoObject> Renderer::gizmos;
+bool Renderer::draw_gizmos = true;
 unsigned Renderer::id = 0;
 sf::RenderTarget* Renderer::window;
 
@@ -21,6 +23,13 @@ void Renderer::add(RenderObject render_object)
 {
 	render_objects.insert(render_object);
 
+}
+
+void Renderer::add_gizmo(GizmoObject gizmo)
+{
+	if (!draw_gizmos)
+		return;
+	gizmos.push_back(gizmo);
 }
 
 void Renderer::remove(sf::Drawable* drawable)
@@ -106,13 +115,29 @@ void Renderer::render()
 		}
 		window->draw(*f.drawable);
 	}
-	
+	if (draw_gizmos)
+		render_gizmos();
+
+}
+
+void Renderer::render_gizmos()
+{
+	for (const auto& g : gizmos)
+	{
+		window->draw(g.drawable);
+	}
 }
 
 void Renderer::clear()
 {
 	render_objects.clear();
 	id = 0;
+}
+
+void Renderer::fixed_update()
+{
+	
+	gizmos.clear();
 }
 
 sf::Vector2u Renderer::get_window_size()

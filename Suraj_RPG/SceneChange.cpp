@@ -12,8 +12,13 @@ SceneChange::SceneChange()
 SceneChange::~SceneChange()
 {
 }
-void SceneChange::on_collision_enter(Collision info)
+void SceneChange::on_trigger_enter(Collider info)
 {
+
+
+	std::cout << info.game_object->get_info().name << " entered my trigger\n";
+	
+	/*
 	if (info.game_object->get_info().tag == Tag::PLAYER)
 	{
 		info.game_object->set_position(destination.x, destination.y);
@@ -21,14 +26,17 @@ void SceneChange::on_collision_enter(Collision info)
 		if (destination_scene_name != SceneManager::get_active_scene_name())
 			SceneManager::load_scene(destination_scene_name);
 	}
+	*/
 }
 
-void SceneChange::on_collision_stay(Collision info)
+void SceneChange::on_trigger_stay(Collider info)
 {
+	std::cout << info.game_object->get_info().name << " is in my trigger\n";
 }
 
-void SceneChange::on_collision_exit(Collision info)
+void SceneChange::on_trigger_exit(Collider info)
 {
+	std::cout << info.game_object->get_info().name << " exited my trigger\n";
 }
 
 Json::Value SceneChange::serialize_json()

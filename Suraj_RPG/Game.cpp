@@ -110,8 +110,9 @@ void Game::update_delta_time()
     {
         if (Time::fixed_delta_time() >= .02f)
         {
-            Physics::fixed_update();
             states.top()->fixed_update();
+            Physics::fixed_update();
+            Renderer::fixed_update();
             Time::reset_fixed_delta();
         }
         else

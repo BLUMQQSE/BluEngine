@@ -10,7 +10,7 @@ class Tile : IData, IObject, public IRenderable
 {
 public:
 	Tile(int x_offset, int y_offset, int grid_x, int grid_y,
-		float grid_size_f, SortingLayer layer);
+		float grid_size_f, SortingLayer layer, Layer physical_layer);
 	virtual ~Tile();
 
 
@@ -20,8 +20,9 @@ public:
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
 	const bool is_static() const;
-	const SortingLayer get_layer() const;
 	const bool get_collision() const;
+	FloatConvex get_collider();
+	const Layer get_layer() const;
 	const sf::FloatRect get_bounds() const;
 	const AnimatedSpriteComponent* get_animated_sprite_component();
 	sf::Sprite& get_sprite();
@@ -43,7 +44,6 @@ public:
 	void remove_texture();
 	void highlight(bool highlight);
 
-
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
@@ -59,12 +59,16 @@ protected:
 	int x_offset;
 	int y_offset;
 
+	FloatConvex collider;
+
 	bool collision;
 	bool static_tile;
 	TileType type;
 	SortingLayer layer;
+	Layer physical_layer;
 	std::string texture_source;
 	AnimatedSpriteComponent* animated_sprite_component;
+	
 	float animation_timer;
 
 };

@@ -64,13 +64,13 @@ void BoxColliderComponent::awake()
 
 void BoxColliderComponent::update()
 {
-	collider_bounds.set_position(Vector2f(game_object->get_transform().position.x + offsetX,
-		game_object->get_transform().position.y + offsetY));
+	
 }
 
 void BoxColliderComponent::fixed_update()
 {
-
+	collider_bounds.set_position(Vector2f(game_object->get_transform().position.x + offsetX,
+		game_object->get_transform().position.y + offsetY));
 }
 
 void BoxColliderComponent::add_to_buffer(sf::View* view)

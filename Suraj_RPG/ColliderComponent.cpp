@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ColliderComponent.h"
+#include "GameObject.h"
 namespace bm98
 {
 ColliderComponent::ColliderComponent()
@@ -15,10 +16,6 @@ bool ColliderComponent::intersects(const FloatConvex collider)
 	return collider_bounds.intersects(collider);
 }
 
-bool ColliderComponent::outer_intersects(const FloatConvex collider)
-{
-	return outer_collider_bounds.intersects(collider);
-}
 
 Json::Value ColliderComponent::serialize_json()
 {
@@ -60,11 +57,6 @@ void ColliderComponent::set_active(bool active)
 FloatConvex ColliderComponent::get_collider_bounds()
 {
 	return collider_bounds;
-}
-
-FloatConvex ColliderComponent::get_outer_collider_bounds()
-{
-	return outer_collider_bounds;
 }
 
 const bool ColliderComponent::is_trigger() const

@@ -18,12 +18,13 @@ public:
 	enum class BodyType
 	{
 		KINEMATIC,
-		DYNAMIC
+		DYNAMIC,
+		STATIC
 	};
 
 	static std::vector<std::string> body_type_to_vector()
 	{
-		return { "KINEMATIC", "DYNAMIC" };
+		return { "KINEMATIC", "DYNAMIC", "STATIC"};
 	}
 
 	static std::string body_type_to_string(BodyType type)
@@ -34,6 +35,8 @@ public:
 			return "KINEMATIC";
 		case BodyType::DYNAMIC:
 			return "DYNAMIC";
+		case BodyType::STATIC:
+			return "STATIC";
 		default:
 			std::cout << "ERROR::RIGIDBODY::body_type_to_string::UNDEFINED BODYTYPE: " << static_cast<int>(type) << "\n";
 			return "null";
@@ -46,6 +49,8 @@ public:
 			return BodyType::KINEMATIC;
 		if (type == "DYNAMIC")
 			return BodyType::DYNAMIC;
+		if (type == "STATIC")
+			return BodyType::STATIC;
 
 		std::cout << "ERROR::RIGIDBODY::string_to_body_type::UNDEFINED STRING: " << type << "\n";
 		return BodyType::KINEMATIC;
@@ -65,11 +70,11 @@ public:
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 
-	const sf::Vector2f get_velocity() const;
+	const Vector2f get_velocity() const;
 	const float get_max_velocity() const;
 	const BodyType get_body_type() const;
 
-	void set_velocity(sf::Vector2f velocity);
+	void set_velocity(Vector2f velocity);
 	void set_max_velocity(float velocity);
 	void set_acceleration(float acceleration);
 	void set_deceleration(float deceleration);
@@ -80,6 +85,7 @@ public:
 	void halt_up();
 	void halt_down();
 	void unhalt();
+
 	//movement states
 
 	const MovementState get_movement_state() const;
@@ -103,13 +109,12 @@ private:
 	float acceleration;
 	float deceleration;
 
-	Vector2f velocity;
-	//std::vector<Contact> contacts;
+	bool halted_up = false;
+	bool halted_down = false;
+	bool halted_left = false;
+	bool halted_right = false;
 
-	bool halted_up;
-	bool halted_down;
-	bool halted_left;
-	bool halted_right;
+	Vector2f velocity;
 
 	void update_orientation();
 	void update_movement_state();

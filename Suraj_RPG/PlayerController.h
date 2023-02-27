@@ -25,6 +25,10 @@ public:
     virtual void add_to_buffer(sf::View* = nullptr) override;
 
     virtual void on_collision_enter(Collision info) override;
+    virtual void on_collision_stay(Collision info) override;
+    virtual void on_collision_exit(Collision info) override;
+
+
     virtual void on_trigger_enter(Collider info) override;
 
     // Inherited via IData

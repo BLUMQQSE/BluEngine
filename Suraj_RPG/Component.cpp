@@ -27,6 +27,10 @@ void Component::start()
 {
 }
 
+void Component::on_destroy()
+{
+}
+
 void Component::update()
 {
 }

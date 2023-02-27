@@ -21,6 +21,11 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 	init_gui();
 	Debug::init();
 	Renderer::add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
+	Renderer::add(Renderer::RenderObject(&circle, _render, options_layer, z_order));
+	Renderer::add(Renderer::RenderObject(&circle2, _render, options_layer, z_order));
+
+	Renderer::add(Renderer::RenderObject(&concave, _render, options_layer, z_order));
+
 }
 
 SettingsState::~SettingsState()
@@ -56,6 +61,16 @@ void SettingsState::init_variables()
 
 void SettingsState::update_input()
 {
+	if (Input::get_action("W"))
+		circle2.move(0, -100 * Time::delta_time());
+	if (Input::get_action("A"))
+		circle2.move(-100 * Time::delta_time(), 0);
+	if (Input::get_action("D"))
+		circle2.move(100 * Time::delta_time(), 0);
+	if (Input::get_action("S"))
+		circle2.move(0, 100 * Time::delta_time());
+	circle2.intersects_static(concave);
+
 	if (buttons["BACK"]->is_pressed())
 	{
 		isRequestingQuit = true;

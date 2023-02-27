@@ -16,7 +16,7 @@ RigidbodyComponent::RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
 	:sprite(&sprite), max_velocity(max_velocity), acceleration(acceleration),
 	deceleration(deceleration)
 {
-	unhalt();
+
 }
 
 RigidbodyComponent::~RigidbodyComponent()
@@ -27,7 +27,6 @@ RigidbodyComponent::~RigidbodyComponent()
 void RigidbodyComponent::init()
 {
 	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
-	unhalt();
 }
 
 void RigidbodyComponent::update()
@@ -38,9 +37,12 @@ void RigidbodyComponent::update()
 	update_orientation();
 	//Final movement
 	//std::cout << velocity.get_normalized().x * (max_velocity) * Time::delta_time() << "\n";
+	
 	sprite->move(velocity.get_normalized() * max_velocity * UNIT_SIZE * Time::delta_time());
 	//TODO: here we can update gameobject transform to reflect this position
+
 	game_object->transform.position = sprite->getPosition();
+	
 }
 
 void RigidbodyComponent::fixed_update()
@@ -74,7 +76,7 @@ void RigidbodyComponent::unserialize_json(Json::Value obj)
 #pragma endregion
 
 
-const sf::Vector2f RigidbodyComponent::get_velocity() const
+const Vector2f RigidbodyComponent::get_velocity() const
 {
 	return velocity;
 }
@@ -89,7 +91,7 @@ const RigidbodyComponent::BodyType RigidbodyComponent::get_body_type() const
 	return body_type;
 }
 
-void RigidbodyComponent::set_velocity(sf::Vector2f velocity)
+void RigidbodyComponent::set_velocity(Vector2f velocity)
 {
 	this->velocity = velocity;
 }
@@ -116,21 +118,25 @@ void RigidbodyComponent::set_body_type(BodyType body_type)
 
 void RigidbodyComponent::halt_right()
 {
+	velocity.x = 0.f;
 	halted_right = true;
 }
 
 void RigidbodyComponent::halt_left()
 {
+	velocity.x = 0.f;
 	halted_left = true;
 }
 
 void RigidbodyComponent::halt_up()
 {
+	velocity.y = 0.f;
 	halted_up = true;
 }
 
 void RigidbodyComponent::halt_down()
 {
+	velocity.y = 0.f;
 	halted_down = true;
 }
 
@@ -160,17 +166,17 @@ void RigidbodyComponent::apply_acceleration(const float dir_x, const float dir_y
 	if ((!halted_down && dir_y > 0) || (!halted_up && dir_y < 0))
 		velocity.y += (acceleration * UNIT_SIZE) * dir_y * 100;
 
-	if(velocity.x > 0)
+	if (velocity.x > 0)
 		if (velocity.x > max_velocity * UNIT_SIZE)
 			velocity.x = max_velocity * UNIT_SIZE;
-	if(velocity.x < 0)
+	if (velocity.x < 0)
 		if (velocity.x < -max_velocity * UNIT_SIZE)
 			velocity.x = -max_velocity * UNIT_SIZE;
-	
-	if(velocity.y > 0)
+
+	if (velocity.y > 0)
 		if (velocity.y > max_velocity * UNIT_SIZE)
 			velocity.y = max_velocity * UNIT_SIZE;
-	if(velocity.y < 0)
+	if (velocity.y < 0)
 		if (velocity.y < -max_velocity * UNIT_SIZE)
 			velocity.y = -max_velocity * UNIT_SIZE;
 }

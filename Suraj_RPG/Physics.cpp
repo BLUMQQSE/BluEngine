@@ -5,10 +5,11 @@
 #include "Tile.h"
 #include "Math.h"
 #include "CapsuleColliderComponent.h"
+#include "TilemapColliderComponent.h"
 namespace bm98::core
 {
-std::unordered_map<GameObject*, Physics::GameObjects> Physics::game_objects;
-std::vector<Tile*> Physics::collidable_tiles;
+std::vector<std::vector<std::pair<GameObject*, Physics::CollisionState>>> Physics::objects;
+
 bool Physics::collision_matrix[(int)(Layer::_LAST_DONT_REMOVE)][(int)(Layer::_LAST_DONT_REMOVE)];
 bool Physics::triggers_acknowledge_colliders = true;
 
@@ -22,104 +23,173 @@ void Physics::add_to_physics(GameObject* game_object)
 	// Could move code to check for game_object parent and child here
 	// to prevent them from ever being added to a game objects collisions list
 
-	GameObjects object_to_add;
-
-	object_to_add.game_object = game_object;
-
-	std::unordered_map<GameObject*, Collision_State> collisions_to_add;
-
-	for (auto& i : game_objects)
+	std::vector<std::pair<GameObject*, CollisionState>> g;
+	g.push_back(std::make_pair(game_object, CollisionState::NOTHING));
+	for (std::size_t i = 0; i < objects.size(); i++)
 	{
-		collisions_to_add[i.second.game_object] = Collision_State::NOTHING;
-
-		i.second.collisions.insert({ game_object, Collision_State::NOTHING });
+		// add other gameobjects to new gameobject list
+		g.push_back(std::make_pair(objects[i][0].first, CollisionState::NOTHING));
+		// add new gameobject to other objects lists
+		objects[i].push_back(std::make_pair(game_object, CollisionState::NOTHING));
 	}
 
-	object_to_add.collisions = collisions_to_add;
-
-	//std::cout << "gameobjects before adding " << game_objects.size() <<"\n";
-	game_objects[game_object] = object_to_add;
-	//std::cout << "gameobjects after adding " << game_objects.size() << "\n";
-
-}
-
-void Physics::add_tiles_to_physics(std::vector<Tile*> tiles)
-{
-	remove_tiles_from_physics();
-	collidable_tiles = tiles;
+	objects.push_back(g);
 }
 
 void Physics::remove_from_physics(GameObject* game_object)
 {
-	for (auto& i : game_objects)
+	for (std::size_t i = 0; i < objects.size(); i++)
 	{
-		i.second.collisions.erase(game_object);
+		if (objects[i][0].first == game_object)
+		{
+			objects.erase(std::find(objects.begin(), objects.end(), objects[i]));
+			break;
+		}
 	}
-	// then remove from game_objects itself
-	game_objects.erase(game_object);
 
-}
-
-void Physics::remove_tiles_from_physics()
-{
-	collidable_tiles.clear();
+	for (std::size_t i = 0; i < objects.size(); i++)
+	{
+		for (std::size_t x = 0; x < objects[i].size(); x++)
+		{
+			if (objects[i][x].first == game_object)
+			{
+				objects[i].erase(std::find(objects[i].begin(), objects[i].end(), objects[i][x]));
+				break;
+			}
+		}
+	}
 }
 
 void Physics::clear_objects()
 {
-	game_objects.clear();
+	objects.clear();
 }
 
 void Physics::fixed_update()
 {
-	//update needs run first to ensure collision states dont immediatly get overwritten
-	update_collisions();
-	check_collisions();
-}
-
-bool Physics::raycast(Vector2f origin, Vector2f direction, float distance, Global::LayerMask mask)
-{
-	FloatConvex ray = FloatConvex::polygon(origin, { Vector2f::zero(), direction * distance });
-
-	for (auto& obj : game_objects)
+	int addon = 1;
+	for (std::size_t i = 0; i < objects.size(); i++)
 	{
-		if (obj.first == nullptr)
-			continue;
-		if (!mask.layers[static_cast<int>(obj.first->get_info().layer)] ||
-			obj.first->get_info().layer == Layer::PHYSICS_IGNORE)
-			continue;
+		std::vector<GameObject*> rel = objects[i][0].first->get_all_relatives();
 
-		if (!obj.first->has_component_of_type<ColliderComponent>())
-			continue;
-
-		obj.first->get_component_of_type<ColliderComponent>()->intersects(ray);
-		
+		for (std::size_t x = addon; x < objects[i].size(); x++)
+		{
+			if (rel.size() != 0)
+			{
+				if (std::find(rel.begin(), rel.end(), objects[i][x].first) != rel.end())
+				{
+					continue;
+				}
+			}
+			handle_collision(objects[x][i + 1], objects[i][x]);
+		}
+		addon++;
 	}
-	return false;
+
 }
-/*
-std::vector<ColliderComponent*> Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore)
+
+bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, float distance, Global::LayerMask mask, RayHit* hit)
 {
-	FloatConvex circle = FloatConvex::circle(pos, radius);
-	std::vector<ColliderComponent*> colliders;
-	for (auto& obj : game_objects)
+	if (distance == INFINITY)
+		distance = 10000.0f;
+	FloatConvex ray = FloatConvex::line(origin, origin + direction.get_normalized() * distance, 3);
+	ray.setFillColor(sf::Color::Cyan);
+	bool hit_something = false;
+	std::vector<GameObject*> rel = ignore->get_all_relatives();
+	for (std::size_t i = 0; i < objects.size(); i++)
 	{
-		if (obj.first == nullptr)
+
+		if (!mask.layers[static_cast<int>(objects[i][0].first->get_info().layer)])
 			continue;
 		
-		if (!obj.first->has_component<ColliderComponent>())
-			continue;
-		// will need to improve so we ignore object_to_ignore, all its ancestors, and all its posterity
-		if (obj.first == object_to_ignore || !mask.layers[static_cast<int>(obj.first->get_info().layer)] ||
-			obj.first->get_info().layer == Layer::PHYSICS_IGNORE)
+		if (objects[i][0].first == ignore)
 			continue;
 
-		if(circle.intersects(obj.first->get_component<ColliderComponent>().get_collider_bounds()))
-			colliders.push_back(&obj.first->get_component<ColliderComponent>());
+		ColliderComponent* c = objects[i][0].first->get_component_of_type<ColliderComponent>();
+		if (!c)
+			continue;
+
+		if (rel.size() != 0)
+			if (std::find(rel.begin(), rel.end(), objects[i][0].first) != rel.end())
+				continue;
+		
+		// TODO: change later to return distance from intersection point between origin and contact with collider
+		if (Vector2f::sqr_distance(origin, objects[i][0].first->get_transform().get_world_position())
+			< hit->distance * hit->distance)
+		{
+			if (dynamic_cast<TilemapColliderComponent*>(c))
+			{
+				if (dynamic_cast<TilemapColliderComponent*>(c)->intersects(ray, mask))
+				{
+					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_transform().get_world_position());
+					hit_something = true;
+					hit->collider = c;
+				}
+			}
+			else
+			{
+				if (ray.intersects(c->get_collider_bounds()))
+				{
+					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_transform().get_world_position());
+					hit_something = true;
+					hit->collider = c;
+				}
+			}
+		}
 	}
-	return colliders;
+
+	Renderer::add_gizmo(ray);
+	return hit_something;
 }
-*/
+
+
+int Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore, std::vector<ColliderComponent*> collisions)
+{
+
+	FloatConvex circle = FloatConvex::circle(pos, radius, 10);
+	circle.setFillColor(sf::Color::Transparent);
+	circle.setOutlineColor(sf::Color::Cyan);
+	circle.setOutlineThickness(2);
+
+	std::vector<GameObject*> rel = object_to_ignore->get_all_relatives();
+
+	for (std::size_t i = 0; i < objects.size(); i++)
+	{
+		if (!mask.layers[static_cast<int>(objects[i][0].first->get_info().layer)])
+			continue;
+			
+		if (objects[i][0].first == object_to_ignore)
+			continue;
+
+		ColliderComponent* c = objects[i][0].first->get_component_of_type<ColliderComponent>();
+		
+		if (!c)
+			continue;
+
+		if (rel.size() != 0)
+			if (std::find(rel.begin(), rel.end(), objects[i][0].first) != rel.end())
+				continue;
+		
+		if (dynamic_cast<TilemapColliderComponent*>(c))
+		{
+			if (dynamic_cast<TilemapColliderComponent*>(c)->intersects(circle, mask))
+			{
+				collisions.push_back(c);
+			}
+		}
+		else
+		{
+			if (circle.intersects(c->get_collider_bounds()))
+			{
+				collisions.push_back(c);
+			}
+		}
+
+	}
+	Renderer::add_gizmo(circle);
+	return collisions.size();
+}
+
 void Physics::init_matrix()
 {
 	for (int i = 0; i < static_cast<int>(Layer::_LAST_DONT_REMOVE); i++)
@@ -136,230 +206,195 @@ void Physics::init_matrix()
 	}
 }
 
-void Physics::check_collisions()
+void Physics::handle_collision(std::pair<GameObject*, CollisionState>& a,
+	std::pair<GameObject*, CollisionState>& b)
 {
-	// need to work out how I'll iterate over this
-	for (auto& active_object : game_objects)
+
+	update_collision_state(a, b);
+
+
+
+	if (!a.first->is_active() || !b.first->is_active())
+		return;
+
+	if (!a.first->has_component<BoxColliderComponent>() && !a.first->has_component<CapsuleColliderComponent>() ||
+		!b.first->has_component<BoxColliderComponent>() && !b.first->has_component<CapsuleColliderComponent>())
+		return;
+
+	ColliderComponent* a_collider = a.first->get_component_of_type<ColliderComponent>();
+	ColliderComponent* b_collider = b.first->get_component_of_type<ColliderComponent>();
+
+	RigidbodyComponent* a_rigid = &a.first->get_component<RigidbodyComponent>();
+	RigidbodyComponent* b_rigid = &b.first->get_component<RigidbodyComponent>();
+
+	if (a_collider->is_trigger() && b_collider->is_trigger())
+		return;
+	if (!a_collider->is_active() || !b_collider->is_active())
+		return;
+
+	
+	// Collision does not exist this update, check if a collider has exited and return
+	if (!a_collider->intersects(b_collider->get_collider_bounds()))
 	{
-		if (active_object.first == nullptr)
+		if (a.second == CollisionState::TRIGGER)
 		{
-			std::cout << "null object as active object\n";
-			continue;
+			a.second = CollisionState::TRIGGER_EXIT;
+			a.first->on_trigger_exit(Collider(b.first));
 		}
-		if (!active_object.first->has_component<BoxColliderComponent>())
-			continue;
-		if (!active_object.first->is_active())
-			continue;
-
-		BoxColliderComponent* active_collider = &active_object.first->get_component<BoxColliderComponent>();
-		RigidbodyComponent* active_rigid = &active_object.first->get_component<RigidbodyComponent>();
-
-		if (active_rigid)
-			active_rigid->unhalt();
-		if (!active_collider->is_active())
-			continue;
-		if (!triggers_acknowledge_colliders && active_collider->is_trigger())
-			continue;
-
-
-		// Here can handle tile collisions
-
-		/*
-		if (!active_collider->is_trigger())
+		if (a.second == CollisionState::COLLISION)
 		{
-			for (auto c : collidable_tiles)
-			{
-				if (active_collider->check_intersect(c->get_bounds()))
-				{
-					//collision
-					if (!collision_matrix[(int)active_object.first->get_info().layer][(int)c->get_layer()])
-						break;
-
-					//here we need to move active so that its outer bounds is one off of c->get_bounds()
-
-					if (active_rigid->get_velocity().x > 0 && active_rigid->get_velocity().y == 0)
-					{
-						active_object.first->set_position(
-							c->get_bounds().left - active_collider->get_offset().x - active_collider->get_bounds().width,
-							active_object.first->get_transform().position.y
-						);
-						active_rigid->set_velocity(Vector2f(0, 0));
-						active_rigid->halt_right();
-					}
-					else if (active_rigid->get_velocity().x < 0 && active_rigid->get_velocity().y == 0)
-					{
-						active_object.first->set_position(
-							c->get_bounds().left + c->get_bounds().width - active_collider->get_offset().x,
-							active_object.first->get_transform().position.y
-						);
-						active_rigid->set_velocity(Vector2f(0, 0));
-						active_rigid->halt_left();
-					}
-					else if (active_rigid->get_velocity().y > 0 && active_rigid->get_velocity().x == 0)
-					{
-						active_object.first->set_position(
-							active_object.first->get_transform().position.x,
-							c->get_bounds().top - active_collider->get_offset().y - active_collider->get_bounds().height
-						);
-						active_rigid->set_velocity(Vector2f(0, 0));
-						active_rigid->halt_down();
-					}
-					else if (active_rigid->get_velocity().y < 0 && active_rigid->get_velocity().x == 0)
-					{
-						active_object.first->set_position(
-							active_object.first->get_transform().position.x,
-							c->get_bounds().top + c->get_bounds().height - active_collider->get_offset().y
-						);
-						active_rigid->set_velocity(Vector2f(0, 0));
-						active_rigid->halt_up();
-					}
-				}
-			}
+			a.second = CollisionState::COLLISION_EXIT;
+			a.first->on_collision_exit(Collision(b.first,
+				b_collider));
 		}
-		*/
-
-		for (auto& checking_object : active_object.second.collisions)
+		if (b.second == CollisionState::TRIGGER)
 		{
-			if (checking_object.first == nullptr)
-				continue;
-			
-			if (!checking_object.first->has_component<BoxColliderComponent>())
-				continue;
-			if (!checking_object.first->is_active())
-				continue;
-			if (!collision_matrix[(int)active_object.first->get_info().layer][(int)checking_object.first->get_info().layer])
-				continue;
-
-			// Safe gaurd to prevent somehow active containing self reference in checking
-			if (active_object.first == checking_object.first)
-				continue;
-			// if checking the parent of active_object, ingore the parent
-			if (active_object.first->get_parent() == checking_object.first)
-				continue;
-			// if checking a child of active_object, ignore the child
-			if (active_object.first->check_for_child(checking_object.first))
-				continue;
-
-			BoxColliderComponent* checking_collider = &checking_object.first->get_component<BoxColliderComponent>();
-
-			if (!checking_collider)
-				continue;
-
-
-			if (!checking_collider->is_active())
-				continue;
-			if (active_collider->is_trigger() && checking_collider->is_trigger())
-				continue;
-
-			if (checking_collider->is_trigger())
-			{
-				if (!active_collider->check_outer_intersect(checking_collider->get_outer_bounds()))
-				{
-					if (checking_object.second == Collision_State::TRIGGER)
-					{
-						checking_object.second = Collision_State::TRIGGER_EXIT;
-						active_object.second.game_object->on_trigger_exit(Collider(checking_object.first));
-					}
-					continue;
-				}
-				if (checking_object.second == Collision_State::NOTHING)
-				{
-					checking_object.second = Collision_State::TRIGGER_ENTRY;
-					active_object.second.game_object->on_trigger_enter(Collider(checking_object.first));
-					continue;
-				}
-
-				active_object.second.game_object->on_trigger_stay(Collider(checking_object.first));
-				continue;
-			}
-
-			if (!active_collider->check_outer_intersect(checking_collider->get_outer_bounds()))
-			{
-				if (checking_object.second == Collision_State::COLLISION)
-				{
-					checking_object.second = Collision_State::COLLISION_EXIT;
-					active_object.second.game_object->on_collision_exit(Collision(checking_object.first,
-						checking_collider));
-				}
-				continue;
-			}
-
-			// when it comes to freezing position, should freeze by parent most object
-			/*
-			//here prevent moving into the collider and ensure does not phase through the object
-			if (active_rigid)
-			{
-				active_rigid->set_velocity(sf::Vector2f(0, 0));
-
-				// TODO: move everything below outside of the if statement
-				//we want to move the game_object so that its active(inner.left + inner.width) == checking(outer.left)
-				sf::FloatRect checking_outer = checking_collider->get_outer_bounds();
-				sf::FloatRect active_inner = active_collider->get_bounds();
-
-				sf::Vector2f velocity = active_rigid->get_velocity();
-
-				//want to set position of active so that
-					//: active_inner == checking_outer
-				active_object.first->set_position(
-					checking_outer.left - active_collider->get_offset().x - active_collider->get_bounds().width,
-					active_object.first->get_transform().position.y
-				);
-
-			}
-			*/
-
-			if (checking_object.second == Collision_State::NOTHING)
-			{
-				checking_object.second = Collision_State::COLLISION_ENTRY;
-				active_object.second.game_object->on_collision_enter(Collision(checking_object.first,
-					&checking_object.first->get_component<BoxColliderComponent>()));
-				continue;
-			}
-
-			active_object.second.game_object->on_collision_stay(Collision(checking_object.first,
-				checking_collider));
-			continue;
+			b.second = CollisionState::TRIGGER_EXIT;
+			b.first->on_trigger_exit(Collider(a.first));
 		}
+		if (b.second == CollisionState::COLLISION)
+		{
+			b.second = CollisionState::COLLISION_EXIT;
+			b.first->on_collision_exit(Collision(a.first,
+				a_collider));
+		}
+		return;
 	}
+
+#pragma region SET COLLISIONSTATE AND SEND FUNCTION CALLS
+
+	RigidbodyComponent::BodyType a_type;
+	RigidbodyComponent::BodyType b_type;
+
+	if (!a_rigid)
+		a_type = RigidbodyComponent::BodyType::KINEMATIC;
+	else
+		a_type = a_rigid->get_body_type();
+
+	if (!b_rigid)
+		b_type = RigidbodyComponent::BodyType::KINEMATIC;
+	else
+		b_type = b_rigid->get_body_type();
+
+	switch (a_type)
+	{
+	case RigidbodyComponent::BodyType::KINEMATIC:
+		switch (a.second)
+		{
+		case CollisionState::NOTHING:
+			if (a_collider->is_trigger())
+			{
+				a.second = CollisionState::TRIGGER_ENTRY;
+				a.first->on_trigger_enter(Collider(b.first));
+			}
+			else if(!b_collider->is_trigger())
+			{
+				a.second = CollisionState::COLLISION_ENTRY;
+				a.first->on_collision_enter(Collision(b.first, b_collider));
+			}
+			break;
+		case CollisionState::COLLISION:
+			a.first->on_collision_stay(Collision(b.first,
+				b_collider));
+			break;
+		case CollisionState::TRIGGER:
+			a.first->on_trigger_stay(Collider(b.first));
+			break;
+		default:
+			break;
+		}
+		break;
+	case RigidbodyComponent::BodyType::DYNAMIC:
+		break;
+	case RigidbodyComponent::BodyType::STATIC:
+		break;
+	default:
+		std::cout << "ERROR::Physics::OBJECT MISSING BODYTYPE::OBJECT- " << a.first->get_info().name << "\n";
+		break;
+	}
+
+	switch (b_type)
+	{
+	case RigidbodyComponent::BodyType::KINEMATIC:
+		switch (b.second)
+		{
+		case CollisionState::NOTHING:
+			if (b_collider->is_trigger())
+			{
+				b.second = CollisionState::TRIGGER_ENTRY;
+				b.first->on_trigger_enter(Collider(a.first));
+			}
+			else if(!a_collider->is_trigger())
+			{
+				b.second = CollisionState::COLLISION_ENTRY;
+				b.first->on_collision_enter(Collision(a.first, a_collider));
+			}
+			break;
+		case CollisionState::COLLISION:
+			// Just re-send Collision call
+			b.first->on_collision_stay(Collision(a.first,
+				a_collider));
+			break;
+		case CollisionState::TRIGGER:
+			b.first->on_trigger_stay(Collider(a.first));
+			break;
+		default:
+			break;
+		}
+		break;
+	case RigidbodyComponent::BodyType::DYNAMIC:
+		break;
+	case RigidbodyComponent::BodyType::STATIC:
+		break;
+
+	default:
+		std::cout << "ERROR::Physics::OBJECT MISSING BODYTYPE::OBJECT- " << b.first->get_info().name << "\n";
+		break;
+	}
+
+#pragma endregion
+
+	
+
+	
 }
 
-void Physics::update_collisions()
-{
-	for (auto& i : game_objects)
-	{
-		for (auto& it : i.second.collisions)
-		{
-			if (it.second == Collision_State::COLLISION
-				|| it.second == Collision_State::TRIGGER
-				|| it.second == Collision_State::NOTHING
-				)
-			{
-				continue;
-			}
-			if (it.second == Collision_State::COLLISION_ENTRY)
-			{
-				it.second = Collision_State::COLLISION;
-				continue;
-			}
-			switch (it.second)
-			{
-			case Collision_State::COLLISION_ENTRY:
-				it.second = Collision_State::COLLISION;
-				break;
-			case Collision_State::TRIGGER_ENTRY:
-				it.second = Collision_State::TRIGGER;
-				break;
-			case Collision_State::COLLISION_EXIT:
-				it.second = Collision_State::NOTHING;
-				break;
-			case Collision_State::TRIGGER_EXIT:
-				it.second = Collision_State::NOTHING;
-				break;
-			default:
-				break;
-			}
-		}
-	}
 
+void Physics::update_collision_state(std::pair<GameObject*, CollisionState>& a, std::pair<GameObject*, CollisionState>& b)
+{
+	switch (a.second)
+	{
+	case CollisionState::COLLISION_ENTRY:
+		a.second = CollisionState::COLLISION;
+		break;
+	case CollisionState::TRIGGER_ENTRY:
+		a.second = CollisionState::TRIGGER;
+		break;
+	case CollisionState::COLLISION_EXIT:
+		a.second = CollisionState::NOTHING;
+		break;
+	case CollisionState::TRIGGER_EXIT:
+		a.second = CollisionState::NOTHING;
+		break;
+	default:
+		break;
+	}
+	switch (b.second)
+	{
+	case CollisionState::COLLISION_ENTRY:
+		b.second = CollisionState::COLLISION;
+		break;
+	case CollisionState::TRIGGER_ENTRY:
+		b.second = CollisionState::TRIGGER;
+		break;
+	case CollisionState::COLLISION_EXIT:
+		b.second = CollisionState::NOTHING;
+		break;
+	case CollisionState::TRIGGER_EXIT:
+		b.second = CollisionState::NOTHING;
+		break;
+	default:
+		break;
+	}
 }
 }

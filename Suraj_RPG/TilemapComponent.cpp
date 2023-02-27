@@ -25,7 +25,10 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 	this->max_size.y = height + 1;
 	load_tile_sheets();
 	this->layers = static_cast<int>(SortingLayer::UI);
-
+	for (int i = 0; i < static_cast<int>(SortingLayer::UI); i++)
+	{
+		physical_layers[i] = Layer::DEFAULT;
+	}
 	outline = FloatConvex::polygon(Vector2f(0,0),
 	{Vector2f(0,0), Vector2f(0, height * grid_size), Vector2f(width * grid_size, height * grid_size), Vector2f(width * grid_size, 0)});
 	
@@ -104,7 +107,7 @@ void TilemapComponent::add_tiles(const unsigned x, const unsigned y, SortingLaye
 		if (map[x][y][static_cast<int>(layer)])
 			delete map[x][y][static_cast<int>(layer)];
 
-		map[x][y][static_cast<int>(layer)] = new Tile(position.x, position.y, x, y, grid_size_f, layer);
+		map[x][y][static_cast<int>(layer)] = new Tile(position.x, position.y, x, y, grid_size_f, layer, physical_layers[static_cast<int>(layer)]);
 		
 		map[x][y][static_cast<int>(layer)]->add_animated_sprite_component(current_tileset_key, &tile_sheets.at(current_tileset_key), texture_rect, animation_timer);
 		map[x][y][static_cast<int>(layer)]->set_collision(collision);
@@ -131,7 +134,7 @@ void TilemapComponent::add_tiles(const unsigned x, const unsigned y, SortingLaye
 				delete map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)];
 
 			map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)] =
-				new Tile(position.x, position.y, x + static_cast<int>(w) / 32.f, y + static_cast<int>(h) / 32.f, grid_size_f, layer);
+				new Tile(position.x, position.y, x + static_cast<int>(w) / 32.f, y + static_cast<int>(h) / 32.f, grid_size_f, layer, physical_layers[static_cast<int>(layer)]);
 
 			map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)]->set_texture(
 				current_tileset_key, &tile_sheets.at(current_tileset_key), sub_rect);
@@ -180,6 +183,11 @@ void TilemapComponent::highlight_layer(SortingLayer layer)
 	editor_active_layer = layer;
 }
 
+Layer TilemapComponent::get_layer(SortingLayer layer)
+{
+	return physical_layers.at(static_cast<int>(layer));
+}
+
 std::vector<std::string> TilemapComponent::get_tileset_keys()
 {
 	return tileset_keys;
@@ -222,6 +230,11 @@ void TilemapComponent::set_position(Vector2i pos)
 				if(z)
 					z->set_position(pos);
 		
+}
+
+std::vector<std::vector<std::vector<Tile*>>> TilemapComponent::get_tiles()
+{
+	return map;
 }
 
 std::vector<Tile*> TilemapComponent::get_collidable_tiles()
@@ -362,7 +375,7 @@ void TilemapComponent::unserialize_json(Json::Value obj)
 		std::string texture_source = tile["texture-source"].asString();
 		float animation_timer = tile["animation-timer"].asFloat();
 
-		map[x][y][z] = new Tile(position.x, position.y, x, y, grid_size_f, static_cast<SortingLayer>(z));
+		map[x][y][z] = new Tile(position.x, position.y, x, y, grid_size_f, static_cast<SortingLayer>(z), physical_layers[z]);
 
 		if (tile["animated-sprite"].asBool())
 			map[x][y][z]->add_animated_sprite_component(texture_source, &tile_sheets.at(texture_source),

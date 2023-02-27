@@ -3,7 +3,9 @@
 namespace bm98
 {
 
-#define PI  3.14159265358979323846 
+extern float PI;
+extern float RAD2DEG;
+extern float DEG2RAD;
 
 /// <summary>
 /// Class to wrap sf::Vector2f and add math functionality.
@@ -26,6 +28,8 @@ public:
 	static float distance(sf::Vector2f a, sf::Vector2f b);
 	static float sqr_distance(sf::Vector2f a, sf::Vector2f b);
 	static float dot_product(sf::Vector2f a, sf::Vector2f b);
+	static float cross_product(sf::Vector2f a, sf::Vector2f b);
+
 	static bool equal(sf::Vector2f a, sf::Vector2f b);
 
 	/// <summary>
@@ -33,6 +37,12 @@ public:
 	/// </summary>
 	Vector2f get_normalized();
 	void normalize();
+	/// <summary>
+	/// Returns the normals of a line segment created between a and b.
+	/// </summary>
+	/// <returns></returns>
+	static std::vector<Vector2f> get_normals(Vector2 a, Vector2f b);
+
 	bool equals(sf::Vector2f a);
 
 	// Inherited via IData
@@ -80,11 +90,12 @@ public:
 	{
 		POLYGON,
 		CIRCLE,
-		CAPSULE
+		CAPSULE,
+		LINE
 	};
 	static std::vector<std::string> shapetype_to_vector()
 	{
-		return { "POLYGON", "CIRCLE", "CAPSULE"};
+		return { "POLYGON", "CIRCLE", "CAPSULE", "LINE"};
 	}
 	static std::string shapetype_to_string(ShapeType type)
 	{
@@ -96,6 +107,8 @@ public:
 			return "CAPSULE";
 		case ShapeType::POLYGON:
 			return "POLYGON";
+		case ShapeType::LINE:
+			return "LINE";
 		default:
 			std::cout << "ERROR::MATH::shapetype_to_string::UNDEFINED DIRECTION: " << static_cast<int>(type) << "\n";
 			return "null";
@@ -109,6 +122,8 @@ public:
 			return ShapeType::CAPSULE;
 		if (type == "POLYGON")
 			return ShapeType::POLYGON;
+		if (type == "LINE")
+			return ShapeType::LINE;
 
 		std::cout << "ERROR::MATH::string_to_shapetype::UNDEFINED STRING: " << type << "\n";
 		return ShapeType::POLYGON;
@@ -172,19 +187,38 @@ public:
 	///  Will contain the least optimized collision detection, and should be avoided when possible.
 	/// </summary>
 	static FloatConvex polygon(sf::Vector2f position, std::vector<Vector2f> model);
+	/// <summary>
+	/// Creates a line. Line starts at start and ends at end.
+	/// </summary>
+	/// <param name="start"></param>
+	/// <param name="end"></param>
+	/// <returns></returns>
+	static FloatConvex line(sf::Vector2f start, sf::Vector2f end, float thickness = 0);
 
-	
+	/// <summary>
+	/// WORK IN PROGRESS...DOESNT WORK. 
+	/// </summary>
+	/// <param name="a"></param>
+	/// <param name="b"></param>
+	/// <returns></returns>
+	static FloatConvex combine_shapes(FloatConvex a, FloatConvex b);
+
 	void move(float x, float y);
 	void set_position(sf::Vector2f position);
 	Vector2f get_position();
+	Vector2f get_center();
 
 	bool intersects(FloatConvex convex);
+	Vector2f intersects_static(FloatConvex convex);
 	static bool intersection(FloatConvex a, FloatConvex b);
 
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
+
+
+
 
 private:
 	std::vector<Vector2f> model;
@@ -194,6 +228,10 @@ private:
 
 	using ConvexShape::getPosition;
 	using ConvexShape::setPosition;
+
+
+	static FloatConvex sort_poly_model(FloatConvex poly);
+	static float get_angle(Vector2f a, Vector2f b, Vector2f c);
 };
 
 }

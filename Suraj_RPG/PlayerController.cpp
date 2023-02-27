@@ -38,6 +38,7 @@ void bm98::PlayerController::init()
 	//std::cout << "first item capacity" << inv->get();
 
 	std::cout << game_object->get_info().name << "\n";
+
 }
 
 void PlayerController::awake()
@@ -48,11 +49,12 @@ void PlayerController::awake()
 
 void bm98::PlayerController::update()
 {
-	
 	update_input();
 	update_animations();
+
 	if (Input::get_action_down("INTERACT"))
 	{
+		/*
 		if (game_object->check_for_child("pants"))
 		{
 			SceneManager::destroy_gameobject(SceneManager::find("pants", game_object));
@@ -70,9 +72,11 @@ void bm98::PlayerController::update()
 		this->game_object->add_child(pants);
 
 		SceneManager::instantiate_gameobject(pants);
-
+		*/
 	}
-	camera->set_position(game_object->transform.position);
+	Vector2f movement = game_object->get_transform().position - camera->get_game_object()->get_transform().position;
+	//camera->set_position(game_object->transform.position);
+	camera->move(movement);
 }
 
 void bm98::PlayerController::late_update()
@@ -81,7 +85,7 @@ void bm98::PlayerController::late_update()
 }
 
 void bm98::PlayerController::fixed_update()
-{
+{	
 	rigid->apply_acceleration(movement_input.x, movement_input.y);
 
 	//Global::LayerMask mask = Global::LayerMask(true);
@@ -98,6 +102,18 @@ void bm98::PlayerController::on_collision_enter(Collision info)
 {
 
 	std::cout << "Player enter collision with: " << info.game_object->get_info().name << "\n";
+}
+
+void PlayerController::on_collision_stay(Collision info)
+{
+	std::cout << "Player stayed in collision with: " << info.game_object->get_info().name << "\n";
+
+}
+
+void PlayerController::on_collision_exit(Collision info)
+{
+	std::cout << "Player exit collision with: " << info.game_object->get_info().name << "\n";
+
 }
 
 void PlayerController::on_trigger_enter(Collider info)

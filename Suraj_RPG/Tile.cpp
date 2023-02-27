@@ -4,7 +4,8 @@
 #include "Renderer.h"
 namespace bm98
 {
-Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f, SortingLayer layer)
+Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f, 
+	SortingLayer layer, Layer physical_layer)
 {
 	this->x_offset = x_offset;
 	this->y_offset = y_offset;
@@ -16,6 +17,7 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 	this->grid_y = grid_y;
 
 	this->layer = layer;
+	this->physical_layer = physical_layer;
 	this->static_tile = true;
 	this->collision = false;
 	this->type = TileType::DEFAULT;
@@ -54,14 +56,19 @@ const bool Tile::is_static() const
 	return static_tile;
 }
 
-const SortingLayer Tile::get_layer() const
-{
-	return layer;
-}
-
 const bool Tile::get_collision() const
 {
 	return collision;
+}
+
+FloatConvex Tile::get_collider() 
+{
+	return collider;
+}
+
+const Layer Tile::get_layer() const
+{
+	return physical_layer;
 }
 
 const sf::FloatRect Tile::get_bounds() const

@@ -25,7 +25,10 @@ Scene::~Scene()
 {
 	int size = objects_in_scene.size();
 	for (auto& o : objects_in_scene)
+	{
+		o->on_destroy();
 		delete o;
+	}
 }
 
 void Scene::init()
@@ -52,6 +55,7 @@ void Scene::update()
 	//remove destroyed objects
 	for (auto& o_t_r : objects_to_remove)
 	{
+		o_t_r->on_destroy();
 		Physics::remove_from_physics(o_t_r);
 		objects_in_scene.erase(std::find(objects_in_scene.begin(),
 			objects_in_scene.end(), o_t_r));
@@ -64,6 +68,7 @@ void Scene::update()
 			std::vector<GameObject*> posterity = o_t_r->get_all_posterity();
 			while (posterity.size() > 0)
 			{
+				posterity[0]->on_destroy();
 				Physics::remove_from_physics(posterity[0]);
 				objects_in_scene.erase(std::find(objects_in_scene.begin(),
 					objects_in_scene.end(), posterity[0]));

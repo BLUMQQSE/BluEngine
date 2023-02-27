@@ -6,6 +6,7 @@
 namespace bm98
 {
 class Tile;
+class TlemapColliderComponent;
 
 static const std::string tiles_file_path = "Resources/Images/Tiles/";
 
@@ -34,6 +35,10 @@ public:
 		const sf::IntRect texture_rect, bool animated_sprite = false);
 
 	void highlight_layer(SortingLayer layer);
+	/// <summary>
+	/// Returns physical layer for layer.
+	/// </summary>
+	Layer get_layer(SortingLayer layer);
 
 	std::vector<std::string> get_tileset_keys();
 	sf::Texture* get_texture();
@@ -46,7 +51,7 @@ public:
 	/// </summary>
 	void set_position(Vector2i pos);
 
-
+	std::vector<std::vector<std::vector<Tile*> > > get_tiles();
 	std::vector<Tile*> get_collidable_tiles();
 
 	// Inherited via IData
@@ -66,6 +71,7 @@ private:
 	std::vector<sf::Sprite> render_sprites;
 	std::vector<sf::RenderTexture*> render_textures;
 	std::vector<SortingLayer> render_layers;
+	std::unordered_map<int, Layer> physical_layers;
 
 	std::vector<Tile*> map_updateables;
 
@@ -94,6 +100,9 @@ private:
 	
 	void clear_map();
 	void create_empty_map();
+
+
+	//TilemapColliderComponent* tilemap_collider;
 };
 
 }
