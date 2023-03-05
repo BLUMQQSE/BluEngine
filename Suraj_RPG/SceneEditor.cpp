@@ -269,23 +269,23 @@ void SceneEditor::create_transform_panel()
 	{
 		std::stringstream i;
 
-		i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().position.x;
+		//i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().position.x;
 		ipos_x->set_text(i.str());
 		i.str("");
-		i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().position.y;
+		//i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().position.y;
 		ipos_y->set_text(i.str());
 		i.str("");
-		i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().rotation.x;
+		//i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().rotation.x;
 
 		irot_x->set_text(i.str());
 		i.str("");
-		i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().rotation.y;
+		//i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().rotation.y;
 		irot_y->set_text(i.str());
 		i.str("");
-		i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().scale.x;
+		//i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().scale.x;
 		isca_x->set_text(i.str());
 		i.str("");
-		i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().scale.y;
+		//i << std::fixed << std::setprecision(2) << selected_gameobject->get_transform().scale.y;
 		isca_y->set_text(i.str());
 	}
 }
@@ -509,24 +509,25 @@ void SceneEditor::update_transform_panel()
 	float pos_x = gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_x_input")->get_text_value();
 	float pos_y = gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_y_input")->get_text_value();
 
-	if (selected_gameobject->get_parent())
-		selected_gameobject->set_local_position(
+	selected_gameobject->set_local_position(
+		Vector2f(
 			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_x_input")->get_text_value(),
 			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_y_input")->get_text_value()
-		);
-	else
-		selected_gameobject->set_position(
-			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_x_input")->get_text_value(),
-			gameobject_editor->get_panel("transform_panel")->get_inputbox("pos_y_input")->get_text_value()
-		);
-	selected_gameobject->transform.rotation = sf::Vector2f(
+		)
+	);
+	/*
+	selected_gameobject->get_local_rotation(
+		Vector2f(
+		Vector2f(
 		gameobject_editor->get_panel("transform_panel")->get_inputbox("rot_x_input")->get_text_value(),
 		gameobject_editor->get_panel("transform_panel")->get_inputbox("rot_y_input")->get_text_value()
+		)
 	);
 	selected_gameobject->transform.scale = sf::Vector2f(
 		gameobject_editor->get_panel("transform_panel")->get_inputbox("scale_x_input")->get_text_value(),
 		gameobject_editor->get_panel("transform_panel")->get_inputbox("scale_y_input")->get_text_value()
 	);
+	*/
 }
 
 void SceneEditor::clear_editor()

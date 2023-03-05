@@ -36,22 +36,22 @@ float Vector2f::sqr_magnitude()
 
 Vector2f Vector2f::down()
 {
-	return Vector2f(0.f, 1.f);
+	return Vector2f(0, 1);
 }
 
 Vector2f Vector2f::up()
 {
-	return Vector2f(0.f, -1.f);
+	return Vector2f(0, -1);
 }
 
 Vector2f Vector2f::left()
 {
-	return Vector2f(-1.f, 0);
+	return Vector2f(-1, 0);
 }
 
 Vector2f Vector2f::right()
 {
-	return Vector2f(1.f, 0.f);
+	return Vector2f(1, 0);
 }
 
 Vector2f Vector2f::zero()
@@ -59,9 +59,14 @@ Vector2f Vector2f::zero()
 	return Vector2f(0, 0);
 }
 
+Vector2f Vector2f::infinity()
+{
+	return Vector2f(INFINITY, INFINITY);
+}
+
 float Vector2f::distance(sf::Vector2f a, sf::Vector2f b)
 {
-	return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
+	return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
 }
 
 float Vector2f::sqr_distance(sf::Vector2f a, sf::Vector2f b)
@@ -105,12 +110,14 @@ void Vector2f::normalize()
 	}
 }
 
-std::vector<Vector2f> Vector2f::get_normals(Vector2 a, Vector2f b)
+Vector2f Vector2f::get_left(Vector2f a)
 {
-	std::vector<Vector2f> normals;
-	normals.push_back(Vector2(-(a.y - a.y), (b.x - a.x)));
-	normals.push_back(Vector2((b.y-a.y), -(b.x-a.x)));
-	return normals;
+	return Vector2f(-a.y, a.x);
+}
+
+Vector2f Vector2f::get_right(Vector2f a)
+{
+	return Vector2f(a.y, -a.x);
 }
 
 bool Vector2f::equals(sf::Vector2f a)
@@ -341,7 +348,7 @@ FloatConvex FloatConvex::line(sf::Vector2f start, sf::Vector2f end, float thickn
 {
 	FloatConvex convex;
 
-	Vector2f normal = Vector2f::get_normals(start, end)[0];
+	Vector2f normal = Vector2f::get_left(end - start);
 
 	convex.shape_type = ShapeType::LINE;
 
@@ -397,11 +404,30 @@ void FloatConvex::set_position(sf::Vector2f position)
 {
 	// TODO: Set position of model to positionwwwwwwww
 	this->position = position;
-
 	for (std::size_t i = 0; i != model.size(); i++)
 	{
 		setPoint(i, model[i] + position);
 	}
+
+}
+
+void FloatConvex::set_rotation(float new_rot)
+{
+	float dif = new_rot - this->rotation;
+	rotate(dif);
+}
+
+void FloatConvex::rotate(float rot_offset)
+{
+	if (rotation + rot_offset >= 360)
+	{
+		float dif = rotation + rot_offset - 360;
+		rotation = dif;
+	}
+	else
+		rotation += rot_offset;
+	
+	// TODO: implement rotation
 
 }
 
@@ -423,58 +449,24 @@ Vector2f FloatConvex::get_center()
 	return c;
 }
 
-bool FloatConvex::intersects(FloatConvex convex)
+Vector2f FloatConvex::get_model_center()
 {
-	FloatConvex* poly1 = this;
-	FloatConvex* poly2 = &convex;
+	Vector2f c;
 
-	for (int shape = 0; shape < 2; shape++)
+	for (int p = 0; p < model.size(); p++)
 	{
-		if (shape == 1)
-		{
-			poly1 = &convex;
-			poly2 = this;
-		}
-
-		for (int a = 0; a < poly1->getPointCount(); a++)
-		{
-			int b = (a + 1) % poly1->getPointCount();
-			Vector2f axisProj = Vector2f(-(poly1->getPoint(b).y - poly1->getPoint(a).y), (poly1->getPoint(b).x - poly1->getPoint(a).x));
-
-			//work out min and max 1D points for r1
-			float min_r1 = INFINITY, max_r1 = -INFINITY;
-			for (int p = 0; p < poly1->getPointCount(); p++)
-			{
-				//calc dot product
-				float q = Vector2f::dot_product(poly1->getPoint(p), axisProj);
-				min_r1 = std::min(min_r1, q);
-				max_r1 = std::max(max_r1, q);
-			}
-
-			float min_r2 = INFINITY, max_r2 = -INFINITY;
-			for (int p = 0; p < poly2->getPointCount(); p++)
-			{
-				//calc dot product
-				float q = Vector2f::dot_product(poly2->getPoint(p), axisProj);
-				min_r2 = std::min(min_r2, q);
-				max_r2 = std::max(max_r2, q);
-			}
-
-			if (!(max_r2 >= min_r1 && max_r1 >= min_r2))
-			{
-				//setFillColor(sf::Color::Red);
-				return false;
-			}
-		}
+		c += model[p];
 	}
-	//setFillColor(sf::Color::Green);
-	return true;
+	c.x /= model.size();
+	c.y /= model.size();
+	
+	return c;
 }
 
-Vector2f FloatConvex::intersects_static(FloatConvex convex)
+Vector2f FloatConvex::intersection(FloatConvex a, FloatConvex b)
 {
-	FloatConvex* poly1 = this;
-	FloatConvex* poly2 = &convex;
+	FloatConvex* poly1 = &b;
+	FloatConvex* poly2 = &a;
 
 	float overlap = INFINITY;
 
@@ -482,14 +474,15 @@ Vector2f FloatConvex::intersects_static(FloatConvex convex)
 	{
 		if (shape == 1)
 		{
-			poly1 = &convex;
-			poly2 = this;
+			poly1 = &a;
+			poly2 = &b;
 		}
 
 		for (int a = 0; a < poly1->getPointCount(); a++)
 		{
 			int b = (a + 1) % poly1->getPointCount();
-			Vector2f axisProj = Vector2f(-(poly1->getPoint(b).y - poly1->getPoint(a).y), (poly1->getPoint(b).x - poly1->getPoint(a).x));
+			//axis proj may need normalized...
+			Vector2f axisProj = Vector2f(-(poly1->getPoint(b).y - poly1->getPoint(a).y), (poly1->getPoint(b).x - poly1->getPoint(a).x)).get_normalized();
 
 			//work out min and max 1D points for r1
 			float min_r1 = INFINITY, max_r1 = -INFINITY;
@@ -514,8 +507,7 @@ Vector2f FloatConvex::intersects_static(FloatConvex convex)
 
 			if (!(max_r2 >= min_r1 && max_r1 >= min_r2))
 			{
-				setFillColor(sf::Color::Red);
-				return Vector2f::zero();
+				return Vector2f::infinity();
 			}
 		}
 	}
@@ -523,16 +515,11 @@ Vector2f FloatConvex::intersects_static(FloatConvex convex)
 	Vector2f d = Vector2f(poly2->get_center().x - poly1->get_center().x, poly2->get_center().y - poly1->get_center().y);
 	float s = sqrtf(d.x * d.x + d.y * d.y);
 
-	poly1->set_position(Vector2f(poly1->get_center().x - overlap * d.x / s, poly1->get_center().y - overlap * d.x / s));
-
-	setFillColor(sf::Color::Green);
-	return Vector2f(poly1->get_center().x - overlap * d.x / s, poly1->get_center().y - overlap * d.x / s);
-}
+	Vector2f result = Vector2f(-(overlap) * d.x / s, -(overlap) * d.y / s);
+	// this is just wrong... need to fully rework to get the vector im looking for
 
 
-bool FloatConvex::intersection(FloatConvex a, FloatConvex b)
-{
-	return a.intersects(b);
+	return result;
 }
 
 #pragma region IDATA
@@ -545,6 +532,7 @@ Json::Value FloatConvex::serialize_json()
 	obj["point-count"] = point_count;
 	obj["position"] = position.serialize_json();
 	obj["shape-type"] = shapetype_to_string(shape_type);
+	obj["rotation"] = rotation;
 
 	for (auto& p : model)
 	{
@@ -559,6 +547,7 @@ void FloatConvex::unserialize_json(Json::Value obj)
 	point_count = obj["point-count"].asUInt64();
 	position.unserialize_json(obj["position"]);
 	shape_type = string_to_shapetype(obj["shape-type"].asString());
+	rotation = obj["rotation"].asFloat();
 
 	model.reserve(point_count);
 	int x = 0;

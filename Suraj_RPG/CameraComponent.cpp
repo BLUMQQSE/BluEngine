@@ -17,11 +17,11 @@ CameraComponent::~CameraComponent()
 
 void CameraComponent::init()
 {
-	camera_view.setCenter(game_object->get_transform().position + game_object->get_transform().local_position);
+	camera_view.setCenter(game_object->get_world_position());
 	camera_view.setSize(sf::Vector2f(Renderer::get_window_size()));
 	//camera_view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
 	camera_view.zoom(.75f);
-	sf::Listener::setPosition(sf::Vector3f(game_object->get_transform().position.x, game_object->get_transform().position.y, 0));
+	sf::Listener::setPosition(sf::Vector3f(game_object->get_world_position().x, game_object->get_world_position().y, 0));
 }
 
 void CameraComponent::awake()
@@ -36,7 +36,7 @@ void CameraComponent::start()
 
 void CameraComponent::update()
 {
-	sf::Listener::setPosition(sf::Vector3f(game_object->get_transform().position.x, game_object->get_transform().position.y, 0));
+	sf::Listener::setPosition(sf::Vector3f(game_object->get_world_position().x, game_object->get_world_position().y, 0));
 	
 }
 
@@ -60,18 +60,9 @@ void CameraComponent::set_viewport(sf::FloatRect viewport)
 	camera_view.setViewport(viewport);
 }
 
-void CameraComponent::set_position(Vector2f pos)
+void CameraComponent::set_world_position(Vector2f pos)
 {
-	game_object->set_position(pos.x, pos.y);
 	camera_view.setCenter(pos);
-
-}
-
-void CameraComponent::move(Vector2f move)
-{
-	if(move.sqr_magnitude() / UNIT_SIZE > 25)
-		camera_view.move(move * Time::delta_time() * 2.f);
-	game_object->set_position(camera_view.getCenter().x, camera_view.getCenter().y);
 }
 
 

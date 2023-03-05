@@ -30,6 +30,7 @@ using ComponentArray = std::array<Component*, max_components>;
 
 class GameObject : IData, public IObject
 {
+
 public:
 
 	struct Info
@@ -58,47 +59,86 @@ public:
 		}
 
 	};
-	struct Transform
-	{
-		Vector2f position;
-		// position relative to parent
-		Vector2f local_position;
-		Vector2f rotation;
-		Vector2f scale;
-
-		const Vector2f get_world_position() const
-		{
-			return position + local_position;
-		}
-
-		Json::Value serialize_json()
-		{
-			Json::Value obj;
-
-			obj["position"] = position.serialize_json();
-			obj["local-position"] = local_position.serialize_json();
-			obj["rotation"] = rotation.serialize_json();
-			obj["scale"] = scale.serialize_json();
-
-			return obj;
-		}
-
-		void unserialize_json(Json::Value obj)
-		{
-			position.unserialize_json(obj["position"]);
-			local_position.unserialize_json(obj["local-position"]);
-			rotation.unserialize_json(obj["rotation"]);
-			scale.unserialize_json(obj["scale"]);
-		}
-
-	};
 
 	GameObject();
 	virtual ~GameObject();
 
-
+	
 	Info info;
-	Transform transform;
+	
+#pragma region Transform
+
+	Vector2f position;
+	// position relative to parent
+	Vector2f local_position;
+	float rotation;
+	float local_rotation;
+
+#pragma region Position
+
+	/// <returns>Position of gameobject relative to the game world.</returns>
+	const Vector2f get_world_position() const { return position; }
+	/// <returns>Position of gameobject relative to its parent. If no parent
+	///exists, the local position is 0.</returns>
+	const Vector2f get_local_position() const { return local_position; }
+	void set_world_position(const Vector2f pos)
+	{
+		position = pos;
+		if (parent)
+			local_position = parent->position - position;
+		else
+			local_position = Vector2f::zero();
+		for (std::size_t i = 0; i < children.size(); i++)
+			children[i]->set_world_position(children[i]->get_local_position() + pos);
+		for (std::size_t i = 0; i < components.size(); i++)
+			components[i]->set_world_position(pos);
+	}
+	void set_local_position(const Vector2f pos)
+	{
+		Vector2f change = pos - local_position;
+		set_world_position(position + change);
+	}
+	void move(const Vector2f offset)
+	{
+		set_world_position(position + offset);
+	}
+
+#pragma endregion
+
+#pragma region Rotation
+
+	/// <returns>Position of gameobject relative to the game world.</returns>
+	const float get_world_rotation() const { return rotation; }
+	/// <returns>Position of gameobject relative to its parent. If no parent
+	///exists, the local position is 0.</returns>
+	const float get_local_rotation() const { return local_rotation; }
+	void set_world_rotation(const float rot)
+	{
+		rotation = rot;
+		if (parent)
+			local_rotation = parent->rotation - rotation;
+		else
+			local_position = Vector2f::zero();
+		for (std::size_t i = 0; i < children.size(); i++)
+			children[i]->set_world_rotation(children[i]->get_local_rotation() + rot);
+		for (std::size_t i = 0; i < components.size(); i++)
+			components[i]->set_world_rotation(rot);
+	}
+	void set_local_rotation(const float rot)
+	{
+		float change = rot - local_rotation;
+		set_world_rotation(change);
+	}
+	void rotate(const float rot)
+	{
+		set_world_rotation(rotation + rot);
+	}
+	
+
+#pragma endregion
+
+#pragma endregion
+
 
 	virtual void init();
 	virtual void awake();
@@ -127,12 +167,8 @@ public:
 	void add_child(GameObject* child);
 	void remove_child(GameObject* child);
 
-	virtual void set_position(const float x, const float y);
-	virtual void set_local_position(const float x, const float y);
-
 	const size_t get_unique_runtime_id() const;
 	const Info& get_info() const;
-	const Transform& get_transform() const;
 	const sf::Vector2f get_center() const;
 	GameObject* get_parent();
 	/// <summary>

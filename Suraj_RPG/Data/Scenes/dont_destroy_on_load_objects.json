@@ -2,44 +2,6 @@
 	"gameobjects" : 
 	[
 		{
-			"components" :
-			[
-				{
-					"name" : "class bm98::CameraComponent",
-					"value" : null
-				}
-			],
-			"info" :
-			{
-				"name" : "MainCamera",
-				"tag" : "CAMERA",
-				"physics-layer" : "PHYSICS_IGNORE"
-			},
-			"transform" :
-			{
-				"position" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"local-position" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"rotation" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"scale" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				}
-			}
-		},
-		{
 			"components" : 
 			[
 				{
@@ -71,9 +33,10 @@
 					"value" : 
 					{
 						"acceleration" : 0.5,
+						"body-type" : "KINEMATIC",
 						"deceleration" : 2.0,
 						"max-velocity" : 7.0,
-						"orientation" : "DOWN"
+						"orientation" : "UP"
 					}
 				},
 				{
@@ -81,6 +44,36 @@
 					"value" : 
 					{
 						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 100.0
+								},
+								{
+									"x" : 50.0,
+									"y" : 100.0
+								},
+								{
+									"x" : 50.0,
+									"y" : 0.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 50.0,
+								"y" : -17.926944732666016
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
 						"collision-check-type" : "DISCRETE",
 						"hitbox-height" : 100.0,
 						"hitbox-offsetX" : 0.0,
@@ -98,34 +91,58 @@
 					"value" : null
 				}
 			],
-			"info" :
+			"info" : 
 			{
 				"name" : "Player",
-				"tag" : "PLAYER",
-				"physics-layer" : "DEFAULT"
+				"physics-layer" : "DEFAULT",
+				"tag" : "PLAYER"
 			},
-			"transform" :
+			"transform" : 
 			{
-				"position" :
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
 				{
 					"x" : 50.0,
-					"y" : 0.0
+					"y" : -17.926944732666016
 				},
-				"local-position" :
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
 				{
-					"x" : 0.0,
-					"y" : 0.0
+					"name" : "class bm98::CameraComponent",
+					"value" : null
 				},
-				"rotation" :
 				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"scale" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
+					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
 				}
+			],
+			"info" : 
+			{
+				"name" : "MainCamera",
+				"physics-layer" : "PHYSICS_IGNORE",
+				"tag" : "CAMERA"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 50.0,
+					"y" : -17.926944732666016
+				},
+				"rotation" : 0.0
 			}
 		}
 	],

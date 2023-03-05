@@ -41,7 +41,7 @@ void RigidbodyComponent::update()
 	sprite->move(velocity.get_normalized() * max_velocity * UNIT_SIZE * Time::delta_time());
 	//TODO: here we can update gameobject transform to reflect this position
 
-	game_object->transform.position = sprite->getPosition();
+	game_object->set_world_position(sprite->getPosition());
 	
 }
 

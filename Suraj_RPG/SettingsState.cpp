@@ -62,14 +62,16 @@ void SettingsState::init_variables()
 void SettingsState::update_input()
 {
 	if (Input::get_action("W"))
-		circle2.move(0, -100 * Time::delta_time());
+		circle.move(0, -100 * Time::delta_time());
 	if (Input::get_action("A"))
-		circle2.move(-100 * Time::delta_time(), 0);
+		circle.move(-100 * Time::delta_time(), 0);
 	if (Input::get_action("D"))
-		circle2.move(100 * Time::delta_time(), 0);
+		circle.move(100 * Time::delta_time(), 0);
 	if (Input::get_action("S"))
-		circle2.move(0, 100 * Time::delta_time());
-	circle2.intersects_static(concave);
+		circle.move(0, 100 * Time::delta_time());
+
+	if (Input::get_mouse_down(Input::Mouse::RIGHT))
+		concave.set_rotation(30);
 
 	if (buttons["BACK"]->is_pressed())
 	{
@@ -89,7 +91,6 @@ void SettingsState::on_end_state()
 
 void SettingsState::update()
 {
-
 	State::update();
 	update_input();
 	Debug::mouse_position_display(font);
@@ -123,7 +124,14 @@ void SettingsState::late_update()
 
 void SettingsState::fixed_update()
 {
+	Vector2f dif = FloatConvex::intersection(circle, concave);
+	
+	if (dif != Vector2f::infinity())
+	{
+		circle.move(dif.x, dif.y);
 
+		std::cout << "collision\n";
+	}
 }
 
 void SettingsState::render()

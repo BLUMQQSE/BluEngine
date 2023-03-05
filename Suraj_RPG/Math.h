@@ -24,6 +24,7 @@ public:
 	static Vector2f left();
 	static Vector2f right();
 	static Vector2f zero();
+	static Vector2f infinity();
 
 	static float distance(sf::Vector2f a, sf::Vector2f b);
 	static float sqr_distance(sf::Vector2f a, sf::Vector2f b);
@@ -37,11 +38,13 @@ public:
 	/// </summary>
 	Vector2f get_normalized();
 	void normalize();
+
 	/// <summary>
-	/// Returns the normals of a line segment created between a and b.
+	/// Returns left normal. Should be used by FloatConvex to get normals
+	/// exiting shape.
 	/// </summary>
-	/// <returns></returns>
-	static std::vector<Vector2f> get_normals(Vector2 a, Vector2f b);
+	static Vector2f get_left (Vector2f a);
+	static Vector2f get_right(Vector2f a);
 
 	bool equals(sf::Vector2f a);
 
@@ -205,12 +208,18 @@ public:
 
 	void move(float x, float y);
 	void set_position(sf::Vector2f position);
+	void set_rotation(float new_rot);
+	void rotate(float rot_offset);
 	Vector2f get_position();
 	Vector2f get_center();
+	Vector2f get_model_center();
 
-	bool intersects(FloatConvex convex);
-	Vector2f intersects_static(FloatConvex convex);
-	static bool intersection(FloatConvex a, FloatConvex b);
+	/// <summary>
+	/// Determines if two shapes overlap.
+	/// </summary>
+	/// <returns>The minimum penetration vector between the two shapes. This vector is
+	/// a.position - b.position. If no collision, returns Vector2f::infinity().</returns>
+	static Vector2f intersection(FloatConvex a, FloatConvex b);
 
 
 	// Inherited via IData
@@ -219,12 +228,12 @@ public:
 
 
 
-
 private:
 	std::vector<Vector2f> model;
 	Vector2f position;
 	unsigned point_count;
 	ShapeType shape_type = ShapeType::POLYGON;
+	float rotation = 0;
 
 	using ConvexShape::getPosition;
 	using ConvexShape::setPosition;

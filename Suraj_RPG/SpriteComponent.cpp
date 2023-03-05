@@ -44,10 +44,12 @@ void SpriteComponent::init()
 
 void SpriteComponent::update()
 {
-	if (game_object->get_parent())
-		if (game_object->get_parent()->has_component<SpriteComponent>())
-			sprite.setPosition(game_object->get_parent()->transform.position + game_object->transform.local_position);
+	
+}
 
+void SpriteComponent::set_world_position(const Vector2f pos)
+{
+	sprite.setPosition(pos.x, pos.y);
 }
 
 Json::Value SpriteComponent::serialize_json()
@@ -131,11 +133,5 @@ void SpriteComponent::set_size(int size_x, int size_y)
 	sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0),
 		sf::Vector2i(size)));
 }
-
-void SpriteComponent::set_position(float x, float y)
-{
-	sprite.setPosition(x, y);
-}
-
 
 }

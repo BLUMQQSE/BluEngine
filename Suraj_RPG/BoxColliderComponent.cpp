@@ -26,8 +26,8 @@ BoxColliderComponent::BoxColliderComponent(float offset_x,
 
 	collider_bounds = FloatConvex::polygon
 	(
-		Vector2f(game_object->get_transform().position.x + offsetX,
-			game_object->get_transform().position.y + offsetY),
+		Vector2f(game_object->get_world_position().x + offsetX,
+			game_object->get_world_position().y + offsetY),
 		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
 	);
 
@@ -49,12 +49,14 @@ void BoxColliderComponent::init()
 
 void BoxColliderComponent::awake()
 {	
+	
 	collider_bounds = FloatConvex::polygon
 	(
-		Vector2f(game_object->get_transform().position.x + offsetX,
-			game_object->get_transform().position.y + offsetY),
+		Vector2f(game_object->get_world_position().x + offsetX,
+			game_object->get_world_position().y + offsetY),
 		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
 	);
+	
 
 	collider_bounds.setFillColor(sf::Color::Transparent);
 	collider_bounds.setOutlineThickness(-1.f);
@@ -69,8 +71,8 @@ void BoxColliderComponent::update()
 
 void BoxColliderComponent::fixed_update()
 {
-	collider_bounds.set_position(Vector2f(game_object->get_transform().position.x + offsetX,
-		game_object->get_transform().position.y + offsetY));
+	collider_bounds.set_position(Vector2f(game_object->get_world_position().x + offsetX,
+		game_object->get_world_position().y + offsetY));
 }
 
 void BoxColliderComponent::add_to_buffer(sf::View* view)
@@ -133,8 +135,8 @@ void BoxColliderComponent::set_hitbox(float width, float height,
 	this->height = height;
 	collider_bounds = FloatConvex::polygon
 	(
-		Vector2f(game_object->get_transform().position.x + offsetX,
-			game_object->get_transform().position.y + offsetY),
+		Vector2f(game_object->get_world_position().x + offsetX,
+			game_object->get_world_position().y + offsetY),
 		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
 	);
 

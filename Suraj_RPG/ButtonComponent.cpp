@@ -96,8 +96,7 @@ ButtonComponent::~ButtonComponent()
 
 void ButtonComponent::init()
 {
-	this->shape.setPosition(game_object->get_transform().position +
-		game_object->get_transform().local_position);
+	this->shape.setPosition(game_object->get_world_position());
 	Renderer::add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 	Renderer::add(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),

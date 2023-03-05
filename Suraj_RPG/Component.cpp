@@ -71,6 +71,14 @@ void Component::on_trigger_exit(Collider info)
 {
 }
 
+void Component::set_world_position(Vector2f pos)
+{
+}
+
+void Component::set_world_rotation(float rot)
+{
+}
+
 #pragma region IData
 
 Json::Value Component::serialize_json()

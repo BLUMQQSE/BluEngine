@@ -46,7 +46,7 @@ void DropDownComponent::init()
 		game_object->add_child(new_child);
 		new_child->set_parent(game_object);
 
-		new_child->set_local_position(0, (i + 1) * height);
+		new_child->set_local_position(Vector2f(0, (i + 1) * height));
 		new_child->add_component<ButtonComponent>(width, height, text_list[i], char_size, i);
 		new_child->set_active(false);
 

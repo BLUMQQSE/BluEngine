@@ -13,6 +13,10 @@ public:
 
     virtual void init() override;
     virtual void update() override;
+
+    virtual void set_world_position(const Vector2f pos) override;
+
+
     // Inherited via IData
     virtual Json::Value serialize_json() override;
     virtual void unserialize_json(Json::Value obj) override;
@@ -27,7 +31,6 @@ public:
 
     void set_sprite(std::string file_path);
     void set_size(int size_x, int size_y);
-    void set_position(float x, float y);
 
 private:
     sf::Sprite sprite;

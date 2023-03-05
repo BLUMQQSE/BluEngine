@@ -2,65 +2,6 @@
 	"gameobjects" : 
 	[
 		{
-			"components" : 
-			[
-				{
-					"name" : "class bm98::SceneChange",
-					"value" : 
-					{
-						"destination-scene" : "test.json",
-						"destination" :
-						{
-							"x" : -150.0,
-							"y" : 300.0
-						}
-					}
-				},
-				{
-					"name" : "class bm98::BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 20.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 20.0,
-						"trigger" : true
-					}
-				}
-			],
-			"info" :
-			{
-				"name" : "SceneChange",
-				"tag" : "UNTAGGED",
-				"physics-layer" : "DEFAULT"
-			},
-			"transform" :
-			{
-				"position" :
-				{
-					"x" : 450.0,
-					"y" : 0.0
-				},
-				"local-position" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"rotation" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"scale" :
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				}
-			}
-		},
-		{
 			"children" : 
 			[
 				{
@@ -84,6 +25,36 @@
 							"value" : 
 							{
 								"active" : true,
+								"collider-bounds" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 50.0
+										},
+										{
+											"x" : 20.0,
+											"y" : 50.0
+										},
+										{
+											"x" : 20.0,
+											"y" : 0.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 10.0,
+										"y" : 0.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
 								"collision-check-type" : "DISCRETE",
 								"hitbox-height" : 50.0,
 								"hitbox-offsetX" : 0.0,
@@ -97,40 +68,32 @@
 							"value" : 
 							{
 								"acceleration" : 0.5,
+								"body-type" : "KINEMATIC",
 								"deceleration" : 2.0,
 								"max-velocity" : 7.0,
 								"orientation" : "DOWN"
 							}
 						}
 					],
-					"info" :
+					"info" : 
 					{
 						"name" : "Sword",
-						"tag" : "UNTAGGED",
-						"physics-layer" : "ACTOR"
+						"physics-layer" : "ACTOR",
+						"tag" : "UNTAGGED"
 					},
-					"transform" :
+					"transform" : 
 					{
-						"position" :
+						"local-position" : 
+						{
+							"x" : -10.0,
+							"y" : 0.0
+						},
+						"position" : 
 						{
 							"x" : 10.0,
 							"y" : 0.0
 						},
-						"local-position" :
-						{
-							"x" : 10.0,
-							"y" : 0.0
-						},
-						"rotation" :
-						{
-							"x" : 0.0,
-							"y" : 0.0
-						},
-						"scale" :
-						{
-							"x" : 0.0,
-							"y" : 0.0
-						}
+						"rotation" : 0.0
 					}
 				}
 			],
@@ -150,34 +113,105 @@
 					}
 				}
 			],
-			"info" :
+			"info" : 
 			{
 				"name" : "Dummy",
-				"tag" : "UNTAGGED",
-				"physics-layer" : "DEFAULT"
+				"physics-layer" : "DEFAULT",
+				"tag" : "UNTAGGED"
 			},
-			"transform" :
+			"transform" : 
 			{
-				"position" :
+				"local-position" : 
 				{
 					"x" : 0.0,
 					"y" : 0.0
 				},
-				"local-position" :
+				"position" : 
 				{
 					"x" : 0.0,
 					"y" : 0.0
 				},
-				"rotation" :
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
 				{
-					"x" : 0.0,
-					"y" : 0.0
+					"name" : "class bm98::SceneChange",
+					"value" : 
+					{
+						"destination" : 
+						{
+							"x" : -150.0,
+							"y" : 300.0
+						},
+						"destination-scene" : "test.json"
+					}
 				},
-				"scale" :
 				{
-					"x" : 0.0,
-					"y" : 0.0
+					"name" : "class bm98::BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 0.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 450.0,
+								"y" : 0.0
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 20.0,
+						"trigger" : true
+					}
 				}
+			],
+			"info" : 
+			{
+				"name" : "SceneChange",
+				"physics-layer" : "DEFAULT",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 450.0,
+					"y" : 0.0
+				},
+				"rotation" : 0.0
 			}
 		}
 	],

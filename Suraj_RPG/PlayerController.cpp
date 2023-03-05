@@ -74,9 +74,10 @@ void bm98::PlayerController::update()
 		SceneManager::instantiate_gameobject(pants);
 		*/
 	}
-	Vector2f movement = game_object->get_transform().position - camera->get_game_object()->get_transform().position;
+	Vector2f movement = game_object->get_world_position() - camera->get_game_object()->get_world_position();
 	//camera->set_position(game_object->transform.position);
-	camera->move(movement);
+	//camera->move(movement);
+	camera->get_game_object()->move(movement);
 }
 
 void bm98::PlayerController::late_update()

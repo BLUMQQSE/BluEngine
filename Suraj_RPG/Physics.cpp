@@ -114,14 +114,14 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 				continue;
 		
 		// TODO: change later to return distance from intersection point between origin and contact with collider
-		if (Vector2f::sqr_distance(origin, objects[i][0].first->get_transform().get_world_position())
+		if (Vector2f::sqr_distance(origin, objects[i][0].first->get_world_position())
 			< hit->distance * hit->distance)
 		{
 			if (dynamic_cast<TilemapColliderComponent*>(c))
 			{
 				if (dynamic_cast<TilemapColliderComponent*>(c)->intersects(ray, mask))
 				{
-					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_transform().get_world_position());
+					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_world_position());
 					hit_something = true;
 					hit->collider = c;
 				}
@@ -130,7 +130,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 			{
 				if (ray.intersects(c->get_collider_bounds()))
 				{
-					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_transform().get_world_position());
+					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_world_position());
 					hit_something = true;
 					hit->collider = c;
 				}
@@ -232,9 +232,10 @@ void Physics::handle_collision(std::pair<GameObject*, CollisionState>& a,
 	if (!a_collider->is_active() || !b_collider->is_active())
 		return;
 
-	
+	Vector2f collision_overlap = FloatConvex::intersection(a_collider->get_collider_bounds(), b_collider->get_collider_bounds());
+
 	// Collision does not exist this update, check if a collider has exited and return
-	if (!a_collider->intersects(b_collider->get_collider_bounds()))
+	if (collision_overlap == Vector2f::infinity())
 	{
 		if (a.second == CollisionState::TRIGGER)
 		{
@@ -261,99 +262,8 @@ void Physics::handle_collision(std::pair<GameObject*, CollisionState>& a,
 		return;
 	}
 
-#pragma region SET COLLISIONSTATE AND SEND FUNCTION CALLS
-
-	RigidbodyComponent::BodyType a_type;
-	RigidbodyComponent::BodyType b_type;
-
-	if (!a_rigid)
-		a_type = RigidbodyComponent::BodyType::KINEMATIC;
-	else
-		a_type = a_rigid->get_body_type();
-
-	if (!b_rigid)
-		b_type = RigidbodyComponent::BodyType::KINEMATIC;
-	else
-		b_type = b_rigid->get_body_type();
-
-	switch (a_type)
-	{
-	case RigidbodyComponent::BodyType::KINEMATIC:
-		switch (a.second)
-		{
-		case CollisionState::NOTHING:
-			if (a_collider->is_trigger())
-			{
-				a.second = CollisionState::TRIGGER_ENTRY;
-				a.first->on_trigger_enter(Collider(b.first));
-			}
-			else if(!b_collider->is_trigger())
-			{
-				a.second = CollisionState::COLLISION_ENTRY;
-				a.first->on_collision_enter(Collision(b.first, b_collider));
-			}
-			break;
-		case CollisionState::COLLISION:
-			a.first->on_collision_stay(Collision(b.first,
-				b_collider));
-			break;
-		case CollisionState::TRIGGER:
-			a.first->on_trigger_stay(Collider(b.first));
-			break;
-		default:
-			break;
-		}
-		break;
-	case RigidbodyComponent::BodyType::DYNAMIC:
-		break;
-	case RigidbodyComponent::BodyType::STATIC:
-		break;
-	default:
-		std::cout << "ERROR::Physics::OBJECT MISSING BODYTYPE::OBJECT- " << a.first->get_info().name << "\n";
-		break;
-	}
-
-	switch (b_type)
-	{
-	case RigidbodyComponent::BodyType::KINEMATIC:
-		switch (b.second)
-		{
-		case CollisionState::NOTHING:
-			if (b_collider->is_trigger())
-			{
-				b.second = CollisionState::TRIGGER_ENTRY;
-				b.first->on_trigger_enter(Collider(a.first));
-			}
-			else if(!a_collider->is_trigger())
-			{
-				b.second = CollisionState::COLLISION_ENTRY;
-				b.first->on_collision_enter(Collision(a.first, a_collider));
-			}
-			break;
-		case CollisionState::COLLISION:
-			// Just re-send Collision call
-			b.first->on_collision_stay(Collision(a.first,
-				a_collider));
-			break;
-		case CollisionState::TRIGGER:
-			b.first->on_trigger_stay(Collider(a.first));
-			break;
-		default:
-			break;
-		}
-		break;
-	case RigidbodyComponent::BodyType::DYNAMIC:
-		break;
-	case RigidbodyComponent::BodyType::STATIC:
-		break;
-
-	default:
-		std::cout << "ERROR::Physics::OBJECT MISSING BODYTYPE::OBJECT- " << b.first->get_info().name << "\n";
-		break;
-	}
-
-#pragma endregion
-
+	// a: uses collision_overlap as positive
+	// b: uses collision_overlap as negative
 	
 
 	

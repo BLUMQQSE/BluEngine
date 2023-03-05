@@ -1,5 +1,6 @@
 #pragma once
 #include "globals.h"
+#include "Math.h"
 #include "IData.h"
 
 namespace bm98
@@ -45,6 +46,9 @@ public:
 	virtual void on_trigger_enter(Collider info);
 	virtual void on_trigger_stay(Collider info);
 	virtual void on_trigger_exit(Collider info);
+
+	virtual void set_world_position(Vector2f pos);
+	virtual void set_world_rotation(float rot);
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;

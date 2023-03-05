@@ -19,8 +19,7 @@ public:
     sf::FloatRect get_view_bounds();
 
     void set_viewport(sf::FloatRect viewport);
-    void set_position(Vector2f pos);
-    void move(Vector2f move);
+    void set_world_position(Vector2f pos);
 
 private:
     sf::View camera_view;

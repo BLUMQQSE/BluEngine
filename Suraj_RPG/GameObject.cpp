@@ -46,9 +46,8 @@ void GameObject::init()
 
 void GameObject::awake()
 {
+	set_world_position(position);
 
-	set_position(transform.position.x, transform.position.y);
-	
 	awake_components();
 
 }
@@ -87,8 +86,8 @@ void GameObject::update()
 	//if(!parent)
 		//transform.position = sprite.getPosition();
 	
-	if (parent)
-		transform.position = parent->transform.position + transform.local_position;
+	//if (parent)
+	//	transform.position = parent->transform.position + transform.local_position;
 	
 	//sprite.setPosition(transform.position);
 	
@@ -210,18 +209,6 @@ void GameObject::remove_child(GameObject* child)
 	children.erase(std::find(children.begin(), children.end(), child));
 }
 
-void GameObject::set_position(const float x, const float y)
-{
-	transform.position = Vector2f(x, y);
-	if (has_component<SpriteComponent>())
-		get_component<SpriteComponent>().set_position(x, y);
-}
-
-void GameObject::set_local_position(const float x, const float y)
-{
-	transform.local_position = Vector2f(x, y);
-}
-
 const size_t GameObject::get_unique_runtime_id() const
 {
 	return unique_runtime_id;
@@ -230,11 +217,6 @@ const size_t GameObject::get_unique_runtime_id() const
 const GameObject::Info& GameObject::get_info() const
 {
 	return info;
-}
-
-const GameObject::Transform& GameObject::get_transform() const
-{
-	return transform;
 }
 
 const sf::Vector2f GameObject::get_center() const
@@ -255,7 +237,7 @@ const sf::Vector2f GameObject::get_center() const
 			bc.top + bc.height / 2
 		);
 	}
-	return get_transform().position + get_transform().local_position;
+	return get_world_position();
 }
 
 GameObject* GameObject::get_parent()
@@ -349,7 +331,10 @@ Json::Value GameObject::serialize_json()
 	Json::Value obj;
 
 	obj["info"] = info.serialize_json();
-	obj["transform"] = transform.serialize_json();
+
+	obj["transform"]["position"] = position.serialize_json();
+	obj["transform"]["local-position"] = local_position.serialize_json();
+	obj["transform"]["rotation"] = rotation;
 
 	for (auto& c : components)
 	{
@@ -370,7 +355,10 @@ Json::Value GameObject::serialize_json()
 void GameObject::unserialize_json(Json::Value obj)
 {
 	info.unserialize_json(obj["info"]);
-	transform.unserialize_json(obj["transform"]);
+
+	position.unserialize_json(obj["transform"]["position"]);
+	local_position.unserialize_json(obj["transform"]["local-position"]);
+	rotation = obj["transform"]["rotation"].asFloat();
 
 	std::unordered_map<std::string, Json::Value> comps_data;
 	for (Json::Value component : obj["components"])
