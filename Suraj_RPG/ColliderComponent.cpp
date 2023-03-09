@@ -13,7 +13,8 @@ ColliderComponent::~ColliderComponent()
 
 bool ColliderComponent::intersects(const FloatConvex collider)
 {
-	return collider_bounds.intersects(collider);
+	//return collider_bounds.intersects(collider);
+	return false;
 }
 
 

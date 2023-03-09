@@ -9,6 +9,7 @@
 #include "Physics.h"
 #include "Debug.h"
 #include <windows.h>
+#include "EventSystem.h"
 namespace bm98::core
 {
 
@@ -147,7 +148,8 @@ void Game::update()
 {
     update_sfml_events();
     Input::update();
-
+    // Process all events in system
+    EventSystem::instance()->push_event(EventID::_EVENTSYSTEM_PROCESS_EVENTS_);
     if (!states.empty())
     {
         

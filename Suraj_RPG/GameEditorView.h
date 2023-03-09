@@ -1,10 +1,13 @@
 #pragma once
 #include "Gui.h"
+#include "EventSystem.h"
+
 namespace bm98
 {
 class GameObject;
 class Component;
-class GameEditorView
+
+class GameEditorView : public core::Listener
 {
 public:
 
@@ -22,6 +25,10 @@ public:
 	void toggle_editor(EditorPanel panel_to_toggle);
 	void update();
 	virtual void update_sfml(sf::Event sfEvent);
+
+	// Inherited via Listener
+	virtual void handle_event(core::Event* event) override;
+
 
 private:
 	GUI::Panel* heir_panel;

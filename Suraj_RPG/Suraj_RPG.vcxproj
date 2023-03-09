@@ -177,6 +177,7 @@
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="DontDestroyOnLoad.cpp" />
     <ClCompile Include="DropDownComponent.cpp" />
+    <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameEditorView.cpp" />
@@ -225,7 +226,6 @@
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
-    <ClCompile Include="TestClass.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TilemapColliderComponent.cpp" />
     <ClCompile Include="TilemapComponent.cpp" />
@@ -259,6 +259,7 @@
     <ClInclude Include="DataAsset.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />
     <ClInclude Include="DropDownComponent.h" />
+    <ClInclude Include="EventSystem.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameEditorView.h" />
@@ -302,7 +303,6 @@
     <ClInclude Include="SettingsState.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
-    <ClInclude Include="TestClass.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TilemapColliderComponent.h" />
     <ClInclude Include="TilemapComponent.h" />

@@ -7,6 +7,7 @@ class TilemapComponent;
 
 class Scene : IData
 {
+
 public:
 	Scene();
 	Scene(std::string name);
@@ -55,7 +56,6 @@ private:
 
 	sf::View* scene_view;
 	void insert_sort();
-
 
 };
 }

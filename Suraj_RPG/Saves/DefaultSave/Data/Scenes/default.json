@@ -2,6 +2,139 @@
 	"gameobjects" : 
 	[
 		{
+			"children" : 
+			[
+				{
+					"components" : 
+					[
+						{
+							"name" : "class bm98::SpriteComponent",
+							"value" : 
+							{
+								"class bm98::IRenderable" : 
+								{
+									"render" : true,
+									"sorting-layer" : "ACTOR",
+									"z-order" : 1
+								},
+								"sprite-file-path" : "sword.png"
+							}
+						},
+						{
+							"name" : "class bm98::BoxColliderComponent",
+							"value" : 
+							{
+								"active" : true,
+								"collider-bounds" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 50.0
+										},
+										{
+											"x" : 20.0,
+											"y" : 50.0
+										},
+										{
+											"x" : 20.0,
+											"y" : 0.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 10.0,
+										"y" : 0.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision-check-type" : "DISCRETE",
+								"hitbox-height" : 50.0,
+								"hitbox-offsetX" : 0.0,
+								"hitbox-offsetY" : 0.0,
+								"hitbox-width" : 20.0,
+								"trigger" : false
+							}
+						},
+						{
+							"name" : "class bm98::RigidbodyComponent",
+							"value" : 
+							{
+								"acceleration" : 0.5,
+								"body-type" : "KINEMATIC",
+								"deceleration" : 2.0,
+								"max-velocity" : 7.0,
+								"orientation" : "DOWN"
+							}
+						}
+					],
+					"info" : 
+					{
+						"name" : "Sword",
+						"physics-layer" : "ACTOR",
+						"tag" : "UNTAGGED"
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : -10.0,
+							"y" : 0.0
+						},
+						"position" : 
+						{
+							"x" : 10.0,
+							"y" : 0.0
+						},
+						"rotation" : 0.0
+					}
+				}
+			],
+			"components" : 
+			[
+				{
+					"name" : "class bm98::SpriteComponent",
+					"value" : 
+					{
+						"class bm98::IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ACTOR",
+							"z-order" : 0
+						},
+						"sprite-file-path" : "player.png"
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Dummy",
+				"physics-layer" : "DEFAULT",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
 			"components" : 
 			[
 				{
@@ -76,139 +209,6 @@
 				"position" : 
 				{
 					"x" : 450.0,
-					"y" : 0.0
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"children" : 
-			[
-				{
-					"components" : 
-					[
-						{
-							"name" : "class bm98::SpriteComponent",
-							"value" : 
-							{
-								"class bm98::IRenderable" : 
-								{
-									"render" : true,
-									"sorting-layer" : "ACTOR",
-									"z-order" : 1
-								},
-								"sprite-file-path" : "sword.png"
-							}
-						},
-						{
-							"name" : "class bm98::BoxColliderComponent",
-							"value" : 
-							{
-								"active" : true,
-								"collider-bounds" : 
-								{
-									"model" : 
-									[
-										{
-											"x" : 0.0,
-											"y" : 0.0
-										},
-										{
-											"x" : 0.0,
-											"y" : 50.0
-										},
-										{
-											"x" : 20.0,
-											"y" : 50.0
-										},
-										{
-											"x" : 20.0,
-											"y" : 0.0
-										}
-									],
-									"point-count" : 4,
-									"position" : 
-									{
-										"x" : -77.371780395507812,
-										"y" : 502.67630004882812
-									},
-									"rotation" : 0.0,
-									"shape-type" : "POLYGON"
-								},
-								"collision-check-type" : "DISCRETE",
-								"hitbox-height" : 50.0,
-								"hitbox-offsetX" : 0.0,
-								"hitbox-offsetY" : 0.0,
-								"hitbox-width" : 20.0,
-								"trigger" : false
-							}
-						},
-						{
-							"name" : "class bm98::RigidbodyComponent",
-							"value" : 
-							{
-								"acceleration" : 0.5,
-								"body-type" : "KINEMATIC",
-								"deceleration" : 2.0,
-								"max-velocity" : 7.0,
-								"orientation" : "DOWN"
-							}
-						}
-					],
-					"info" : 
-					{
-						"name" : "Sword",
-						"physics-layer" : "ACTOR",
-						"tag" : "UNTAGGED"
-					},
-					"transform" : 
-					{
-						"local-position" : 
-						{
-							"x" : 77.371780395507812,
-							"y" : -502.67630004882812
-						},
-						"position" : 
-						{
-							"x" : -77.371780395507812,
-							"y" : 502.67630004882812
-						},
-						"rotation" : 0.0
-					}
-				}
-			],
-			"components" : 
-			[
-				{
-					"name" : "class bm98::SpriteComponent",
-					"value" : 
-					{
-						"class bm98::IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ACTOR",
-							"z-order" : 0
-						},
-						"sprite-file-path" : "player.png"
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "Dummy",
-				"physics-layer" : "DEFAULT",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 0.0,
 					"y" : 0.0
 				},
 				"rotation" : 0.0

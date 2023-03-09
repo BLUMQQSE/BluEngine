@@ -34,6 +34,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	unserialize_json(FileManager::load_from_file(FileManager::get_save_name() + "gamestate.json"));
 
 	active_scene = new Scene(active_scene_name);
+
 	SceneManager::init(active_scene);
 	SceneManager::load_scene(active_scene_name);
 	//load in dont destroy objects on load
@@ -49,6 +50,8 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("QUIT", 500.f, 500.f, "Quit Game");
+
+
 }
 
 GameState::~GameState()

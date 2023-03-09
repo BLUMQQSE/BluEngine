@@ -15,6 +15,7 @@
 #include "DataAsset.h"
 #include "Inventory.h"
 #include "CapsuleColliderComponent.h"
+#include "EventSystem.h"
 namespace bm98
 {
 using namespace core;
@@ -39,12 +40,15 @@ void bm98::PlayerController::init()
 
 	std::cout << game_object->get_info().name << "\n";
 
+
 }
 
 void PlayerController::awake()
 {
 	init_animations();
 	camera = &SceneManager::find_with_tag(Tag::CAMERA, this->game_object)->get_component<CameraComponent>();
+
+
 }
 
 void bm98::PlayerController::update()
@@ -74,6 +78,7 @@ void bm98::PlayerController::update()
 		SceneManager::instantiate_gameobject(pants);
 		*/
 	}
+
 	Vector2f movement = game_object->get_world_position() - camera->get_game_object()->get_world_position();
 	//camera->set_position(game_object->transform.position);
 	//camera->move(movement);

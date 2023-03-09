@@ -9,7 +9,7 @@
 #include "CameraComponent.h"
 #include "SpriteComponent.h"
 #include "PlayerController.h"
-
+#include "EventSystem.h"
 namespace bm98
 {
 Scene::Scene()
@@ -46,10 +46,13 @@ void Scene::update()
 	// add new objects (add before remove in case adding a child to which parent will be
 	// destroyed in same update
 	for (auto& o_t_a : objects_to_add)
+	{
 		objects_in_scene.push_back(o_t_a);
-
+		EventSystem::instance()->push_event(EventID::SCENE_ADD_GAMEOBJECT, o_t_a);
+	}
 	if (objects_to_add.size() > 0)
 		insert_sort();
+	
 	objects_to_add.clear();
 
 	//remove destroyed objects
@@ -72,10 +75,16 @@ void Scene::update()
 				Physics::remove_from_physics(posterity[0]);
 				objects_in_scene.erase(std::find(objects_in_scene.begin(),
 					objects_in_scene.end(), posterity[0]));
+
+				EventSystem::instance()->push_event(EventID::SCENE_REMOVE_GAMEOBJECT, posterity[0]);
+				
 				delete posterity[0];
 				posterity.erase(posterity.begin());
 			}
 		}
+
+		EventSystem::instance()->push_event(EventID::SCENE_REMOVE_GAMEOBJECT, o_t_r);
+		
 		delete o_t_r;
 	}
 	objects_to_remove.clear();

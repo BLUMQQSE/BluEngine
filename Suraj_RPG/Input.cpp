@@ -26,7 +26,7 @@ sf::RenderWindow* Input::window;
 std::unordered_map<std::string, std::unordered_map<std::string, int>> Input::keybinds;
 Input::Input()
 {
-
+    
 }
 
 Input::~Input()

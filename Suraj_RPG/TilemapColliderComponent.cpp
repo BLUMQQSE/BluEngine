@@ -38,7 +38,7 @@ bool TilemapColliderComponent::intersects(const FloatConvex collider, Global::La
 			continue;
 		for (int i = 0; i < colliders[h].size(); i++)
 		{
-			if (colliders[h][i].intersects(collider))
+			if (FloatConvex::intersection(colliders[h][i], collider) != Vector2f::infinity())
 				return true;
 		}
 	}

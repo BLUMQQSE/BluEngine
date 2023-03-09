@@ -1,6 +1,7 @@
 #pragma once
 #include "State.h"
 #include "IData.h"
+
 namespace bm98
 {
 class Player;
@@ -8,7 +9,6 @@ class GameObject;
 class Scene;
 class ParticleSystem; 
 class PauseMenu;
-
 class GameState :
     public State, public IData
 {

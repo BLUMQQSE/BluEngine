@@ -6,12 +6,13 @@ namespace bm98
 {
 GameEditorView::GameEditorView()
 {
-
+	EventSystem::instance()->subscribe(EventID::SCENE_ADD_GAMEOBJECT, this);
+	EventSystem::instance()->subscribe(EventID::SCENE_REMOVE_GAMEOBJECT, this);
 }
 
 GameEditorView::~GameEditorView()
 {
-	
+
 }
 
 void GameEditorView::toggle_editor(EditorPanel panel_to_toggle)
@@ -104,6 +105,16 @@ void GameEditorView::update_sfml(sf::Event sfEvent)
 	if(inspector_active)
 		inspector_panel->update_sfml(sfEvent);
 }
+
+void GameEditorView::handle_event(Event* event)
+{
+	EventID id = event->get_event_id();
+	if (id == EventID::SCENE_ADD_GAMEOBJECT || id == EventID::SCENE_REMOVE_GAMEOBJECT)
+	{
+		
+	}
+}
+
 
 void GameEditorView::create_heir_panel()
 {

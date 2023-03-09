@@ -28,7 +28,7 @@ constexpr std::size_t max_components = 150;
 using ComponentBitSet = std::bitset<max_components>;
 using ComponentArray = std::array<Component*, max_components>;
 
-class GameObject : IData, public IObject
+class GameObject : public IData, public IObject
 {
 
 public:

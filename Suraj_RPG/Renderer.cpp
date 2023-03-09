@@ -22,7 +22,7 @@ void Renderer::init(RenderTarget* render_target)
 void Renderer::add(RenderObject render_object)
 {
 	render_objects.insert(render_object);
-
+	
 }
 
 void Renderer::add_gizmo(GizmoObject gizmo)

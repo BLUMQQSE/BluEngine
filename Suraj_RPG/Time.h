@@ -1,4 +1,5 @@
 #pragma once
+#include "EventSystem.h"
 #include "IData.h"
 
 namespace bm98::core
@@ -7,10 +8,6 @@ namespace bm98::core
 class Time : IData
 {
 public:
-
-	Time();
-	virtual ~Time();
-
 	static void init(float total_time);
 	static void update_delta(const float& dt);
 	static void reset_fixed_delta();
@@ -38,6 +35,8 @@ private:
 
 	static void set_real_time(const float d);
 
+	Time();
+	~Time();
 
 };
 

@@ -128,7 +128,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 			}
 			else
 			{
-				if (ray.intersects(c->get_collider_bounds()))
+				if (FloatConvex::intersection(ray, c->get_collider_bounds()) != Vector2f::infinity())
 				{
 					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_world_position());
 					hit_something = true;
@@ -179,7 +179,7 @@ int Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, G
 		}
 		else
 		{
-			if (circle.intersects(c->get_collider_bounds()))
+			if (FloatConvex::intersection(circle, c->get_collider_bounds()) != Vector2f::infinity())
 			{
 				collisions.push_back(c);
 			}

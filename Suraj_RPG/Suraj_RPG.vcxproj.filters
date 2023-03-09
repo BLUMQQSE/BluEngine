@@ -192,9 +192,6 @@
     <ClCompile Include="AudioSource.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="TestClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BoxColliderComponent.cpp">
       <Filter>Components\Physics</Filter>
     </ClCompile>
@@ -242,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="TilemapColliderComponent.cpp">
       <Filter>Components\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -419,9 +419,6 @@
     <ClInclude Include="AudioSource.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="TestClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BoxColliderComponent.h">
       <Filter>Components\Physics</Filter>
     </ClInclude>
@@ -469,6 +466,9 @@
     </ClInclude>
     <ClInclude Include="TilemapColliderComponent.h">
       <Filter>Components\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
