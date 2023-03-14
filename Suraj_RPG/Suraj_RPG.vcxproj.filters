@@ -243,6 +243,9 @@
     <ClCompile Include="EventSystem.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -469,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="EventSystem.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,7 @@ public:
 	void set_view(sf::View* view);
 	void set_shader(std::pair<std::string, std::string> shader_files, sf::Vector2f light_pos);
 	void set_uniforms(sf::Vector2f light_pos);
-	void set_render(bool render);
+	virtual void set_render(bool render);
 	void set_z_order(char order, bool refresh_renderer = true);
 	void set_sorting_layer(SortingLayer layer, bool refresh_renderer = true);
 	

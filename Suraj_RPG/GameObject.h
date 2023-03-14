@@ -78,9 +78,12 @@ public:
 
 	/// <returns>Position of gameobject relative to the game world.</returns>
 	const Vector2f get_world_position() const { return position; }
+
 	/// <returns>Position of gameobject relative to its parent. If no parent
 	///exists, the local position is 0.</returns>
 	const Vector2f get_local_position() const { return local_position; }
+	
+	/*
 	void set_world_position(const Vector2f pos)
 	{
 		position = pos;
@@ -93,15 +96,71 @@ public:
 		for (std::size_t i = 0; i < components.size(); i++)
 			components[i]->set_world_position(pos);
 	}
+
 	void set_local_position(const Vector2f pos)
 	{
 		Vector2f change = pos - local_position;
 		set_world_position(position + change);
 	}
+
 	void move(const Vector2f offset)
 	{
 		set_world_position(position + offset);
 	}
+	*/
+
+	void set_world_position(const Vector2f pos)
+	{
+		if (parent)
+			local_position = pos - parent->get_world_position();
+
+		Vector2f change = pos - position;
+		position = pos;
+
+		for (std::size_t i = 0; i < components.size(); i++)
+			components[i]->set_world_position(pos);
+
+		for (std::size_t i = 0; i < children.size(); i++)
+			children[i]->set_world_position(children[i]->get_world_position()
+				+ change);
+
+	}
+
+	void set_local_position(const Vector2f pos)
+	{
+		if (!parent)
+		{
+			local_position = position;
+			return;
+		}
+
+		Vector2f change = pos - get_local_position();
+
+		local_position = pos;
+		position += pos;
+
+		for (std::size_t i = 0; i < components.size(); i++)
+			components[i]->set_world_position(pos);
+
+		for (std::size_t i = 0; i < children.size(); i++)
+			children[i]->set_world_position(children[i]->get_world_position()
+				+ change);
+
+	}
+
+	void move(const Vector2f offset)
+	{
+		set_world_position(position + offset);
+	}
+
+private:
+
+	void set_child_position(const Vector2f pos)
+	{
+
+	}
+
+public:
 
 #pragma endregion
 
@@ -164,7 +223,6 @@ public:
 	void set_render(bool render);
 
 	void set_parent(GameObject* parent);
-	void add_child(GameObject* child);
 	void remove_child(GameObject* child);
 
 	const size_t get_unique_runtime_id() const;
@@ -225,6 +283,9 @@ public:
 
 		component_array[get_component_type_id<T>()] = c;
 		component_bitset[get_component_type_id<T>()] = true;
+		
+		EventSystem::instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED,
+			static_cast<void*>(c), static_cast<void*>(this));
 
 	}
 
@@ -239,6 +300,9 @@ public:
 
 				component_array[get_component_type_id<T>()] = nullptr;
 				component_bitset[get_component_type_id<T>()] = false;
+
+				EventSystem::instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED,
+					static_cast<void*>(comp), static_cast<void*>(this));
 			}
 		}
 	}
@@ -280,6 +344,9 @@ protected:
 	//std::vector<std::unique_ptr<Component>> components;
 	std::vector<Component*> components;
 	std::vector<Component*> components_to_remove;
+
+
+	void add_child(GameObject* child);
 
 private:
 	size_t unique_runtime_id;

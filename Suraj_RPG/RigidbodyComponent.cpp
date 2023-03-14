@@ -11,9 +11,9 @@ RigidbodyComponent::RigidbodyComponent()
 {
 }
 
-RigidbodyComponent::RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
+RigidbodyComponent::RigidbodyComponent(float max_velocity,
 	float acceleration, float deceleration)
-	:sprite(&sprite), max_velocity(max_velocity), acceleration(acceleration),
+	:max_velocity(max_velocity), acceleration(acceleration),
 	deceleration(deceleration)
 {
 
@@ -26,7 +26,7 @@ RigidbodyComponent::~RigidbodyComponent()
 
 void RigidbodyComponent::init()
 {
-	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
+
 }
 
 void RigidbodyComponent::update()
@@ -35,13 +35,10 @@ void RigidbodyComponent::update()
 
 	update_movement_state();
 	update_orientation();
-	//Final movement
-	//std::cout << velocity.get_normalized().x * (max_velocity) * Time::delta_time() << "\n";
-	
-	sprite->move(velocity.get_normalized() * max_velocity * UNIT_SIZE * Time::delta_time());
-	//TODO: here we can update gameobject transform to reflect this position
-
-	game_object->set_world_position(sprite->getPosition());
+	// this could be converted to:
+	Vector2f translation = velocity.get_normalized() * max_velocity * 
+		UNIT_SIZE * Time::delta_time();
+	game_object->move(translation);
 	
 }
 
@@ -74,6 +71,25 @@ void RigidbodyComponent::unserialize_json(Json::Value obj)
 }
 
 #pragma endregion
+
+std::vector<Editor::SerializedVar> RigidbodyComponent::get_editor_values()
+{
+	std::vector<Editor::SerializedVar> variables;
+	
+	//variables.push_back(Editor::SerializedVar("This is a header", nullptr, Editor::VarType::Header));
+
+	variables.push_back(Editor::SerializedVar("velocity", static_cast<void*>(&velocity), Editor::VarType::Vector2f));
+	variables.push_back(Editor::SerializedVar("max_velocity", static_cast<void*>(&max_velocity),
+		Editor::VarType::Float));
+	variables.push_back(Editor::SerializedVar("acceleration", static_cast<void*>(&acceleration),
+		Editor::VarType::Float));
+	variables.push_back(Editor::SerializedVar("deceleration", static_cast<void*>(&deceleration)
+		, Editor::VarType::Float));
+	variables.push_back(Editor::SerializedVar("body_type", static_cast<void*>(&body_type),
+		Editor::VarType::Dropdown, body_type_to_vector()));
+
+	return variables;
+}
 
 
 const Vector2f RigidbodyComponent::get_velocity() const

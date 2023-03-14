@@ -213,6 +213,7 @@ public:
 	Vector2f get_position();
 	Vector2f get_center();
 	Vector2f get_model_center();
+	std::vector<Vector2f> get_model();
 
 	/// <summary>
 	/// Determines if two shapes overlap.

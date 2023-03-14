@@ -240,14 +240,15 @@ void EditorState::update_gui()
 
 	if (!Input::using_input_box())
 	{
+		float delta = Time::delta_time();
 		if (Input::get_action("CAM_UP"))
-			scene_view->move(0, -camera_move_speed * Time::delta_time());
+			scene_view->move(0, -camera_move_speed * delta);
 		if (Input::get_action("CAM_DOWN"))
-			scene_view->move(0, camera_move_speed * Time::delta_time());
+			scene_view->move(0, camera_move_speed * delta);
 		if (Input::get_action("CAM_LEFT"))
-			scene_view->move(-camera_move_speed * Time::delta_time(), 0);
+			scene_view->move(-camera_move_speed * delta, 0);
 		if (Input::get_action("CAM_RIGHT"))
-			scene_view->move(camera_move_speed * Time::delta_time(), 0);
+			scene_view->move(camera_move_speed * delta, 0);
 
 		if (!texture_selector->mouse_in_container())
 		{

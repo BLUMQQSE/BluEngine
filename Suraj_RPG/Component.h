@@ -10,8 +10,51 @@ class Entity;
 class Collision;
 class Collider;
 
+namespace Editor
+{
+
+enum class VarType
+{
+	Int,
+	Float,
+	Bool,
+	Vector2f,
+	Vector2i,
+	FloatConvex,
+	Dropdown,
+	Header,
+	String,
+};
+
+/// <summary>
+/// Struct containing a void* for a variable and a string identifier
+/// for what type to convert it back to.
+/// </summary>
+struct SerializedVar
+{
+	SerializedVar(std::string name, void* variable, VarType type, 
+		std::vector<std::string> extra_data = std::vector<std::string>())
+	{
+		this->name = name;
+		this->variable = variable;
+		this->extra_data = extra_data;
+		this->type = type;
+	}
+
+	std::string name;
+	void* variable;
+	std::vector<std::string> extra_data;
+	VarType type;
+
+};
+}
 class Component : public IData
 {
+
+protected:
+
+	
+
 public:
 	Component();
 	virtual ~Component();
@@ -58,12 +101,13 @@ public:
 	virtual void set_active(bool active);
 	GameObject* get_game_object();
 
+	virtual std::vector<Editor::SerializedVar> get_editor_values();
 
 protected:
+
 	bool active = true;
 	GameObject* game_object;
 
 
 };
-
 }

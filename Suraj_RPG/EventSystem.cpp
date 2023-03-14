@@ -1,16 +1,16 @@
 #include "pch.h"
 #include "EventSystem.h"
-#include "GameObject.h"
 
 namespace bm98::core
 {
 
 #pragma region Event
 
-Event::Event(EventID event_id, void* parameter)
+Event::Event(EventID event_id, void* parameter, void* caller)
 {
 	this->event_id = event_id;
 	this->parameter = parameter;
+	this->caller = caller;
 }
 
 Event::~Event()
@@ -22,9 +22,14 @@ EventID Event::get_event_id() const
 	return event_id;
 }
 
-inline void* Event::get_parameter()
+void* Event::get_parameter()
 {
 	return parameter;
+}
+
+void* Event::get_caller()
+{
+	return caller;
 }
 
 
@@ -94,27 +99,38 @@ void EventSystem::unsubscribe_all(Listener* client)
 	}
 }
 
-void EventSystem::push_event(EventID event_id, void* data)
+void EventSystem::push_event(EventID event_id, void* data, void* caller)
 {
 	
+	Event new_event(event_id, data, caller);
 
-	Event new_event(event_id, data);
-
-	if (check_system_events(new_event))
-		return;
+	if (static_cast<int>(event_id) < 1000)
+		return handle_system_events(new_event);
 
 	current_events.push_back(new_event);
 
 }
 
-bool EventSystem::check_system_events(Event event)
+void EventSystem::handle_system_events(Event event)
 {
-	if (event.get_event_id() == EventID::_EVENTSYSTEM_PROCESS_EVENTS_)
+	switch (event.get_event_id())
 	{
+	case EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_:
 		process_events();
-		return true;
+		break;
+	case EventID::_SYSTEM_RENDER_:
+		dispatch_event(&event);
+		break;
+	case EventID::_SYSTEM_UPDATE_INPUT_:
+		dispatch_event(&event);
+		break;
+	case EventID::_SYSTEM_LATE_UPDATE_INPUT_:
+		dispatch_event(&event);
+		break;
+	default:
+		break;
 	}
-	return false;
+
 }
 
 void EventSystem::process_events()

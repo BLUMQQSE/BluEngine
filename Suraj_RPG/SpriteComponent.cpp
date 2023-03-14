@@ -32,7 +32,6 @@ void SpriteComponent::init()
 	//};
 	if (!ResourceManager::has_texture(file_path))
 	{
-		std::cout << "issue finding texut\n";
 		return;
 	}
 	texture_sheet = ResourceManager::get_texture(file_path);
@@ -44,7 +43,7 @@ void SpriteComponent::init()
 
 void SpriteComponent::update()
 {
-	
+
 }
 
 void SpriteComponent::set_world_position(const Vector2f pos)
@@ -83,6 +82,16 @@ void SpriteComponent::set_active(bool active)
 {
 	Component::set_active(active);
 	set_render(active);
+}
+
+std::vector<Editor::SerializedVar> SpriteComponent::get_editor_values()
+{
+	std::vector<Editor::SerializedVar> values;
+	
+	values.push_back(Editor::SerializedVar("file_name", static_cast<void*>(&file_path), Editor::VarType::String));
+	values.push_back(Editor::SerializedVar("size", static_cast<void*>(&size), Editor::VarType::Vector2i));
+	
+	return values;
 }
 
 sf::Sprite& SpriteComponent::get_sprite()

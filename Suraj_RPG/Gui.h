@@ -114,6 +114,8 @@ public:
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 	virtual void set_position(float x, float y) override;
 
+	virtual void set_render(bool render) override;
+
 	void toggle_list(bool toggle);
 
 	bool changed_selection();
@@ -150,6 +152,7 @@ public:
 	virtual void set_position(float x, float y) override;
 
 	bool is_checked();
+	void set_checked(bool checked);
 
 private:
 	sf::RectangleShape box;
@@ -319,6 +322,8 @@ public:
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 	virtual void set_position(float x, float y);
 	virtual void update_sfml(sf::Event sfEvent) override;
+
+	virtual void set_render(bool render) override;
 
 	std::unordered_map<std::string, GUIObject*> get_content();
 	void add_element(std::string key, GUIObject* gui_object);

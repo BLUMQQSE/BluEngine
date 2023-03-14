@@ -463,6 +463,11 @@ Vector2f FloatConvex::get_model_center()
 	return c;
 }
 
+std::vector<Vector2f> FloatConvex::get_model()
+{
+	return model;
+}
+
 Vector2f FloatConvex::intersection(FloatConvex a, FloatConvex b)
 {
 	FloatConvex* poly1 = &b;

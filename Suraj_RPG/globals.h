@@ -1,6 +1,10 @@
 #pragma once
 namespace bm98
 {
+
+
+#define PRECISION std::fixed << std::setprecision(1)
+
 enum class TileType
 {
 	DEFAULT,

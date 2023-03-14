@@ -9,6 +9,7 @@ class GameObject;
 class Scene;
 class ParticleSystem; 
 class PauseMenu;
+class GameEditorView;
 class GameState :
     public State, public IData
 {
@@ -26,6 +27,7 @@ public:
     virtual void unpause_state() override;
 
     virtual void update();
+    virtual void update_sfml(sf::Event sfEvent) override;
     virtual void fixed_update();
     virtual void late_update();
 
@@ -47,6 +49,7 @@ private:
     Scene* active_scene;
 
     PauseMenu* pmenu;
+    GameEditorView* editor_view;
 };
 
 }

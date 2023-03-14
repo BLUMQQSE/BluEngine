@@ -22,6 +22,8 @@ public:
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 
+	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
+
 	bool check_intersect(const sf::FloatRect& frect);
 	bool check_outer_intersect(const sf::FloatRect& frect);
 	const sf::FloatRect get_bounds() const;

@@ -20,6 +20,14 @@ void Physics::init()
 
 void Physics::add_to_physics(GameObject* game_object)
 {
+	// check if already in physics
+	for (std::size_t i = 0; i < objects.size(); i++)
+	{
+		// dont add again
+		if (objects[i][0].first == game_object)
+			return;
+	}
+
 	// Could move code to check for game_object parent and child here
 	// to prevent them from ever being added to a game objects collisions list
 

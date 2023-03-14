@@ -230,6 +230,7 @@
     <ClCompile Include="TilemapColliderComponent.cpp" />
     <ClCompile Include="TilemapComponent.cpp" />
     <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VisualComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -307,6 +308,7 @@
     <ClInclude Include="TilemapColliderComponent.h" />
     <ClInclude Include="TilemapComponent.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="VisualComponent.h" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "FileManager.h"
 #include "GameObject.h"
+#include "EventSystem.h"
 
 namespace bm98::core
 {
@@ -54,6 +55,8 @@ void SceneManager::load_scene(std::string scene_name)
 
 	active_scene->unserialize_json(obj);
 
+	EventSystem::instance()->push_event(EventID::SCENE_CHANGE);
+
 }
 
 void SceneManager::load_scene_prefab(std::string scene_name)
@@ -92,12 +95,13 @@ void SceneManager::clear_active_scene()
 void SceneManager::save_scene_prefab(Scene* scene)
 {
 	FileManager::save_to_file_styled(scene->serialize_json(), scenes_file_path + scene->get_name());
-
 }
 
 void SceneManager::instantiate_gameobject(GameObject* game_object)
 {
-	active_scene->insert_gameobject(game_object);
+	if (!game_object)
+		return;
+	EventSystem::instance()->push_event(EventID::GAMEOBJECT_INSTANTIATE, static_cast<void*>(game_object));
 }
 
 void SceneManager::instantiate_gameobject_on_load(GameObject* game_object)
@@ -109,7 +113,9 @@ void SceneManager::destroy_gameobject(GameObject* game_object)
 {
 	if (game_object == nullptr)
 		return;
-	active_scene->remove_gameobject(game_object);
+
+	EventSystem::instance()->push_event(EventID::GAMEOBJECT_DESTROY, static_cast<void*>(game_object));
+
 }
 
 std::vector<GameObject*> SceneManager::get_objects_in_scene()

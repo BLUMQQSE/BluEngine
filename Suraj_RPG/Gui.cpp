@@ -282,6 +282,13 @@ void DropDownList::set_position(float x, float y)
 	
 }
 
+void DropDownList::set_render(bool render)
+{
+	active_selection->set_render(render);
+	for (int i = 0; i < list.size(); i++)
+		list[i]->set_render(false);
+}
+
 void DropDownList::toggle_list(bool toggle)
 {
 	show_list = toggle;
@@ -397,6 +404,18 @@ void Checkbox::set_position(float x, float y)
 bool Checkbox::is_checked()
 {
 	return checked;
+}
+
+void Checkbox::set_checked(bool checked)
+{
+	this->checked = checked;
+	if (checked)
+	{
+		check.setFillColor(sf::Color::White);
+		return;
+	}
+	check.setFillColor(sf::Color::Transparent);
+	return;
 }
 
 #pragma endregion
@@ -810,14 +829,16 @@ void TextureSelector::update()
 	tile_type_selector->update();
 	tile_collection_selector->update();
 
+	float delta = Time::delta_time();
+
 	if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() < 0)
-		text_view->move(2000 * Time::delta_time(), 0);
+		text_view->move(2000 * delta, 0);
 	else if (Input::get_action("SHIFT") && Input::get_mouse_scroll_delta() > 0)
-		text_view->move(-2000 * Time::delta_time(), 0);
+		text_view->move(-2000 * delta, 0);
 	else if (Input::get_mouse_scroll_delta() < 0)
-		text_view->move(0, 2000 * Time::delta_time());
+		text_view->move(0, 2000 * delta);
 	else if (Input::get_mouse_scroll_delta() > 0)
-		text_view->move(0, -2000 * Time::delta_time());
+		text_view->move(0, -2000 * delta);
 
 	/*
 	*  here need to change how this works entirely
@@ -1014,7 +1035,12 @@ void InputBox::set_text(std::string value)
 {
 	text_string.str("");
 	text_string << value;
-	text.setString(value);
+	text.setString(text_string.str());
+
+	text.setPosition(
+		box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
+		text.getPosition().y
+	);
 }
 
 const bool InputBox::is_selected() const
@@ -1122,17 +1148,13 @@ Panel::Panel(float x, float y, float width, float height, sf::Color color)
 	set_z_order(0, false);
 	Renderer::add(Renderer::RenderObject(&panel_shape, get_render(), get_sorting_layer(), 
 		get_z_order(), get_view_pointer()));
+	
 }
 
 Panel::~Panel()
 {
-	
 	Renderer::remove(&panel_shape);
-	for (auto& c : content)
-	{
-		delete c.second;
-	}
-	content.clear();
+	clear();
 	
 }
 
@@ -1182,6 +1204,13 @@ void Panel::update_sfml(sf::Event sfEvent)
 {
 	for (auto& c : content)
 		c.second->update_sfml(sfEvent);
+}
+
+void Panel::set_render(bool render)
+{
+	IRenderable::set_render(render);
+	for (auto& c : content)
+		c.second->set_render(render);
 }
 
 void Panel::add_element(std::string key, GUIObject* gui_object)
@@ -1268,6 +1297,10 @@ float Panel::get_height()
 
 void Panel::clear()
 {
+	for (auto& c : content)
+	{
+		delete c.second;
+	}
 	content.clear();
 }
 

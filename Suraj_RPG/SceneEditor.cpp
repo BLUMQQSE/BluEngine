@@ -682,7 +682,7 @@ void SceneEditor::update_heirarchy()
 				}
 
 				selected_gameobject->set_parent(gis.second.at(0).second);
-				gis.second.at(0).second->add_child(selected_gameobject);
+				//gis.second.at(0).second->add_child(selected_gameobject);
 				
 
 				std::vector<std::pair<Button*, GameObject*>> objects_to_move = gameobjects_in_scene.at(selected_button);

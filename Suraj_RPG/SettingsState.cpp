@@ -61,14 +61,15 @@ void SettingsState::init_variables()
 
 void SettingsState::update_input()
 {
+	float delta = Time::delta_time();
 	if (Input::get_action("W"))
-		circle.move(0, -100 * Time::delta_time());
+		circle.move(0, -100 * delta);
 	if (Input::get_action("A"))
-		circle.move(-100 * Time::delta_time(), 0);
+		circle.move(-100 * delta, 0);
 	if (Input::get_action("D"))
-		circle.move(100 * Time::delta_time(), 0);
+		circle.move(100 * delta, 0);
 	if (Input::get_action("S"))
-		circle.move(0, 100 * Time::delta_time());
+		circle.move(0, 100 * delta);
 
 	if (Input::get_mouse_down(Input::Mouse::RIGHT))
 		concave.set_rotation(30);

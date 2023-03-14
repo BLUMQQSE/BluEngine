@@ -26,7 +26,6 @@ Game::Game()
     init_window();
 
     ResourceManager::load_resources();
-    //renderer = new Renderer(window);
     Renderer::init(window);
     Input::init(window);
     Physics::init();
@@ -107,9 +106,16 @@ void Game::update_delta_time()
 {
     Time::update_delta(deltaClock.restart().asSeconds());
     
+    //std::cout << Time::instance()->delta_time() << "\n";
+
+  //  float t = deltaClock.restart().asSeconds();
+    //EventSystem::instance()->push_event(EventID::_SYSTEM_UPDATE_INPUT_,
+      //  static_cast<void*>(&t));
+    
     if (!states.empty())
     {
-        if (Time::fixed_delta_time() >= .02f)
+        
+        if (Time::fixed_delta_time() >= .01f)
         {
             states.top()->fixed_update();
             Physics::fixed_update();
@@ -123,10 +129,10 @@ void Game::update_delta_time()
     }
 
     Time::apply_time_scale();
-    if (fps_averager == 700)
+    if (fps_averager == 1500)
     {
         fps_averager = 0; 
-        fps = fps_col /700;
+        fps = fps_col /1500;
         fps_col = 0;
 
 
@@ -149,7 +155,7 @@ void Game::update()
     update_sfml_events();
     Input::update();
     // Process all events in system
-    EventSystem::instance()->push_event(EventID::_EVENTSYSTEM_PROCESS_EVENTS_);
+    EventSystem::instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
     if (!states.empty())
     {
         

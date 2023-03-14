@@ -420,19 +420,20 @@ void Input::update_key_states()
 
 void Input::update_mouse_deltas()
 {
+    float delta = Time::delta_time();
     if (mouse_left == PressedState::PRESSED_FRAME || mouse_left == PressedState::PRESSED)
-        mouse_left_delta += Time::delta_time();
+        mouse_left_delta += delta;
     else
     {
         mouse_left_delta = 0.f;
     }
     if (mouse_right == PressedState::PRESSED_FRAME || mouse_left == PressedState::PRESSED)
-        mouse_right_delta += Time::delta_time();
+        mouse_right_delta += delta;
     else
         mouse_right_delta = 0.f;
 
     if (mouse_middle == PressedState::PRESSED_FRAME || mouse_left == PressedState::PRESSED)
-        mouse_middle_delta += Time::delta_time();
+        mouse_middle_delta += delta;
     else
         mouse_middle_delta = 0.f;
 

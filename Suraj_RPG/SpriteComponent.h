@@ -23,6 +23,8 @@ public:
 
     virtual void set_active(bool active) override;
 
+    virtual std::vector<Editor::SerializedVar> get_editor_values() override;
+
     sf::Sprite& get_sprite();
     sf::Texture& get_texture_sheet();
     virtual void add_to_buffer(sf::View* view) override;

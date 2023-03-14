@@ -18,6 +18,7 @@
 #include "RigidbodyComponent.h"
 #include "BoxColliderComponent.h"
 #include "PlayerController.h"
+#include "GameEditorView.h"
 
 namespace bm98
 {
@@ -51,7 +52,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("QUIT", 500.f, 500.f, "Quit Game");
 
-
+	editor_view = new GameEditorView();
 }
 
 GameState::~GameState()
@@ -59,6 +60,7 @@ GameState::~GameState()
 	delete pmenu;
 	delete view;
 	delete active_scene;
+	delete editor_view;
 	active_scene = nullptr;
 }
 
@@ -69,7 +71,6 @@ void GameState::init_state()
 void GameState::on_end_state()
 {
 	Debug::Log("Will now clean up game state on exit");
-	//somewhere I am losing player before I even resave scene
 	SceneManager::save_scene(true); 
 	FileManager::save_to_file_styled(serialize_json(), FileManager::get_save_name()+"gamestate.json");
 	SceneManager::destroy();
@@ -79,9 +80,8 @@ void GameState::on_end_state()
 
 void GameState::update_input()
 {
-
-	if (Input::get_mouse_down(Input::Mouse::RIGHT))
-		SceneManager::load_scene("test.json");
+	if (Input::get_action_down("TILDE"))
+		editor_view->toggle_editor(GameEditorView::EditorPanel::ALL);
 
 	if (Input::get_action_down("ESCAPE"))
 	{
@@ -111,6 +111,9 @@ void GameState::unpause_state()
 
 void GameState::update()
 {
+	//update editor first in case event occured last frame
+	editor_view->update();
+
 	GameClock::update();
 	update_input();
 	if (!paused)
@@ -125,6 +128,11 @@ void GameState::update()
 		if (pmenu->is_button_pressed("QUIT"))
 			isRequestingQuit = true;
 	}
+}
+
+void GameState::update_sfml(sf::Event sfEvent)
+{
+	editor_view->update_sfml(sfEvent);
 }
 
 void GameState::fixed_update()

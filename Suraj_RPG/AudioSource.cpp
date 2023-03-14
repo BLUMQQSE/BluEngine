@@ -41,6 +41,26 @@ void AudioSource::update()
 		));
 }
 
+std::vector<Editor::SerializedVar> AudioSource::get_editor_values()
+{
+	std::vector<Editor::SerializedVar> values;
+
+	values.push_back(Editor::SerializedVar("playing", static_cast<void*>(&playing),
+		Editor::VarType::Bool));
+	values.push_back(Editor::SerializedVar("loop", static_cast<void*>(&loop),
+		Editor::VarType::Bool));
+	values.push_back(Editor::SerializedVar("muted", static_cast<void*>(&muted),
+		Editor::VarType::Bool));
+	values.push_back(Editor::SerializedVar("play_on_awake", static_cast<void*>(&play_on_awake),
+		Editor::VarType::Bool));
+
+	values.push_back(Editor::SerializedVar("current_audio", static_cast<void*>(&current_audio_clip),
+		Editor::VarType::String));
+
+
+	return values;
+}
+
 void AudioSource::play()
 {
 	if (sound.getStatus() == sf::Sound::Status::Playing)

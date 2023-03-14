@@ -1,6 +1,8 @@
 #pragma once
+#include "Component.h"
 #include "Gui.h"
 #include "EventSystem.h"
+#include "Timer.h"
 
 namespace bm98
 {
@@ -10,7 +12,7 @@ class Component;
 class GameEditorView : public core::Listener
 {
 public:
-
+	
 	enum class EditorPanel
 	{
 		ALL,
@@ -22,6 +24,8 @@ public:
 	GameEditorView();
 	virtual ~GameEditorView();
 
+	void init();
+
 	void toggle_editor(EditorPanel panel_to_toggle);
 	void update();
 	virtual void update_sfml(sf::Event sfEvent);
@@ -32,28 +36,39 @@ public:
 
 private:
 	GUI::Panel* heir_panel;
-	GUI::Panel* context_panel;
-	GUI::Panel* inspector_panel;
+	GUI::Panel* inspec_panel;
 
 	sf::View* heir_view;
-	sf::View* inspector_view;
+	sf::View* inspec_view;
 
-	bool all_active = true;
 	bool heir_active = true;
-	bool context_active = true;
-	bool inspector_active = true;
-	//context will use default view
+	bool inspec_active = true;
+
+
+	bool gameobject_held = false;
 
 	std::unordered_map<GUI::Button*, GameObject*> objects_in_scene_map;
-	std::vector<GameObject*> objects_in_scene;
+
+	/// <summary> Map connecting each Component Panel to its variables stored. </summary>
+	//std::unordered_map < GUI::Panel*, std::vector<Editor::SerializedVar>> variables_in_components;
+	std::vector<std::pair<GUI::Panel*, 
+		std::vector<Editor::SerializedVar>>> variables_in_components;
+
 	GameObject* selected_gameobject;
-	// components on selected gameobject
-	std::vector<GUI::Panel*> components_panels;
-	std::vector<Component*> components;
+
+	//std::unordered_map<GUI::Panel*, Component*> component_panels;
 
 	void create_heir_panel();
-	void create_context_panel();
-	void create_inspector_panel();
+	void update_heir_panel();
+
+	void create_inspec_panel();
+	void update_inspec_panel();
+
+
+	GUI::Panel* create_component_panel(float pos_y, float width, std::string component_name,
+		std::vector<Editor::SerializedVar> vars);
+
+	void update_component_panel(std::pair<GUI::Panel*, std::vector<Editor::SerializedVar>> vars);
 
 };
 

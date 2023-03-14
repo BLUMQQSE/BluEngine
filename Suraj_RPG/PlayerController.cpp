@@ -58,13 +58,14 @@ void bm98::PlayerController::update()
 
 	if (Input::get_action_down("INTERACT"))
 	{
-		/*
 		if (game_object->check_for_child("pants"))
 		{
 			SceneManager::destroy_gameobject(SceneManager::find("pants", game_object));
 			return;
 		}
+		
 		GameObject* pants = new GameObject();
+
 		pants->info.name = "pants";
 		pants->add_component<SpriteComponent>("pants.png");
 		pants->add_component<AudioSource>();
@@ -73,15 +74,12 @@ void bm98::PlayerController::update()
 		sc->set_sorting_layer(SortingLayer::ACTOR);
 		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
 		pants->set_parent(this->game_object);
-		this->game_object->add_child(pants);
-
 		SceneManager::instantiate_gameobject(pants);
-		*/
+		
 	}
 
 	Vector2f movement = game_object->get_world_position() - camera->get_game_object()->get_world_position();
-	//camera->set_position(game_object->transform.position);
-	//camera->move(movement);
+	
 	camera->get_game_object()->move(movement);
 }
 
@@ -193,11 +191,11 @@ void bm98::PlayerController::update_input()
 }
 void PlayerController::update_animations()
 {
-	if (attack)
-	{
-		attack = anim->play("ATTACK_UP");
-	}
-	else if (movement_input.x == 0 && movement_input.y == 0
+	//if (attack)
+	//{
+		//attack = anim->play("ATTACK_UP");
+	//}
+	if (movement_input.x == 0 && movement_input.y == 0
 		&& rigid->get_orientation() == Orientation::UP)
 		anim->play("IDLE_UP");
 	else if (movement_input.x == 0 && movement_input.y == 0

@@ -1,11 +1,12 @@
 #pragma once
 #include "IData.h"
+#include "EventSystem.h"
 namespace bm98
 {
 class GameObject;
 class TilemapComponent;
 
-class Scene : IData
+class Scene : IData, public core::Listener
 {
 
 public:
@@ -46,6 +47,8 @@ public:
 	Json::Value serialize_undestroyed_objects();
 	virtual void unserialize_json(Json::Value obj) override;
 
+	// Inherited via Listener
+	virtual void handle_event(core::Event* event) override;
 
 private:
 	std::string name;
@@ -56,6 +59,8 @@ private:
 
 	sf::View* scene_view;
 	void insert_sort();
+
+
 
 };
 }

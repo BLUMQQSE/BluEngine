@@ -17,11 +17,12 @@ bool ColliderComponent::intersects(const FloatConvex collider)
 	return false;
 }
 
+#pragma region IData
 
 Json::Value ColliderComponent::serialize_json()
 {
 	Json::Value obj;
-	
+
 
 	obj["active"] = active;
 	obj["collision-check-type"] = collisiondetection_to_string(collision_check_type);
@@ -47,6 +48,24 @@ void ColliderComponent::unserialize_json(Json::Value obj)
 	offsetY = obj["hitbox-offsetY"].asFloat();
 
 	collider_bounds.unserialize_json(obj["collider_bounds"]);
+}
+
+#pragma endregion
+
+std::vector<Editor::SerializedVar> ColliderComponent::get_editor_values()
+{
+	std::vector<Editor::SerializedVar> variables;
+
+	variables.push_back(Editor::SerializedVar("trigger", static_cast<void*>(&trigger), Editor::VarType::Bool));
+	variables.push_back(Editor::SerializedVar("X offset", static_cast<void*>(&offsetX), 
+		Editor::VarType::Float));
+	variables.push_back(Editor::SerializedVar("Y offset", static_cast<void*>(&offsetY),
+		Editor::VarType::Float));
+	variables.push_back(Editor::SerializedVar("collision_check_type", &collision_check_type,
+		Editor::VarType::Dropdown, collisiondetection_to_vector()));
+
+
+	return variables;
 }
 
 void ColliderComponent::set_active(bool active)

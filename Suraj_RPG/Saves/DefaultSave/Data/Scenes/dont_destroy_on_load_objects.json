@@ -2,6 +2,58 @@
 	"gameobjects" : 
 	[
 		{
+			"children" : 
+			[
+				{
+					"components" : 
+					[
+						{
+							"name" : "class bm98::SpriteComponent",
+							"value" : 
+							{
+								"class bm98::IRenderable" : 
+								{
+									"render" : true,
+									"sorting-layer" : "ACTOR",
+									"z-order" : 11
+								},
+								"sprite-file-path" : "pants.png"
+							}
+						},
+						{
+							"name" : "class bm98::AudioSource",
+							"value" : 
+							{
+								"current-audio-clip" : "footsteps.wav"
+							}
+						},
+						{
+							"name" : "class bm98::ChildAnimationComponent",
+							"value" : null
+						}
+					],
+					"info" : 
+					{
+						"name" : "pants",
+						"physics-layer" : "DEFAULT",
+						"tag" : "UNTAGGED"
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : 200.00030517578125,
+							"y" : 0.0
+						},
+						"position" : 
+						{
+							"x" : 292.776611328125,
+							"y" : -343.51223754882812
+						},
+						"rotation" : 0.0
+					}
+				}
+			],
 			"components" : 
 			[
 				{
@@ -68,8 +120,8 @@
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 50.0,
-								"y" : -17.926944732666016
+								"x" : 92.776313781738281,
+								"y" : -343.51223754882812
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
@@ -106,8 +158,8 @@
 				},
 				"position" : 
 				{
-					"x" : 50.0,
-					"y" : -17.926944732666016
+					"x" : 92.776313781738281,
+					"y" : -343.51223754882812
 				},
 				"rotation" : 0.0
 			}
@@ -139,8 +191,8 @@
 				},
 				"position" : 
 				{
-					"x" : 50.0,
-					"y" : -17.926944732666016
+					"x" : 92.776313781738281,
+					"y" : -343.51223754882812
 				},
 				"rotation" : 0.0
 			}

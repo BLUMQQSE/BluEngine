@@ -111,50 +111,79 @@ void GameObject::fixed_update()
 
 void GameObject::on_collision_enter(Collision info)
 {
+	if (has_component<RigidbodyComponent>())
+	{
+		for (std::size_t i = 0; i != components.size(); i++)
+			components[i]->on_collision_enter(info);
+		return;
+	}
 	if (parent)
 		parent->on_collision_enter(info);
-	for (std::size_t i = 0; i != components.size(); i++)
-		components[i]->on_collision_enter(info);
 }
 
 void GameObject::on_collision_stay(Collision info)
 {
+	if (has_component<RigidbodyComponent>())
+	{
+		for (std::size_t i = 0; i != components.size(); i++)
+			components[i]->on_collision_stay(info);
+		return;
+	}
 	if (parent)
 		parent->on_collision_stay(info);
-	for (std::size_t i = 0; i != components.size(); i++)
-		components[i]->on_collision_stay(info);
+	
 }
 
 void GameObject::on_collision_exit(Collision info)
 {
+	if (has_component<RigidbodyComponent>())
+	{
+		for (std::size_t i = 0; i != components.size(); i++)
+			components[i]->on_collision_exit(info);
+		return;
+	}
 	if (parent)
 		parent->on_collision_exit(info);
-	for (std::size_t i = 0; i != components.size(); i++)
-		components[i]->on_collision_exit(info);
+	
 }
 
 void GameObject::on_trigger_enter(Collider info)
 {
+	if (has_component<RigidbodyComponent>())
+	{
+		for (std::size_t i = 0; i != components.size(); i++)
+			components[i]->on_trigger_enter(info);
+		return;
+	}
 	if (parent)
 		parent->on_trigger_enter(info);
-	for (std::size_t i = 0; i != components.size(); i++)
-		components[i]->on_trigger_enter(info);
+	
 }
 
 void GameObject::on_trigger_stay(Collider info)
 {
+	if (has_component<RigidbodyComponent>())
+	{
+		for (std::size_t i = 0; i != components.size(); i++)
+			components[i]->on_trigger_stay(info);
+		return;
+	}
 	if (parent)
 		parent->on_trigger_stay(info);
-	for (std::size_t i = 0; i != components.size(); i++)
-		components[i]->on_trigger_stay(info);
+
 }
 
 void GameObject::on_trigger_exit(Collider info)
 {
+	if (has_component<RigidbodyComponent>())
+	{
+		for (std::size_t i = 0; i != components.size(); i++)
+			components[i]->on_trigger_exit(info);
+		return;
+	}
 	if (parent)
 		parent->on_trigger_exit(info);
-	for (std::size_t i = 0; i != components.size(); i++)
-		components[i]->on_trigger_exit(info);
+	
 }
 
 void GameObject::add_to_buffer(sf::View* view)
@@ -196,13 +225,26 @@ void GameObject::set_render(bool render)
 
 void GameObject::set_parent(GameObject* parent)
 {
+	if (this->parent)
+	{
+		// remove as a child from previous parent if exists
+		this->parent->remove_child(this);
+	}
+
+	EventSystem::instance()->push_event(EventID::GAMEOBJECT_PARENT_CHANGE);
 	this->parent = parent;
+
+	if (this->parent)
+	{
+		// if I was a betting man... this statement is the true issue
+		set_local_position(parent->get_world_position() - get_world_position());
+		// 
+		//seems to be the posiotion issue
+		this->parent->add_child(this);
+	}
 }
 
-void GameObject::add_child(GameObject* child)
-{
-	children.push_back(child);
-}
+
 
 void GameObject::remove_child(GameObject* child)
 {
@@ -452,6 +494,11 @@ void GameObject::unserialize_json(Json::Value obj)
 }
 
 #pragma endregion
+
+void GameObject::add_child(GameObject* child)
+{
+	children.push_back(child);
+}
 
 void GameObject::init_components()
 {

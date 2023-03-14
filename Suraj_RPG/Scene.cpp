@@ -18,7 +18,12 @@ Scene::Scene()
 Scene::Scene(std::string name)
 	:name(name)
 {
+	EventSystem::instance()->subscribe(EventID::GAMEOBJECT_PARENT_CHANGE, this);
+	EventSystem::instance()->subscribe(EventID::GAMEOBJECT_INSTANTIATE, this);
+	EventSystem::instance()->subscribe(EventID::GAMEOBJECT_DESTROY, this);
 
+	EventSystem::instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED, this);
+	EventSystem::instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED, this);
 }
 
 Scene::~Scene()
@@ -43,18 +48,7 @@ void Scene::init()
 void Scene::update()
 {
 
-	// add new objects (add before remove in case adding a child to which parent will be
-	// destroyed in same update
-	for (auto& o_t_a : objects_to_add)
-	{
-		objects_in_scene.push_back(o_t_a);
-		EventSystem::instance()->push_event(EventID::SCENE_ADD_GAMEOBJECT, o_t_a);
-	}
-	if (objects_to_add.size() > 0)
-		insert_sort();
-	
-	objects_to_add.clear();
-
+	/*
 	//remove destroyed objects
 	for (auto& o_t_r : objects_to_remove)
 	{
@@ -76,19 +70,19 @@ void Scene::update()
 				objects_in_scene.erase(std::find(objects_in_scene.begin(),
 					objects_in_scene.end(), posterity[0]));
 
-				EventSystem::instance()->push_event(EventID::SCENE_REMOVE_GAMEOBJECT, posterity[0]);
+				EventSystem::instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT, posterity[0]);
 				
 				delete posterity[0];
 				posterity.erase(posterity.begin());
 			}
 		}
 
-		EventSystem::instance()->push_event(EventID::SCENE_REMOVE_GAMEOBJECT, o_t_r);
+		EventSystem::instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT, o_t_r);
 		
 		delete o_t_r;
 	}
 	objects_to_remove.clear();
-
+	*/
 
 	// update objects
 	for(std::size_t i = 0; i != objects_in_scene.size(); i++)
@@ -149,7 +143,6 @@ void Scene::insert_gameobject(GameObject* go, bool initialize)
 	
 	if (initialize)
 	{
-		
 		std::vector<GameObject*> objs;
 		
 
@@ -160,11 +153,11 @@ void Scene::insert_gameobject(GameObject* go, bool initialize)
 		objs.insert(objs.end(), posterity.begin(), posterity.end());
 		
 
-		for (std::size_t i = 0; i < objs.size(); i++)
-			Physics::add_to_physics(objs[i]);
+		//for (std::size_t i = 0; i < objs.size(); i++)
+			//Physics::add_to_physics(objs[i]);
 
 		for (std::size_t i = 0; i < objs.size(); i++)
-			objects_to_add.push_back(objs[i]);
+			objects_in_scene.push_back(objs[i]);
 		for (std::size_t i = 0; i < objs.size(); i++)
 			objs[i]->init();
 		for (std::size_t i = 0; i < objs.size(); i++)
@@ -175,7 +168,7 @@ void Scene::insert_gameobject(GameObject* go, bool initialize)
 	else
 	{
 		// this occurs on loading objects from file, do not need posterity
-		Physics::add_to_physics(go);
+		//Physics::add_to_physics(go);
 		objects_in_scene.push_back(go);
 		
 		insert_sort();
@@ -189,7 +182,36 @@ void Scene::remove_gameobject(GameObject* go)
 		std::cout << "ERROR::SCENE::REMOVE_GAMEOBJECT::OBJECT DOES NOT EXIST IN SCENE\n";
 		return;
 	}
-	objects_to_remove.push_back(go);
+
+	go->on_destroy();
+	Physics::remove_from_physics(go);
+	objects_in_scene.erase(std::find(objects_in_scene.begin(),
+		objects_in_scene.end(), go));
+	if (go->get_parent())
+		go->get_parent()->remove_child(go);
+
+	// destroy all posterity of object
+	if (go->get_children().size() > 0)
+	{
+		std::vector<GameObject*> posterity = go->get_all_posterity();
+		while (posterity.size() > 0)
+		{
+			posterity[0]->on_destroy();
+			Physics::remove_from_physics(posterity[0]);
+			objects_in_scene.erase(std::find(objects_in_scene.begin(),
+				objects_in_scene.end(), posterity[0]));
+
+			EventSystem::instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT, posterity[0]);
+
+			delete posterity[0];
+			posterity.erase(posterity.begin());
+		}
+	}
+
+	delete go;
+	
+
+	//objects_to_remove.push_back(go);
 }
 
 void Scene::clear_scene(bool remove_everything)
@@ -296,9 +318,75 @@ void Scene::unserialize_json(Json::Value obj)
 
 #pragma endregion
 
+void Scene::handle_event(Event* event)
+{
+	switch (event->get_event_id())
+	{
+	case EventID::GAMEOBJECT_PARENT_CHANGE:
+		insert_sort();
+		EventSystem::instance()->push_event(EventID::SCENE_ORDER_CHANGE);
+		break;
+	case EventID::GAMEOBJECT_INSTANTIATE:
+	{
+		std::cout << "add gameobject\n";
+		GameObject* new_object = static_cast<GameObject*>(event->get_parameter());
+
+		if (!new_object)
+			return;
+
+		insert_gameobject(new_object);
+
+		insert_sort();
+
+		EventSystem::instance()->push_event(
+			EventID::SCENE_ADDED_GAMEOBJECT, static_cast<void*>(new_object));
+
+		break;
+	}
+	case EventID::GAMEOBJECT_DESTROY:
+	{
+		std::cout << "remove gameobject\n";
+
+		GameObject* remove_object = static_cast<GameObject*>(event->get_parameter());
+		if (!remove_object)
+			return;
+
+		remove_gameobject(remove_object);
+
+		EventSystem::instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT);
+
+		break;
+	}
+	case EventID::GAMEOBJECT_COMPONENT_ADDED:
+	{
+		GameObject* obj = static_cast<GameObject*>(event->get_caller());
+		Component* c = static_cast<Component*>(event->get_parameter());
+
+		if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
+			return;
+
+		Physics::add_to_physics(obj);
+		break;
+	}
+	case EventID::GAMEOBJECT_COMPONENT_REMOVED:
+	{
+		GameObject* obj = static_cast<GameObject*>(event->get_caller());
+		Component* c = static_cast<Component*>(event->get_parameter());
+
+		if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
+			return;
+		// verify it has both, because as of right now neigther would've been removed
+		if (!obj->has_component_of_type<ColliderComponent>() && !obj->has_component<RigidbodyComponent>())
+			return;
+
+		Physics::remove_from_physics(obj);
+		break;
+	}
+	}
+}
+
 void Scene::insert_sort()
 {
-
 	for (int k = 1; k < objects_in_scene.size(); k++)
 	{
 		GameObject* temp = objects_in_scene[k];

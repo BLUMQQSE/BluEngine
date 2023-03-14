@@ -105,6 +105,19 @@ void BoxColliderComponent::unserialize_json(Json::Value obj)
 
 #pragma endregion
 
+std::vector<Editor::SerializedVar> BoxColliderComponent::get_editor_values()
+{
+	std::vector<Editor::SerializedVar> variables;
+
+	variables = ColliderComponent::get_editor_values();
+
+	variables.push_back(Editor::SerializedVar("width", & width, Editor::VarType::Float));
+	variables.push_back(Editor::SerializedVar("height", &height, Editor::VarType::Float));
+
+
+	return variables;
+}
+
 bool BoxColliderComponent::check_intersect(const sf::FloatRect& frect)
 {
 	return false;

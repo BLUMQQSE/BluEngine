@@ -59,7 +59,7 @@ public:
 #pragma endregion
 
 	RigidbodyComponent();
-	RigidbodyComponent(sf::Sprite& sprite, float max_velocity,
+	RigidbodyComponent(float max_velocity,
 		float acceleration, float deceleration);
 	virtual ~RigidbodyComponent();
 
@@ -69,6 +69,8 @@ public:
 
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
+
+	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 
 	const Vector2f get_velocity() const;
 	const float get_max_velocity() const;
@@ -103,8 +105,6 @@ protected:
 	BodyType body_type = BodyType::KINEMATIC;
 
 private:
-	sf::Sprite* sprite;
-
 	float max_velocity;
 	float acceleration;
 	float deceleration;
