@@ -9,11 +9,20 @@ namespace bm98
 class GameObject;
 class Component;
 
-class GameEditorView : public core::Listener
+class SceneEditorView : public core::Listener
 {
 public:
-	GameEditorView();
-	virtual ~GameEditorView();
+
+	enum class EditorPanel
+	{
+		ALL,
+		HEIRARCHY,
+		CONTEXT,
+		INSPECTOR
+	};
+
+	SceneEditorView();
+	virtual ~SceneEditorView();
 
 	void init();
 
@@ -42,7 +51,7 @@ private:
 
 	/// <summary> Map connecting each Component Panel to its variables stored. </summary>
 	//std::unordered_map < GUI::Panel*, std::vector<Editor::SerializedVar>> variables_in_components;
-	std::vector<std::pair<GUI::Panel*, 
+	std::vector<std::pair<GUI::Panel*,
 		std::vector<Editor::SerializedVar>>> variables_in_components;
 
 	GameObject* selected_gameobject;

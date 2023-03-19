@@ -118,9 +118,9 @@ public:
 		else
 		{
 			if (modifier / modifier_max < 0.5f)
-				timer += (0.5f) * 100.f * Time::delta_time();
+				timer += (0.5f) * 100.f * Time::Instance()->delta_time();
 			else
-				timer += (modifier / modifier_max) * 100.f * Time::delta_time();
+				timer += (modifier / modifier_max) * 100.f * Time::Instance()->delta_time();
 
 		}
 		sprite.setTextureRect(current_rect);

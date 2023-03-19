@@ -3,8 +3,6 @@
 namespace bm98::core
 {
 
-std::string FileManager::save_name = "GameState_Should_Change_This";
-
 std::string FileManager::get_save_name()
 {
 	return save_name;

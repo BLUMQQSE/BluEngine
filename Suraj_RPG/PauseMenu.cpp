@@ -33,16 +33,16 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 
 	set_render(false);
 	set_sorting_layer(SortingLayer::UI, false);
-	Renderer::add(Renderer::RenderObject(&background, this));
-	Renderer::add(Renderer::RenderObject(&container, this));
-	Renderer::add(Renderer::RenderObject(&menu_text, this));
+	Renderer::Instance()->add(Renderer::RenderObject(&background, this));
+	Renderer::Instance()->add(Renderer::RenderObject(&container, this));
+	Renderer::Instance()->add(Renderer::RenderObject(&menu_text, this));
 }
 
 PauseMenu::~PauseMenu()
 {
-	Renderer::remove(&background);
-	Renderer::remove(&container);
-	Renderer::remove(&menu_text);
+	Renderer::Instance()->remove(&background);
+	Renderer::Instance()->remove(&container);
+	Renderer::Instance()->remove(&menu_text);
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != buttons.end(); ++it)
 	{

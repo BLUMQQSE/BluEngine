@@ -5,12 +5,6 @@
 #include "ItemData.h"
 namespace bm98::core 
 {
-std::unordered_map<std::string, DataAsset*> ResourceManager::asset_data;
-std::unordered_map<std::string, Json::Value> ResourceManager::prefab_data;
-std::unordered_map<std::string, sf::SoundBuffer> ResourceManager::sound_buffers;
-std::unordered_map<std::string, Json::Value> ResourceManager::sound_data;
-std::unordered_map<std::string, sf::Texture> ResourceManager::textures;
-std::unordered_map<std::string, sf::Font> ResourceManager::fonts;
 
 void ResourceManager::load_resources()
 {
@@ -119,6 +113,11 @@ bool ResourceManager::has_font(std::string font_file_name)
 	return true;
 }
 
+ResourceManager::ResourceManager()
+{
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RESOURCEMANAGER_LOAD_RESOURCES_, this);
+}
+
 void ResourceManager::iterate_prefab_directory(std::string dir_path)
 {
 	for (const auto& entry : std::filesystem::directory_iterator(dir_path))
@@ -126,7 +125,7 @@ void ResourceManager::iterate_prefab_directory(std::string dir_path)
 		std::string file_name = entry.path().string().substr(dir_path.size(), entry.path().string().size() - 1);
 		if (!entry.is_directory())
 		{
-			prefab_data[file_name] = FileManager::load_from_file(dir_path + file_name);
+			prefab_data[file_name] = FileManager::Instance()->load_from_file(dir_path + file_name);
 			continue;
 		}
 	
@@ -145,12 +144,12 @@ void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 			if (entry.path().string().find("ItemData"))
 			{
 				asset_data[file_name] = new ItemData();
-				asset_data.at(file_name)->unserialize_json(FileManager::load_from_file(dir_path + file_name));
+				asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 			}
 			else
 			{
 				asset_data[file_name] = new DataAsset();
-				asset_data.at(file_name)->unserialize_json(FileManager::load_from_file(dir_path + file_name));
+				asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 			}
 			continue;
 		}
@@ -169,7 +168,7 @@ void ResourceManager::iterate_audio_directory(std::string dir_path)
 		{
 			if (file_name.substr(file_name.find_last_of(".") + 1) == "json")
 			{
-				sound_data[file_name] = FileManager::load_from_file(dir_path + file_name);
+				sound_data[file_name] = FileManager::Instance()->load_from_file(dir_path + file_name);
 
 				continue;
 			}
@@ -183,7 +182,7 @@ void ResourceManager::iterate_audio_directory(std::string dir_path)
 			continue;
 		}
 		
-		iterate_textures_directory(dir_path + file_name + "/");
+		iterate_audio_directory(dir_path + file_name + "/");
 		
 	}
 }
@@ -226,8 +225,18 @@ void ResourceManager::iterate_fonts_directory(std::string dir_path)
 			continue;
 		}
 		
-		iterate_textures_directory(dir_path + file_name + "/");
+		iterate_fonts_directory(dir_path + file_name + "/");
 		
+	}
+}
+
+void ResourceManager::handle_event(Event* event)
+{
+	switch (event->get_event_id())
+	{
+	case EventID::_SYSTEM_RESOURCEMANAGER_LOAD_RESOURCES_:
+		load_resources();
+		break;
 	}
 }
 

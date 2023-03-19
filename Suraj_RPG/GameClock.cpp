@@ -17,7 +17,7 @@ void GameClock::init()
 
 void GameClock::update()
 {
-	total_game_sec += Time::delta_time();
+	total_game_sec += Time::Instance()->delta_time();
 
 	game_time.minute = std::floor(static_cast<int>(total_game_sec) % 60);
 	game_time.hour = std::floor(static_cast<int>(total_game_sec) / 60 % 24);

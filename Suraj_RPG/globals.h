@@ -5,11 +5,20 @@ namespace bm98
 
 #define PRECISION std::fixed << std::setprecision(1)
 
+enum class EditorPanel
+{
+	ALL,
+	HEIRARCHY,
+	CONTEXT,
+	INSPECTOR,
+	_LAST_DONT_REMOVE
+};
+
 enum class TileType
 {
 	DEFAULT,
 	DAMAGING,
-	_LAST_OF_ENUM
+	_LAST_DONT_REMOVE
 };
 
 enum class SortingLayer
@@ -55,7 +64,8 @@ enum class Orientation
 	UP,
 	DOWN,
 	LEFT,
-	RIGHT
+	RIGHT,
+	_LAST_DONT_REMOVE
 };
 
 class Global

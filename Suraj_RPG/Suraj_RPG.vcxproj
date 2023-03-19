@@ -220,7 +220,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneChange.cpp" />
-    <ClCompile Include="SceneEditor.cpp" />
+    <ClCompile Include="SceneEditorView.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SensoryComponent.cpp" />
     <ClCompile Include="SettingsState.cpp" />
@@ -298,7 +298,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneChange.h" />
-    <ClInclude Include="SceneEditor.h" />
+    <ClInclude Include="SceneEditorView.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SensoryComponent.h" />
     <ClInclude Include="SettingsState.h" />

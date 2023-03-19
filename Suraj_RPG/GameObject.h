@@ -177,7 +177,7 @@ public:
 		if (parent)
 			local_rotation = parent->rotation - rotation;
 		else
-			local_position = Vector2f::zero();
+			local_position = Vector2f::Zero();
 		for (std::size_t i = 0; i < children.size(); i++)
 			children[i]->set_world_rotation(children[i]->get_local_rotation() + rot);
 		for (std::size_t i = 0; i < components.size(); i++)
@@ -284,7 +284,7 @@ public:
 		component_array[get_component_type_id<T>()] = c;
 		component_bitset[get_component_type_id<T>()] = true;
 		
-		EventSystem::instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED,
+		EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED,
 			static_cast<void*>(c), static_cast<void*>(this));
 
 	}
@@ -344,10 +344,6 @@ protected:
 	//std::vector<std::unique_ptr<Component>> components;
 	std::vector<Component*> components;
 	std::vector<Component*> components_to_remove;
-
-
-	void add_child(GameObject* child);
-
 private:
 	size_t unique_runtime_id;
 
@@ -360,6 +356,8 @@ private:
 	void init_components();
 	void awake_components();
 	void start_components();
+
+	void add_child(GameObject* child);
 
 	static size_t get_unique_id()
 	{

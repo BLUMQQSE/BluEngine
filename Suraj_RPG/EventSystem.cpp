@@ -44,7 +44,7 @@ Listener::Listener()
 
 Listener::~Listener()
 {
-	EventSystem::instance()->unsubscribe_all(this);
+	EventSystem::Instance()->unsubscribe_all(this);
 }
 
 
@@ -118,16 +118,11 @@ void EventSystem::handle_system_events(Event event)
 	case EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_:
 		process_events();
 		break;
-	case EventID::_SYSTEM_RENDER_:
-		dispatch_event(&event);
-		break;
-	case EventID::_SYSTEM_UPDATE_INPUT_:
-		dispatch_event(&event);
-		break;
-	case EventID::_SYSTEM_LATE_UPDATE_INPUT_:
-		dispatch_event(&event);
-		break;
 	default:
+		if (event.get_event_id() < EventID::_SYSTEM_SETTINGS_WINDOW_SIZE_CHANGE_)
+		{
+			dispatch_event(&event);
+		}
 		break;
 	}
 

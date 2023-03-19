@@ -21,7 +21,7 @@ namespace bm98
 using namespace core;
 bm98::PlayerController::PlayerController()
 {
-
+	
 }
 
 bm98::PlayerController::~PlayerController()
@@ -40,14 +40,12 @@ void bm98::PlayerController::init()
 
 	std::cout << game_object->get_info().name << "\n";
 
-
 }
 
 void PlayerController::awake()
 {
 	init_animations();
-	camera = &SceneManager::find_with_tag(Tag::CAMERA, this->game_object)->get_component<CameraComponent>();
-
+	camera = &SceneManager::Instance()->find_with_tag(Tag::CAMERA, this->game_object)->get_component<CameraComponent>();
 
 }
 
@@ -56,11 +54,11 @@ void bm98::PlayerController::update()
 	update_input();
 	update_animations();
 
-	if (Input::get_action_down("INTERACT"))
+	if (Input::Instance()->get_action_down("INTERACT"))
 	{
 		if (game_object->check_for_child("pants"))
 		{
-			SceneManager::destroy_gameobject(SceneManager::find("pants", game_object));
+			SceneManager::Instance()->destroy_gameobject(SceneManager::Instance()->find("pants", game_object));
 			return;
 		}
 		
@@ -74,7 +72,7 @@ void bm98::PlayerController::update()
 		sc->set_sorting_layer(SortingLayer::ACTOR);
 		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
 		pants->set_parent(this->game_object);
-		SceneManager::instantiate_gameobject(pants);
+		SceneManager::Instance()->instantiate_gameobject(pants);
 		
 	}
 
@@ -85,7 +83,6 @@ void bm98::PlayerController::update()
 
 void bm98::PlayerController::late_update()
 {
-	
 }
 
 void bm98::PlayerController::fixed_update()
@@ -160,25 +157,25 @@ void bm98::PlayerController::update_input()
 	movement_input.x = 0;
 	movement_input.y = 0;
 
-	if (Input::get_action_down("INTERACT"))
+	if (Input::Instance()->get_action_down("INTERACT"))
 	{
 
 	}
-	if (Input::get_action("LEFT"))
+	if (Input::Instance()->get_action("LEFT"))
 		movement_input.x = -1;
-	if (Input::get_action("RIGHT"))
+	if (Input::Instance()->get_action("RIGHT"))
 		movement_input.x = 1;
-	if (Input::get_action("UP"))
+	if (Input::Instance()->get_action("UP"))
 		movement_input.y = -1;
-	if (Input::get_action("DOWN"))
+	if (Input::Instance()->get_action("DOWN"))
 		movement_input.y = 1;
 
-	if (Input::get_mouse_up(Input::Mouse::LEFT))
+	if (Input::Instance()->get_mouse_up(Input::Mouse::LEFT))
 	{
 		attack = true;
 	}
 
-	if (movement_input != Vector2f::zero())
+	if (movement_input != Vector2f::Zero())
 	{
 		game_object->get_component<AudioSource>().set_sound("footsteps.wav");
 		game_object->get_component<AudioSource>().play();

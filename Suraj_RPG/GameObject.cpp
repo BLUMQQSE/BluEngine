@@ -6,18 +6,36 @@
 #include "Collisions.h"
 #include "SceneManager.h"
 
-#include "TilemapComponent.h"
-#include "ChildAnimationComponent.h"
+
+
+#pragma region GUI
+
+#include "ButtonComponent.h"
+
+#pragma endregion
+#pragma region Physics
+
 #include "BoxColliderComponent.h"
+#include "TilemapColliderComponent.h"
+#include "CapsuleColliderComponent.h"
 #include "RigidbodyComponent.h"
+
+#pragma endregion
+#pragma region Rendering
+
 #include "SpriteComponent.h"
 #include "AnimatedSpriteComponent.h"
 #include "AnimationComponent.h"
+#include "ChildAnimationComponent.h"
+#include "TilemapComponent.h"
+#include "CameraComponent.h"
+
+#pragma endregion
+
 #include "PlayerController.h"
-#include "ButtonComponent.h"
+
 #include "DontDestroyOnLoad.h"
 #include "SceneChange.h"
-#include "CameraComponent.h"
 #include "AudioSource.h"
 #include "Inventory.h"
 
@@ -231,7 +249,7 @@ void GameObject::set_parent(GameObject* parent)
 		this->parent->remove_child(this);
 	}
 
-	EventSystem::instance()->push_event(EventID::GAMEOBJECT_PARENT_CHANGE);
+	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_PARENT_CHANGE);
 	this->parent = parent;
 
 	if (this->parent)
@@ -410,67 +428,77 @@ void GameObject::unserialize_json(Json::Value obj)
 			comps_data[typeid(TilemapComponent).name()] = component["value"];
 			add_component<TilemapComponent>();
 		}
-		if (component["name"].asString() == typeid(SpriteComponent).name())
+		else if (component["name"].asString() == typeid(TilemapColliderComponent).name())
+		{
+			comps_data[typeid(TilemapColliderComponent).name()] = component["value"];
+			add_component<TilemapColliderComponent>();
+		}
+		else if (component["name"].asString() == typeid(SpriteComponent).name())
 		{
 			comps_data[typeid(SpriteComponent).name()] = component["value"];
 			add_component<SpriteComponent>();
 		}
-		if (component["name"].asString() == typeid(AnimatedSpriteComponent).name())
+		else if (component["name"].asString() == typeid(AnimatedSpriteComponent).name())
 		{
 			comps_data[typeid(AnimatedSpriteComponent).name()] = component["value"];
 			add_component<AnimatedSpriteComponent>();
 		}
-		if (component["name"].asString() == typeid(AnimationComponent).name())
+		else if (component["name"].asString() == typeid(AnimationComponent).name())
 		{
 			comps_data[typeid(AnimationComponent).name()] = component["value"];
 			add_component<AnimationComponent>();
 		}
-		if (component["name"].asString() == typeid(BoxColliderComponent).name())
+		else if (component["name"].asString() == typeid(BoxColliderComponent).name())
 		{
 			comps_data[typeid(BoxColliderComponent).name()] = component["value"];
 			add_component<BoxColliderComponent>();
 		}
-		if (component["name"].asString() == typeid(ChildAnimationComponent).name())
+		else if (component["name"].asString() == typeid(CapsuleColliderComponent).name())
+		{
+			comps_data[typeid(CapsuleColliderComponent).name()] = component["value"];
+			add_component<CapsuleColliderComponent>();
+		}
+		else if (component["name"].asString() == typeid(ChildAnimationComponent).name())
 		{
 			comps_data[typeid(ChildAnimationComponent).name()] = component["value"];
 			add_component<ChildAnimationComponent>();
 		}
-		if (component["name"].asString() == typeid(RigidbodyComponent).name())
+		else if (component["name"].asString() == typeid(RigidbodyComponent).name())
 		{
 			comps_data[typeid(RigidbodyComponent).name()] = component["value"];
 			add_component<RigidbodyComponent>();
 		}
-		if (component["name"].asString() == typeid(PlayerController).name())
+		else if (component["name"].asString() == typeid(PlayerController).name())
 		{
 			comps_data[typeid(PlayerController).name()] = component["value"];
 			add_component<PlayerController>();
 		}
-		if (component["name"].asString() == typeid(ButtonComponent).name())
+		else if (component["name"].asString() == typeid(ButtonComponent).name())
 		{
 			comps_data[typeid(ButtonComponent).name()] = component["value"];
 			add_component<ButtonComponent>();
 		}
-		if (component["name"].asString() == typeid(DontDestroyOnLoad).name())
+		else if (component["name"].asString() == typeid(DontDestroyOnLoad).name())
 		{
 			comps_data[typeid(DontDestroyOnLoad).name()] = component["value"];
 			add_component<DontDestroyOnLoad>();
 		}
-		if (component["name"].asString() == typeid(SceneChange).name())
+		else if (component["name"].asString() == typeid(SceneChange).name())
 		{
 			comps_data[typeid(SceneChange).name()] = component["value"];
 			add_component<SceneChange>();
 		}
-		if (component["name"].asString() == typeid(CameraComponent).name())
+		else if (component["name"].asString() == typeid(CameraComponent).name())
 		{
 			comps_data[typeid(CameraComponent).name()] = component["value"];
 			add_component<CameraComponent>();
 		}
-		if (component["name"].asString() == typeid(AudioSource).name())
+		else if (component["name"].asString() == typeid(AudioSource).name())
 		{
 			comps_data[typeid(AudioSource).name()] = component["value"];
 			add_component<AudioSource>();
 		}
-		if (component["name"].asString() == typeid(Inventory).name())
+		else if (component["name"].asString() == typeid(Inventory).name())
 		{
 			comps_data[typeid(Inventory).name()] = component["value"];
 			add_component<Inventory>();
@@ -486,9 +514,8 @@ void GameObject::unserialize_json(Json::Value obj)
 	{
 		GameObject* go = new GameObject();
 		go->set_parent(this);
-		add_child(go);
 		go->unserialize_json(child);
-		SceneManager::instantiate_gameobject_on_load(go);
+		SceneManager::Instance()->instantiate_gameobject_on_load(go);
 	}
 
 }

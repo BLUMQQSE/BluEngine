@@ -28,14 +28,14 @@ public:
     virtual void fixed_update();
     virtual void render();
 
-    FloatConvex circle = FloatConvex::circle(Vector2f(300, 300), 60);
+    FloatConvex circle = FloatConvex::Circle(Vector2f(300, 300), 60);
 
 //    FloatConvex circle2 = FloatConvex::circle(Vector2f(300, 600), 40);
 
-    FloatConvex circle2 = FloatConvex::polygon(Vector2f(300, 600),
+    FloatConvex square = FloatConvex::Polygon(Vector2f(300, 600),
         {Vector2f(0,0), Vector2f(100, 0), Vector2f(100, 100), Vector2f(0, 100)});
     
-    FloatConvex concave = FloatConvex::polygon(Vector2f(600, 600),
+    FloatConvex concave = FloatConvex::Polygon(Vector2f(600, 600),
         {Vector2f(0,0), Vector2f(200, 0), 
         Vector2f(200, 200), Vector2f(0, 200)});
 

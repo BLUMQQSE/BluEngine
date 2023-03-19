@@ -16,7 +16,7 @@ ButtonComponent::ButtonComponent()
 	this->shape.setOutlineThickness(1.f);
 	this->shape.setOutlineColor(outline_idle_color);
 	
-	this->font = &ResourceManager::get_font("calibri-regular.ttf");
+	this->font = &ResourceManager::Instance()->get_font("calibri-regular.ttf");
 
 	this->text.setString("");
 	this->text.setFont(*font);
@@ -82,24 +82,24 @@ ButtonComponent::ButtonComponent(float width, float height, std::string text,
 	set_sorting_layer(SortingLayer::UI, false);
 	set_z_order(id+10, false);
 
-	Renderer::add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(), 
+	Renderer::Instance()->add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
-	Renderer::add(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(), 
+	Renderer::Instance()->add(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
 
 ButtonComponent::~ButtonComponent()
 {
-	Renderer::remove(&shape);
-	Renderer::remove(&text);
+	Renderer::Instance()->remove(&shape);
+	Renderer::Instance()->remove(&text);
 }
 
 void ButtonComponent::init()
 {
 	this->shape.setPosition(game_object->get_world_position());
-	Renderer::add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
-	Renderer::add(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
 
@@ -107,12 +107,12 @@ void ButtonComponent::update()
 {
 	if (!active)
 		return;
-	if (shape.getGlobalBounds().contains(Input::mouse_position(get_view())) &&
-		Input::get_mouse_down(Input::Mouse::LEFT))
+	if (shape.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())) &&
+		Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
 	{
 		button_state = ButtonState::BTN_PRESSED;
 	}
-	else if (shape.getGlobalBounds().contains(Input::mouse_position(get_view())))
+	else if (shape.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())))
 	{
 		button_state = ButtonState::BTN_HOVERED;
 	}
@@ -185,7 +185,8 @@ const bool ButtonComponent::is_pressed() const
 
 bool ButtonComponent::mouse_in_bounds()
 {
-	return shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position( get_view() )));
+	return shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(
+		Input::Instance()->mouse_position( get_view() )));
 }
 
 const std::string ButtonComponent::get_text() const

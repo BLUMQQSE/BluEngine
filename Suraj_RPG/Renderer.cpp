@@ -1,15 +1,14 @@
 #include "pch.h"
 #include "globals.h"
 #include "Renderer.h"
-#include "Debug.h"
 
 namespace bm98::core
 {
-std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::render_objects;
-std::vector<Renderer::GizmoObject> Renderer::gizmos;
-bool Renderer::draw_gizmos = true;
-unsigned Renderer::id = 0;
-sf::RenderTarget* Renderer::window;
+//std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::render_objects;
+//std::vector<Renderer::GizmoObject> Renderer::gizmos;
+//bool Renderer::draw_gizmos = true;
+//unsigned Renderer::id = 0;
+//sf::RenderTarget* Renderer::window;
 
 float UNIT_SIZE = 32.f;
 float SCALE = 2.f;
@@ -115,8 +114,6 @@ void Renderer::render()
 		}
 		window->draw(*f.drawable);
 	}
-	if (draw_gizmos)
-		render_gizmos();
 
 }
 
@@ -145,6 +142,15 @@ sf::Vector2u Renderer::get_window_size()
 	return window->getSize();
 }
 
+Renderer::Renderer()
+{
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_INITIALIZE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_REFRESH_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_RENDER_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_, this);
+}
+
 const unsigned& Renderer::get_id()
 {
 	return id;
@@ -153,6 +159,38 @@ const unsigned& Renderer::get_id()
 void Renderer::increase_id()
 {
 	id++;
+}
+
+void Renderer::handle_event(Event* event)
+{
+	switch (event->get_event_id())
+	{
+	case EventID::_SYSTEM_RENDERER_INITIALIZE_:
+	{
+		RenderTarget* tar = static_cast<RenderTarget*>(event->get_parameter());
+		init(tar);
+		break;	
+	}
+	case EventID::_SYSTEM_RENDERER_RENDER_:
+		render();
+		break;
+	case EventID::_SYSTEM_RENDERER_CLEAR_:
+		clear();
+		break;
+	case EventID::_SYSTEM_RENDERER_FIXED_UPDATE_:
+		fixed_update();
+		break;
+	case EventID::_SYSTEM_RENDERER_REFRESH_:
+		refresh();
+		break;
+		
+	}
+}
+
+sf::Vector2u Renderer::getSize() const
+{
+	return sf::Vector2u();
+	//return sf::RenderTarget::getSize();
 }
 
 

@@ -53,7 +53,7 @@ void DropDownComponent::init()
 		this->list.push_back(&new_child->get_component<ButtonComponent>());
 		this->list[i]->set_render(false);
 
-		SceneManager::instantiate_gameobject(new_child);
+		SceneManager::Instance()->instantiate_gameobject(new_child);
 	}
 
 	active_selection->set_id(default_index);
@@ -80,7 +80,7 @@ void DropDownComponent::update()
 				return;
 			}
 		}
-		if (Input::get_mouse_down(Input::Mouse::LEFT) && !active_selection->is_pressed())
+		if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT) && !active_selection->is_pressed())
 			toggle_list(false);
 	}
 

@@ -37,13 +37,13 @@ void IRenderable::set_z_order(char order, bool refresh_renderer)
 {
 	this->z_order = order;
 	if(refresh_renderer)
-		core::Renderer::refresh();
+		core::Renderer::Instance()->refresh();
 }
 void IRenderable::set_sorting_layer(SortingLayer layer, bool refresh_renderer)
 {
 	this->sorting_layer = layer;
 	if (refresh_renderer)
-		core::Renderer::refresh();
+		core::Renderer::Instance()->refresh();
 	
 }
 bool& IRenderable::get_render()

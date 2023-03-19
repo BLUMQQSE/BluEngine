@@ -1,6 +1,7 @@
 #pragma once
 #include "globals.h"
 #include "Math.h"
+#include "EventSystem.h"
 namespace bm98
 {
 class Collider;
@@ -14,9 +15,14 @@ class FloatConvex;
 namespace bm98::core
 {
 
-class Physics
+class Physics: public Listener
 {
 public:
+	static Physics* Instance()
+	{
+		static Physics instance;
+		return &instance;
+	}
 
 	struct RayHit
 	{
@@ -35,14 +41,13 @@ public:
 		TRIGGER_EXIT
 	};
 
-	static void init();
+	
 
 
-	static void add_to_physics(GameObject* game_object);
-	static void remove_from_physics(GameObject* game_object);
-	static void clear_objects();
+	void add_to_physics(GameObject* game_object);
+	void remove_from_physics(GameObject* game_object);
+	void clear_objects();
 
-	static void fixed_update();
 	/// <summary>
 	/// Creates a ray from origin in provided direction for provided distance.
 	/// This function should be reserved for fixed_update and limited use in updates do to noticable
@@ -50,7 +55,7 @@ public:
 	/// </summary>
 	/// <returns>
 	/// The closest collider which is not on a gameobject related to the calling gameobject.</returns>
-	static bool raycast(Vector2f origin, Vector2f direction, GameObject* ignore,
+	bool raycast(Vector2f origin, Vector2f direction, GameObject* ignore,
 		float distance = INFINITY, Global::LayerMask mask = Global::LayerMask(),
 		RayHit* hit = nullptr);
 
@@ -61,29 +66,44 @@ public:
 	/// </summary>
 	/// <returns>
 	/// All colliders within the circle not related to the object calling the functions.</returns>
-	static int OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, 
+	int OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, 
 		GameObject* object_to_ignore, std::vector<ColliderComponent*> collisions);
 
 private:
 
-	static std::vector<std::vector<std::pair<GameObject*, CollisionState>>> objects;
+	Physics();
+	~Physics() { }
+	Physics(const Physics& rhs)
+	{
 
-	static bool collision_matrix[(int)(Layer::_LAST_DONT_REMOVE)][(int)(Layer::_LAST_DONT_REMOVE)];
+	}
+	Physics& operator=(const Physics& rhs) {}
 
-	static bool triggers_acknowledge_colliders;
+	std::vector<std::vector<std::pair<GameObject*, CollisionState>>> objects;
+
+	bool collision_matrix[(int)(Layer::_LAST_DONT_REMOVE)][(int)(Layer::_LAST_DONT_REMOVE)];
+
+	void init();
+	void fixed_update();
 
 	/// <summary>
 	/// Initialize matrix double array with bool flags determining if layers acknowledge each other.
 	/// </summary>
-	static void init_matrix();
+	void init_matrix();
 	/// <summary>
 	/// Takes in two pairs of gameobjects and their collision states with each other. 
 	/// These objects are compared for intersection and collisions are handled.
 	/// </summary>
-	static void handle_collision(std::pair<GameObject*, CollisionState>& a,
+	void handle_collision(std::pair<GameObject*, CollisionState>& a,
 		std::pair<GameObject*, CollisionState>& b);
-	static void update_collision_state(std::pair<GameObject*, CollisionState>& a,
+	void update_collision_state(std::pair<GameObject*, CollisionState>& a,
 		std::pair<GameObject*, CollisionState>& b);
+
+
+
+	// Inherited via Listener
+	virtual void handle_event(Event* event) override;
+
 };
 
 }

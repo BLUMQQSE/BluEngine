@@ -11,9 +11,11 @@
 #include "TilemapColliderComponent.h"
 #include "Time.h"
 #include "GameObject.h"
-#include "SceneEditor.h"
+#include "SceneEditorView.h"
 #include "PrefabEditor.h"
 #include "FileManager.h"
+#include "SceneManager.h"
+#include "Scene.h"
 namespace bm98
 {
 using namespace core;
@@ -30,6 +32,11 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	init_fonts();
 	init_buttons();
 
+	active_scene = new Scene("default.json");
+
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, static_cast<void*>(active_scene));
+	//SceneManager::Instance()->init(active_scene);
+	SceneManager::Instance()->load_scene_prefab("default.json");
 
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("BACK", 500.f, 500.f, "Back");
@@ -45,20 +52,25 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	tile_modifier.tile_type = TileType::DEFAULT;
 	camera_move_speed = 120;
 
-	Renderer::add(Renderer::RenderObject(&sidebar, outline_render, outline_layer, z_order));
-	Renderer::add(Renderer::RenderObject(&selector_rect, text_select_render, text_select_layer, z_order, &scene_view));
+
+	editor_view = new SceneEditorView();
+
+	Renderer::Instance()->add(Renderer::RenderObject(&sidebar, outline_render, outline_layer, z_order));
+	Renderer::Instance()->add(Renderer::RenderObject(&selector_rect, text_select_render, text_select_layer, z_order, &scene_view));
 }
 
 EditorState::~EditorState()
 {
-	Renderer::remove(&sidebar);
-	Renderer::remove(&selector_rect);
-	
+	Renderer::Instance()->remove(&sidebar);
+	Renderer::Instance()->remove(&selector_rect);
+
 	delete scene_view;
 	delete tile_selector_view;
+	delete active_scene;
 
 	delete selected_gameobject;
 	delete texture_selector;
+	delete editor_view;
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != buttons.end(); ++it)
 	{
@@ -69,6 +81,8 @@ EditorState::~EditorState()
 void EditorState::on_end_state()
 {
 	Debug::Log("Will now clean up editor state on exit");
+	SceneManager::Instance()->save_scene(true);
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_DESTROY_);
 }
 
 void EditorState::update_input()
@@ -77,10 +91,10 @@ void EditorState::update_input()
 	//{
 	//	isRequestingQuit = true;
    //}
-	if (Input::using_input_box())
+	if (Input::Instance()->using_input_box())
 		return;
 
-	if (Input::get_action_down("MENU"))
+	if (Input::Instance()->get_action_down("MENU"))
 	{
 		std::cout << "MENU\n";
 		if (!paused)
@@ -88,9 +102,9 @@ void EditorState::update_input()
 		else
 			unpause_state();
 	}
-	if (Input::get_action_down("SPACE"))
+	if (Input::Instance()->get_action_down("SPACE"))
 	{
-		FileManager::save_to_file_styled(selected_gameobject->get_component<TilemapComponent>().serialize_json(),
+		FileManager::Instance()->save_to_file_styled(selected_gameobject->get_component<TilemapComponent>().serialize_json(),
 			"test_file.json");
 
 	}
@@ -98,13 +112,14 @@ void EditorState::update_input()
 
 void EditorState::update_sfml(sf::Event sfEvent)
 {
-	
+	editor_view->update_sfml(sfEvent);
 }
 
 void EditorState::update()
 {
 	//Debug::mouse_position_display(font);
 	update_input();
+	editor_view->update();
 	if (!paused)
 	{
 		State::update();
@@ -116,13 +131,13 @@ void EditorState::update()
 		{
 			it.second->update();
 		}
-		if (Input::get_action_down("TS_MENU"))
+		if (Input::Instance()->get_action_down("TS_MENU"))
 			buttons.at("TS_BTN")->set_pressed();
 		if (buttons.at("TS_BTN")->is_pressed())
 			texture_selector->toggle_hidden();
-		if (Input::get_action_down("COLLISION"))
+		if (Input::Instance()->get_action_down("COLLISION"))
 			tile_modifier.collision = !tile_modifier.collision;
-		if (Input::get_action_down("TYPE"))
+		if (Input::Instance()->get_action_down("TYPE"))
 			tile_modifier.tile_type = TileType::DAMAGING;
 		
 		update_gui();
@@ -233,28 +248,29 @@ void EditorState::init_gui()
 
 void EditorState::update_gui()
 {
-	if (sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position_window())))
+	if (sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(
+		Input::Instance()->mouse_position_window())))
 	{
 		return;
 	}
 
-	if (!Input::using_input_box())
+	if (!Input::Instance()->using_input_box())
 	{
-		float delta = Time::delta_time();
-		if (Input::get_action("CAM_UP"))
+		float delta = Time::Instance()->delta_time();
+		if (Input::Instance()->get_action("CAM_UP"))
 			scene_view->move(0, -camera_move_speed * delta);
-		if (Input::get_action("CAM_DOWN"))
+		if (Input::Instance()->get_action("CAM_DOWN"))
 			scene_view->move(0, camera_move_speed * delta);
-		if (Input::get_action("CAM_LEFT"))
+		if (Input::Instance()->get_action("CAM_LEFT"))
 			scene_view->move(-camera_move_speed * delta, 0);
-		if (Input::get_action("CAM_RIGHT"))
+		if (Input::Instance()->get_action("CAM_RIGHT"))
 			scene_view->move(camera_move_speed * delta, 0);
 
 		if (!texture_selector->mouse_in_container())
 		{
-			if (Input::get_mouse_scroll_delta() > 0.f)
+			if (Input::Instance()->get_mouse_scroll_delta() > 0.f)
 				scene_view->zoom(.9f);
-			if (Input::get_mouse_scroll_delta() < 0.f)
+			if (Input::Instance()->get_mouse_scroll_delta() < 0.f)
 				scene_view->zoom(1.1f);
 		}
 	}
@@ -276,9 +292,9 @@ void EditorState::update_gui()
 		if (texture_selector->mouse_in_bounds())
 		{
 			// Here code to set selector size
-			if (Input::get_mouse(Input::Mouse::LEFT) ||
-				Input::get_mouse_down(Input::Mouse::LEFT) ||
-				Input::get_mouse_up(Input::Mouse::LEFT))
+			if (Input::Instance()->get_mouse(Input::Mouse::LEFT) ||
+				Input::Instance()->get_mouse_down(Input::Mouse::LEFT) ||
+				Input::Instance()->get_mouse_up(Input::Mouse::LEFT))
 			{
 				texture_selector->set_texture_rect();
 				texture_rect = texture_selector->get_texture_rect();
@@ -301,13 +317,15 @@ void EditorState::update_gui()
 	selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().get_texture());
 	selector_rect.setTextureRect(texture_rect);
 
-	selector_rect.setPosition(Input::mouse_position_grid(UNIT_SIZE, scene_view).x * UNIT_SIZE, Input::mouse_position_grid(UNIT_SIZE, scene_view).y * UNIT_SIZE);
+	selector_rect.setPosition(Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x * UNIT_SIZE,
+		Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y * UNIT_SIZE);
 
-	if (Input::get_mouse_down(Input::Mouse::LEFT) || Input::get_mouse(Input::Mouse::LEFT))
+	if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT) || 
+		Input::Instance()->get_mouse(Input::Mouse::LEFT))
 	{
 		selected_gameobject->get_component<TilemapComponent>().add_tiles(
-			Input::mouse_position_grid(UNIT_SIZE, scene_view).x,
-			Input::mouse_position_grid(UNIT_SIZE, scene_view).y,
+			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
+			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
 			texture_selector->get_layer(),
 			texture_rect,
 			(TileType)texture_selector->get_tiletype_selector()->get_selected_index(),
@@ -315,11 +333,12 @@ void EditorState::update_gui()
 			texture_selector->get_animation_checkbox()->is_checked()
 		);
 	}
-	if (Input::get_mouse_down(Input::Mouse::RIGHT) || Input::get_mouse(Input::Mouse::RIGHT))
+	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT) || 
+		Input::Instance()->get_mouse(Input::Mouse::RIGHT))
 	{
 		selected_gameobject->get_component<TilemapComponent>().remove_tiles(
-			Input::mouse_position_grid(UNIT_SIZE, scene_view).x,
-			Input::mouse_position_grid(UNIT_SIZE, scene_view).y,
+			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
+			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
 			texture_selector->get_layer(),
 			texture_rect,
 			texture_selector->get_animation_checkbox()->is_checked()
@@ -333,7 +352,8 @@ void EditorState::update_gui()
 void EditorState::render_gui()
 {
 	if (!texture_selector->mouse_in_bounds() &&
-		!sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(Input::mouse_position_window())))
+		!sidebar.getGlobalBounds().contains(static_cast<sf::Vector2f>(
+			Input::Instance()->mouse_position_window())))
 		text_select_render = true;
 	else
 		text_select_render = false;

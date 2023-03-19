@@ -34,62 +34,64 @@ float Vector2f::sqr_magnitude()
 	return std::pow(x, 2) + std::pow(y, 2);
 }
 
-Vector2f Vector2f::down()
+float Vector2f::magnitude()
+{
+	return std::sqrt(sqr_magnitude());
+}
+
+std::string Vector2f::to_string()
+{
+	return std::string("(" + std::to_string(x) + ", " + std::to_string(y) + ")");
+}
+
+Vector2f Vector2f::Down()
 {
 	return Vector2f(0, 1);
 }
 
-Vector2f Vector2f::up()
+Vector2f Vector2f::Up()
 {
 	return Vector2f(0, -1);
 }
 
-Vector2f Vector2f::left()
+Vector2f Vector2f::Left()
 {
 	return Vector2f(-1, 0);
 }
 
-Vector2f Vector2f::right()
+Vector2f Vector2f::Right()
 {
 	return Vector2f(1, 0);
 }
 
-Vector2f Vector2f::zero()
+Vector2f Vector2f::Zero()
 {
 	return Vector2f(0, 0);
 }
 
-Vector2f Vector2f::infinity()
+Vector2f Vector2f::Infinity()
 {
 	return Vector2f(INFINITY, INFINITY);
 }
 
-float Vector2f::distance(sf::Vector2f a, sf::Vector2f b)
+float Vector2f::Distance(sf::Vector2f a, sf::Vector2f b)
 {
 	return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
 }
 
-float Vector2f::sqr_distance(sf::Vector2f a, sf::Vector2f b)
+float Vector2f::SqrDistance(sf::Vector2f a, sf::Vector2f b)
 {
 	return std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2);
 }
 
-float Vector2f::dot_product(sf::Vector2f a, sf::Vector2f b)
+float Vector2f::DotProduct(sf::Vector2f a, sf::Vector2f b)
 {
 	return a.x * b.x + a.y * b.y;
 }
 
-float Vector2f::cross_product(sf::Vector2f a, sf::Vector2f b)
+float Vector2f::CrossProduct(sf::Vector2f a, sf::Vector2f b)
 {
 	return a.x * b.y - a.y * b.x;
-}
-
-bool Vector2f::equal(sf::Vector2f a, sf::Vector2f b)
-{
-	if (a.x == b.x && a.y == b.y)
-		return true;
-
-	return false;
 }
 
 Vector2f Vector2f::get_normalized()
@@ -101,21 +103,17 @@ Vector2f Vector2f::get_normalized()
 	return Vector2f(x, y);
 }
 
-void Vector2f::normalize()
+void Vector2f::Normalize(Vector2f& vec)
 {
-	if (sqr_magnitude() != 0)
-	{
-		x = x / std::sqrt(sqr_magnitude());
-		y = y / std::sqrt(sqr_magnitude());
-	}
+	vec = vec.get_normalized();
 }
 
-Vector2f Vector2f::get_left(Vector2f a)
+Vector2f Vector2f::GetLeft(Vector2f a)
 {
 	return Vector2f(-a.y, a.x);
 }
 
-Vector2f Vector2f::get_right(Vector2f a)
+Vector2f Vector2f::GetRight(Vector2f a)
 {
 	return Vector2f(a.y, -a.x);
 }
@@ -171,51 +169,44 @@ int Vector2i::sqr_magnitude()
 	return std::pow(x, 2) + std::pow(y, 2);
 }
 
-Vector2i Vector2i::down()
+Vector2i Vector2i::Down()
 {
 	return Vector2i(0.f, 1.f);
 }
 
-Vector2i Vector2i::up()
+Vector2i Vector2i::Up()
 {
 	return Vector2i(0.f, -1.f);
 }
 
-Vector2i Vector2i::left()
+Vector2i Vector2i::Left()
 {
 	return Vector2i(-1.f, 0);
 }
 
-Vector2i Vector2i::right()
+Vector2i Vector2i::Right()
 {
 	return Vector2i(1.f, 0.f);
 }
 
-Vector2i Vector2i::zero()
+Vector2i Vector2i::Zero()
 {
 	return Vector2i(0, 0);
 }
 
-int Vector2i::distance(sf::Vector2i a, sf::Vector2i b)
+int Vector2i::Distance(sf::Vector2i a, sf::Vector2i b)
 {
 	return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
 }
 
-int Vector2i::sqr_distance(sf::Vector2i a, sf::Vector2i b)
+int Vector2i::SqrDistance(sf::Vector2i a, sf::Vector2i b)
 {
 	return std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2);
 }
 
-int Vector2i::dot_product(sf::Vector2i a, sf::Vector2i b)
+int Vector2i::DotProduct(sf::Vector2i a, sf::Vector2i b)
 {
 	return a.x * b.x + a.y * b.y;
-}
-
-bool Vector2i::equal(sf::Vector2i a, sf::Vector2i b)
-{
-	if (a.x == b.x && a.y == b.y)
-		return true;
-	return false;
 }
 
 bool Vector2i::equals(sf::Vector2i a)
@@ -251,7 +242,7 @@ FloatConvex::FloatConvex()
 	
 }
 
-FloatConvex FloatConvex::circle(sf::Vector2f position, float radius, std::size_t point_count)
+FloatConvex FloatConvex::Circle(sf::Vector2f position, float radius, std::size_t point_count)
 {
 	FloatConvex convex;
 	
@@ -279,7 +270,7 @@ FloatConvex FloatConvex::circle(sf::Vector2f position, float radius, std::size_t
 	return convex;
 }
 
-FloatConvex FloatConvex::capsule(sf::Vector2f position, sf::Vector2f size, Direction dir, std::size_t point_count)
+FloatConvex FloatConvex::Capsule(sf::Vector2f position, sf::Vector2f size, Direction dir, std::size_t point_count)
 {
 	FloatConvex convex;
 
@@ -327,10 +318,11 @@ FloatConvex FloatConvex::capsule(sf::Vector2f position, sf::Vector2f size, Direc
 
 	convex.set_position(position);
 
+
 	return convex;
 }
 
-FloatConvex FloatConvex::polygon(sf::Vector2f position, std::vector<Vector2f> model)
+FloatConvex FloatConvex::Polygon(sf::Vector2f position, std::vector<Vector2f> model)
 {
 	FloatConvex convex;
 
@@ -344,11 +336,11 @@ FloatConvex FloatConvex::polygon(sf::Vector2f position, std::vector<Vector2f> mo
 	return convex;
 }
 
-FloatConvex FloatConvex::line(sf::Vector2f start, sf::Vector2f end, float thickness)
+FloatConvex FloatConvex::Line(sf::Vector2f start, sf::Vector2f end, float thickness)
 {
 	FloatConvex convex;
 
-	Vector2f normal = Vector2f::get_left(end - start);
+	Vector2f normal = Vector2f::GetLeft(end - start);
 
 	convex.shape_type = ShapeType::LINE;
 
@@ -363,7 +355,7 @@ FloatConvex FloatConvex::line(sf::Vector2f start, sf::Vector2f end, float thickn
 	return convex;
 }
 
-FloatConvex FloatConvex::combine_shapes(FloatConvex a, FloatConvex b)
+FloatConvex FloatConvex::CombineShapes(FloatConvex a, FloatConvex b)
 {
 	FloatConvex convex;
 
@@ -376,7 +368,7 @@ FloatConvex FloatConvex::combine_shapes(FloatConvex a, FloatConvex b)
 	convex.model.insert(convex.model.end(), b.model.begin(), b.model.end());
 
 
-	convex = sort_poly_model(convex);
+	SortPolyModel(convex);
 
 	// remove duplicates
 	
@@ -468,63 +460,82 @@ std::vector<Vector2f> FloatConvex::get_model()
 	return model;
 }
 
-Vector2f FloatConvex::intersection(FloatConvex a, FloatConvex b)
+FloatConvex::ShapeType FloatConvex::get_shape_type()
 {
-	FloatConvex* poly1 = &b;
-	FloatConvex* poly2 = &a;
+	return shape_type;
+}
 
-	float overlap = INFINITY;
+Vector2f FloatConvex::Intersection(FloatConvex a, FloatConvex b)
+{
+	Vector2f normal = Vector2f::Infinity();
+	float depth = INFINITY;
 
-	for (int shape = 0; shape < 2; shape++)
+	for (int i = 0; i < a.getPointCount(); i++)
 	{
-		if (shape == 1)
+		Vector2f va = a.getPoint(i);
+		Vector2f vb = a.getPoint( ( i + 1 ) % a.getPointCount());
+
+		Vector2f edge = vb - va;
+		Vector2f axis = Vector2f(-edge.y, edge.x);
+		
+		float minA, maxA, minB, maxB;
+
+		ProjectVertices(a, axis, minA, maxA);
+		ProjectVertices(b, axis, minB, maxB);
+
+		if (minA >= maxB || minB >= maxA)
+			return Vector2f::Infinity();
+
+		float axisDepth = std::min(maxB - minA, maxA - minB);
+		if (axisDepth < depth)
 		{
-			poly1 = &a;
-			poly2 = &b;
+			depth = axisDepth;
+			normal = axis;
 		}
 
-		for (int a = 0; a < poly1->getPointCount(); a++)
-		{
-			int b = (a + 1) % poly1->getPointCount();
-			//axis proj may need normalized...
-			Vector2f axisProj = Vector2f(-(poly1->getPoint(b).y - poly1->getPoint(a).y), (poly1->getPoint(b).x - poly1->getPoint(a).x)).get_normalized();
-
-			//work out min and max 1D points for r1
-			float min_r1 = INFINITY, max_r1 = -INFINITY;
-			for (int p = 0; p < poly1->getPointCount(); p++)
-			{
-				//calc dot product
-				float q = Vector2f::dot_product(poly1->getPoint(p), axisProj);
-				min_r1 = std::min(min_r1, q);
-				max_r1 = std::max(max_r1, q);
-			}
-
-			float min_r2 = INFINITY, max_r2 = -INFINITY;
-			for (int p = 0; p < poly2->getPointCount(); p++)
-			{
-				//calc dot product
-				float q = Vector2f::dot_product(poly2->getPoint(p), axisProj);
-				min_r2 = std::min(min_r2, q);
-				max_r2 = std::max(max_r2, q);
-			}
-
-			overlap = std::min(std::min(max_r1, max_r2) - std::max(min_r1, min_r2), overlap);
-
-			if (!(max_r2 >= min_r1 && max_r1 >= min_r2))
-			{
-				return Vector2f::infinity();
-			}
-		}
 	}
 
-	Vector2f d = Vector2f(poly2->get_center().x - poly1->get_center().x, poly2->get_center().y - poly1->get_center().y);
-	float s = sqrtf(d.x * d.x + d.y * d.y);
+	for (int i = 0; i < b.getPointCount(); i++)
+	{
+		Vector2f va = b.getPoint(i);
+		Vector2f vb = b.getPoint((i + 1) % b.getPointCount());
 
-	Vector2f result = Vector2f(-(overlap) * d.x / s, -(overlap) * d.y / s);
-	// this is just wrong... need to fully rework to get the vector im looking for
+		Vector2f edge = vb - va;
+		Vector2f axis = Vector2f(-edge.y, edge.x);
 
+		float minA, maxA, minB, maxB;
 
-	return result;
+		ProjectVertices(a, axis, minA, maxA);
+		ProjectVertices(b, axis, minB, maxB);
+
+		if (minA >= maxB || minB >= maxA)
+			return Vector2f::Infinity();
+		
+		float axisDepth = std::min(maxB - minA, maxA - minB);
+		if (axisDepth < depth)
+		{
+			depth = axisDepth;
+			normal = axis;
+		}
+
+	}
+
+	depth /= normal.magnitude();
+	// test changing to normal.normalize();
+	//normal = normal.get_normalized();
+	Vector2f::Normalize(normal);
+
+	Vector2f centerA = a.get_center();
+	Vector2f centerB = b.get_center();
+
+	Vector2f dir = centerB - centerA;
+
+	if (Vector2f::DotProduct(dir, normal) > 0.f)
+		normal = -normal;
+
+	// subtract 1 from depth so that after collision is resolved can still detect the shapes are touching
+	return (depth-1) * normal;
+
 }
 
 #pragma region IDATA
@@ -550,6 +561,7 @@ Json::Value FloatConvex::serialize_json()
 void FloatConvex::unserialize_json(Json::Value obj)
 {
 	point_count = obj["point-count"].asUInt64();
+	setPointCount(point_count);
 	position.unserialize_json(obj["position"]);
 	shape_type = string_to_shapetype(obj["shape-type"].asString());
 	rotation = obj["rotation"].asFloat();
@@ -558,13 +570,16 @@ void FloatConvex::unserialize_json(Json::Value obj)
 	int x = 0;
 	for (Json::Value point : obj["model"])
 	{
+		model.push_back(Vector2f());
 		model[x].unserialize_json(point);
 		x++;
 	}
 
+	set_position(position);
+
 }
 
-FloatConvex FloatConvex::sort_poly_model(FloatConvex poly)
+void FloatConvex::SortPolyModel(FloatConvex& poly)
 {
 	Vector2f og = poly.model[0];
 	for (int k = 1; k < poly.model.size(); k++)
@@ -572,27 +587,25 @@ FloatConvex FloatConvex::sort_poly_model(FloatConvex poly)
 		int j = k - 1;
 		Vector2f temp = poly.model[k];
 		while (j >= 0 &&
-			FloatConvex::get_angle(og, poly.get_center(), poly.model[j]) >
-			FloatConvex::get_angle(og, poly.get_center(), poly.model[k]))
+			FloatConvex::GetAngle(og, poly.get_center(), poly.model[j]) >
+			FloatConvex::GetAngle(og, poly.get_center(), poly.model[k]))
 		{
 			poly.model[j + 1] = poly.model[j];
 			j = j - 1;
 		}
 		poly.model[j + 1] = temp;
 	}
-
-	return poly;
 }
 
-float FloatConvex::get_angle(Vector2f a, Vector2f b, Vector2f c)
+float FloatConvex::GetAngle(Vector2f a, Vector2f b, Vector2f c)
 {
-	float A = std::abs(Vector2f::sqr_distance(a, b));
-	float B = std::abs(Vector2f::sqr_distance(b, c));
-	float C = std::abs(Vector2f::sqr_distance(c, a));
+	float A = std::abs(Vector2f::SqrDistance(a, b));
+	float B = std::abs(Vector2f::SqrDistance(b, c));
+	float C = std::abs(Vector2f::SqrDistance(c, a));
 
 	float angle = std::acos((A + B - C) / (2 * std::sqrt(A) * std::sqrt(B)));
 
-	float x = Vector2f::cross_product(a - b, c - b);
+	float x = Vector2f::CrossProduct(a - b, c - b);
 
 	if (x < 0)
 	{
@@ -611,6 +624,22 @@ float FloatConvex::get_angle(Vector2f a, Vector2f b, Vector2f c)
 	else
 	{
 		return ((angle * RAD2DEG) + 180.0) * DEG2RAD;
+	}
+}
+
+void FloatConvex::ProjectVertices(FloatConvex a, Vector2f axis, float& min, float& max)
+{
+	min = INFINITY;
+	max = -INFINITY;
+
+	for (int i = 0; i < a.getPointCount(); i++)
+	{
+		Vector2f v = a.getPoint(i);
+		float proj = Vector2f::DotProduct(v, axis);
+
+		if (proj < min) { min = proj; }
+		if (proj > max) { max = proj; }
+
 	}
 }
 

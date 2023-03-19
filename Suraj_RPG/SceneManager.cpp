@@ -7,10 +7,8 @@
 
 namespace bm98::core
 {
-std::string SceneManager::scenes_file_path = "Data/Scenes/";
-std::vector<GameObject*> SceneManager::objects_to_add;
-Scene* SceneManager::active_scene = nullptr;
-//GameState* SceneManager::game_state = nullptr;
+//std::string SceneManager::scenes_file_path = "Data/Scenes/";
+//Scene* SceneManager::active_scene = nullptr;
 
 std::string SceneManager::get_default_scene()
 {
@@ -49,34 +47,36 @@ void SceneManager::load_scene(std::string scene_name)
 	active_scene->clear_scene();
 
 
-	Json::Value obj = FileManager::load_from_file(FileManager::get_save_name() + scenes_file_path + scene_name);
+	Json::Value obj = FileManager::Instance()->load_from_file(FileManager::Instance()->get_save_name() + scenes_file_path + scene_name);
 
 	active_scene->set_name(scene_name);
 
 	active_scene->unserialize_json(obj);
 
-	EventSystem::instance()->push_event(EventID::SCENE_CHANGE);
+	EventSystem::Instance()->push_event(EventID::SCENE_CHANGE);
 
 }
 
 void SceneManager::load_scene_prefab(std::string scene_name)
 {
-	//if (active_scene)
-	//	save_scene();
-	
 	active_scene->clear_scene();
-	active_scene->set_name(scene_name);
 
-	Json::Value obj = FileManager::load_from_file(scenes_file_path + scene_name);
+	Json::Value obj = FileManager::Instance()->load_from_file(scenes_file_path + scene_name);
+	
+	active_scene->set_name(scene_name);
 	active_scene->unserialize_json(obj);
+
+	EventSystem::Instance()->push_event(EventID::SCENE_CHANGE);
 }
 
 void SceneManager::save_scene(bool save_everything)
 {
 	std::cout << "save_scene("<<active_scene->get_name()<<")\n";
 
-	FileManager::save_to_file_styled(active_scene->serialize_undestroyed_objects(), FileManager::get_save_name() + scenes_file_path + "dont_destroy_on_load_objects.json");
-	FileManager::save_to_file_styled(active_scene->serialize_destroyed_objects(), FileManager::get_save_name() + scenes_file_path + active_scene->get_name());
+	FileManager::Instance()->save_to_file_styled(active_scene->serialize_undestroyed_objects(), 
+		FileManager::Instance()->get_save_name() + scenes_file_path + "dont_destroy_on_load_objects.json");
+	FileManager::Instance()->save_to_file_styled(active_scene->serialize_destroyed_objects(), 
+		FileManager::Instance()->get_save_name() + scenes_file_path + active_scene->get_name());
 
 	if (save_everything)
 		active_scene->clear_scene(true);
@@ -84,7 +84,8 @@ void SceneManager::save_scene(bool save_everything)
 
 void SceneManager::save_scene(Scene* scene)
 {
-	FileManager::save_to_file_styled(scene->serialize_json(), FileManager::get_save_name() + scenes_file_path + scene->get_name());
+	FileManager::Instance()->save_to_file_styled(scene->serialize_json(), 
+		FileManager::Instance()->get_save_name() + scenes_file_path + scene->get_name());
 }
 
 void SceneManager::clear_active_scene()
@@ -94,14 +95,14 @@ void SceneManager::clear_active_scene()
 
 void SceneManager::save_scene_prefab(Scene* scene)
 {
-	FileManager::save_to_file_styled(scene->serialize_json(), scenes_file_path + scene->get_name());
+	FileManager::Instance()->save_to_file_styled(scene->serialize_json(), scenes_file_path + scene->get_name());
 }
 
 void SceneManager::instantiate_gameobject(GameObject* game_object)
 {
 	if (!game_object)
 		return;
-	EventSystem::instance()->push_event(EventID::GAMEOBJECT_INSTANTIATE, static_cast<void*>(game_object));
+	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_INSTANTIATE, static_cast<void*>(game_object));
 }
 
 void SceneManager::instantiate_gameobject_on_load(GameObject* game_object)
@@ -114,7 +115,7 @@ void SceneManager::destroy_gameobject(GameObject* game_object)
 	if (game_object == nullptr)
 		return;
 
-	EventSystem::instance()->push_event(EventID::GAMEOBJECT_DESTROY, static_cast<void*>(game_object));
+	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_DESTROY, static_cast<void*>(game_object));
 
 }
 
@@ -152,6 +153,29 @@ std::vector<GameObject*> SceneManager::find_all_with_tag(Tag tag, GameObject* ob
 
 	return objects;
 }
+SceneManager::SceneManager()
+{
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_DESTROY_, this);
+}
+
+void SceneManager::handle_event(Event* event)
+{
+	switch (event->get_event_id())
+	{
+	case EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_ :
+		init(static_cast<Scene*>(event->get_parameter()));
+		break;
+	case EventID::_SYSTEM_SCENEMANAGER_DESTROY_:
+		destroy();
+		break;
+	case EventID::_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_:
+		clear_active_scene();
+		break;
+	}
+}
+
 template <typename T> static  GameObject* SceneManager::find_of_type(GameObject* object_to_ignore)
 {
 	std::vector<GameObject*> objects = active_scene->get_objects();
@@ -164,7 +188,7 @@ template <typename T> static std::vector<GameObject*> SceneManager::find_all_of_
 	std::vector<GameObject*> objects = active_scene->get_objects();
 	objects.erase(
 		std::remove_if(
-			objects.begin(),
+			objects.begin(), 
 			objects.end(),
 			[](GameObject* const& p) { return !p->has_component<T>(); }
 		),

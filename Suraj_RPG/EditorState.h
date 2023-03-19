@@ -7,7 +7,8 @@ class PauseMenu;
 class TilemapComponent;
 class GameObject;
 class PrefabEditor;
-class SceneEditor;
+class SceneEditorView;
+class Scene;
 
 class EditorState :
     public State
@@ -89,7 +90,9 @@ private:
     //TilemapComponent* tilemap;
     //GameObject* tilemap_go;
 
-
+    SceneEditorView* editor_view;
+    Scene* active_scene;
+    std::string active_scene_name;
 
 };
 

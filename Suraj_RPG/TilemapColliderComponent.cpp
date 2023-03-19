@@ -38,7 +38,7 @@ bool TilemapColliderComponent::intersects(const FloatConvex collider, Global::La
 			continue;
 		for (int i = 0; i < colliders[h].size(); i++)
 		{
-			if (FloatConvex::intersection(colliders[h][i], collider) != Vector2f::infinity())
+			if (FloatConvex::Intersection(colliders[h][i], collider) != Vector2f::Infinity())
 				return true;
 		}
 	}
@@ -90,7 +90,7 @@ FloatConvex TilemapColliderComponent::helper(int x, int y, int z, std::vector<st
 			if (map[x - 1][y][z]->get_collision())
 			{
 				map[x][y][z] = nullptr;
-				FloatConvex::combine_shapes(f, helper(x-1, y, z, map));
+				FloatConvex::CombineShapes(f, helper(x-1, y, z, map));
 			}
 		}
 	}
@@ -101,7 +101,7 @@ FloatConvex TilemapColliderComponent::helper(int x, int y, int z, std::vector<st
 			if (map[x][y + 1][z]->get_collision())
 			{
 				map[x][y+1][z] = nullptr;
-				FloatConvex::combine_shapes(f, helper(x, y+1, z, map));
+				FloatConvex::CombineShapes(f, helper(x, y+1, z, map));
 			}
 		}
 	}
@@ -112,7 +112,7 @@ FloatConvex TilemapColliderComponent::helper(int x, int y, int z, std::vector<st
 			if (map[x + 1][y][z]->get_collision())
 			{
 				map[x+1][y][z] = nullptr;
-				FloatConvex::combine_shapes(f, helper(x+1, y, z, map));
+				FloatConvex::CombineShapes(f, helper(x+1, y, z, map));
 			}
 		}
 	}
@@ -123,7 +123,7 @@ FloatConvex TilemapColliderComponent::helper(int x, int y, int z, std::vector<st
 			if (map[x][y - 1][z]->get_collision())
 			{
 				map[x][y - 1][z] = nullptr;
-				FloatConvex::combine_shapes(f, helper(x, y - 1, z, map));
+				FloatConvex::CombineShapes(f, helper(x, y - 1, z, map));
 			}
 		}
 	}

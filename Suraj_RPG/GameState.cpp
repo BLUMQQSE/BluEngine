@@ -4,20 +4,12 @@
 #include "Input.h"
 #include "Debug.h"
 #include "Gui.h"
-#include "Physics.h"
-#include "GameObject.h"
 #include "Scene.h"
 #include "GameClock.h"
 #include "PauseMenu.h"
 #include "ParticleSystem.h"
 #include "SceneManager.h"
 #include "FileManager.h"
-
-#include "SpriteComponent.h"
-#include "AnimationComponent.h"
-#include "RigidbodyComponent.h"
-#include "BoxColliderComponent.h"
-#include "PlayerController.h"
 #include "GameEditorView.h"
 
 namespace bm98
@@ -30,18 +22,21 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 {
 	state_name = "Game_State";
 
-	FileManager::set_save_name("Saves/" +game_save_name + "/");
+	FileManager::Instance()->set_save_name("Saves/" +game_save_name + "/");
 
-	unserialize_json(FileManager::load_from_file(FileManager::get_save_name() + "gamestate.json"));
+	unserialize_json(FileManager::Instance()->load_from_file(
+		FileManager::Instance()->get_save_name() + "gamestate.json"));
 
 	active_scene = new Scene(active_scene_name);
 
-	SceneManager::init(active_scene);
-	SceneManager::load_scene(active_scene_name);
+	//SceneManager::Instance()->init(active_scene);
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, active_scene);
+	SceneManager::Instance()->load_scene(active_scene_name);
 	//load in dont destroy objects on load
 	// 
 	std::string n = active_scene->get_name();
-	active_scene->unserialize_json(FileManager::load_from_file(FileManager::get_save_name() + "Data/Scenes/dont_destroy_on_load_objects.json"));
+	active_scene->unserialize_json(FileManager::Instance()->load_from_file(FileManager::Instance()->get_save_name()
+		+ "Data/Scenes/dont_destroy_on_load_objects.json"));
 	active_scene->set_name(n);
 
 	active_scene->init();
@@ -71,23 +66,24 @@ void GameState::init_state()
 void GameState::on_end_state()
 {
 	Debug::Log("Will now clean up game state on exit");
-	SceneManager::save_scene(true); 
-	FileManager::save_to_file_styled(serialize_json(), FileManager::get_save_name()+"gamestate.json");
-	SceneManager::destroy();
-
+	SceneManager::Instance()->save_scene(true);
+	FileManager::Instance()->save_to_file_styled(serialize_json(),
+		FileManager::Instance()->get_save_name()+"gamestate.json");
+	//SceneManager::Instance()->destroy();
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_DESTROY_);
 	State::on_end_state();
 }
 
 void GameState::update_input()
 {
-	if (Input::get_action_down("TILDE"))
-		editor_view->toggle_editor(GameEditorView::EditorPanel::ALL);
+	if (Input::Instance()->get_action_down("TILDE"))
+		editor_view->toggle_editor(EditorPanel::ALL);
 
-	if (Input::get_action_down("ESCAPE"))
+	if (Input::Instance()->get_action_down("ESCAPE"))
 	{
 		isRequestingQuit = true;
 	}
-	if (Input::get_action_down("MENU"))
+	if (Input::Instance()->get_action_down("MENU"))
 	{
 		if (!paused) 
 			pause_state();
@@ -157,7 +153,7 @@ void GameState::render()
 Json::Value GameState::serialize_json()
 {
 	Json::Value obj;
-	obj["active-scene-name"] = SceneManager::get_active_scene_name();
+	obj["active-scene-name"] = SceneManager::Instance()->get_active_scene_name();
 	return obj;
 }
 
@@ -165,9 +161,9 @@ void GameState::unserialize_json(Json::Value obj)
 {
 	if (obj == Json::Value::null)
 	{
-		active_scene_name = SceneManager::get_default_scene();
+		active_scene_name = SceneManager::Instance()->get_default_scene();
 
-		FileManager::save_to_file_styled(serialize_json(), FileManager::get_save_name() + "/gamestate.json");
+		FileManager::Instance()->save_to_file_styled(serialize_json(), FileManager::Instance()->get_save_name() + "/gamestate.json");
 
 		return;
 	}

@@ -3,16 +3,9 @@
 #include "Collisions.h"
 #include "GameObject.h"
 #include "Tile.h"
-#include "Math.h"
-#include "CapsuleColliderComponent.h"
 #include "TilemapColliderComponent.h"
 namespace bm98::core
 {
-std::vector<std::vector<std::pair<GameObject*, Physics::CollisionState>>> Physics::objects;
-
-bool Physics::collision_matrix[(int)(Layer::_LAST_DONT_REMOVE)][(int)(Layer::_LAST_DONT_REMOVE)];
-bool Physics::triggers_acknowledge_colliders = true;
-
 void Physics::init()
 {
 	init_matrix();
@@ -84,6 +77,7 @@ void Physics::fixed_update()
 		{
 			if (rel.size() != 0)
 			{
+				// Objects are related, so skip comparing
 				if (std::find(rel.begin(), rel.end(), objects[i][x].first) != rel.end())
 				{
 					continue;
@@ -100,7 +94,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 {
 	if (distance == INFINITY)
 		distance = 10000.0f;
-	FloatConvex ray = FloatConvex::line(origin, origin + direction.get_normalized() * distance, 3);
+	FloatConvex ray = FloatConvex::Line(origin, origin + direction.get_normalized() * distance, 3);
 	ray.setFillColor(sf::Color::Cyan);
 	bool hit_something = false;
 	std::vector<GameObject*> rel = ignore->get_all_relatives();
@@ -122,23 +116,23 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 				continue;
 		
 		// TODO: change later to return distance from intersection point between origin and contact with collider
-		if (Vector2f::sqr_distance(origin, objects[i][0].first->get_world_position())
+		if (Vector2f::SqrDistance(origin, objects[i][0].first->get_world_position())
 			< hit->distance * hit->distance)
 		{
 			if (dynamic_cast<TilemapColliderComponent*>(c))
 			{
 				if (dynamic_cast<TilemapColliderComponent*>(c)->intersects(ray, mask))
 				{
-					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_world_position());
+					hit->distance = Vector2f::Distance(origin, objects[i][0].first->get_world_position());
 					hit_something = true;
 					hit->collider = c;
 				}
 			}
 			else
 			{
-				if (FloatConvex::intersection(ray, c->get_collider_bounds()) != Vector2f::infinity())
+				if (FloatConvex::Intersection(ray, c->get_collider_bounds()) != Vector2f::Infinity())
 				{
-					hit->distance = Vector2f::distance(origin, objects[i][0].first->get_world_position());
+					hit->distance = Vector2f::Distance(origin, objects[i][0].first->get_world_position());
 					hit_something = true;
 					hit->collider = c;
 				}
@@ -146,7 +140,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 		}
 	}
 
-	Renderer::add_gizmo(ray);
+	Renderer::Instance()->add_gizmo(ray);
 	return hit_something;
 }
 
@@ -154,7 +148,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 int Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore, std::vector<ColliderComponent*> collisions)
 {
 
-	FloatConvex circle = FloatConvex::circle(pos, radius, 10);
+	FloatConvex circle = FloatConvex::Circle(pos, radius, 10);
 	circle.setFillColor(sf::Color::Transparent);
 	circle.setOutlineColor(sf::Color::Cyan);
 	circle.setOutlineThickness(2);
@@ -187,15 +181,21 @@ int Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, G
 		}
 		else
 		{
-			if (FloatConvex::intersection(circle, c->get_collider_bounds()) != Vector2f::infinity())
+			if (FloatConvex::Intersection(circle, c->get_collider_bounds()) != Vector2f::Infinity())
 			{
 				collisions.push_back(c);
 			}
 		}
 
 	}
-	Renderer::add_gizmo(circle);
+	Renderer::Instance()->add_gizmo(circle);
 	return collisions.size();
+}
+
+Physics::Physics()
+{
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_PHYSICS_INITIALIZE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_, this);
 }
 
 void Physics::init_matrix()
@@ -220,30 +220,46 @@ void Physics::handle_collision(std::pair<GameObject*, CollisionState>& a,
 
 	update_collision_state(a, b);
 
-
-
 	if (!a.first->is_active() || !b.first->is_active())
-		return;
-
-	if (!a.first->has_component<BoxColliderComponent>() && !a.first->has_component<CapsuleColliderComponent>() ||
-		!b.first->has_component<BoxColliderComponent>() && !b.first->has_component<CapsuleColliderComponent>())
 		return;
 
 	ColliderComponent* a_collider = a.first->get_component_of_type<ColliderComponent>();
 	ColliderComponent* b_collider = b.first->get_component_of_type<ColliderComponent>();
 
-	RigidbodyComponent* a_rigid = &a.first->get_component<RigidbodyComponent>();
-	RigidbodyComponent* b_rigid = &b.first->get_component<RigidbodyComponent>();
-
+	if (!a_collider || !b_collider)
+		return;
 	if (a_collider->is_trigger() && b_collider->is_trigger())
 		return;
 	if (!a_collider->is_active() || !b_collider->is_active())
 		return;
 
-	Vector2f collision_overlap = FloatConvex::intersection(a_collider->get_collider_bounds(), b_collider->get_collider_bounds());
+	GameObject* a_rigid_gameobject = a.first;
+	GameObject* b_rigid_gameobject = b.first;
+	
+	while (a_rigid_gameobject->get_parent())
+	{
+		if (a_rigid_gameobject->has_component<RigidbodyComponent>())
+			break;
 
+		a_rigid_gameobject = a_rigid_gameobject->get_parent();
+	}
+	while (b_rigid_gameobject->get_parent())
+	{
+		if (b_rigid_gameobject->has_component<RigidbodyComponent>())
+			break;
+
+		b_rigid_gameobject = b_rigid_gameobject->get_parent();
+	}
+
+	RigidbodyComponent* a_rigid = &a_rigid_gameobject->get_component<RigidbodyComponent>();
+	RigidbodyComponent* b_rigid = &b_rigid_gameobject->get_component<RigidbodyComponent>();
+	if (!a_rigid || !b_rigid)
+		return;
+
+	Vector2f collision_overlap = FloatConvex::Intersection(a_collider->get_collider_bounds(), b_collider->get_collider_bounds());
+	
 	// Collision does not exist this update, check if a collider has exited and return
-	if (collision_overlap == Vector2f::infinity())
+	if (collision_overlap == Vector2f::Infinity())
 	{
 		if (a.second == CollisionState::TRIGGER)
 		{
@@ -270,11 +286,28 @@ void Physics::handle_collision(std::pair<GameObject*, CollisionState>& a,
 		return;
 	}
 
+	float a_velocity_abs = a_rigid->get_velocity().sqr_magnitude();
+	float b_velocity_abs = b_rigid->get_velocity().sqr_magnitude();
+
+	float total_velocity = a_velocity_abs + b_velocity_abs;
+
+	if (total_velocity == 0)
+		return;
+
+	float a_velocity_percent = a_velocity_abs / total_velocity;
+	float b_velocity_percent = 1 - a_velocity_percent;
+
 	// a: uses collision_overlap as positive
 	// b: uses collision_overlap as negative
-	
+	Vector2f a_movement = collision_overlap * a_velocity_percent;
+	Vector2f b_movement = -collision_overlap * b_velocity_percent;
 
-	
+	a_rigid_gameobject->move(a_movement);
+	b_rigid_gameobject->move(b_movement);
+
+	a_rigid->halt(-collision_overlap.get_normalized());
+	b_rigid->halt(collision_overlap.get_normalized());
+
 }
 
 
@@ -312,6 +345,18 @@ void Physics::update_collision_state(std::pair<GameObject*, CollisionState>& a, 
 		b.second = CollisionState::NOTHING;
 		break;
 	default:
+		break;
+	}
+}
+void Physics::handle_event(Event* event)
+{
+	switch (event->get_event_id())
+	{
+	case EventID::_SYSTEM_PHYSICS_INITIALIZE_:
+		init();
+		break;
+	case EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_:
+		fixed_update();
 		break;
 	}
 }

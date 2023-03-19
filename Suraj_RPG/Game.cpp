@@ -10,6 +10,7 @@
 #include "Debug.h"
 #include <windows.h>
 #include "EventSystem.h"
+#include "SceneManager.h"
 namespace bm98::core
 {
 
@@ -17,31 +18,35 @@ GameSettings Game::game_settings;
 
 Game::Game()
 {
-    //restart_on_launch = true;
-    //file_path = "Data/game.json";
-    unserialize_json(FileManager::load_from_file("Data/game.json"));
+    init_singletons();
+
+    unserialize_json(FileManager::Instance()->load_from_file("Data/game.json"));
 
     init_variables();
     init_graphics_settings();
     init_window();
 
-    ResourceManager::load_resources();
-    Renderer::init(window);
-    Input::init(window);
-    Physics::init();
+
+    // WISH I could figure out issue with this call
+    //EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_INITIALIZE_, static_cast<void*>(window));
+    Renderer::Instance()->init(window);
+
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_RESOURCEMANAGER_LOAD_RESOURCES_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_INITIALIZE_, static_cast<void*>(window));
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_INITIALIZE_);
+
     Debug::init();
 
-
     //Set up input
-    Input::load_supported_keybinds_from_file("Config/supported_keys.ini");
-    Input::load_keybinds_from_file("Main_Menu_State", "Config/mainmenustate_keybinds.ini");
-    Input::load_keybinds_from_file("Editor_State", "Config/editorstate_keybinds.ini");
-    Input::load_keybinds_from_file("Game_State", "Config/gamestate_keybinds.ini");
-    Input::load_keybinds_from_file("Settings_State", "Config/settingsstate_keybinds.ini");
+    Input::Instance()->load_supported_keybinds_from_file("Config/supported_keys.ini");
+    Input::Instance()->load_keybinds_from_file("Main_Menu_State", "Config/mainmenustate_keybinds.ini");
+    Input::Instance()->load_keybinds_from_file("Editor_State", "Config/editorstate_keybinds.ini");
+    Input::Instance()->load_keybinds_from_file("Game_State", "Config/gamestate_keybinds.ini");
+    Input::Instance()->load_keybinds_from_file("Settings_State", "Config/settingsstate_keybinds.ini");
     
-    Input::load_keybinds_from_file("Dev_Keybinds", "Config/dev_keybinds.ini");
+    Input::Instance()->load_keybinds_from_file("Dev_Keybinds", "Config/dev_keybinds.ini");
 
-    Input::change_keybinds_state("Main_Menu_State");
+    Input::Instance()->change_keybinds_state("Main_Menu_State");
 
     init_states();
 
@@ -57,7 +62,7 @@ Game::~Game()
     }
 
     delete window;
-    FileManager::save_to_file_styled(serialize_json(), "Data/game.json");
+    FileManager::Instance()->save_to_file_styled(serialize_json(), "Data/game.json");
 }
 
 void Game::run()
@@ -91,12 +96,12 @@ void Game::update_sfml_events()
         }
         if (sfevent.type == sf::Event::MouseWheelMoved)
         {
-            Input::update_mouse_scroll(sfevent.mouseWheel.delta);
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_SCROLL_, static_cast<void*>(&sfevent.mouseWheel.delta));
         }
 
         if (sfevent.type == sf::Event::GainedFocus)
             if(states.size() > 0)
-                Input::change_keybinds_state(states.top()->get_state_name());
+                Input::Instance()->change_keybinds_state(states.top()->get_state_name());
         
     }
 
@@ -104,31 +109,27 @@ void Game::update_sfml_events()
 
 void Game::update_delta_time()
 {
-    Time::update_delta(deltaClock.restart().asSeconds());
-    
-    //std::cout << Time::instance()->delta_time() << "\n";
-
-  //  float t = deltaClock.restart().asSeconds();
-    //EventSystem::instance()->push_event(EventID::_SYSTEM_UPDATE_INPUT_,
-      //  static_cast<void*>(&t));
+    float dt = deltaClock.restart().asSeconds();
+    // Update delta time in Time class
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_, static_cast<void*>(&dt));
     
     if (!states.empty())
     {
         
-        if (Time::fixed_delta_time() >= .01f)
+        if (Time::Instance()->fixed_delta_time() >= .01f)
         {
             states.top()->fixed_update();
-            Physics::fixed_update();
-            Renderer::fixed_update();
-            Time::reset_fixed_delta();
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_FIXED_);
         }
         else
         {
-            fixed_delta_timer += Time::delta_time();
+            fixed_delta_timer += Time::Instance()->delta_time();
         }
     }
-
-    Time::apply_time_scale();
+    // Apply time scale in Time class
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_APPLY_SCALE_);
     if (fps_averager == 1500)
     {
         fps_averager = 0; 
@@ -145,7 +146,7 @@ void Game::update_delta_time()
     else
     {
         fps_averager++;
-        fps_col += 1000 / (Time::delta_time() * 1000);
+        fps_col += 1000 / (Time::Instance()->delta_time() * 1000);
     }
 }
 
@@ -153,16 +154,16 @@ void Game::update_delta_time()
 void Game::update()
 {
     update_sfml_events();
-    Input::update();
-    // Process all events in system
-    EventSystem::instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_);
+
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
     if (!states.empty())
     {
         
         states.top()->update();
         states.top()->late_update();
 
-        Input::late_update();
+        EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_LATE_UPDATE_);
 
         if (states.top()->get_quit())
         {
@@ -173,9 +174,10 @@ void Game::update()
         if (states.size() != state_count && !states.empty())
         {
             state_count = (int)states.size();
-            Input::change_keybinds_state(states.top()->get_state_name());
+            Input::Instance()->change_keybinds_state(states.top()->get_state_name());
             states.top()->init_state();
-            Time::reset_time_since_state_change();
+            // Reset time since state has changed in game
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_);
         }
 
     }
@@ -195,10 +197,22 @@ void Game::render()
     if (!states.empty())
         states.top()->render();
    
-    Renderer::render();
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_RENDER_);
 
     window->display();
 
+}
+
+void Game::init_singletons()
+{
+    Input::Instance();
+    Renderer::Instance();
+    SceneManager::Instance();
+    EventSystem::Instance();
+    FileManager::Instance();
+    Time::Instance();
+    ResourceManager::Instance();
+    Physics::Instance();
 }
 
 void Game::init_variables()
@@ -251,7 +265,6 @@ void Game::end_application()
         delete states.top();
         states.pop();
     }
-
     successful_shutdown = true;
     std::cout << "Shutting down the game";
 }
@@ -262,13 +275,15 @@ Json::Value Game::serialize_json()
 {
     Json::Value obj;
 
-    obj["Time"]["total-real-time"] = Time::total_real_time();
+    obj["Time"]["total-real-time"] = Time::Instance()->total_real_time();
 
     return obj;
 }
 void Game::unserialize_json(Json::Value obj)
 {
-    Time::init(obj["Time"]["total-real-time"].asFloat());
+    float t = obj["Time"]["total-real-time"].asFloat();
+    // Initialize time in Time class
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_INITIALIZE_, static_cast<void*>(&t));
 }
 
 }

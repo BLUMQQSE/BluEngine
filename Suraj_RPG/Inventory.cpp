@@ -53,7 +53,7 @@ void Inventory::unserialize_json(Json::Value obj)
 		int i = item["index"].asInt64();
 		content[i].current_capacity = item["current-capacity"].asInt64();
 		if(content[i].current_capacity > 0)
-			content[i].item = *dynamic_cast<ItemData*>(core::ResourceManager::get_data_asset(item["item"].asString()));
+			content[i].item = *dynamic_cast<ItemData*>(core::ResourceManager::Instance()->get_data_asset(item["item"].asString()));
 		
 	}
 }

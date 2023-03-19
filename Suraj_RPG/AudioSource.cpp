@@ -96,7 +96,7 @@ Json::Value AudioSource::serialize_json()
 void AudioSource::unserialize_json(Json::Value obj)
 {
 	current_audio_clip = obj["current-audio-clip"].asString();
-	sound.setBuffer(ResourceManager::get_sound_buffer(current_audio_clip));
+	sound.setBuffer(ResourceManager::Instance()->get_sound_buffer(current_audio_clip));
 }
 
 void AudioSource::set_active(bool active)
@@ -114,15 +114,15 @@ void AudioSource::set_active(bool active)
 
 void AudioSource::set_sound_attributes()
 {
-	if (!ResourceManager::has_sound_buffer(current_audio_clip))
+	if (!ResourceManager::Instance()->has_sound_buffer(current_audio_clip))
 		return;
 
-	sound.setBuffer(ResourceManager::get_sound_buffer(current_audio_clip));
+	sound.setBuffer(ResourceManager::Instance()->get_sound_buffer(current_audio_clip));
 	std::string sound_data = current_audio_clip.substr(0, current_audio_clip.find_last_of(".")).append(".json");
 
-	if (ResourceManager::has_sound_data(sound_data))
+	if (ResourceManager::Instance()->has_sound_data(sound_data))
 	{
-		Json::Value obj = ResourceManager::get_sound_data(sound_data);
+		Json::Value obj = ResourceManager::Instance()->get_sound_data(sound_data);
 		if (!obj["attenuation"].isNull())
 			sound.setAttenuation(obj["attenuation"].asFloat() / UNIT_SIZE);
 		else

@@ -29,7 +29,7 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 	{
 		physical_layers[i] = Layer::DEFAULT;
 	}
-	outline = FloatConvex::polygon(Vector2f(0,0),
+	outline = FloatConvex::Polygon(Vector2f(0,0),
 	{Vector2f(0,0), Vector2f(0, height * grid_size), Vector2f(width * grid_size, height * grid_size), Vector2f(width * grid_size, 0)});
 	
 	//this->outline.setPosition(position_x, position_y);
@@ -45,14 +45,14 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 	
 	set_sorting_layer(SortingLayer::UI);
 	set_z_order(0);
-	Renderer::add(Renderer::RenderObject(&outline, this));
+	Renderer::Instance()->add(Renderer::RenderObject(&outline, this));
 
 	update_tilemap_changes();
 }
 
 TilemapComponent::~TilemapComponent()
 {
-	Renderer::remove(&outline);
+	Renderer::Instance()->remove(&outline);
 	clear_map();
 }
 
@@ -205,13 +205,13 @@ void TilemapComponent::set_texture(std::string key)
 
 void TilemapComponent::save_to_json(std::string file_path)
 {
-	FileManager::save_to_file_styled(serialize_json(), file_path);
+	FileManager::Instance()->save_to_file_styled(serialize_json(), file_path);
 }
 
 void TilemapComponent::load_from_json(std::string file_path)
 {
 	load_tile_sheets();
-	Json::Value obj = FileManager::load_from_file(file_path);
+	Json::Value obj = FileManager::Instance()->load_from_file(file_path);
 	unserialize_json(obj);
 
 }
@@ -253,7 +253,7 @@ void TilemapComponent::update_tilemap_changes()
 	// Render Textures
 	for (int i = 0; i < render_sprites.size(); i++)
 	{
-		Renderer::remove(&render_sprites[i]);
+		Renderer::Instance()->remove(&render_sprites[i]);
 		if(render_textures[i])
 			delete render_textures[i];
 	}
@@ -292,7 +292,7 @@ void TilemapComponent::update_tilemap_changes()
 	for (int x = 0; x < render_sprites.size(); x++)
 	{
 		set_z_order(-2, false);
-		Renderer::add(Renderer::RenderObject(&render_sprites[x], get_render(), render_layers[x], get_z_order(), get_view_pointer()));
+		Renderer::Instance()->add(Renderer::RenderObject(&render_sprites[x], get_render(), render_layers[x], get_z_order(), get_view_pointer()));
 	}
 
 

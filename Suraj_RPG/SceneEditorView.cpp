@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Input.h"
-#include "GameEditorView.h"
+#include "SceneEditorView.h"
 #include "SceneManager.h"
 #include "GameObject.h"
 #include "ResourceManager.h"
 namespace bm98
 {
-GameEditorView::GameEditorView()
+SceneEditorView::SceneEditorView()
 {
 	EventSystem::Instance()->subscribe(EventID::SCENE_ADDED_GAMEOBJECT, this);
 	EventSystem::Instance()->subscribe(EventID::SCENE_REMOVED_GAMEOBJECT, this);
@@ -17,22 +17,22 @@ GameEditorView::GameEditorView()
 	init();
 }
 
-GameEditorView::~GameEditorView()
+SceneEditorView::~SceneEditorView()
 {
 	delete heir_panel;
 	delete inspec_panel;
 }
 
-void GameEditorView::init()
+void SceneEditorView::init()
 {
 	heir_panel = new GUI::Panel(0, 0, Renderer::Instance()->get_window_size().x / 6,
 		Renderer::Instance()->get_window_size().y);
-	inspec_panel = new GUI::Panel(Renderer::Instance()->get_window_size().x -
+	inspec_panel = new GUI::Panel(Renderer::Instance()->get_window_size().x - 
 		Renderer::Instance()->get_window_size().x / 6, 0,
 		Renderer::Instance()->get_window_size().x / 6, Renderer::Instance()->get_window_size().y);
 }
 
-void GameEditorView::toggle_editor(EditorPanel panel_to_toggle)
+void SceneEditorView::toggle_editor(EditorPanel panel_to_toggle)
 {
 	switch (panel_to_toggle)
 	{
@@ -65,7 +65,7 @@ void GameEditorView::toggle_editor(EditorPanel panel_to_toggle)
 	}
 }
 
-void GameEditorView::update()
+void SceneEditorView::update()
 {
 	if (heir_active)
 	{
@@ -79,7 +79,7 @@ void GameEditorView::update()
 	}
 }
 
-void GameEditorView::update_sfml(sf::Event sfEvent)
+void SceneEditorView::update_sfml(sf::Event sfEvent)
 {
 	if (heir_active)
 		heir_panel->update_sfml(sfEvent);
@@ -87,7 +87,7 @@ void GameEditorView::update_sfml(sf::Event sfEvent)
 		inspec_panel->update_sfml(sfEvent);
 }
 
-void GameEditorView::handle_event(Event* event)
+void SceneEditorView::handle_event(Event* event)
 {
 	EventID id = event->get_event_id();
 
@@ -110,7 +110,7 @@ void GameEditorView::handle_event(Event* event)
 	}
 }
 
-void GameEditorView::create_heir_panel()
+void SceneEditorView::create_heir_panel()
 {
 	// wipe anything previously on the panel
 	heir_panel->clear();
@@ -130,7 +130,7 @@ void GameEditorView::create_heir_panel()
 			temp = temp->get_parent();
 		}
 
-		GUI::Button* new_button = new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"), 
+		GUI::Button* new_button = new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
 			objs[i]->get_info().name + " " + std::to_string(objs[i]->get_unique_runtime_id()), 12,
 			sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
 			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
@@ -147,7 +147,7 @@ void GameEditorView::create_heir_panel()
 
 }
 
-void GameEditorView::update_heir_panel()
+void SceneEditorView::update_heir_panel()
 {
 	// nothing to update
 	if (objects_in_scene_map.size() == 0)
@@ -177,7 +177,7 @@ void GameEditorView::update_heir_panel()
 					}
 				}
 			}
-			if(gameobject_held)
+			if (gameobject_held)
 				selected_gameobject->set_parent(nullptr);
 		}
 		else
@@ -186,7 +186,7 @@ void GameEditorView::update_heir_panel()
 		}
 	}
 
-	if (gameobject_held == true && !core::Input::Instance()->get_mouse(core::Input::Mouse::LEFT))
+	if (gameobject_held == true && !Input::Instance()->get_mouse(core::Input::Mouse::LEFT))
 	{
 		gameobject_held = false;
 		return;
@@ -199,14 +199,14 @@ void GameEditorView::update_heir_panel()
 			if (ois.first->mouse_in_bounds())
 			{
 				selected_gameobject = ois.second;
-				gameobject_held = true;	
+				gameobject_held = true;
 				create_inspec_panel();
 			}
 		}
 	}
 }
 
-void GameEditorView::create_inspec_panel()
+void SceneEditorView::create_inspec_panel()
 {
 	inspec_panel->clear();
 	variables_in_components.clear();
@@ -227,7 +227,7 @@ void GameEditorView::create_inspec_panel()
 		std::string component_name = typeid(*components[i]).name();
 		component_name = component_name.substr(12);
 
-		inspec_panel->add_element(typeid(*components[i]).name(), create_component_panel(component_panel_height, inspec_panel->get_width(), 
+		inspec_panel->add_element(typeid(*components[i]).name(), create_component_panel(component_panel_height, inspec_panel->get_width(),
 			component_name, selected_gameobject_components[i].second));
 
 		component_panel_height += inspec_panel->get_panel(typeid(*components[i]).name())->get_height();
@@ -235,7 +235,7 @@ void GameEditorView::create_inspec_panel()
 	}
 }
 
-void GameEditorView::update_inspec_panel()
+void SceneEditorView::update_inspec_panel()
 {
 	for (auto& component_panel : variables_in_components)
 	{
@@ -243,13 +243,14 @@ void GameEditorView::update_inspec_panel()
 	}
 }
 
-GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std::string component_name
+GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, std::string component_name
 	, std::vector<Editor::SerializedVar> vars)
 {
 	float height = 0;
 	std::vector<std::pair<std::string, GUI::GUIObject*>> items_in_panel;
 
-	items_in_panel.push_back(std::make_pair("title", new GUI::Label(0, 0, 16, ResourceManager::Instance()->get_font("calibri-regular.ttf"), component_name)));
+	items_in_panel.push_back(std::make_pair("title", new GUI::Label(0, 0, 16,
+		ResourceManager::Instance()->get_font("calibri-regular.ttf"), component_name)));
 	height += 25;
 
 	for (std::size_t i = 0; i < vars.size(); i++)
@@ -271,7 +272,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::Checkbox(150, height, 12)));
-			
+
 			height += 20;
 			break;
 		}
@@ -279,7 +280,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::DropDownList(150, height, 80, 15, 
+			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::DropDownList(150, height, 80, 15,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"),
 				vars[i].extra_data, 0, 12)));
 
@@ -300,11 +301,11 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 		}
 		case Editor::VarType::Vector2i:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 			items_in_panel.push_back(std::make_pair("ix_" + vars[i].name, new GUI::InputBox(110, height, 40, 12, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
-			items_in_panel.push_back(std::make_pair("iy_" + vars[i].name, new GUI::InputBox(170, height, 40, 12, 12,
+			items_in_panel.push_back(std::make_pair("iy_" + vars[i].name, new GUI::InputBox(170, height, 40, 12, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
 
 			height += 20;
@@ -312,7 +313,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 		}
 		case Editor::VarType::FloatConvex:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 			FloatConvex polygon = *static_cast<FloatConvex*>(vars[i].variable);
 			std::cout << polygon.getPointCount() << " points\n";
@@ -331,17 +332,17 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 16, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			
+
 			height += 20;
 			break;
 		}
 		case Editor::VarType::String:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::InputBox(70, height, 140, 12, 12, 
+			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::InputBox(70, height, 140, 12, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
-			
+
 			height += 20;
 			break;
 		}
@@ -354,12 +355,12 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 	{
 		panel->add_element(items_in_panel[i].first, items_in_panel[i].second);
 	}
-	
+
 	variables_in_components.push_back(std::make_pair(panel, vars));
 	return panel;
 }
 
-void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<Editor::SerializedVar>> vars)
+void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<Editor::SerializedVar>> vars)
 {
 	for (std::size_t i = 0; i < vars.second.size(); i++)
 	{
@@ -368,66 +369,60 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 		{
 		case Editor::VarType::Float:
 		{
-			float value = *static_cast<float*>(vars.second[i].variable);
-			std::stringstream s;
-			s << PRECISION << value;
-			dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->set_text(s.str());
+			float value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text_value();			
+			*static_cast<float*>(vars.second[i].variable) = value;
+
 			break;
 		}
 		case Editor::VarType::Bool:
 		{
+			bool value = dynamic_cast<GUI::Checkbox*>(vars.first->get_element(vars.second[i].name))->is_checked();
 
-			bool value = *static_cast<bool*>(vars.second[i].variable);
-			dynamic_cast<GUI::Checkbox*>(vars.first->get_element(vars.second[i].name))->set_checked(value);
+			*static_cast<bool*>(vars.second[i].variable) = value;
 
 			break;
 		}
 		case Editor::VarType::Dropdown:
 		{
-			int value = *static_cast<int*>(vars.second[i].variable);
-			dynamic_cast<GUI::DropDownList*>(vars.first->get_element(vars.second[i].name))->set_selected_index(value);
+			int value = dynamic_cast<GUI::DropDownList*>(vars.first->get_element(vars.second[i].name))->get_selected_index();
+			*static_cast<int*>(vars.second[i].variable) = value;
 
 			break;
 		}
 		case Editor::VarType::Vector2f:
 		{
-			Vector2f vec = *static_cast<Vector2f*>(vars.second[i].variable);
-			std::stringstream s;
-			s << PRECISION << vec.x;
-			dynamic_cast<GUI::InputBox*>(vars.first->get_element("x_" + vars.second[i].name))->set_text(s.str());
-			s.str("");
-			s << PRECISION << vec.y;
-			dynamic_cast<GUI::InputBox*>(vars.first->get_element("y_" + vars.second[i].name))->set_text(s.str());
 
+			float x_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("x_"+vars.second[i].name))->get_text_value();
+			float y_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("y_"+vars.second[i].name))->get_text_value();
+			
+			*static_cast<Vector2f*>(vars.second[i].variable) = Vector2f(x_value, y_value);
 			break;
 		}
 		case Editor::VarType::Vector2i:
 		{
-			Vector2i vec = *static_cast<Vector2i*>(vars.second[i].variable);
-			std::stringstream s;
-			s << PRECISION << vec.x;
-			dynamic_cast<GUI::InputBox*>(vars.first->get_element("ix_" + vars.second[i].name))->set_text(s.str());
-			s.str("");
-			s << PRECISION << vec.y;
-			dynamic_cast<GUI::InputBox*>(vars.first->get_element("iy_" + vars.second[i].name))->set_text(s.str());
+			int x_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("x_" + vars.second[i].name))->get_text_value();
+			int y_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("y_" + vars.second[i].name))->get_text_value();
+
+			*static_cast<Vector2i*>(vars.second[i].variable) = Vector2i(x_value, y_value);
 
 			break;
 		}
 		case Editor::VarType::FloatConvex:
 		{
+
 			FloatConvex poly = *static_cast<FloatConvex*>(vars.second[i].variable);
 			std::vector<Vector2f> model = poly.get_model();
-			std::stringstream s;
+
 			for (std::size_t i = 0; i < model.size(); i++)
 			{
-				s.str("");
-				s << PRECISION << model[i].x;
-				dynamic_cast<GUI::InputBox*>(vars.first->get_element(std::to_string(i)+"_x_" + vars.second[i].name))->set_text(s.str());
-				s.str("");
-				s << PRECISION << model[i].y;
-				dynamic_cast<GUI::InputBox*>(vars.first->get_element(std::to_string(i) + "_y_" + vars.second[i].name))->set_text(s.str());
+				float x_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(std::to_string(i) + "_x_" + vars.second[i].name))->get_text_value();
+				float y_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(std::to_string(i) + "_y_" + vars.second[i].name))->get_text_value();
 
+				poly.setPoint(i, Vector2f(x_value, y_value));
 			}
+
+			*static_cast<FloatConvex*>(vars.second[i].variable) = poly;
+
 			break;
 		}
 		case Editor::VarType::Header:
@@ -436,8 +431,8 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 		}
 		case Editor::VarType::String:
 		{
-			std::string value = *static_cast<std::string*>(vars.second[i].variable);
-			dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->set_text(value);
+			std::string value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text();
+			*static_cast<std::string*>(vars.second[i].variable) = value;
 			break;
 		}
 		}

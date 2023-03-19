@@ -12,7 +12,7 @@ ItemData::ItemData(std::string name)
 {
 	this->name = name;
 	file_path = "Data/DataAssets/Items/";
-	FileManager::load_from_file(file_path + name);
+	FileManager::Instance()->load_from_file(file_path + name);
 }
 
 ItemData::~ItemData()

@@ -34,22 +34,22 @@
 											"y" : 0.0
 										},
 										{
-											"x" : 0.0,
-											"y" : 50.0
-										},
-										{
-											"x" : 20.0,
-											"y" : 50.0
-										},
-										{
 											"x" : 20.0,
 											"y" : 0.0
+										},
+										{
+											"x" : 20.0,
+											"y" : 50.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 50.0
 										}
 									],
 									"point-count" : 4,
 									"position" : 
 									{
-										"x" : 10.0,
+										"x" : -200.0,
 										"y" : 0.0
 									},
 									"rotation" : 0.0,
@@ -85,104 +85,12 @@
 					{
 						"local-position" : 
 						{
-							"x" : 10.0,
+							"x" : -100.0,
 							"y" : 0.0
 						},
 						"position" : 
 						{
-							"x" : 10.0,
-							"y" : 0.0
-						},
-						"rotation" : 0.0
-					}
-				},
-				{
-					"components" : 
-					[
-						{
-							"name" : "class bm98::SpriteComponent",
-							"value" : 
-							{
-								"class bm98::IRenderable" : 
-								{
-									"render" : true,
-									"sorting-layer" : "ACTOR",
-									"z-order" : 1
-								},
-								"sprite-file-path" : "sword.png"
-							}
-						},
-						{
-							"name" : "class bm98::BoxColliderComponent",
-							"value" : 
-							{
-								"active" : true,
-								"collider-bounds" : 
-								{
-									"model" : 
-									[
-										{
-											"x" : 0.0,
-											"y" : 0.0
-										},
-										{
-											"x" : 0.0,
-											"y" : 50.0
-										},
-										{
-											"x" : 20.0,
-											"y" : 50.0
-										},
-										{
-											"x" : 20.0,
-											"y" : 0.0
-										}
-									],
-									"point-count" : 4,
-									"position" : 
-									{
-										"x" : 10.0,
-										"y" : 0.0
-									},
-									"rotation" : 0.0,
-									"shape-type" : "POLYGON"
-								},
-								"collision-check-type" : "DISCRETE",
-								"hitbox-height" : 50.0,
-								"hitbox-offsetX" : 0.0,
-								"hitbox-offsetY" : 0.0,
-								"hitbox-width" : 20.0,
-								"trigger" : false
-							}
-						},
-						{
-							"name" : "class bm98::RigidbodyComponent",
-							"value" : 
-							{
-								"acceleration" : 0.5,
-								"body-type" : "KINEMATIC",
-								"deceleration" : 2.0,
-								"max-velocity" : 7.0,
-								"orientation" : "DOWN"
-							}
-						}
-					],
-					"info" : 
-					{
-						"name" : "Sword",
-						"physics-layer" : "ACTOR",
-						"tag" : "UNTAGGED"
-					},
-					"transform" : 
-					{
-						"local-position" : 
-						{
-							"x" : 10.0,
-							"y" : 0.0
-						},
-						"position" : 
-						{
-							"x" : 10.0,
+							"x" : -200.0,
 							"y" : 0.0
 						},
 						"rotation" : 0.0
@@ -220,7 +128,7 @@
 				},
 				"position" : 
 				{
-					"x" : 0.0,
+					"x" : -100.0,
 					"y" : 0.0
 				},
 				"rotation" : 0.0
@@ -255,16 +163,16 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 0.0,
-									"y" : 20.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 20.0
-								},
-								{
 									"x" : 20.0,
 									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 20.0
 								}
 							],
 							"point-count" : 4,

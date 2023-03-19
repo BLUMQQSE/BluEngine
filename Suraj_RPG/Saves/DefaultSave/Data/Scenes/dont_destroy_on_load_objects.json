@@ -2,58 +2,6 @@
 	"gameobjects" : 
 	[
 		{
-			"children" : 
-			[
-				{
-					"components" : 
-					[
-						{
-							"name" : "class bm98::SpriteComponent",
-							"value" : 
-							{
-								"class bm98::IRenderable" : 
-								{
-									"render" : true,
-									"sorting-layer" : "ACTOR",
-									"z-order" : 11
-								},
-								"sprite-file-path" : "pants.png"
-							}
-						},
-						{
-							"name" : "class bm98::AudioSource",
-							"value" : 
-							{
-								"current-audio-clip" : "footsteps.wav"
-							}
-						},
-						{
-							"name" : "class bm98::ChildAnimationComponent",
-							"value" : null
-						}
-					],
-					"info" : 
-					{
-						"name" : "pants",
-						"physics-layer" : "DEFAULT",
-						"tag" : "UNTAGGED"
-					},
-					"transform" : 
-					{
-						"local-position" : 
-						{
-							"x" : 200.00030517578125,
-							"y" : 0.0
-						},
-						"position" : 
-						{
-							"x" : 292.776611328125,
-							"y" : -343.51223754882812
-						},
-						"rotation" : 0.0
-					}
-				}
-			],
 			"components" : 
 			[
 				{
@@ -88,7 +36,7 @@
 						"body-type" : "KINEMATIC",
 						"deceleration" : 2.0,
 						"max-velocity" : 7.0,
-						"orientation" : "UP"
+						"orientation" : "LEFT"
 					}
 				},
 				{
@@ -105,30 +53,30 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 0.0,
-									"y" : 100.0
-								},
-								{
-									"x" : 50.0,
-									"y" : 100.0
-								},
-								{
-									"x" : 50.0,
+									"x" : 40.0,
 									"y" : 0.0
+								},
+								{
+									"x" : 40.0,
+									"y" : 80.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 80.0
 								}
 							],
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 92.776313781738281,
-								"y" : -343.51223754882812
+								"x" : 311.35818481445312,
+								"y" : 3.0561294555664062
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
 						},
 						"collision-check-type" : "DISCRETE",
 						"hitbox-height" : 100.0,
-						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetX" : 15.0,
 						"hitbox-offsetY" : 0.0,
 						"hitbox-width" : 50.0,
 						"trigger" : false
@@ -158,8 +106,8 @@
 				},
 				"position" : 
 				{
-					"x" : 92.776313781738281,
-					"y" : -343.51223754882812
+					"x" : 296.35818481445312,
+					"y" : 3.0561294555664062
 				},
 				"rotation" : 0.0
 			}
@@ -191,8 +139,8 @@
 				},
 				"position" : 
 				{
-					"x" : 92.776313781738281,
-					"y" : -343.51223754882812
+					"x" : 296.35818481445312,
+					"y" : 3.0561294555664062
 				},
 				"rotation" : 0.0
 			}

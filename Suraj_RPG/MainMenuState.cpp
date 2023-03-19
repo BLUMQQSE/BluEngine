@@ -88,7 +88,7 @@ void MainMenuState::update_input()
 		{
 			std::string file_name = entry.path().string().substr(path.size(), entry.path().string().size() - 1);
 			if (!entry.is_directory())
-				FileManager::save_to_file_styled(FileManager::load_from_file(entry.path().string()), "Saves/DefaultSave/Data/Scenes/" + file_name);
+				FileManager::Instance()->save_to_file_styled(FileManager::Instance()->load_from_file(entry.path().string()), "Saves/DefaultSave/Data/Scenes/" + file_name);
 		}
 		on_end_state();
 		states->push(new GameState(window, states, graphics_settings, "DefaultSave"));
@@ -150,12 +150,12 @@ void MainMenuState::render()
 void MainMenuState::init_variables()
 {
 	background.setSize((sf::Vector2f)window->getSize());
-	background.setTexture(&ResourceManager::get_texture("mainmenu_bg.png"));
+	background.setTexture(&ResourceManager::Instance()->get_texture("mainmenu_bg.png"));
 }
 
 void MainMenuState::init_background()
 {
-	Renderer::add(Renderer::RenderObject(&background, _render, background_layer, z_order));
+	Renderer::Instance()->add(Renderer::RenderObject(&background, _render, background_layer, z_order));
 }
 
 void MainMenuState::init_buttons()

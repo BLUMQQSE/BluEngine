@@ -72,7 +72,7 @@ public:
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 
-	const Vector2f get_velocity() const;
+	Vector2f get_velocity();
 	const float get_max_velocity() const;
 	const BodyType get_body_type() const;
 
@@ -82,12 +82,6 @@ public:
 	void set_deceleration(float deceleration);
 	void set_body_type(BodyType body_type);
 
-	void halt_right();
-	void halt_left();
-	void halt_up();
-	void halt_down();
-	void unhalt();
-
 	//movement states
 
 	const MovementState get_movement_state() const;
@@ -95,7 +89,7 @@ public:
 
 	void apply_acceleration(const float dir_x, const float dir_y);
 
-	
+	void halt(Vector2f dir);
 
 protected:
 	void apply_deceleration();
@@ -108,11 +102,6 @@ private:
 	float max_velocity;
 	float acceleration;
 	float deceleration;
-
-	bool halted_up = false;
-	bool halted_down = false;
-	bool halted_left = false;
-	bool halted_right = false;
 
 	Vector2f velocity;
 

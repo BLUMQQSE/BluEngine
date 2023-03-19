@@ -18,7 +18,7 @@ CameraComponent::~CameraComponent()
 void CameraComponent::init()
 {
 	camera_view.setCenter(game_object->get_world_position());
-	camera_view.setSize(sf::Vector2f(Renderer::get_window_size()));
+	camera_view.setSize(sf::Vector2f(Renderer::Instance()->get_window_size()));
 	//camera_view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
 	camera_view.zoom(.75f);
 	sf::Listener::setPosition(sf::Vector3f(game_object->get_world_position().x, game_object->get_world_position().y, 0));

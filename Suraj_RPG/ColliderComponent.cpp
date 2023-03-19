@@ -47,7 +47,8 @@ void ColliderComponent::unserialize_json(Json::Value obj)
 	offsetX = obj["hitbox-offsetX"].asFloat();
 	offsetY = obj["hitbox-offsetY"].asFloat();
 
-	collider_bounds.unserialize_json(obj["collider_bounds"]);
+	collider_bounds.unserialize_json(obj["collider-bounds"]);
+
 }
 
 #pragma endregion

@@ -15,7 +15,8 @@ using namespace core;
 
 State::State(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings)
 {
-    Renderer::clear();
+    //Renderer::Instance()->clear();
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_CLEAR_);
     this->window = window;
     this->graphics_settings = graphics_settings;
     this->states = states;
@@ -27,12 +28,13 @@ State::State(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSetti
 
 State::~State()
 {
-    Renderer::clear();
+    //Renderer::Instance()->clear();
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_CLEAR_);
 }
 
 void State::on_end_state()
 {
-    Physics::clear_objects();
+    Physics::Instance()->clear_objects();
 }
 
 void State::pause_state()
@@ -81,7 +83,7 @@ std::string State::get_state_name()
 
 void State::init_fonts()
 {
-    font = ResourceManager::get_font("calibri-regular.ttf");
+    font = ResourceManager::Instance()->get_font("calibri-regular.ttf");
 }
 
 void State::init_buttons()

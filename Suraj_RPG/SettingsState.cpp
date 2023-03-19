@@ -13,24 +13,22 @@ using namespace core;
 SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings)
 	: State(window, states, graphics_settings)
 {
-	Renderer::clear();
 	state_name = "Settings_State";
 	init_variables();
 	init_fonts();
 	init_text();
 	init_gui();
 	Debug::init();
-	Renderer::add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
-	Renderer::add(Renderer::RenderObject(&circle, _render, options_layer, z_order));
-	Renderer::add(Renderer::RenderObject(&circle2, _render, options_layer, z_order));
+	Renderer::Instance()->add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
+	Renderer::Instance()->add(Renderer::RenderObject(&circle, _render, options_layer, z_order));
+	Renderer::Instance()->add(Renderer::RenderObject(&square, _render, options_layer, z_order));
 
-	Renderer::add(Renderer::RenderObject(&concave, _render, options_layer, z_order));
+	Renderer::Instance()->add(Renderer::RenderObject(&concave, _render, options_layer, z_order));
 
 }
 
 SettingsState::~SettingsState()
 {
-	Renderer::clear();
 	auto it = this->buttons.begin();
 	for (it = this->buttons.begin(); it != buttons.end(); ++it)
 	{
@@ -61,17 +59,17 @@ void SettingsState::init_variables()
 
 void SettingsState::update_input()
 {
-	float delta = Time::delta_time();
-	if (Input::get_action("W"))
-		circle.move(0, -100 * delta);
-	if (Input::get_action("A"))
-		circle.move(-100 * delta, 0);
-	if (Input::get_action("D"))
-		circle.move(100 * delta, 0);
-	if (Input::get_action("S"))
-		circle.move(0, 100 * delta);
+	float delta = Time::Instance()->delta_time();
+	if (Input::Instance()->get_action("W"))
+		square.move(0, -100 * delta);
+	if (Input::Instance()->get_action("A"))
+		square.move(-100 * delta, 0);
+	if (Input::Instance()->get_action("D"))
+		square.move(100 * delta, 0);
+	if (Input::Instance()->get_action("S"))
+		square.move(0, 100 * delta);
 
-	if (Input::get_mouse_down(Input::Mouse::RIGHT))
+	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT))
 		concave.set_rotation(30);
 
 	if (buttons["BACK"]->is_pressed())
@@ -120,16 +118,17 @@ void SettingsState::update()
 
 void SettingsState::late_update()
 {
-	
+
 }
 
 void SettingsState::fixed_update()
 {
-	Vector2f dif = FloatConvex::intersection(circle, concave);
-	
-	if (dif != Vector2f::infinity())
+	Vector2f dif;
+	dif = FloatConvex::Intersection(square, concave);
+
+	if (dif != Vector2f::Infinity())
 	{
-		circle.move(dif.x, dif.y);
+		square.move(dif.x, dif.y);
 
 		std::cout << "collision\n";
 	}

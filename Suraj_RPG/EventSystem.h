@@ -11,21 +11,62 @@ enum class EventID
 	
 	/// <summary>System event to process all events for the previous frame.</summary>
 	_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_,
-	_SYSTEM_RENDER_,
-	_SYSTEM_UPDATE_TIME_,
-	_SYSTEM_UPDATE_INPUT_,
-	_SYSTEM_LATE_UPDATE_INPUT_,
+
+#pragma region Time
+
+	_SYSTEM_TIME_INITIALIZE_,
+	_SYSTEM_TIME_UPDATE_,
+	_SYSTEM_TIME_UPDATE_FIXED_,
+	_SYSTEM_TIME_APPLY_SCALE_,
+	_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_,
+
+#pragma endregion
+
+#pragma region Input
+
+	_SYSTEM_INPUT_INITIALIZE_,
+	_SYSTEM_INPUT_UPDATE_,
+	_SYSTEM_INPUT_LATE_UPDATE_,
+	_SYSTEM_INPUT_UPDATE_SCROLL_,
+
+#pragma endregion
+
+#pragma region Renderer
+
+	_SYSTEM_RENDERER_INITIALIZE_,
+	_SYSTEM_RENDERER_REFRESH_,
+	_SYSTEM_RENDERER_RENDER_,
+	_SYSTEM_RENDERER_CLEAR_,
+	_SYSTEM_RENDERER_FIXED_UPDATE_,
+
+#pragma endregion
+
+#pragma region ResourceManager
+
+	_SYSTEM_RESOURCEMANAGER_LOAD_RESOURCES_,
+
+#pragma endregion
+
+#pragma region Physics
+
+	_SYSTEM_PHYSICS_INITIALIZE_,
+	_SYSTEM_PHYSICS_FIXED_UPDATE_,
+
+#pragma endregion
+
+#pragma region SceneManager
+
+	_SYSTEM_SCENEMANAGER_INITIALIZE_,
+	_SYSTEM_SCENEMANAGER_DESTROY_,
+	_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_,
+
+#pragma endregion
+
 
 	_SYSTEM_SETTINGS_WINDOW_SIZE_CHANGE_,
 	_SYSTEM_SETTINGS_AUDIO_MASTER_CHANGE_,
 	_SYSTEM_SETTINGS_AUDIO_MUSIC_CHANGE_,
 	_SYSTEM_SETTINGS_AUDIO_SOUND_CHANGE_,
-
-
-	_TIME_INITIALIZE_,
-	_TIME_UPDATE_,
-	_TIME_RESET_SINCE_STATE_CHANGE,
-
 
 
 	_SYSTEM_SHUTDOWN = 999,
@@ -104,7 +145,7 @@ class EventSystem
 {
 public:
 	// Returns instance of the EventSystem
-	static EventSystem* instance()
+	static EventSystem* Instance()
 	{
 		static EventSystem instance;
 		return &instance;

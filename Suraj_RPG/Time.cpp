@@ -3,28 +3,47 @@
 
 namespace bm98::core
 {
-
-float Time::delta = 0.f;
-float Time::time = 0.f;
-float Time::time_scale = 1.f;
-float Time::time_since_state_change_var = 0.f;
-float Time::total_real_delta = 0.f;
-float Time::fixed_delta;
-
-Time::Time()
+Json::Value Time::serialize_json()
 {
+	return Json::Value();
 }
 
-Time::~Time()
+void Time::unserialize_json(Json::Value obj)
 {
+
+}
+
+void Time::handle_event(Event* event)
+{
+	switch (event->get_event_id())
+	{
+	case EventID::_SYSTEM_TIME_INITIALIZE_:
+		Instance()->init(*static_cast<float*>(event->get_parameter()));
+		break;
+	case EventID::_SYSTEM_TIME_APPLY_SCALE_:
+		Instance()->apply_time_scale();
+		break;
+	case EventID::_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_:
+		Instance()->reset_time_since_state_change();
+		break;
+	case EventID::_SYSTEM_TIME_UPDATE_:
+		Instance()->update_delta(*static_cast<float*>(event->get_parameter()));
+		break;
+	case EventID::_SYSTEM_TIME_UPDATE_FIXED_:
+		Instance()->reset_fixed_delta();
+		break;
+
+	}
 }
 
 void Time::init(float total_time)
 {
 	set_real_time(total_time);
+	
+	
 }
 
-void Time::update_delta(const float& dt)
+void Time::update_delta(const float dt)
 {
 	delta = dt;
 	total_real_delta += dt;
@@ -55,37 +74,45 @@ void Time::reset_time_since_state_change()
 
 const float Time::delta_time()
 {
-	return delta;
+	return Instance()->delta;
 }
 
 const float Time::fixed_delta_time()
 {
-	return fixed_delta;
+	return Instance()->fixed_delta;
 }
 
 const float Time::get_time_scale()
 {
-	return time_scale;
+	return Instance()->time_scale;
 }
 
 const float Time::time_since_state_change()
 {
-	return time_since_state_change_var;
+	return Instance()->time_since_state_change_var;
 }
 
 const float Time::time_since_startup()
 {
-	return time;
+	return Instance()->time;
 }
 
 const float Time::total_real_time()
 {
-	return total_real_delta;
+	return Instance()->total_real_delta;
+}
+
+Time::Time()
+{
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_UPDATE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_APPLY_SCALE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_UPDATE_FIXED_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_, this);
 }
 
 void Time::set_real_time(const float d)
 {
-	total_real_delta = d;
+	Instance()->total_real_delta = d;
 }
 
 }

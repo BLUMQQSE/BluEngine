@@ -3,68 +3,6 @@
 #include "Time.h"
 namespace bm98::core
 {
-sf::Vector2i Input::mouse_pos_screen = sf::Vector2i(0, 0);
-sf::Vector2i Input::mouse_pos_window = sf::Vector2i(0, 0);
-sf::Vector2f Input::mouse_pos_view = sf::Vector2f(0, 0);
-
-std::unordered_map<std::string, int> Input::supported_keys;
-std::unordered_map<std::string, int>* Input::current_keybinds;
-std::map<std::string, Input::PressedState> Input::key_states;
-
-Input::PressedState Input::mouse_left = Input::PressedState::UNPRESSED;
-Input::PressedState Input::mouse_right = Input::PressedState::UNPRESSED;
-Input::PressedState Input::mouse_middle = Input::PressedState::UNPRESSED;
-
-float Input::mouse_left_delta;
-float Input::mouse_middle_delta;
-float Input::mouse_right_delta;
-float Input::mouse_scroll_delta;
-bool Input::in_input_box = false;
-
-sf::RenderWindow* Input::window;
-
-std::unordered_map<std::string, std::unordered_map<std::string, int>> Input::keybinds;
-Input::Input()
-{
-    
-}
-
-Input::~Input()
-{
-
-}
-
-void Input::init(sf::RenderWindow* window_ptr)
-{
-    window = window_ptr;
-}
-
-void Input::update()
-{
-    mouse_pos_screen = sf::Mouse::getPosition();
-    mouse_pos_window = sf::Mouse::getPosition(*window);
-    mouse_pos_view = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
-
-    update_mouse_input();
-    update_key_input();
-
-}
-
-void Input::update_mouse_scroll(int scroll_delta)
-{
-    mouse_scroll_delta = scroll_delta;
-}
-
-void Input::late_update()
-{
-    update_mouse_deltas();
-
-    update_mouse_states();
-
-    update_key_states();
-
-    mouse_scroll_delta = 0.f;
-}
 
 sf::Vector2f Input::mouse_position(sf::View* view)
 {
@@ -306,6 +244,15 @@ void Input::set_using_input_box(bool val)
     in_input_box = val;
 }
 
+Input::Input()
+{
+    EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_INITIALIZE_, this);
+    EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_UPDATE_, this);
+    EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_LATE_UPDATE_, this);
+    EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_UPDATE_SCROLL_, this);
+
+}
+
 void Input::update_mouse_input()
 {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -420,7 +367,7 @@ void Input::update_key_states()
 
 void Input::update_mouse_deltas()
 {
-    float delta = Time::delta_time();
+    float delta = Time::Instance()->delta_time();
     if (mouse_left == PressedState::PRESSED_FRAME || mouse_left == PressedState::PRESSED)
         mouse_left_delta += delta;
     else
@@ -438,4 +385,55 @@ void Input::update_mouse_deltas()
         mouse_middle_delta = 0.f;
 
 }
+void Input::handle_event(Event* event)
+{
+    switch (event->get_event_id())
+    {
+    case EventID::_SYSTEM_INPUT_INITIALIZE_:
+        init(static_cast<sf::RenderWindow*>(event->get_parameter()));
+        break;
+    case EventID::_SYSTEM_INPUT_UPDATE_:
+        update();
+        break;
+    case EventID::_SYSTEM_INPUT_LATE_UPDATE_:
+        late_update();
+        break;
+    case EventID::_SYSTEM_INPUT_UPDATE_SCROLL_:
+        update_mouse_scroll(*static_cast<int*>(event->get_parameter()));
+        break;
+    }
+}
+
+void Input::init(sf::RenderWindow* window_ptr)
+{
+    window = window_ptr;
+}
+
+void Input::update()
+{
+    mouse_pos_screen = sf::Mouse::getPosition();
+    mouse_pos_window = sf::Mouse::getPosition(*window);
+    mouse_pos_view = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
+
+    update_mouse_input();
+    update_key_input();
+
+}
+
+void Input::update_mouse_scroll(int scroll_delta)
+{
+    mouse_scroll_delta = scroll_delta;
+}
+
+void Input::late_update()
+{
+    update_mouse_deltas();
+
+    update_mouse_states();
+
+    update_key_states();
+
+    mouse_scroll_delta = 0.f;
+}
+
 }

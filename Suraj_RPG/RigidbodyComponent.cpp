@@ -37,7 +37,7 @@ void RigidbodyComponent::update()
 	update_orientation();
 	// this could be converted to:
 	Vector2f translation = velocity.get_normalized() * max_velocity * 
-		UNIT_SIZE * Time::delta_time();
+		UNIT_SIZE * Time::Instance()->delta_time();
 	game_object->move(translation);
 	
 }
@@ -92,7 +92,7 @@ std::vector<Editor::SerializedVar> RigidbodyComponent::get_editor_values()
 }
 
 
-const Vector2f RigidbodyComponent::get_velocity() const
+Vector2f RigidbodyComponent::get_velocity()
 {
 	return velocity;
 }
@@ -132,38 +132,6 @@ void RigidbodyComponent::set_body_type(BodyType body_type)
 	this->body_type = body_type;
 }
 
-void RigidbodyComponent::halt_right()
-{
-	velocity.x = 0.f;
-	halted_right = true;
-}
-
-void RigidbodyComponent::halt_left()
-{
-	velocity.x = 0.f;
-	halted_left = true;
-}
-
-void RigidbodyComponent::halt_up()
-{
-	velocity.y = 0.f;
-	halted_up = true;
-}
-
-void RigidbodyComponent::halt_down()
-{
-	velocity.y = 0.f;
-	halted_down = true;
-}
-
-void RigidbodyComponent::unhalt()
-{
-	halted_down = false;
-	halted_up = false;
-	halted_left = false;
-	halted_right = false;
-}
-
 const MovementState RigidbodyComponent::get_movement_state() const
 {
 	return current_movement_state;
@@ -177,10 +145,8 @@ const Orientation RigidbodyComponent::get_orientation() const
 void RigidbodyComponent::apply_acceleration(const float dir_x, const float dir_y)
 {
 	//Acceleration
-	if ((!halted_right && dir_x > 0) || (!halted_left && dir_x < 0))
-		velocity.x += (acceleration * UNIT_SIZE) * dir_x * 100;
-	if ((!halted_down && dir_y > 0) || (!halted_up && dir_y < 0))
-		velocity.y += (acceleration * UNIT_SIZE) * dir_y * 100;
+	velocity.x += (acceleration * UNIT_SIZE) * dir_x * 100;
+	velocity.y += (acceleration * UNIT_SIZE) * dir_y * 100;
 
 	if (velocity.x > 0)
 		if (velocity.x > max_velocity * UNIT_SIZE)
@@ -195,6 +161,15 @@ void RigidbodyComponent::apply_acceleration(const float dir_x, const float dir_y
 	if (velocity.y < 0)
 		if (velocity.y < -max_velocity * UNIT_SIZE)
 			velocity.y = -max_velocity * UNIT_SIZE;
+}
+
+void RigidbodyComponent::halt(Vector2f dir)
+{
+	if ((dir.x > 0 && velocity.x > 0) || dir.x < 0 && velocity.x < 0)
+		velocity.x = 0;
+	if ((dir.y > 0 && velocity.y > 0) || dir.y < 0 && velocity.y < 0)
+		velocity.y = 0;
+
 }
 
 void RigidbodyComponent::apply_deceleration()

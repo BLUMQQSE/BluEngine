@@ -10,7 +10,7 @@
 				},
 				{
 					"name" : "class bm98::AudioSource",
-					"value" : 
+					"value" :  
 					{
 						"current-audio-clip" : "footsteps.wav"
 					}
@@ -34,7 +34,7 @@
 					{
 						"acceleration" : 0.5,
 						"body-type" : "KINEMATIC",
-						"deceleration" : 2.0,
+						"deceleration" : 2,
 						"max-velocity" : 7.0,
 						"orientation" : "UP"
 					}
@@ -53,30 +53,30 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 0.0,
-									"y" : 100.0
-								},
-								{
-									"x" : 50.0,
-									"y" : 100.0
-								},
-								{
-									"x" : 50.0,
+									"x" : 40.0,
 									"y" : 0.0
+								},
+								{
+									"x" : 40.0,
+									"y" : 80.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 80.0
 								}
 							],
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 50.0,
-								"y" : -17.926944732666016
+								"x" : 0.0,
+								"y" : 0.0
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
 						},
 						"collision-check-type" : "DISCRETE",
 						"hitbox-height" : 100.0,
-						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetX" : 15.0,
 						"hitbox-offsetY" : 0.0,
 						"hitbox-width" : 50.0,
 						"trigger" : false
@@ -106,8 +106,8 @@
 				},
 				"position" : 
 				{
-					"x" : 50.0,
-					"y" : -17.926944732666016
+					"x" : 0.0,
+					"y" : 0.0
 				},
 				"rotation" : 0.0
 			}

@@ -3,6 +3,7 @@
 #include "IRenderable.h"
 #include <limits>
 #include "Math.h"
+#include "EventSystem.h"
 
 namespace bm98::core
 {
@@ -10,9 +11,16 @@ extern float UNIT_SIZE;
 extern float SCALE;
 
 class Renderer
-	: sf::RenderTarget
+	: sf::RenderTarget, public Listener
 {
 public:
+	// Returns instance of the EventSystem
+	static Renderer* Instance()
+	{
+		static Renderer instance;
+		return &instance;
+	}
+
 	struct RenderObject
 	{
 		RenderObject(sf::Drawable* drawable, bool& render, SortingLayer& sorting_layer,
@@ -24,8 +32,8 @@ public:
 			this->z_order = z_order;
 			this->view = view;
 			this->shader = shader;
-			this->private_entry_key = Renderer::get_id();
-			Renderer::increase_id();
+			this->private_entry_key = Renderer::Instance()->get_id();
+			Renderer::Instance()->Instance()->increase_id();
 		}
 
 		RenderObject(sf::Drawable* drawable, IRenderable* renderable)
@@ -37,8 +45,8 @@ public:
 			this->view = renderable->get_view_pointer();
 			this->shader = renderable->get_shader_pointer();
 			this->drawable = drawable;
-			this->private_entry_key = Renderer::get_id();
-			Renderer::increase_id();
+			this->private_entry_key = Renderer::Instance()->get_id();
+			Renderer::Instance()->increase_id();
 		}
 
 		SortingLayer& sorting_layer;
@@ -62,13 +70,12 @@ public:
 
 
 	};
+	void init(RenderTarget* render_target);
 
-	static void init(RenderTarget* render_target);
-
-	static void add(RenderObject render_object);
-	static void add_gizmo(GizmoObject gizmo);
-	static void remove(sf::Drawable* drawable);
-	static void remove(RenderObject render_object);
+	void add(RenderObject render_object);
+	void add_gizmo(GizmoObject gizmo);
+	void remove(sf::Drawable* drawable);
+	void remove(RenderObject render_object);
 
 	/// <summary>
 	/// Returns true if element is top ui element under the mouse.
@@ -83,29 +90,29 @@ public:
 	/// <summary>
 	/// Updates render objects after a change has been made to its sorting_layer or z_order
 	/// </summary>
-	static void refresh();
+	void refresh();
 
-	static void set_view(sf::View view = window->getDefaultView());
+	void set_view(sf::View view = Instance()->window->getDefaultView());
 	//static const bool& top_ui(const sf::Drawable& drawable);
 	//static void add_tile(RenderObject render_object);
 	// should run once on state change
 
+	sf::Vector2u get_window_size();
 
-	static void render();
-	static void render_gizmos();
-	static void clear();
-
-	static void fixed_update();
-
-	static sf::Vector2u get_window_size();
-
-	static const unsigned& get_id();
-	static void increase_id();
 
 protected:
 
 private:
-	static RenderTarget* window;
+
+	Renderer();
+	~Renderer() { }
+	Renderer(const Renderer& rhs)
+	{
+
+	}
+	Renderer& operator=(const Renderer& rhs) {}
+
+	RenderTarget* window;
 
 	struct cmpStruct
 	{
@@ -121,12 +128,28 @@ private:
 		}
 	};
 
-	static unsigned id;
-	static bool draw_gizmos;
-	static std::set<RenderObject, cmpStruct> render_objects;
-	static std::vector<GizmoObject> gizmos;
+	unsigned id = 0;
+	bool draw_gizmos = true;
+	std::set<RenderObject, cmpStruct> render_objects;
+	std::vector<GizmoObject> gizmos;
 
 	//static sf::Drawable* _top_ui;
+
+
+	// Inherited via RenderTarget
+	virtual sf::Vector2u getSize() const override;
+
+	const unsigned& get_id();
+	void increase_id();
+
+	// Inherited via Listener
+	virtual void handle_event(Event* event) override;
+
+	void render();
+	void render_gizmos();
+	void clear();
+
+	void fixed_update();
 
 };
 

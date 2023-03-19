@@ -24,7 +24,7 @@ BoxColliderComponent::BoxColliderComponent(float offset_x,
 	this->active = true;
 	this->collision_check_type = collision_check_type;
 
-	collider_bounds = FloatConvex::polygon
+	collider_bounds = FloatConvex::Polygon
 	(
 		Vector2f(game_object->get_world_position().x + offsetX,
 			game_object->get_world_position().y + offsetY),
@@ -39,23 +39,23 @@ BoxColliderComponent::BoxColliderComponent(float offset_x,
 
 BoxColliderComponent::~BoxColliderComponent()
 {
-	Renderer::remove(&collider_bounds);
+	Renderer::Instance()->remove(&collider_bounds);
 }
 
 void BoxColliderComponent::init()
 {
-	Renderer::add(Renderer::RenderObject(&collider_bounds, this));
+	Renderer::Instance()->add(Renderer::RenderObject(&collider_bounds, this));
 }
 
 void BoxColliderComponent::awake()
 {	
 	
-	collider_bounds = FloatConvex::polygon
-	(
-		Vector2f(game_object->get_world_position().x + offsetX,
-			game_object->get_world_position().y + offsetY),
-		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
-	);
+	//collider_bounds = FloatConvex::polygon
+	//(
+	//	Vector2f(game_object->get_world_position().x + offsetX,
+	//		game_object->get_world_position().y + offsetY),
+	//	{ {Vector2f(0, 0), Vector2f(width, 0), Vector2f(width, height), Vector2f(0, height)} }
+	//);
 	
 
 	collider_bounds.setFillColor(sf::Color::Transparent);
@@ -66,7 +66,6 @@ void BoxColliderComponent::awake()
 
 void BoxColliderComponent::update()
 {
-	
 }
 
 void BoxColliderComponent::fixed_update()
@@ -146,11 +145,11 @@ void BoxColliderComponent::set_hitbox(float width, float height,
 	this->offsetY = offset_y;
 	this->width = width;
 	this->height = height;
-	collider_bounds = FloatConvex::polygon
+	collider_bounds = FloatConvex::Polygon
 	(
 		Vector2f(game_object->get_world_position().x + offsetX,
 			game_object->get_world_position().y + offsetY),
-		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
+		{ {Vector2f(0, 0), Vector2f(width, 0), Vector2f(width, height), Vector2f(0, height)} }
 	);
 
 	collider_bounds.setFillColor(sf::Color::Transparent);

@@ -18,33 +18,34 @@ public:
 	Vector2f(sf::Vector2f vec);
 	
 	float sqr_magnitude();
+	float magnitude();
+
+	std::string to_string();
 	
-	static Vector2f down();
-	static Vector2f up();
-	static Vector2f left();
-	static Vector2f right();
-	static Vector2f zero();
-	static Vector2f infinity();
+	static Vector2f Down();
+	static Vector2f Up();
+	static Vector2f Left();
+	static Vector2f Right();
+	static Vector2f Zero();
+	static Vector2f Infinity();
 
-	static float distance(sf::Vector2f a, sf::Vector2f b);
-	static float sqr_distance(sf::Vector2f a, sf::Vector2f b);
-	static float dot_product(sf::Vector2f a, sf::Vector2f b);
-	static float cross_product(sf::Vector2f a, sf::Vector2f b);
-
-	static bool equal(sf::Vector2f a, sf::Vector2f b);
+	static float Distance(sf::Vector2f a, sf::Vector2f b);
+	static float SqrDistance(sf::Vector2f a, sf::Vector2f b);
+	static float DotProduct(sf::Vector2f a, sf::Vector2f b);
+	static float CrossProduct(sf::Vector2f a, sf::Vector2f b);
 
 	/// <summary>
 	/// Returns a normalized copy of vector.
 	/// </summary>
 	Vector2f get_normalized();
-	void normalize();
+	static void Normalize(Vector2f& vec);
 
 	/// <summary>
 	/// Returns left normal. Should be used by FloatConvex to get normals
 	/// exiting shape.
 	/// </summary>
-	static Vector2f get_left (Vector2f a);
-	static Vector2f get_right(Vector2f a);
+	static Vector2f GetLeft (Vector2f a);
+	static Vector2f GetRight(Vector2f a);
 
 	bool equals(sf::Vector2f a);
 
@@ -63,16 +64,15 @@ public:
 
 	int sqr_magnitude();
 
-	static Vector2i down();
-	static Vector2i up();
-	static Vector2i left();
-	static Vector2i right();
-	static Vector2i zero();
+	static Vector2i Down();
+	static Vector2i Up();
+	static Vector2i Left();
+	static Vector2i Right();
+	static Vector2i Zero();
 
-	static int distance(sf::Vector2i a, sf::Vector2i b);
-	static int sqr_distance(sf::Vector2i a, sf::Vector2i b);
-	static int dot_product(sf::Vector2i a, sf::Vector2i b);
-	static bool equal(sf::Vector2i a, sf::Vector2i b);
+	static int Distance(sf::Vector2i a, sf::Vector2i b);
+	static int SqrDistance(sf::Vector2i a, sf::Vector2i b);
+	static int DotProduct(sf::Vector2i a, sf::Vector2i b);
 
 	bool equals(sf::Vector2i a);
 
@@ -177,26 +177,26 @@ public:
 	/// Additionally sets the shape to circle, to attempt to optimize
 	/// collision detection with other objects.
 	/// </summary>
-	static FloatConvex circle(sf::Vector2f position, float radius, std::size_t point_count = 20);
+	static FloatConvex Circle(sf::Vector2f position, float radius, std::size_t point_count = 20);
 	/// <summary>
 	/// Creates a circle shape. Model positions are relative to position provided. 
 	/// Additionally sets the shape to capsule, to attempt to optimize
 	/// collision detection with other objects.
 	/// </summary>
-	static FloatConvex capsule(sf::Vector2f position, sf::Vector2f size, Direction direction,
+	static FloatConvex Capsule(sf::Vector2f position, sf::Vector2f size, Direction direction,
 		std::size_t point_count = 20);
 	/// <summary>
 	/// Creates a polygon shape. Model positions are relative to position provided.
 	///  Will contain the least optimized collision detection, and should be avoided when possible.
 	/// </summary>
-	static FloatConvex polygon(sf::Vector2f position, std::vector<Vector2f> model);
+	static FloatConvex Polygon(sf::Vector2f position, std::vector<Vector2f> model);
 	/// <summary>
 	/// Creates a line. Line starts at start and ends at end.
 	/// </summary>
 	/// <param name="start"></param>
 	/// <param name="end"></param>
 	/// <returns></returns>
-	static FloatConvex line(sf::Vector2f start, sf::Vector2f end, float thickness = 0);
+	static FloatConvex Line(sf::Vector2f start, sf::Vector2f end, float thickness = 0);
 
 	/// <summary>
 	/// WORK IN PROGRESS...DOESNT WORK. 
@@ -204,7 +204,7 @@ public:
 	/// <param name="a"></param>
 	/// <param name="b"></param>
 	/// <returns></returns>
-	static FloatConvex combine_shapes(FloatConvex a, FloatConvex b);
+	static FloatConvex CombineShapes(FloatConvex a, FloatConvex b);
 
 	void move(float x, float y);
 	void set_position(sf::Vector2f position);
@@ -214,13 +214,14 @@ public:
 	Vector2f get_center();
 	Vector2f get_model_center();
 	std::vector<Vector2f> get_model();
+	ShapeType get_shape_type();
 
 	/// <summary>
 	/// Determines if two shapes overlap.
 	/// </summary>
 	/// <returns>The minimum penetration vector between the two shapes. This vector is
 	/// a.position - b.position. If no collision, returns Vector2f::infinity().</returns>
-	static Vector2f intersection(FloatConvex a, FloatConvex b);
+	static Vector2f Intersection(FloatConvex a, FloatConvex b);
 
 
 	// Inherited via IData
@@ -240,8 +241,12 @@ private:
 	using ConvexShape::setPosition;
 
 
-	static FloatConvex sort_poly_model(FloatConvex poly);
-	static float get_angle(Vector2f a, Vector2f b, Vector2f c);
+	static void SortPolyModel(FloatConvex& poly);
+	static float GetAngle(Vector2f a, Vector2f b, Vector2f c);
+	static void ProjectVertices(FloatConvex a, Vector2f axis,
+		float& min, float& max);
+
+
 };
 
 }

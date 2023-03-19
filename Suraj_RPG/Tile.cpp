@@ -32,7 +32,7 @@ Tile::~Tile()
 {
 	if (animated_sprite_component)
 	{
-		Renderer::remove(&sprite);
+		Renderer::Instance()->remove(&sprite);
 		delete animated_sprite_component;
 	}
 }
@@ -123,14 +123,14 @@ void Tile::add_animated_sprite_component(std::string source_key, sf::Texture* te
 	animated_sprite_component = new AnimatedSpriteComponent(sprite, *texture_sheet, animation_rect,
 		animation_timer, UNIT_SIZE, UNIT_SIZE);
 
-	Renderer::add(Renderer::RenderObject(&sprite, this));
+	Renderer::Instance()->add(Renderer::RenderObject(&sprite, this));
 }
 
 void Tile::remove_animated_sprite_component()
 {
 	if (animated_sprite_component)
 	{
-		Renderer::remove(&sprite);
+		Renderer::Instance()->remove(&sprite);
 		delete animated_sprite_component;
 		animation_timer = 0;
 	}

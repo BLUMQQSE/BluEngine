@@ -19,7 +19,7 @@ SpriteComponent::SpriteComponent(std::string file_path)
 
 SpriteComponent::~SpriteComponent()
 {
-	Renderer::remove(&sprite);
+	Renderer::Instance()->remove(&sprite);
 }
 
 void SpriteComponent::init()
@@ -30,15 +30,15 @@ void SpriteComponent::init()
 	//	Debug::Log("ERROR::SpriteComponent::COULD NOT LOAD texture_sheet");
 	//	return;
 	//};
-	if (!ResourceManager::has_texture(file_path))
+	if (!ResourceManager::Instance()->has_texture(file_path))
 	{
 		return;
 	}
-	texture_sheet = ResourceManager::get_texture(file_path);
+	texture_sheet = ResourceManager::Instance()->get_texture(file_path);
 
 	sprite.setTexture(texture_sheet);
 	sprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), size));
-	Renderer::add(Renderer::RenderObject(&sprite, this));
+	Renderer::Instance()->add(Renderer::RenderObject(&sprite, this));
 }
 
 void SpriteComponent::update()
@@ -123,9 +123,9 @@ void SpriteComponent::set_sprite(std::string file_path)
 {
 	//if (!this->texture_sheet.loadFromFile(sprite_path + file_path))
 	//	return;
-	if (!ResourceManager::has_texture(file_path))
+	if (!ResourceManager::Instance()->has_texture(file_path))
 		return;
-	this->texture_sheet = ResourceManager::get_texture(file_path);
+	this->texture_sheet = ResourceManager::Instance()->get_texture(file_path);
 
 	this->file_path = file_path;
 	sprite.setTexture(texture_sheet);

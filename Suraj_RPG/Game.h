@@ -70,6 +70,10 @@ private:
 
 	void render();
 
+	/// <summary>
+	/// Initialize singletons so they can subscribe to their events.
+	/// </summary>
+	void init_singletons();
 	void init_variables();
 	void init_graphics_settings();
 	void init_window();
