@@ -4,7 +4,7 @@
 #include "Collisions.h"
 namespace bm98
 {
-/*
+
 class Collider;
 class IInteractable;
 
@@ -16,27 +16,44 @@ class Interactor : public Component
 {
 
 public:
+	inline const bool is_interacting() const { return interacting; }
 
+	/// <summary>
+	/// This method relies on input, and therefor should only be called from an
+	/// update method.
+	/// </summary>
+	void interact();
+	/// <summary>
+	/// This method relies on input, and therefor should only be called from an
+	/// update method.
+	/// </summary>
+	/// <param name="interactable"></param>
+	void interact(IInteractable* interactable);
+	void cancel_interaction();
 
-	virtual void update_interactions() = 0;
+	virtual void fixed_update() override;
 
-	void set_interact(bool i);
-	
-	const bool is_interacting() const;
-
+	/// <summary>
+	/// Should only be called by IInteractable on exit_interaction().
+	/// </summary>
+	void remove_interactable();
 
 protected:
-	float interaction_radius;
-	Global::LayerMask interactable_mask;
+	// number of interactables near
+	int count = 0;
+	float interaction_radius = 0;
+	PhysicsNS::LayerMask interactable_mask;
 	
-	bool interact;
-
 	bool interacting;
-	std::vector<Collider> colliders;
-	Collider current_collider = nullptr;
+
+	IInteractable* potential_interactable = nullptr;
 	IInteractable* current_interactable = nullptr;
+
+	virtual Json::Value serialize_json();
+	virtual void unserialize_json(Json::Value obj);
 	
+	virtual std::vector<Editor::SerializedVar> get_editor_values();
 
 };
-*/
+
 }

@@ -10,7 +10,7 @@ using namespace core;
 
 BoxColliderComponent::BoxColliderComponent()
 {
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 }
 
 BoxColliderComponent::BoxColliderComponent(float offset_x,

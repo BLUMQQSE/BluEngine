@@ -90,7 +90,7 @@ void Physics::fixed_update()
 
 }
 
-bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, float distance, Global::LayerMask mask, RayHit* hit)
+bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, float distance, PhysicsNS::LayerMask mask, RayHit* hit)
 {
 	if (distance == INFINITY)
 		distance = 10000.0f;
@@ -145,9 +145,9 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 }
 
 
-int Physics::OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, GameObject* object_to_ignore, std::vector<ColliderComponent*> collisions)
+int Physics::OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
+	GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions)
 {
-
 	FloatConvex circle = FloatConvex::Circle(pos, radius, 10);
 	circle.setFillColor(sf::Color::Transparent);
 	circle.setOutlineColor(sf::Color::Cyan);
@@ -200,11 +200,12 @@ Physics::Physics()
 
 void Physics::init_matrix()
 {
-	for (int i = 0; i < static_cast<int>(Layer::_LAST_DONT_REMOVE); i++)
+	for (int i = 0; i < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); i++)
 	{
-		for (int x = 0; x < (int)Layer::_LAST_DONT_REMOVE; x++)
+		for (int x = 0; x < (int)PhysicsNS::Layer::_LAST_DONT_REMOVE; x++)
 		{
-			if (i == static_cast<int>(Layer::PHYSICS_IGNORE) || x == static_cast<int>(Layer::PHYSICS_IGNORE))
+			if (i == static_cast<int>(PhysicsNS::Layer::PHYSICS_IGNORE) || x ==
+				static_cast<int>(PhysicsNS::Layer::PHYSICS_IGNORE))
 			{
 				collision_matrix[i][x] = false;
 				continue;
@@ -285,6 +286,9 @@ void Physics::handle_collision(std::pair<GameObject*, CollisionState>& a,
 		}
 		return;
 	}
+
+	if (a_collider->is_trigger() || b_collider->is_trigger())
+		return;
 
 	float a_velocity_abs = a_rigid->get_velocity().sqr_magnitude();
 	float b_velocity_abs = b_rigid->get_velocity().sqr_magnitude();

@@ -56,6 +56,7 @@ GameState::~GameState()
 	delete view;
 	delete active_scene;
 	delete editor_view;
+
 	active_scene = nullptr;
 }
 
@@ -83,14 +84,14 @@ void GameState::update_input()
 	{
 		isRequestingQuit = true;
 	}
-	if (Input::Instance()->get_action_down("MENU"))
-	{
-		if (!paused) 
-			pause_state();
-		else
-			unpause_state();
-		pmenu->set_render(paused);
-	}
+	//if (Input::Instance()->get_action_down("MENU"))
+	//{
+	//	if (!paused) 
+	//		pause_state();
+	//	else
+	//		unpause_state();
+	//	pmenu->set_render(paused);
+	//}
 }
 
 void GameState::pause_state()

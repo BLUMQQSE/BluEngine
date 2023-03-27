@@ -16,7 +16,7 @@ enum class EventID
 
 	_SYSTEM_TIME_INITIALIZE_,
 	_SYSTEM_TIME_UPDATE_,
-	_SYSTEM_TIME_UPDATE_FIXED_,
+	_SYSTEM_TIME_RESET_FIXED_,
 	_SYSTEM_TIME_APPLY_SCALE_,
 	_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_,
 
@@ -72,6 +72,22 @@ enum class EventID
 	_SYSTEM_SHUTDOWN = 999,
 
 #pragma endregion
+
+#pragma region Scripts
+
+	SCRIPTS_LOAD_SCENE,
+	SCRIPTS_SAVE_SCENE,
+
+#pragma endregion
+
+
+#pragma region Interaction
+
+	INTERACTION_INVENTORY_UPDATED,
+	INTERACTION_EXIT_INTERACTION,
+
+#pragma endregion
+
 
 #pragma region Scene
 

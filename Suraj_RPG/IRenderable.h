@@ -15,10 +15,10 @@ public:
 	void set_uniforms(sf::Vector2f light_pos);
 	virtual void set_render(bool render);
 	void set_z_order(char order, bool refresh_renderer = true);
-	void set_sorting_layer(SortingLayer layer, bool refresh_renderer = true);
-	
+	void set_sorting_layer(Sorting::Layer layer, bool refresh_renderer = true);
+
 	bool& get_render();
-	SortingLayer& get_sorting_layer();
+	Sorting::Layer& get_sorting_layer();
 	char& get_z_order();
 	sf::View** get_view_pointer();
 	sf::View* get_view();
@@ -30,7 +30,7 @@ public:
 	virtual void unserialize_json(Json::Value obj) override;
 
 private:
-	SortingLayer sorting_layer = SortingLayer::BACKGROUND;
+	Sorting::Layer sorting_layer = Sorting::Layer::BACKGROUND;
 	char z_order = 0;
 	sf::View* view = nullptr;
 	sf::Shader* shader = nullptr;

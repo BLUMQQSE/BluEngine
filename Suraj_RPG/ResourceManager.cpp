@@ -8,11 +8,12 @@ namespace bm98::core
 
 void ResourceManager::load_resources()
 {
-	iterate_data_asset_directory("Data/DataAssets/");
-	iterate_prefab_directory("Data/Prefabs/");
-	iterate_audio_directory("Resources/Audio/Sounds/");
 	iterate_textures_directory("Resources/Images/");
 	iterate_fonts_directory("Fonts/");
+	iterate_audio_directory("Resources/Audio/Sounds/");
+	iterate_prefab_directory("Data/Prefabs/");
+	iterate_data_asset_directory("Data/DataAssets/");
+	
 }
 
 void ResourceManager::reload()
@@ -113,6 +114,14 @@ bool ResourceManager::has_font(std::string font_file_name)
 	return true;
 }
 
+void ResourceManager::shutdown()
+{
+	for (auto a : asset_data)
+	{
+		delete a.second;
+	}
+}
+
 ResourceManager::ResourceManager()
 {
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RESOURCEMANAGER_LOAD_RESOURCES_, this);
@@ -144,11 +153,13 @@ void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 			if (entry.path().string().find("ItemData"))
 			{
 				asset_data[file_name] = new ItemData();
+				asset_data[file_name]->set_file_name(file_name);
 				asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 			}
 			else
 			{
 				asset_data[file_name] = new DataAsset();
+				asset_data[file_name]->set_file_name(file_name);
 				asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 			}
 			continue;

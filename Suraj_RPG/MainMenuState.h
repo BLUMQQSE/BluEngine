@@ -27,11 +27,12 @@ protected:
 
 private:
     bool _render = true;
-    SortingLayer background_layer = SortingLayer::BACKGROUND;
+    Sorting::Layer background_layer = Sorting::Layer::BACKGROUND;
     char z_order = 0;
     sf::Texture background_texture;
     sf::RectangleShape background;
     std::map<std::string, GUI::Button*> buttons;
+
 
     sf::Shader shader;
     sf::Music music;

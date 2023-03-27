@@ -55,7 +55,7 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 
 	shape.setFillColor(idle_color);
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(id+10, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
@@ -356,7 +356,7 @@ Checkbox::Checkbox(float x, float y, float size)
 
 	checked = false;
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(1, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
@@ -465,7 +465,7 @@ ScrollView::ScrollView(float x, float y, float width, float height, bool vertica
 	if (horizontal)
 		horizontal_handle.setFillColor(sf::Color::Green);
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(0, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&bounds, get_render(), get_sorting_layer(),
 		get_z_order(), &scroll_view));
@@ -627,7 +627,7 @@ TextureSelector::TextureSelector(float x, float y, float width, float height, fl
 
 	//set_view(new sf::View());
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(0, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&container, this));
 	Renderer::Instance()->add(Renderer::RenderObject(&bounds, this));
@@ -685,9 +685,9 @@ sf::IntRect TextureSelector::convert_rect_to_grid(sf::IntRect rect)
 	return converted_rect;
 }
 
-const SortingLayer TextureSelector::get_layer() const
+const Sorting::Layer TextureSelector::get_layer() const
 {
-	return (SortingLayer)layer_selector->get_selected_index();
+	return (Sorting::Layer)layer_selector->get_selected_index();
 }
 
 void TextureSelector::toggle_hidden()
@@ -703,11 +703,11 @@ void TextureSelector::init_buttons(float x, float y)
 void TextureSelector::init_dropdowns(float x, float y, std::vector<std::string> tilesets_names)
 {
 	//std::string list[((int)SortingLayer::UI)] = { "Background", "Item", "Actor", "Effects", "Foreground" };
-	std::vector<std::string> big = Global::layers_to_vector();
+	std::vector<std::string> big = Sorting::ToVector();
 	std::vector<std::string> sub = { big.begin(), big.end() - 1 };
 	layer_selector = new DropDownList(x, y, 120.f, 50.f, font, sub);
 	tile_collection_selector = new DropDownList(x + 130, y, 120.f, 50.f, font, tilesets_names);
-	tile_type_selector = new DropDownList(x + 260, y, 120, 50, font, Global::tiletypes_to_vector());
+	tile_type_selector = new DropDownList(x + 260, y, 120, 50, font, TileNS::ToVector());
 }
 
 void TextureSelector::init_checkboxes(float x, float y, float size)
@@ -908,7 +908,7 @@ InputBox::InputBox(float x, float y, float width, float height, float character_
 		text.setString(text_string.str());
 	}
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(3, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
@@ -991,7 +991,6 @@ void InputBox::set_position(float x, float y)
 
 void InputBox::set_selected(bool sel)
 {
-	
 	selected = sel;
 
 	if (!selected)
@@ -1104,7 +1103,7 @@ Label::Label(float x, float y, float character_size,
 	text_content.setFillColor(color);
 	text_content.setPosition(sf::Vector2f(x, y));
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(3, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&text_content, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
@@ -1145,9 +1144,10 @@ Panel::Panel(float x, float y, float width, float height, sf::Color color)
 	panel_shape.setFillColor(color);
 	panel_shape.setOutlineThickness(1.f);
 	panel_shape.setOutlineColor(sf::Color::Cyan);
+
 	active = false;
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(0, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&panel_shape, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
@@ -1214,6 +1214,13 @@ void Panel::set_render(bool render)
 	IRenderable::set_render(render);
 	for (auto& c : content)
 		c.second->set_render(render);
+}
+
+void Panel::apply_texture(sf::Texture* texture, sf::IntRect rect)
+{
+	panel_shape.setTexture(texture);
+	panel_shape.setTextureRect(rect);
+	panel_shape.setFillColor(sf::Color::White);
 }
 
 void Panel::add_element(std::string key, GUIObject* gui_object)
@@ -1346,7 +1353,7 @@ Slider::Slider(float x, float y, float width, float min_value, float max_value,
 	slider.setOutlineThickness(1.f);
 	slider.setOutlineColor(sf::Color::White);
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&slider_back, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
 	Renderer::Instance()->add(Renderer::RenderObject(&slider, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
 

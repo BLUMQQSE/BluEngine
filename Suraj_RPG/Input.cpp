@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Input.h"
 #include "Time.h"
+#include "Game.h"
 namespace bm98::core
 {
 
@@ -244,6 +245,11 @@ void Input::set_using_input_box(bool val)
     in_input_box = val;
 }
 
+const sf::RenderWindow* Input::get_window() const
+{
+    return window;
+}
+
 Input::Input()
 {
     EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_INITIALIZE_, this);
@@ -332,6 +338,7 @@ void Input::update_key_input()
                 key_states[it.first] = PressedState::UNPRESSED;
         }
     }
+    
 }
 
 void Input::update_mouse_states()
@@ -407,6 +414,7 @@ void Input::handle_event(Event* event)
 void Input::init(sf::RenderWindow* window_ptr)
 {
     window = window_ptr;
+    
 }
 
 void Input::update()

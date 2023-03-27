@@ -11,6 +11,8 @@ public:
 	ChildAnimationComponent();
 	ChildAnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,
 		AnimationComponent& parent_animation_component);
+
+
 	virtual ~ChildAnimationComponent();
 
 	virtual void init() override;

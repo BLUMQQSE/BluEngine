@@ -16,6 +16,7 @@
 #include "FileManager.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "SpriteComponent.h"
 namespace bm98
 {
 using namespace core;
@@ -38,6 +39,12 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	//SceneManager::Instance()->init(active_scene);
 	SceneManager::Instance()->load_scene_prefab("default.json");
 
+	std::vector<GameObject*> obj = SceneManager::Instance()->get_objects_in_scene();
+
+	for (std::size_t i = 0; i < obj.size(); i++)
+		if (obj[i]->has_component<SpriteComponent>())
+			obj[i]->get_component<SpriteComponent>().set_view(scene_view);
+
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("BACK", 500.f, 500.f, "Back");
 	pmenu->add_button("SAVE", 500, 440, "Save");
@@ -46,10 +53,10 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	init_tilemap();
 	init_gui();
 	
-	//texture_selector->toggle_hidden();
+	texture_selector->toggle_hidden();
 
 	tile_modifier.collision = false;
-	tile_modifier.tile_type = TileType::DEFAULT;
+	tile_modifier.tile_type = TileNS::Type::DEFAULT;
 	camera_move_speed = 120;
 
 
@@ -81,16 +88,13 @@ EditorState::~EditorState()
 void EditorState::on_end_state()
 {
 	Debug::Log("Will now clean up editor state on exit");
-	SceneManager::Instance()->save_scene(true);
+	SceneManager::Instance()->save_scene_prefab(active_scene);
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_DESTROY_);
+	State::on_end_state();
 }
 
 void EditorState::update_input()
 {
-	//if (buttons["BACK"]->is_pressed())
-	//{
-	//	isRequestingQuit = true;
-   //}
 	if (Input::Instance()->using_input_box())
 		return;
 
@@ -117,7 +121,6 @@ void EditorState::update_sfml(sf::Event sfEvent)
 
 void EditorState::update()
 {
-	//Debug::mouse_position_display(font);
 	update_input();
 	editor_view->update();
 	if (!paused)
@@ -138,7 +141,7 @@ void EditorState::update()
 		if (Input::Instance()->get_action_down("COLLISION"))
 			tile_modifier.collision = !tile_modifier.collision;
 		if (Input::Instance()->get_action_down("TYPE"))
-			tile_modifier.tile_type = TileType::DAMAGING;
+			tile_modifier.tile_type = TileNS::Type::DAMAGING;
 		
 		update_gui();
 	}
@@ -328,7 +331,7 @@ void EditorState::update_gui()
 			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
 			texture_selector->get_layer(),
 			texture_rect,
-			(TileType)texture_selector->get_tiletype_selector()->get_selected_index(),
+			(TileNS::Type)texture_selector->get_tiletype_selector()->get_selected_index(),
 			texture_selector->get_collision_checkbox()->is_checked(),
 			texture_selector->get_animation_checkbox()->is_checked()
 		);
@@ -377,7 +380,6 @@ void EditorState::init_tilemap()
 	selected_gameobject->init();
 	selected_gameobject->awake();
 	selected_gameobject->start();
-	//selected_gameobject->get_component<TilemapComponent>().set_position(Vector2i(100, 0));
 }
 
 }

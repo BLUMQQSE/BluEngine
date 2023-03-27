@@ -96,7 +96,6 @@ void SceneEditorView::handle_event(Event* event)
 	{
 	case EventID::SCENE_ADDED_GAMEOBJECT:
 		create_heir_panel();
-
 		break;
 	case EventID::SCENE_REMOVED_GAMEOBJECT:
 		create_heir_panel();
@@ -217,8 +216,11 @@ void SceneEditorView::create_inspec_panel()
 
 	for (std::size_t i = 0; i < components.size(); i++)
 	{
-		selected_gameobject_components.push_back(std::make_pair(components[i], components[i]->get_editor_values()));
+		if (components[i]->get_editor_values().size() > 0)
+			selected_gameobject_components.push_back(std::make_pair(components[i], components[i]->get_editor_values()));
+	
 	}
+
 
 
 	int component_panel_height = 0;
@@ -257,6 +259,16 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 	{
 		switch (vars[i].type)
 		{
+		case Editor::VarType::Int:
+		{
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::InputBox(150, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+
+			height += 20;
+			break;
+		}
 		case Editor::VarType::Float:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
@@ -365,8 +377,19 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 	for (std::size_t i = 0; i < vars.second.size(); i++)
 	{
 		// here handle updating for all objects in scene
+
+		if (vars.second[i].variable == nullptr)
+				continue;
+
 		switch (vars.second[i].type)
 		{
+		case Editor::VarType::Int:
+		{
+			int value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text_value();
+			*static_cast<int*>(vars.second[i].variable) = value;
+
+			break;
+		}
 		case Editor::VarType::Float:
 		{
 			float value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text_value();			
@@ -400,8 +423,8 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 		}
 		case Editor::VarType::Vector2i:
 		{
-			int x_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("x_" + vars.second[i].name))->get_text_value();
-			int y_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("y_" + vars.second[i].name))->get_text_value();
+			int x_value = (int)dynamic_cast<GUI::InputBox*>(vars.first->get_element("ix_" + vars.second[i].name))->get_text_value();
+			int y_value = (int)dynamic_cast<GUI::InputBox*>(vars.first->get_element("iy_" + vars.second[i].name))->get_text_value();
 
 			*static_cast<Vector2i*>(vars.second[i].variable) = Vector2i(x_value, y_value);
 

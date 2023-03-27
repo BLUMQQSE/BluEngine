@@ -5,7 +5,7 @@
 namespace bm98
 {
 Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f, 
-	SortingLayer layer, Layer physical_layer)
+	Sorting::Layer layer, PhysicsNS::Layer physical_layer)
 {
 	this->x_offset = x_offset;
 	this->y_offset = y_offset;
@@ -20,7 +20,7 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 	this->physical_layer = physical_layer;
 	this->static_tile = true;
 	this->collision = false;
-	this->type = TileType::DEFAULT;
+	this->type = TileNS::Type::DEFAULT;
 	animated_sprite_component = nullptr;
 
 	set_render(false);
@@ -66,7 +66,7 @@ FloatConvex Tile::get_collider()
 	return collider;
 }
 
-const Layer Tile::get_layer() const
+const PhysicsNS::Layer Tile::get_layer() const
 {
 	return physical_layer;
 }
@@ -99,7 +99,7 @@ void Tile::set_collision(bool collision)
 	this->collision = collision;
 }
 
-void Tile::set_type(TileType tile_type)
+void Tile::set_type(TileNS::Type tile_type)
 {
 	type = tile_type;
 }
@@ -168,13 +168,13 @@ Json::Value Tile::serialize_json()
 	Json::Value obj;
 	obj["grid.x"] = grid_x;
 	obj["grid.y"] = grid_y;
-	obj["layer"] = Global::layer_to_string(layer);
+	obj["layer"] = Sorting::ToString(layer);
 	obj["texture_rect.left"] = texture_rect.left;
 	obj["texture_rect.width"] = texture_rect.width;
 	obj["texture_rect.top"] = texture_rect.top;
 	obj["texture_rect.height"] = texture_rect.height;
 	obj["collision"] = collision;
-	obj["tile-type"] = Global::tiletype_to_string(type);
+	obj["tile-type"] = TileNS::ToString(type);
 	obj["texture-source"] = texture_source;
 	obj["animated-sprite"] = (animated_sprite_component != nullptr);
 	obj["animation-timer"] = animation_timer;
@@ -186,7 +186,7 @@ void Tile::unserialize_json(Json::Value obj)
 {
 	grid_x = obj["grid.x"].asInt64();
 	grid_y = obj["grid.y"].asInt64();
-	layer = Global::string_to_layer(obj["layer"].asString());
+	layer = Sorting::ToLayer(obj["layer"].asString());
 
 	texture_rect.left = obj["texture_rect.left"].asInt64();
 	texture_rect.width = obj["texture_rect.width"].asInt64();
@@ -194,7 +194,7 @@ void Tile::unserialize_json(Json::Value obj)
 	texture_rect.height = obj["texture_rect.height"].asInt64();
 
 	collision = obj["collision"].asBool();
-	type = Global::string_to_tiletype(obj["tile-type"].asString());
+	type = TileNS::ToTiletype(obj["tile-type"].asString());
 	texture_source = obj["texture-source"].asString();
 	animation_timer = obj["animation-timer"].asFloat();
 

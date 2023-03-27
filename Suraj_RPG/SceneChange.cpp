@@ -4,44 +4,26 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "DontDestroyOnLoad.h"
+#include "Interactor.h"
 namespace bm98
 {
-SceneChange::SceneChange()
-{
-}
-SceneChange::~SceneChange()
-{
-}
-void SceneChange::on_trigger_enter(Collider info)
-{
 
-
-	std::cout << info.game_object->get_info().name << " entered my trigger\n";
-	
-	/*
-	if (info.game_object->get_info().tag == Tag::PLAYER)
+void SceneChange::handle_instant_interaction()
+{
+	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
-		info.game_object->set_position(destination.x, destination.y);
-		std::cout << "destination : " << destination_scene_name<<"\n";
-		if (destination_scene_name != SceneManager::get_active_scene_name())
-			SceneManager::load_scene(destination_scene_name);
+		current_interactor->get_game_object()->set_world_position(destination);
+		if (destination_scene_name != SceneManager::Instance()->get_active_scene_name())
+			EventSystem::Instance()->push_event(EventID::SCRIPTS_LOAD_SCENE, &destination_scene_name);
 	}
-	*/
 }
 
-void SceneChange::on_trigger_stay(Collider info)
-{
-	std::cout << info.game_object->get_info().name << " is in my trigger\n";
-}
-
-void SceneChange::on_trigger_exit(Collider info)
-{
-	std::cout << info.game_object->get_info().name << " exited my trigger\n";
-}
+#pragma region IData
 
 Json::Value SceneChange::serialize_json()
 {
 	Json::Value obj;
+	obj[typeid(IInteractable).name()] = IInteractable::serialize_json();
 
 	obj["destination"] = destination.serialize_json();
 	obj["destination-scene"] = destination_scene_name;
@@ -51,8 +33,11 @@ Json::Value SceneChange::serialize_json()
 
 void SceneChange::unserialize_json(Json::Value obj)
 {
+	IInteractable::unserialize_json(obj[typeid(IInteractable).name()]);
 	destination.unserialize_json(obj["destination"]);
 	destination_scene_name = obj["destination-scene"].asString();
 }
+
+#pragma endregion
 
 }

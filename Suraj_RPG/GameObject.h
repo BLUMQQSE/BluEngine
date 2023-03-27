@@ -37,16 +37,16 @@ public:
 	{
 		unsigned int id;
 		std::string name;
-		Tag tag;
-		Layer layer;
+		Tags::Tag tag;
+		PhysicsNS::Layer layer;
 
 		Json::Value serialize_json()
 		{
 			Json::Value obj;
 
 			obj["name"] = name;
-			obj["tag"] = Global::tag_to_string(tag);
-			obj["physics-layer"] = Global::physics_layer_to_string(layer);
+			obj["tag"] = Tags::ToString(tag);
+			obj["physics-layer"] = PhysicsNS::ToString(layer);
 
 			return obj;
 		}
@@ -54,8 +54,8 @@ public:
 		void unserialize_json(Json::Value obj)
 		{
 			name = obj["name"].asString();
-			tag = Global::string_to_tag(obj["tag"].asString());
-			layer = Global::string_to_physics_layer(obj["physics-layer"].asString());
+			tag = Tags::ToTag(obj["tag"].asString());
+			layer = PhysicsNS::ToLayer(obj["physics-layer"].asString());
 		}
 
 	};
@@ -218,10 +218,16 @@ public:
 
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
+	virtual std::vector<Editor::SerializedVar> get_editor_values();
+
 	const bool& is_active();
 	void set_active(bool active);
 	void set_render(bool render);
 
+	/// <summary>
+	/// Sets the parent of this gameobject to parent. Additionally removes from children of prior parent if one
+	/// existed.
+	/// </summary>
 	void set_parent(GameObject* parent);
 	void remove_child(GameObject* child);
 

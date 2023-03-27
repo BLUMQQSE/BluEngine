@@ -19,14 +19,15 @@ public:
     SettingsState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings);
     virtual ~SettingsState();
 
-    virtual void init_variables();
+    virtual void init_variables() override;
 
-    virtual void update_input();
-    virtual void on_end_state();
-    virtual void update();
-    virtual void late_update();
-    virtual void fixed_update();
-    virtual void render();
+    virtual void update_input() override;
+    virtual void on_end_state() override;
+    virtual void update() override;
+    virtual void update_sfml(sf::Event sfEvent) override;
+    virtual void late_update() override;
+    virtual void fixed_update() override;
+    virtual void render() override;
 
     FloatConvex circle = FloatConvex::Circle(Vector2f(300, 300), 60);
 
@@ -47,7 +48,7 @@ protected:
 
 private:
     bool _render = true;
-    SortingLayer options_layer = SortingLayer::UI;
+    Sorting::Layer options_layer = Sorting::Layer::UI;
     char z_order = 0;
     sf::Texture background_texture;
     sf::RectangleShape background;
@@ -62,6 +63,7 @@ private:
 
     std::vector<sf::VideoMode> modes;
 
+    GUI::InputBox* inp;
     void init_gui();
     void init_text();
     void init_drop_downs();

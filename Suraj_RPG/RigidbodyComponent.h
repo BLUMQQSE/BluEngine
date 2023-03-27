@@ -85,9 +85,13 @@ public:
 	//movement states
 
 	const MovementState get_movement_state() const;
-	const Orientation get_orientation() const;
+	const Orientation::Direction get_orientation() const;
 
-	void apply_acceleration(const float dir_x, const float dir_y);
+	void set_orientation(Orientation::Direction dir);
+
+	void apply_acceleration(const Vector2f dir, const bool ignore_max_velocty = false);
+	void apply_velocity(const Vector2f velocity, const bool ignore_max_velocity = false);
+	void move_towards(const Vector2f dest);
 
 	void halt(Vector2f dir);
 
@@ -95,7 +99,7 @@ protected:
 	void apply_deceleration();
 
 	MovementState current_movement_state;
-	Orientation current_orientation;
+	Orientation::Direction current_orientation;
 	BodyType body_type = BodyType::KINEMATIC;
 
 private:
@@ -104,6 +108,11 @@ private:
 	float deceleration;
 
 	Vector2f velocity;
+
+	/// <summary>
+	/// Caps the velocity at max_velocity if it currently exceeds
+	/// </summary>
+	void cap_velocity();
 
 	void update_orientation();
 	void update_movement_state();

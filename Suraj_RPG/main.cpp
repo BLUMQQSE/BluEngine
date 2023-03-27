@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "json/json.h"
 #include "SFML/Audio.hpp"
+#include "globals.h"
+#include "Math.h"
 
 int main()
 {

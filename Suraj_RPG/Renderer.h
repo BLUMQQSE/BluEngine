@@ -23,7 +23,7 @@ public:
 
 	struct RenderObject
 	{
-		RenderObject(sf::Drawable* drawable, bool& render, SortingLayer& sorting_layer,
+		RenderObject(sf::Drawable* drawable, bool& render, Sorting::Layer& sorting_layer,
 			char& z_order, sf::View** view = nullptr, sf::Shader** shader = nullptr)
 			:render(render), sorting_layer(sorting_layer), z_order(z_order)
 		{
@@ -49,7 +49,7 @@ public:
 			Renderer::Instance()->increase_id();
 		}
 
-		SortingLayer& sorting_layer;
+		Sorting::Layer& sorting_layer;
 		bool& render;
 		sf::Drawable* drawable;
 		char& z_order;
@@ -98,6 +98,7 @@ public:
 	// should run once on state change
 
 	sf::Vector2u get_window_size();
+	const sf::RenderTarget* get_window() const;
 
 
 protected:

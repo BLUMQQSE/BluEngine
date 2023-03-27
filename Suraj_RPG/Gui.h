@@ -206,7 +206,7 @@ public:
 	/// </summary>
 	const sf::IntRect& get_texture_rect() const;
 	sf::IntRect convert_rect_to_grid(sf::IntRect rect);
-	const SortingLayer get_layer() const;
+	const Sorting::Layer get_layer() const;
 	DropDownList* get_layer_dropdown();
 	DropDownList* get_tiletype_selector();
 	DropDownList* get_tileset_selector();
@@ -296,6 +296,7 @@ private:
 class Label : public GUIObject
 {
 public:
+	Label() {}
 	Label(float x, float y, float character_size, 
 		sf::Font& font, std::string text, sf::Color color = sf::Color::Black);
 	virtual ~Label();
@@ -324,6 +325,9 @@ public:
 	virtual void update_sfml(sf::Event sfEvent) override;
 
 	virtual void set_render(bool render) override;
+	void set_fill_color(sf::Color color) { panel_shape.setFillColor(color); }
+
+	void apply_texture(sf::Texture* texture, sf::IntRect rect);
 
 	std::unordered_map<std::string, GUIObject*> get_content();
 	void add_element(std::string key, GUIObject* gui_object);
@@ -335,6 +339,7 @@ public:
 	float get_width();
 	float get_height();
 
+	sf::RectangleShape& get_shape() { return panel_shape; }
 	GUIObject* get_element(std::string key);
 	DropDownList* get_dropdown(std::string key);
 	InputBox* get_inputbox(std::string key);

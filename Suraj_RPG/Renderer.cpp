@@ -142,6 +142,11 @@ sf::Vector2u Renderer::get_window_size()
 	return window->getSize();
 }
 
+const sf::RenderTarget* Renderer::get_window() const
+{
+	return window;
+}
+
 Renderer::Renderer()
 {
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_INITIALIZE_, this);

@@ -29,7 +29,7 @@ void Time::handle_event(Event* event)
 	case EventID::_SYSTEM_TIME_UPDATE_:
 		Instance()->update_delta(*static_cast<float*>(event->get_parameter()));
 		break;
-	case EventID::_SYSTEM_TIME_UPDATE_FIXED_:
+	case EventID::_SYSTEM_TIME_RESET_FIXED_:
 		Instance()->reset_fixed_delta();
 		break;
 
@@ -106,7 +106,7 @@ Time::Time()
 {
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_UPDATE_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_APPLY_SCALE_, this);
-	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_UPDATE_FIXED_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_RESET_FIXED_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_, this);
 }
 

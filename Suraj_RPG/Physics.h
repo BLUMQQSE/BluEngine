@@ -56,7 +56,7 @@ public:
 	/// <returns>
 	/// The closest collider which is not on a gameobject related to the calling gameobject.</returns>
 	bool raycast(Vector2f origin, Vector2f direction, GameObject* ignore,
-		float distance = INFINITY, Global::LayerMask mask = Global::LayerMask(),
+		float distance = INFINITY, PhysicsNS::LayerMask mask = PhysicsNS::LayerMask(),
 		RayHit* hit = nullptr);
 
 	/// <summary>
@@ -66,8 +66,8 @@ public:
 	/// </summary>
 	/// <returns>
 	/// All colliders within the circle not related to the object calling the functions.</returns>
-	int OverlapCircle(Vector2f pos, float radius, Global::LayerMask mask, 
-		GameObject* object_to_ignore, std::vector<ColliderComponent*> collisions);
+	int OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
+		GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions);
 
 private:
 
@@ -81,7 +81,8 @@ private:
 
 	std::vector<std::vector<std::pair<GameObject*, CollisionState>>> objects;
 
-	bool collision_matrix[(int)(Layer::_LAST_DONT_REMOVE)][(int)(Layer::_LAST_DONT_REMOVE)];
+	bool collision_matrix[(int)(PhysicsNS::Layer::_LAST_DONT_REMOVE)][(int)
+		(PhysicsNS::Layer::_LAST_DONT_REMOVE)];
 
 	void init();
 	void fixed_update();

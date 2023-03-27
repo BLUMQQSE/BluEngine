@@ -10,7 +10,7 @@ class Tile : IData, IObject, public IRenderable
 {
 public:
 	Tile(int x_offset, int y_offset, int grid_x, int grid_y,
-		float grid_size_f, SortingLayer layer, Layer physical_layer);
+		float grid_size_f, Sorting::Layer layer, PhysicsNS::Layer physical_layer);
 	virtual ~Tile();
 
 
@@ -22,7 +22,7 @@ public:
 	const bool is_static() const;
 	const bool get_collision() const;
 	FloatConvex get_collider();
-	const Layer get_layer() const;
+	const PhysicsNS::Layer get_layer() const;
 	const sf::FloatRect get_bounds() const;
 	const AnimatedSpriteComponent* get_animated_sprite_component();
 	sf::Sprite& get_sprite();
@@ -33,7 +33,7 @@ public:
 	/// </summary>
 	void set_texture(std::string source_key, const sf::Texture* texture, const sf::IntRect rect);
 	void set_collision(bool collision);
-	void set_type(TileType tile_type);
+	void set_type(TileNS::Type tile_type);
 	void set_position(Vector2i pos);
 
 	void add_animated_sprite_component(std::string source_key, sf::Texture* texture,
@@ -63,9 +63,9 @@ protected:
 
 	bool collision;
 	bool static_tile;
-	TileType type;
-	SortingLayer layer;
-	Layer physical_layer;
+	TileNS::Type type;
+	Sorting::Layer layer;
+	PhysicsNS::Layer physical_layer;
 	std::string texture_source;
 	AnimatedSpriteComponent* animated_sprite_component;
 	

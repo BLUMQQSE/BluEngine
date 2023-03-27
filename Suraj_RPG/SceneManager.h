@@ -51,8 +51,8 @@ public:
 	std::vector<GameObject*> get_objects_in_scene();
 
 	GameObject* find(std::string name, GameObject* object_to_ignore);
-	GameObject* find_with_tag(Tag tag, GameObject* object_to_ignore);
-	std::vector<GameObject*> find_all_with_tag(Tag tag, GameObject* object_to_ignore);
+	GameObject* find_with_tag(Tags::Tag tag, GameObject* object_to_ignore);
+	std::vector<GameObject*> find_all_with_tag(Tags::Tag tag, GameObject* object_to_ignore);
 	template <typename T> static  GameObject* find_of_type(GameObject* object_to_ignore);
 	template <typename T> static std::vector<GameObject*> find_all_of_type(GameObject* object_to_ignore);
 	//static void set_active_scene(std::string scene_name);

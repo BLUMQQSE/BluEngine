@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -37,9 +33,6 @@
     <Filter Include="Scripts">
       <UniqueIdentifier>{98f24351-850e-4551-a204-9a495bbd5011}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\JSON">
-      <UniqueIdentifier>{9d941b67-eab8-4191-9a14-4751833ab3d8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DataAssets">
       <UniqueIdentifier>{67fd264c-dce2-4712-8378-b9aac46d6923}</UniqueIdentifier>
     </Filter>
@@ -57,6 +50,13 @@
     </Filter>
     <Filter Include="Components\Rendering">
       <UniqueIdentifier>{da86aae8-6d4b-47c7-96b1-5aebf243eee3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\JSON">
+      <UniqueIdentifier>{9d941b67-eab8-4191-9a14-4751833ab3d8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -177,9 +177,6 @@
     <ClCompile Include="SceneChange.cpp">
       <Filter>Scripts\Interaction</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerInteractor.cpp">
-      <Filter>Scripts\Interaction</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -245,6 +242,24 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryWindow.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryGUIController.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Chest.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="Delay.cpp">
+      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,9 +419,6 @@
     <ClInclude Include="SceneChange.h">
       <Filter>Scripts\Interaction</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerInteractor.h">
-      <Filter>Scripts\Interaction</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -475,6 +487,24 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryWindow.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryGUIController.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Chest.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="Delay.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

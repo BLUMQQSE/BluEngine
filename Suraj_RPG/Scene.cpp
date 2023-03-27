@@ -143,8 +143,8 @@ void Scene::remove_gameobject(GameObject* go)
 	Physics::Instance()->remove_from_physics(go);
 	objects_in_scene.erase(std::find(objects_in_scene.begin(),
 		objects_in_scene.end(), go));
-	if (go->get_parent())
-		go->get_parent()->remove_child(go);
+
+	go->set_parent(nullptr);
 
 	// destroy all posterity of object
 	if (go->get_children().size() > 0)
@@ -287,7 +287,6 @@ void Scene::handle_event(Event* event)
 		break;
 	case EventID::GAMEOBJECT_INSTANTIATE:
 	{
-		std::cout << "add gameobject\n";
 		GameObject* new_object = static_cast<GameObject*>(event->get_parameter());
 
 		if (!new_object)
@@ -304,8 +303,6 @@ void Scene::handle_event(Event* event)
 	}
 	case EventID::GAMEOBJECT_DESTROY:
 	{
-		std::cout << "remove gameobject\n";
-
 		GameObject* remove_object = static_cast<GameObject*>(event->get_parameter());
 		if (!remove_object)
 			return;

@@ -55,7 +55,7 @@ Json::Value RigidbodyComponent::serialize_json()
 	obj["max-velocity"] = max_velocity;
 	obj["acceleration"] = acceleration;
 	obj["deceleration"] = deceleration;
-	obj["orientation"] = Global::orientation_to_string(current_orientation);
+	obj["orientation"] = Orientation::ToString(current_orientation);
 	obj["body-type"] = body_type_to_string(body_type);
 
 	return obj;
@@ -66,7 +66,7 @@ void RigidbodyComponent::unserialize_json(Json::Value obj)
 	max_velocity = obj["max-velocity"].asFloat();
 	acceleration = obj["acceleration"].asFloat();
 	deceleration = obj["deceleration"].asFloat();
-	current_orientation = Global::string_to_orientation(obj["orientation"].asString());
+	current_orientation = Orientation::ToDirection(obj["orientation"].asString());
 	body_type = string_to_body_type(obj["body-type"].asString());
 }
 
@@ -137,30 +137,41 @@ const MovementState RigidbodyComponent::get_movement_state() const
 	return current_movement_state;
 }
 
-const Orientation RigidbodyComponent::get_orientation() const
+const Orientation::Direction RigidbodyComponent::get_orientation() const
 {
 	return current_orientation;
 }
 
-void RigidbodyComponent::apply_acceleration(const float dir_x, const float dir_y)
+void RigidbodyComponent::set_orientation(Orientation::Direction dir)
+{
+	current_orientation = dir;
+}
+
+void RigidbodyComponent::apply_acceleration(const Vector2f dir, const bool ignore_max_velocty)
 {
 	//Acceleration
-	velocity.x += (acceleration * UNIT_SIZE) * dir_x * 100;
-	velocity.y += (acceleration * UNIT_SIZE) * dir_y * 100;
+	velocity.x += (acceleration * UNIT_SIZE) * dir.x * 100;
+	velocity.y += (acceleration * UNIT_SIZE) * dir.y * 100;
 
-	if (velocity.x > 0)
-		if (velocity.x > max_velocity * UNIT_SIZE)
-			velocity.x = max_velocity * UNIT_SIZE;
-	if (velocity.x < 0)
-		if (velocity.x < -max_velocity * UNIT_SIZE)
-			velocity.x = -max_velocity * UNIT_SIZE;
+	if (ignore_max_velocty)
+		return;
 
-	if (velocity.y > 0)
-		if (velocity.y > max_velocity * UNIT_SIZE)
-			velocity.y = max_velocity * UNIT_SIZE;
-	if (velocity.y < 0)
-		if (velocity.y < -max_velocity * UNIT_SIZE)
-			velocity.y = -max_velocity * UNIT_SIZE;
+	cap_velocity();
+}
+
+void RigidbodyComponent::apply_velocity(const Vector2f velocity, const bool ignore_max_velocity)
+{
+	this->velocity += velocity;
+
+	if (ignore_max_velocity)
+		return;
+	
+	cap_velocity();
+}
+
+void RigidbodyComponent::move_towards(const Vector2f dest)
+{
+	apply_acceleration(dest - game_object->get_world_position());
 }
 
 void RigidbodyComponent::halt(Vector2f dir)
@@ -204,6 +215,23 @@ void RigidbodyComponent::apply_deceleration()
 
 }
 
+void RigidbodyComponent::cap_velocity()
+{
+	if (velocity.x > 0)
+		if (velocity.x > max_velocity * UNIT_SIZE)
+			velocity.x = max_velocity * UNIT_SIZE;
+	if (velocity.x < 0)
+		if (velocity.x < -max_velocity * UNIT_SIZE)
+			velocity.x = -max_velocity * UNIT_SIZE;
+
+	if (velocity.y > 0)
+		if (velocity.y > max_velocity * UNIT_SIZE)
+			velocity.y = max_velocity * UNIT_SIZE;
+	if (velocity.y < 0)
+		if (velocity.y < -max_velocity * UNIT_SIZE)
+			velocity.y = -max_velocity * UNIT_SIZE;
+}
+
 void RigidbodyComponent::update_orientation()
 {
 	//if no movement occurred, no orientation change
@@ -212,20 +240,20 @@ void RigidbodyComponent::update_orientation()
 
 	if (velocity.x > 0.f && velocity.y == 0.f)
 	{
-		current_orientation = Orientation::RIGHT;
+		current_orientation = Orientation::Direction::RIGHT;
 		return;
 	}
 	if (velocity.x < 0.f && velocity.y == 0.f)
 	{
-		current_orientation = Orientation::LEFT;
+		current_orientation = Orientation::Direction::LEFT;
 		return;
 	}
 	if (velocity.y > 0.f)
 	{
-		current_orientation = Orientation::DOWN;
+		current_orientation = Orientation::Direction::DOWN;
 		return;
 	}
-	current_orientation = Orientation::UP;
+	current_orientation = Orientation::Direction::UP;
 	
 }
 

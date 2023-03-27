@@ -134,7 +134,7 @@ GameObject* SceneManager::find(std::string name, GameObject* object_to_ignore)
 	return nullptr;
 }
 
-GameObject* SceneManager::find_with_tag(Tag tag, GameObject* object_to_ignore)
+GameObject* SceneManager::find_with_tag(Tags::Tag tag, GameObject* object_to_ignore)
 {
 	std::vector<GameObject*> objects = active_scene->get_objects();
 	for (auto& o : objects)
@@ -144,7 +144,7 @@ GameObject* SceneManager::find_with_tag(Tag tag, GameObject* object_to_ignore)
 	return nullptr;
 }
 
-std::vector<GameObject*> SceneManager::find_all_with_tag(Tag tag, GameObject* object_to_ignore)
+std::vector<GameObject*> SceneManager::find_all_with_tag(Tags::Tag tag, GameObject* object_to_ignore)
 {
 	std::vector<GameObject*> objects;
 	for (auto& o : active_scene->get_objects())
@@ -158,6 +158,8 @@ SceneManager::SceneManager()
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_DESTROY_, this);
+	EventSystem::Instance()->subscribe(EventID::SCRIPTS_LOAD_SCENE, this);
+	EventSystem::Instance()->subscribe(EventID::SCRIPTS_SAVE_SCENE, this);
 }
 
 void SceneManager::handle_event(Event* event)
@@ -172,6 +174,10 @@ void SceneManager::handle_event(Event* event)
 		break;
 	case EventID::_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_:
 		clear_active_scene();
+	case EventID::SCRIPTS_SAVE_SCENE:
+		save_scene();
+	case EventID::SCRIPTS_LOAD_SCENE:
+		load_scene(*static_cast<std::string*>(event->get_parameter()));
 		break;
 	}
 }

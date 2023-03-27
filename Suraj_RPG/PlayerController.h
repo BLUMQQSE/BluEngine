@@ -7,7 +7,10 @@ namespace bm98
 class CameraComponent;
 class AnimationComponent;
 class RigidbodyComponent;
+class Interactor;
 class Inventory;
+class InventoryGUIController;
+
 
 class PlayerController :
     public Component
@@ -41,6 +44,8 @@ private:
     bool attack;
     AnimationComponent* anim;
     RigidbodyComponent* rigid;
+    Interactor* interactor;
+    InventoryGUIController* inventory;
 
     CameraComponent* camera;
     Inventory* inv;

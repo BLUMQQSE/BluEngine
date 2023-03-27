@@ -19,7 +19,7 @@ TilemapColliderComponent::~TilemapColliderComponent()
 void TilemapColliderComponent::awake()
 {
 	tilemap = &game_object->get_component<TilemapComponent>();
-	for (int i = 0; i < static_cast<int>(Layer::_LAST_DONT_REMOVE); i++)
+	for (int i = 0; i < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); i++)
 	{
 		colliders.push_back(std::vector<FloatConvex>());
 	}
@@ -30,9 +30,9 @@ void TilemapColliderComponent::start()
 	create_colliders();
 }
 
-bool TilemapColliderComponent::intersects(const FloatConvex collider, Global::LayerMask mask)
+bool TilemapColliderComponent::intersects(const FloatConvex collider, PhysicsNS::LayerMask mask)
 {
-	for (int h = 0; h < static_cast<int>(Layer::_LAST_DONT_REMOVE); h++)
+	for (int h = 0; h < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); h++)
 	{
 		if (!mask.layers[h])
 			continue;

@@ -2,6 +2,83 @@
 	"gameobjects" : 
 	[
 		{
+			"children" : 
+			[
+				{
+					"components" : 
+					[
+						{
+							"name" : "class bm98::Inventory",
+							"value" : 
+							{
+								"inventory-type" : "GENERAL",
+								"max-size" : 18
+							}
+						},
+						{
+							"name" : "class bm98::InventoryWindow",
+							"value" : null
+						}
+					],
+					"info" : 
+					{
+						"name" : "GeneralInventory",
+						"physics-layer" : "DEFAULT",
+						"tag" : "PLAYER"
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						"position" : 
+						{
+							"x" : 110.30786895751953,
+							"y" : 275.79824829101562
+						},
+						"rotation" : 0.0
+					}
+				},
+				{
+					"components" : 
+					[
+						{
+							"name" : "class bm98::Inventory",
+							"value" : 
+							{
+								"inventory-type" : "COMBAT",
+								"max-size" : 10
+							}
+						},
+						{
+							"name" : "class bm98::InventoryWindow",
+							"value" : null
+						}
+					],
+					"info" : 
+					{
+						"name" : "CombatInventory",
+						"physics-layer" : "DEFAULT",
+						"tag" : "PLAYER"
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						"position" : 
+						{
+							"x" : 110.30786895751953,
+							"y" : 275.79824829101562
+						},
+						"rotation" : 0.0
+					}
+				}
+			],
 			"components" : 
 			[
 				{
@@ -68,8 +145,8 @@
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 311.35818481445312,
-								"y" : 3.0561294555664062
+								"x" : 125.30786895751953,
+								"y" : 275.79824829101562
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
@@ -89,6 +166,23 @@
 				{
 					"name" : "class bm98::DontDestroyOnLoad",
 					"value" : null
+				},
+				{
+					"name" : "class bm98::Interactor",
+					"value" : 
+					{
+						"interactable-mask" : 
+						[
+							{
+								"layer" : "INTERACTABLE"
+							}
+						],
+						"interaction-radius" : 60.0
+					}
+				},
+				{
+					"name" : "class bm98::InventoryGUIController",
+					"value" : null
 				}
 			],
 			"info" : 
@@ -106,8 +200,8 @@
 				},
 				"position" : 
 				{
-					"x" : 296.35818481445312,
-					"y" : 3.0561294555664062
+					"x" : 110.30786895751953,
+					"y" : 275.79824829101562
 				},
 				"rotation" : 0.0
 			}
@@ -139,8 +233,8 @@
 				},
 				"position" : 
 				{
-					"x" : 296.35818481445312,
-					"y" : 3.0561294555664062
+					"x" : 110.30786895751953,
+					"y" : 275.79824829101562
 				},
 				"rotation" : 0.0
 			}

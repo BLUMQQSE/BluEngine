@@ -50,7 +50,7 @@ private:
     struct TileModifier
     {
         bool collision;
-        TileType tile_type;
+        TileNS::Type tile_type;
     };
 
     sf::View* scene_view;
@@ -68,9 +68,9 @@ private:
 
     float camera_move_speed;
     bool outline_render = true;
-    SortingLayer outline_layer = SortingLayer::UI;
+    Sorting::Layer outline_layer = Sorting::Layer::UI;
     bool text_select_render = false;
-    SortingLayer text_select_layer = SortingLayer::UI;
+    Sorting::Layer text_select_layer = Sorting::Layer::UI;
     char z_order = 0;
 
     sf::Texture background_texture;

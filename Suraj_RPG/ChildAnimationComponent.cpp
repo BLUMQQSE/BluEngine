@@ -53,6 +53,9 @@ void ChildAnimationComponent::awake()
 
 void ChildAnimationComponent::update()
 {
+	if (animations.size() == 0)
+		return;
+
 	if (parents_last_animation != parent_animation_component->get_active_animation_key())
 	{
 		animations[parents_last_animation]->reset();

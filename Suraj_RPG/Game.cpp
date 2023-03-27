@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "FileManager.h"
 #include "ResourceManager.h"
+#include "ConsoleManager.h"
 #include "GameState.h"
 #include "MainMenuState.h"
 #include "Time.h"
@@ -14,6 +15,8 @@
 namespace bm98::core
 {
 
+bool DEBUG_MODE = true;
+
 GameSettings Game::game_settings;
 
 Game::Game()
@@ -25,7 +28,6 @@ Game::Game()
     init_variables();
     init_graphics_settings();
     init_window();
-
 
     // WISH I could figure out issue with this call
     //EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_INITIALIZE_, static_cast<void*>(window));
@@ -49,7 +51,7 @@ Game::Game()
     Input::Instance()->change_keybinds_state("Main_Menu_State");
 
     init_states();
-
+    
 
 }
 
@@ -70,6 +72,7 @@ void Game::run()
     while (window->isOpen())
     {
         update_delta_time();
+        check_fixed_update();
         update();
         render();
     }
@@ -99,10 +102,11 @@ void Game::update_sfml_events()
             EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_SCROLL_, static_cast<void*>(&sfevent.mouseWheel.delta));
         }
 
-        if (sfevent.type == sf::Event::GainedFocus)
-            if(states.size() > 0)
-                Input::Instance()->change_keybinds_state(states.top()->get_state_name());
-        
+        if (sfevent.type == sf::Event::TextEntered)
+        {
+            if (states.size() > 0)
+                states.top()->update_sfml(sfevent);
+        }
     }
 
 }
@@ -113,21 +117,6 @@ void Game::update_delta_time()
     // Update delta time in Time class
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_, static_cast<void*>(&dt));
     
-    if (!states.empty())
-    {
-        
-        if (Time::Instance()->fixed_delta_time() >= .01f)
-        {
-            states.top()->fixed_update();
-            EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
-            EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);
-            EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_FIXED_);
-        }
-        else
-        {
-            fixed_delta_timer += Time::Instance()->delta_time();
-        }
-    }
     // Apply time scale in Time class
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_APPLY_SCALE_);
     if (fps_averager == 1500)
@@ -150,10 +139,10 @@ void Game::update_delta_time()
     }
 }
 
-
 void Game::update()
 {
     update_sfml_events();
+
     EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_);
 
     EventSystem::Instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
@@ -189,6 +178,20 @@ void Game::update()
 
 }
 
+void Game::check_fixed_update()
+{
+    if (!states.empty())
+    {
+
+        if (Time::Instance()->fixed_delta_time() >= .01f)
+        {
+            states.top()->fixed_update();
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_RESET_FIXED_);
+        }
+    }
+}
 
 void Game::render()
 {
@@ -213,13 +216,13 @@ void Game::init_singletons()
     Time::Instance();
     ResourceManager::Instance();
     Physics::Instance();
+    ConsoleManager::Instance();
 }
 
 void Game::init_variables()
 {
     successful_shutdown = false;
     window = nullptr;
-    fixed_delta_timer = 0.f;
 }
 
 void Game::init_graphics_settings()

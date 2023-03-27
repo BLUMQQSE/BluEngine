@@ -28,17 +28,17 @@ public:
 	virtual void fixed_update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
-	void add_tiles(const unsigned x, const unsigned y, SortingLayer layer,
-		const sf::IntRect texture_rect, TileType tile_type = TileType::DEFAULT,
+	void add_tiles(const unsigned x, const unsigned y, Sorting::Layer layer,
+		const sf::IntRect texture_rect, TileNS::Type tile_type = TileNS::Type::DEFAULT,
 		bool collision = false, bool animated_sprite = false, float animation_timer = 30.f);
-	void remove_tiles(const unsigned x, const unsigned y, const SortingLayer layer,
+	void remove_tiles(const unsigned x, const unsigned y, const Sorting::Layer layer,
 		const sf::IntRect texture_rect, bool animated_sprite = false);
 
-	void highlight_layer(SortingLayer layer);
+	void highlight_layer(Sorting::Layer layer);
 	/// <summary>
 	/// Returns physical layer for layer.
 	/// </summary>
-	Layer get_layer(SortingLayer layer);
+	PhysicsNS::Layer get_layer(Sorting::Layer layer);
 
 	std::vector<std::string> get_tileset_keys();
 	sf::Texture* get_texture();
@@ -70,8 +70,8 @@ private:
 
 	std::vector<sf::Sprite> render_sprites;
 	std::vector<sf::RenderTexture*> render_textures;
-	std::vector<SortingLayer> render_layers;
-	std::unordered_map<int, Layer> physical_layers;
+	std::vector<Sorting::Layer> render_layers;
+	std::unordered_map<int, PhysicsNS::Layer> physical_layers;
 
 	std::vector<Tile*> map_updateables;
 
@@ -93,7 +93,7 @@ private:
 	but how can i save a reference to each loaded file
 	*/
 
-	SortingLayer editor_active_layer;
+	Sorting::Layer editor_active_layer;
 
 	void update_tilemap_changes();
 	void load_tile_sheets();

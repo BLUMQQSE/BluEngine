@@ -4,7 +4,7 @@ namespace bm98::core
 {
 sf::Text Debug::text_display;
 bool Debug::active = true;
-SortingLayer Debug::layer = SortingLayer::UI;
+Sorting::Layer Debug::layer = Sorting::Layer::UI;
 char Debug::z_order = 100;
 
 void Debug::init()

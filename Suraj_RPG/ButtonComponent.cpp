@@ -42,7 +42,7 @@ ButtonComponent::ButtonComponent()
 
 	shape.setFillColor(idle_color);
 	
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(id + 10, false);
 	
 }
@@ -79,7 +79,7 @@ ButtonComponent::ButtonComponent(float width, float height, std::string text,
 
 	shape.setFillColor(idle_color);
 
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(id+10, false);
 
 	Renderer::Instance()->add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),

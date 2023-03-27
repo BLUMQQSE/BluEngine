@@ -103,6 +103,8 @@ public:
 	/// <param name="font_file_name">Name of font file looking for.</param>
 	bool has_font(std::string font_file_name);
 
+	void shutdown();
+
 private:
 	ResourceManager();
 	~ResourceManager() {  }

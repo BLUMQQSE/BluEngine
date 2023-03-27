@@ -130,18 +130,20 @@ void GameEditorView::create_heir_panel()
 			temp = temp->get_parent();
 		}
 
-		GUI::Button* new_button = new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"), 
+		heir_panel->add_element(std::to_string(objs[i]->get_unique_runtime_id()), new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
 			objs[i]->get_info().name + " " + std::to_string(objs[i]->get_unique_runtime_id()), 12,
 			sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
-			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
+			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255)));
 
-		objects_in_scene_map[new_button] = objs[i];
-
-		heir_panel->add_element(std::to_string(objs[i]->get_unique_runtime_id()), new_button);
+		objects_in_scene_map[heir_panel->get_button(std::to_string(objs[i]->get_unique_runtime_id()))] = objs[i];
 
 		x = 0;
 	}
 
+	if (!heir_active)
+		heir_panel->set_render(false);
+	if (!inspec_active)
+		inspec_panel->set_render(false);
 	if (!selected_gameobject)
 		selected_gameobject = objs[0];
 
@@ -149,7 +151,7 @@ void GameEditorView::create_heir_panel()
 
 void GameEditorView::update_heir_panel()
 {
-	// nothing to update
+	// NOTHING TO UPDATE
 	if (objects_in_scene_map.size() == 0)
 	{
 		selected_gameobject = nullptr;
@@ -222,6 +224,12 @@ void GameEditorView::create_inspec_panel()
 
 
 	int component_panel_height = 0;
+
+	inspec_panel->add_element(selected_gameobject->get_info().name, create_component_panel(component_panel_height, inspec_panel->get_width(),
+		selected_gameobject->get_info().name, selected_gameobject->get_editor_values()));
+
+	component_panel_height += inspec_panel->get_panel(selected_gameobject->get_info().name)->get_height();
+
 	for (std::size_t i = 0; i < selected_gameobject_components.size(); i++)
 	{
 		std::string component_name = typeid(*components[i]).name();
@@ -233,6 +241,8 @@ void GameEditorView::create_inspec_panel()
 		component_panel_height += inspec_panel->get_panel(typeid(*components[i]).name())->get_height();
 
 	}
+	if (!inspec_active)
+		inspec_panel->set_render(false);
 }
 
 void GameEditorView::update_inspec_panel()
@@ -256,6 +266,16 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 	{
 		switch (vars[i].type)
 		{
+		case Editor::VarType::Int:
+		{
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::InputBox(150, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+
+			height += 20;
+			break;
+		}
 		case Editor::VarType::Float:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
@@ -366,6 +386,14 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 		// here handle updating for all objects in scene
 		switch (vars.second[i].type)
 		{
+		case Editor::VarType::Int:
+		{
+			int value = *static_cast<int*>(vars.second[i].variable);
+			std::stringstream s;
+			s << PRECISION << value;
+			dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->set_text(s.str());
+			break;
+		}
 		case Editor::VarType::Float:
 		{
 			float value = *static_cast<float*>(vars.second[i].variable);
@@ -436,7 +464,9 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 		}
 		case Editor::VarType::String:
 		{
-			std::string value = *static_cast<std::string*>(vars.second[i].variable);
+			std::string value = "empty";
+			if(vars.second[i].variable)
+				value = *static_cast<std::string*>(vars.second[i].variable);
 			dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->set_text(value);
 			break;
 		}

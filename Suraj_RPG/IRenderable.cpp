@@ -39,7 +39,7 @@ void IRenderable::set_z_order(char order, bool refresh_renderer)
 	if(refresh_renderer)
 		core::Renderer::Instance()->refresh();
 }
-void IRenderable::set_sorting_layer(SortingLayer layer, bool refresh_renderer)
+void IRenderable::set_sorting_layer(Sorting::Layer layer, bool refresh_renderer)
 {
 	this->sorting_layer = layer;
 	if (refresh_renderer)
@@ -50,7 +50,7 @@ bool& IRenderable::get_render()
 {
 	return render;
 }
-SortingLayer& IRenderable::get_sorting_layer()
+Sorting::Layer& IRenderable::get_sorting_layer()
 {
 	return sorting_layer;
 }
@@ -81,7 +81,7 @@ Json::Value bm98::IRenderable::serialize_json()
 {
 	Json::Value obj;
 
-	obj["sorting-layer"] = Global::layer_to_string(sorting_layer);
+	obj["sorting-layer"] = Sorting::ToString(sorting_layer);
 	obj["z-order"] = z_order;
 	obj["render"] = render;
 
@@ -90,8 +90,9 @@ Json::Value bm98::IRenderable::serialize_json()
 
 void bm98::IRenderable::unserialize_json(Json::Value obj)
 {
-	sorting_layer = Global::string_to_layer(obj["sorting-layer"].asString());
+	sorting_layer = Sorting::ToLayer(obj["sorting-layer"].asString());
 	z_order = static_cast<unsigned char>(obj["z-order"].asInt64());
 	render = obj["render"].asBool();
 }
+
 }

@@ -16,6 +16,9 @@
 #include "Inventory.h"
 #include "CapsuleColliderComponent.h"
 #include "EventSystem.h"
+#include "Interactor.h"
+#include "IInteractable.h"
+#include "InventoryGUIController.h"
 namespace bm98
 {
 using namespace core;
@@ -33,19 +36,15 @@ void bm98::PlayerController::init()
 {
 	anim = &game_object->get_component<AnimationComponent>();
 	rigid = &game_object->get_component<RigidbodyComponent>();
-	//inv = &game_object->get_component<Inventory>();
-
-	//std::cout << "inventory size: " << inv->get_size();
-	//std::cout << "first item capacity" << inv->get();
-
-	std::cout << game_object->get_info().name << "\n";
+	interactor = &game_object->get_component<Interactor>();
+	inventory = &game_object->get_component<InventoryGUIController>();
 
 }
 
 void PlayerController::awake()
 {
 	init_animations();
-	camera = &SceneManager::Instance()->find_with_tag(Tag::CAMERA, this->game_object)->get_component<CameraComponent>();
+	camera = &SceneManager::Instance()->find_with_tag(Tags::Tag::CAMERA, this->game_object)->get_component<CameraComponent>();
 
 }
 
@@ -54,8 +53,14 @@ void bm98::PlayerController::update()
 	update_input();
 	update_animations();
 
+	interactor->interact();
+
+	if (interactor->is_interacting())
+		return;
+
 	if (Input::Instance()->get_action_down("INTERACT"))
 	{
+		return;
 		if (game_object->check_for_child("pants"))
 		{
 			SceneManager::Instance()->destroy_gameobject(SceneManager::Instance()->find("pants", game_object));
@@ -69,7 +74,7 @@ void bm98::PlayerController::update()
 		pants->add_component<AudioSource>();
 		SpriteComponent* sc = &pants->get_component<SpriteComponent>();
 		pants->add_component<ChildAnimationComponent>();
-		sc->set_sorting_layer(SortingLayer::ACTOR);
+		sc->set_sorting_layer(Sorting::Layer::ACTOR);
 		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
 		pants->set_parent(this->game_object);
 		SceneManager::Instance()->instantiate_gameobject(pants);
@@ -86,8 +91,11 @@ void bm98::PlayerController::late_update()
 }
 
 void bm98::PlayerController::fixed_update()
-{	
-	rigid->apply_acceleration(movement_input.x, movement_input.y);
+{
+	if (interactor->is_interacting())
+		return;
+	
+	rigid->apply_acceleration(movement_input);
 
 	//Global::LayerMask mask = Global::LayerMask(true);
 	//if (Physics::raycast(game_object->get_transform().position, movement_input.get_normalized(), 80,
@@ -161,6 +169,9 @@ void bm98::PlayerController::update_input()
 	{
 
 	}
+	if (Input::Instance()->get_action_down("INVENTORY"))
+		inventory->toggle_inventory(InventoryNS::WindowToggle::FULL_INVENTORY);
+
 	if (Input::Instance()->get_action("LEFT"))
 		movement_input.x = -1;
 	if (Input::Instance()->get_action("RIGHT"))
@@ -192,34 +203,35 @@ void PlayerController::update_animations()
 	//{
 		//attack = anim->play("ATTACK_UP");
 	//}
-	if (movement_input.x == 0 && movement_input.y == 0
-		&& rigid->get_orientation() == Orientation::UP)
+	Vector2f movement = rigid->get_velocity();
+	if (movement.x == 0 && movement.y == 0
+		&& rigid->get_orientation() == Orientation::Direction::UP)
 		anim->play("IDLE_UP");
-	else if (movement_input.x == 0 && movement_input.y == 0
-		&& rigid->get_orientation() == Orientation::LEFT)
+	else if (movement.x == 0 && movement.y == 0
+		&& rigid->get_orientation() == Orientation::Direction::LEFT)
 		anim->play("IDLE_LEFT");
-	else if (movement_input.x == 0 && movement_input.y == 0
-		&& rigid->get_orientation() == Orientation::DOWN)
+	else if (movement.x == 0 && movement.y == 0
+		&& rigid->get_orientation() == Orientation::Direction::DOWN)
 		anim->play("IDLE_DOWN");
-	else if (movement_input.x == 0 && movement_input.y == 0
-		&& rigid->get_orientation() == Orientation::RIGHT)
+	else if (movement.x == 0 && movement.y == 0
+		&& rigid->get_orientation() == Orientation::Direction::RIGHT)
 		anim->play("IDLE_RIGHT");
 
-	else if (movement_input.x < 0 && movement_input.y == 0
-		&& rigid->get_orientation() == Orientation::LEFT)
+	else if (movement.x < 0 && movement.y == 0
+		&& rigid->get_orientation() == Orientation::Direction::LEFT)
 		anim->play("WALK_LEFT", rigid->get_velocity().x,
 			rigid->get_max_velocity());
-	else if (movement_input.x > 0 && movement_input.y == 0
-		&& rigid->get_orientation() == Orientation::RIGHT)
+	else if (movement.x > 0 && movement.y == 0
+		&& rigid->get_orientation() == Orientation::Direction::RIGHT)
 		anim->play("WALK_RIGHT", rigid->get_velocity().x,
 			rigid->get_max_velocity());
 
-	else if (movement_input.y < 0
-		&& rigid->get_orientation() == Orientation::UP)
+	else if (movement.y < 0
+		&& rigid->get_orientation() == Orientation::Direction::UP)
 		anim->play("WALK_UP", rigid->get_velocity().y,
 			rigid->get_max_velocity());
-	else if (movement_input.y > 0
-		&& rigid->get_orientation() == Orientation::DOWN)
+	else if (movement.y > 0
+		&& rigid->get_orientation() == Orientation::Direction::DOWN)
 		anim->play("WALK_DOWN", rigid->get_velocity().y,
 			rigid->get_max_velocity());
 }

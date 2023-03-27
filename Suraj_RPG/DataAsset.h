@@ -5,10 +5,12 @@ namespace bm98
 class DataAsset : IData
 {
 public:
-	DataAsset();
-	virtual ~DataAsset();
+	DataAsset() {}
+	virtual ~DataAsset() {}
 
-	const std::string get_name() const;
+	std::string& get_name() { return file_name; }
+	std::string& get_file_name() { return file_name; }
+	void set_file_name(std::string file_name) { this->file_name = file_name; }
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
@@ -18,6 +20,7 @@ public:
 
 protected:
 	std::string name;
+	std::string file_name;
 
 };
 }

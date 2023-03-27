@@ -24,6 +24,8 @@ struct GameSettings
 	bool draw_gizmos = false;
 };
 
+extern bool DEBUG_MODE;
+
 class Game : IData
 {
 public:
@@ -32,6 +34,8 @@ public:
 	void run();
 
 	static GameSettings& get_game_settings();
+
+	
 
 protected:
 
@@ -51,7 +55,6 @@ private:
 	//Renderer* renderer;
 
 	sf::Clock deltaClock;
-	float fixed_delta_timer;
 	int fps_averager = 0;
 	float fps_col;
 	float fps;
@@ -65,9 +68,8 @@ private:
 
 	void update_sfml_events();
 	void update_delta_time();
-
 	void update();
-
+	void check_fixed_update();
 	void render();
 
 	/// <summary>

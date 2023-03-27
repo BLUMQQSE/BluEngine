@@ -1,0 +1,14 @@
+{
+    "name" : "A boring sword",
+    "file-name" : "SwordData.json",
+    "stackable-limit" : 2,
+    "wearable-location" : "RIGHT",
+    "texture-file-name" : "sword.png",
+    "icon-rect" :
+    {
+        "left" : 0,
+        "top" : 0,
+        "width" : 0,
+        "height" : 0
+    }
+}

@@ -2,6 +2,85 @@
 	"gameobjects" : 
 	[
 		{
+			"children" :
+			[
+				{
+					"components" :
+					[
+						{
+							"name" : "class bm98::Inventory",
+							"value" : 
+							{
+								"max-size" : 18,
+								"inventory-type" : "GENERAL"
+							}
+						},
+						{
+							"name" : "class bm98::InventoryWindow",
+							"value" : null
+						}
+					],
+					"info" : 
+					{
+						"name" : "GeneralInventory",
+						"physics-layer" : "DEFAULT",
+						"tag" : "PLAYER"
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						"position" : 
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						"rotation" : 0.0
+					}
+
+				},
+				{
+					"components" :
+					[
+						{
+							"name" : "class bm98::Inventory",
+							"value" : 
+							{
+								"max-size" : 10,
+								"inventory-type" : "COMBAT"
+							}
+						}, 
+						{
+							"name" : "class bm98::InventoryWindow",
+							"value" : null
+						}
+					],
+					"info" : 
+					{
+						"name" : "CombatInventory",
+						"physics-layer" : "DEFAULT",
+						"tag" : "PLAYER"
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						"position" : 
+						{
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						"rotation" : 0.0
+					}
+
+				}
+			],
 			"components" : 
 			[
 				{
@@ -88,6 +167,23 @@
 				},
 				{
 					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::Interactor",
+					"value" : 
+					{
+						"interactable-mask" : 
+						[
+							{
+								"layer" : "INTERACTABLE"
+							}
+						],
+						"interaction-radius" : 60.0
+					}
+				},
+				{
+					"name" :"class bm98::InventoryGUIController",
 					"value" : null
 				}
 			],

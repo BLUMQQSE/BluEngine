@@ -36,7 +36,7 @@ public:
 
 private:
     sf::Sprite sprite;
-    sf::Texture texture_sheet;
+    sf::Texture* texture_sheet;
 
     sf::Vector2i size = sf::Vector2i(32, 32);
     std::string file_path;

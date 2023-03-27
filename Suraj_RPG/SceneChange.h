@@ -1,28 +1,24 @@
 #pragma once
 #include "Math.h"
-#include "Component.h"
+#include "IInteractable.h"
 namespace bm98
 {
 class SceneChange :
-    public Component
+    public IInteractable
 {
 
 public:
-	SceneChange();
-	virtual ~SceneChange();
+	SceneChange() {}
+	virtual ~SceneChange() {}	
 
-	virtual void on_trigger_enter(Collider info) override;
-	virtual void on_trigger_stay(Collider info) override;
-	virtual void on_trigger_exit(Collider info) override; 
+protected:
+	Vector2f destination;
+	std::string destination_scene_name;
 
+	virtual void handle_instant_interaction() override;
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
-
-private:
-	Vector2f destination;
-	std::string destination_scene_name;
-	bool triggered = false;
 };
 
 }

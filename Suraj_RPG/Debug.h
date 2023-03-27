@@ -22,7 +22,7 @@ public:
 private:
 	static sf::Text text_display;
 	static bool active;
-	static SortingLayer layer;
+	static Sorting::Layer layer;
 	static char z_order;
 };
 }

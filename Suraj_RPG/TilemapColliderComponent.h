@@ -14,7 +14,7 @@ public:
     virtual void start() override;
 
     bool intersects(const FloatConvex collider, 
-        Global::LayerMask mask);
+        PhysicsNS::LayerMask mask);
 
 private:
 

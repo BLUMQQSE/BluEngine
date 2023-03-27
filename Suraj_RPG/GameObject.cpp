@@ -30,7 +30,6 @@
 #include "TilemapComponent.h"
 #include "CameraComponent.h"
 
-#pragma endregion
 
 #include "PlayerController.h"
 
@@ -38,6 +37,12 @@
 #include "SceneChange.h"
 #include "AudioSource.h"
 #include "Inventory.h"
+#include "InventoryWindow.h"
+#include "InventoryGUIController.h"
+#include "Interactor.h"
+#include "IInteractable.h"
+#include "Item.h"
+#include "Chest.h"
 
 namespace bm98
 {
@@ -216,6 +221,20 @@ void GameObject::add_to_buffer(sf::View* view)
 	for (auto& ch : children)
 		ch->add_to_buffer(view);
 	
+}
+
+std::vector<Editor::SerializedVar> GameObject::get_editor_values()
+{
+
+	std::vector<Editor::SerializedVar> variables;
+
+	variables.push_back(Editor::SerializedVar("name", static_cast<void*>(&info.name), Editor::VarType::String));
+	variables.push_back(Editor::SerializedVar("layer", static_cast<void*>(&info.layer),
+		Editor::VarType::Dropdown, Sorting::ToVector()));
+	variables.push_back(Editor::SerializedVar("position", static_cast<void*>(&position), Editor::VarType::Vector2f));
+	variables.push_back(Editor::SerializedVar("local_position", static_cast<void*>(&local_position), Editor::VarType::Vector2f));
+
+	return variables;
 }
 
 const bool& GameObject::is_active()
@@ -502,6 +521,36 @@ void GameObject::unserialize_json(Json::Value obj)
 		{
 			comps_data[typeid(Inventory).name()] = component["value"];
 			add_component<Inventory>();
+		}
+		else if (component["name"].asString() == typeid(InventoryWindow).name())
+		{
+			comps_data[typeid(InventoryWindow).name()] = component["value"];
+			add_component<InventoryWindow>();
+		}
+		else if (component["name"].asString() == typeid(InventoryGUIController).name())
+		{
+			comps_data[typeid(InventoryGUIController).name()] = component["value"];
+			add_component<InventoryGUIController>();
+		}
+		else if (component["name"].asString() == typeid(Interactor).name())
+		{
+			comps_data[typeid(Interactor).name()] = component["value"];
+			add_component<Interactor>();
+		}
+		else if (component["name"].asString() == typeid(IInteractable).name())
+		{
+			comps_data[typeid(IInteractable).name()] = component["value"];
+			add_component<IInteractable>();
+		}
+		else if (component["name"].asString() == typeid(Item).name())
+		{
+			comps_data[typeid(Item).name()] = component["value"];
+			add_component<Item>();
+		}
+		else if (component["name"].asString() == typeid(Chest).name())
+		{
+		comps_data[typeid(Chest).name()] = component["value"];
+		add_component<Chest>();
 		}
 	}
 

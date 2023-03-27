@@ -32,7 +32,7 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 		, container.getPosition().y + 20.f);
 
 	set_render(false);
-	set_sorting_layer(SortingLayer::UI, false);
+	set_sorting_layer(Sorting::Layer::UI, false);
 	Renderer::Instance()->add(Renderer::RenderObject(&background, this));
 	Renderer::Instance()->add(Renderer::RenderObject(&container, this));
 	Renderer::Instance()->add(Renderer::RenderObject(&menu_text, this));

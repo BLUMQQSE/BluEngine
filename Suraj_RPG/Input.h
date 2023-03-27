@@ -52,7 +52,6 @@ public:
 	/// <param name="key">: String relating to an sfml key pressed.</param>
 	/// <returns>True if key is first released this frame.</returns>
 	bool get_action_up(std::string key);
-
 	/// <summary>
 	/// Returns true if the specified mouse button is pressed. 
 	/// The provided button corrisponds to sfml::Mouse button.
@@ -97,6 +96,7 @@ public:
 	/// <returns></returns>
 	const bool using_input_box();
 	void set_using_input_box(bool val);
+	const sf::RenderWindow* get_window() const;
 
 protected:
 

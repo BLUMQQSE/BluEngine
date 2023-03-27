@@ -32,8 +32,8 @@ private:
 	sf::View* heir_view;
 	sf::View* inspec_view;
 
-	bool heir_active = true;
-	bool inspec_active = true;
+	bool heir_active = false;
+	bool inspec_active = false;
 
 
 	bool gameobject_held = false;

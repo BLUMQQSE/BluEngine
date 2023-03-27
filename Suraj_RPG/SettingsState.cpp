@@ -7,6 +7,7 @@
 #include "Gui.h"
 #include "Physics.h"
 #include "Game.h"
+#include "ResourceManager.h"
 namespace bm98
 {
 using namespace core;
@@ -25,6 +26,7 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 
 	Renderer::Instance()->add(Renderer::RenderObject(&concave, _render, options_layer, z_order));
 
+	inp = new GUI::InputBox(0, 0, 100, 50, 16, ResourceManager::Instance()->get_font("calibri-regular.ttf"));
 }
 
 SettingsState::~SettingsState()
@@ -49,6 +51,7 @@ SettingsState::~SettingsState()
 		delete v.second.first;
 		delete v.second.second;
 	}
+	delete inp;
 
 }
 
@@ -94,6 +97,8 @@ void SettingsState::update()
 	update_input();
 	Debug::mouse_position_display(font);
 	
+	inp->update();
+
 	for (auto& it : buttons)
 	{
 		it.second->update();
@@ -116,6 +121,11 @@ void SettingsState::update()
 		v.second.second->set_text(std::to_string(static_cast<int>(std::round(volume_sliders.at(v.first)->get_value()))) + "%");
 }
 
+void SettingsState::update_sfml(sf::Event sfEvent)
+{
+	inp->update_sfml(sfEvent);
+}
+
 void SettingsState::late_update()
 {
 
@@ -132,6 +142,7 @@ void SettingsState::fixed_update()
 
 		std::cout << "collision\n";
 	}
+
 }
 
 void SettingsState::render()
