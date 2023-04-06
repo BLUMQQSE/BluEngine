@@ -3,6 +3,7 @@
 #include "FileManager.h"
 #include "DataAsset.h"
 #include "ItemData.h"
+#include "WeaponData.h"
 namespace bm98::core 
 {
 
@@ -135,6 +136,7 @@ void ResourceManager::iterate_prefab_directory(std::string dir_path)
 		if (!entry.is_directory())
 		{
 			prefab_data[file_name] = FileManager::Instance()->load_from_file(dir_path + file_name);
+			
 			continue;
 		}
 	
@@ -152,9 +154,18 @@ void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 		{
 			if (entry.path().string().find("ItemData"))
 			{
-				asset_data[file_name] = new ItemData();
-				asset_data[file_name]->set_file_name(file_name);
-				asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
+				if (entry.path().string().find("WeaponData"))
+				{
+					asset_data[file_name] = new WeaponData();
+					asset_data[file_name]->set_file_name(file_name);
+					asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
+				}
+				else
+				{
+					asset_data[file_name] = new ItemData();
+					asset_data[file_name]->set_file_name(file_name);
+					asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
+				}
 			}
 			else
 			{

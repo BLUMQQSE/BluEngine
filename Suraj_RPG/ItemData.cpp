@@ -6,12 +6,6 @@ namespace bm98
 {
 using namespace core;
 
-Json::Value ItemData::serialize_json()
-{
-	// SHOULDNT NEED TO SERIALIZE ANYTHING
-	return Json::Value();
-}
-
 void ItemData::unserialize_json(Json::Value obj)
 {
 	DataAsset::unserialize_json(obj);
@@ -25,6 +19,10 @@ void ItemData::unserialize_json(Json::Value obj)
 	icon_rect.width = (obj["icon-rect"]["width"].asInt64() * 32) + 32;
 	icon_rect.top = obj["icon-rect"]["top"].asInt64() * 32;
 	icon_rect.height = (obj["icon-rect"]["height"].asInt64() * 32) + 32;
+
+	tradable = obj["tradable"].asBool();
+	worth = obj["worth"].asFloat();
+	cost = obj["cost"].asFloat();
 
 	texture_sheet = &ResourceManager::Instance()->get_texture(texture_file_name);
 	

@@ -11,7 +11,7 @@ GameEditorView::GameEditorView()
 	EventSystem::Instance()->subscribe(EventID::SCENE_ADDED_GAMEOBJECT, this);
 	EventSystem::Instance()->subscribe(EventID::SCENE_REMOVED_GAMEOBJECT, this);
 	EventSystem::Instance()->subscribe(EventID::SCENE_CHANGE, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_ORDER_CHANGE, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE, this);
 
 
 	init();
@@ -104,7 +104,7 @@ void GameEditorView::handle_event(Event* event)
 	case EventID::SCENE_CHANGE:
 		create_heir_panel();
 		break;
-	case EventID::SCENE_ORDER_CHANGE:
+	case EventID::SCENE_GAMEOBJECT_ORDER_CHANGE:
 		create_heir_panel();
 		break;
 	}
@@ -266,7 +266,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 	{
 		switch (vars[i].type)
 		{
-		case Editor::VarType::Int:
+		case Var::Type::Int:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -276,7 +276,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Float:
+		case Var::Type::Float:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -286,7 +286,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Bool:
+		case Var::Type::Bool:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -295,7 +295,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Dropdown:
+		case Var::Type::Dropdown:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -306,7 +306,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			height += 30;
 			break;
 		}
-		case Editor::VarType::Vector2f:
+		case Var::Type::Vector2f:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -318,7 +318,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Vector2i:
+		case Var::Type::Vector2i:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -330,7 +330,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			height += 20;
 			break;
 		}
-		case Editor::VarType::FloatConvex:
+		case Var::Type::FloatConvex:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -347,7 +347,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 
 			break;
 		}
-		case Editor::VarType::Header:
+		case Var::Type::Header:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 16, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -355,7 +355,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			height += 20;
 			break;
 		}
-		case Editor::VarType::String:
+		case Var::Type::String:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -386,7 +386,7 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 		// here handle updating for all objects in scene
 		switch (vars.second[i].type)
 		{
-		case Editor::VarType::Int:
+		case Var::Type::Int:
 		{
 			int value = *static_cast<int*>(vars.second[i].variable);
 			std::stringstream s;
@@ -394,7 +394,7 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 			dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->set_text(s.str());
 			break;
 		}
-		case Editor::VarType::Float:
+		case Var::Type::Float:
 		{
 			float value = *static_cast<float*>(vars.second[i].variable);
 			std::stringstream s;
@@ -402,7 +402,7 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 			dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->set_text(s.str());
 			break;
 		}
-		case Editor::VarType::Bool:
+		case Var::Type::Bool:
 		{
 
 			bool value = *static_cast<bool*>(vars.second[i].variable);
@@ -410,14 +410,14 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 
 			break;
 		}
-		case Editor::VarType::Dropdown:
+		case Var::Type::Dropdown:
 		{
 			int value = *static_cast<int*>(vars.second[i].variable);
 			dynamic_cast<GUI::DropDownList*>(vars.first->get_element(vars.second[i].name))->set_selected_index(value);
 
 			break;
 		}
-		case Editor::VarType::Vector2f:
+		case Var::Type::Vector2f:
 		{
 			Vector2f vec = *static_cast<Vector2f*>(vars.second[i].variable);
 			std::stringstream s;
@@ -429,7 +429,7 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 
 			break;
 		}
-		case Editor::VarType::Vector2i:
+		case Var::Type::Vector2i:
 		{
 			Vector2i vec = *static_cast<Vector2i*>(vars.second[i].variable);
 			std::stringstream s;
@@ -441,7 +441,7 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 
 			break;
 		}
-		case Editor::VarType::FloatConvex:
+		case Var::Type::FloatConvex:
 		{
 			FloatConvex poly = *static_cast<FloatConvex*>(vars.second[i].variable);
 			std::vector<Vector2f> model = poly.get_model();
@@ -458,11 +458,11 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 			}
 			break;
 		}
-		case Editor::VarType::Header:
+		case Var::Type::Header:
 		{
 			break;
 		}
-		case Editor::VarType::String:
+		case Var::Type::String:
 		{
 			std::string value = "empty";
 			if(vars.second[i].variable)

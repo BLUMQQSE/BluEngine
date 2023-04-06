@@ -1,7 +1,9 @@
 {
     "name" : "A boring sword",
     "file-name" : "SwordData.json",
-    "stackable-limit" : 2,
+    "prefab-file-name" : "weapon_prefab.json",
+    "attack-radius" : 69.69,
+    "stackable-limit" : 1,
     "wearable-location" : "RIGHT",
     "texture-file-name" : "sword.png",
     "icon-rect" :

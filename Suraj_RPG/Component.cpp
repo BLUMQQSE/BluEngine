@@ -115,6 +115,4 @@ std::vector<Editor::SerializedVar> Component::get_editor_values()
 }
 
 
-
-
 }

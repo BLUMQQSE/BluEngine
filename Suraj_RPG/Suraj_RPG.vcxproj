@@ -178,6 +178,9 @@
     <ClCompile Include="ConsoleManager.cpp" />
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="Delay.cpp" />
+    <ClCompile Include="Destructor.cpp" />
+    <ClCompile Include="Dialogue.cpp" />
+    <ClCompile Include="DialogueSystem.cpp" />
     <ClCompile Include="DontDestroyOnLoad.cpp" />
     <ClCompile Include="DropDownComponent.cpp" />
     <ClCompile Include="EventSystem.cpp" />
@@ -195,6 +198,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="HearingComponent.cpp" />
+    <ClCompile Include="IDestructable.cpp" />
     <ClCompile Include="IInteractable.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Interactor.cpp" />
@@ -202,7 +206,7 @@
     <ClCompile Include="InventoryGUIController.cpp" />
     <ClCompile Include="InventoryWindow.cpp" />
     <ClCompile Include="IRenderable.cpp" />
-    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemController.cpp" />
     <ClCompile Include="ItemData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
@@ -237,6 +241,8 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VisualComponent.cpp" />
+    <ClCompile Include="WeaponController.cpp" />
+    <ClCompile Include="WeaponData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\JSON\dist\json\json-forwards.h" />
@@ -266,6 +272,9 @@
     <ClInclude Include="ConsoleManager.h" />
     <ClInclude Include="DataAsset.h" />
     <ClInclude Include="Delay.h" />
+    <ClInclude Include="Destructor.h" />
+    <ClInclude Include="Dialogue.h" />
+    <ClInclude Include="DialogueSystem.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />
     <ClInclude Include="DropDownComponent.h" />
     <ClInclude Include="EventSystem.h" />
@@ -284,6 +293,7 @@
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="HearingComponent.h" />
     <ClInclude Include="IData.h" />
+    <ClInclude Include="IDestructable.h" />
     <ClInclude Include="IInteractable.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Interactor.h" />
@@ -292,7 +302,7 @@
     <ClInclude Include="InventoryWindow.h" />
     <ClInclude Include="IObject.h" />
     <ClInclude Include="IRenderable.h" />
-    <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemController.h" />
     <ClInclude Include="ItemData.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="Math.h" />
@@ -320,6 +330,8 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="VisualComponent.h" />
+    <ClInclude Include="WeaponController.h" />
+    <ClInclude Include="WeaponData.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Suraj_RPG.rc" />

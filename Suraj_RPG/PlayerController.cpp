@@ -60,13 +60,12 @@ void bm98::PlayerController::update()
 
 	if (Input::Instance()->get_action_down("INTERACT"))
 	{
-		return;
 		if (game_object->check_for_child("pants"))
 		{
 			SceneManager::Instance()->destroy_gameobject(SceneManager::Instance()->find("pants", game_object));
 			return;
 		}
-		
+
 		GameObject* pants = new GameObject();
 
 		pants->info.name = "pants";
@@ -81,7 +80,7 @@ void bm98::PlayerController::update()
 		
 	}
 
-	Vector2f movement = game_object->get_world_position() - camera->get_game_object()->get_world_position();
+	Vector2f movement = game_object->get_center() - camera->get_game_object()->get_center();
 	
 	camera->get_game_object()->move(movement);
 }
@@ -170,8 +169,9 @@ void bm98::PlayerController::update_input()
 
 	}
 	if (Input::Instance()->get_action_down("INVENTORY"))
+	{
 		inventory->toggle_inventory(InventoryNS::WindowToggle::FULL_INVENTORY);
-
+	}
 	if (Input::Instance()->get_action("LEFT"))
 		movement_input.x = -1;
 	if (Input::Instance()->get_action("RIGHT"))

@@ -11,6 +11,11 @@ ColliderComponent::~ColliderComponent()
 {
 }
 
+void ColliderComponent::init()
+{
+	collider_bounds.init();
+}
+
 bool ColliderComponent::intersects(const FloatConvex collider)
 {
 	//return collider_bounds.intersects(collider);
@@ -57,13 +62,13 @@ std::vector<Editor::SerializedVar> ColliderComponent::get_editor_values()
 {
 	std::vector<Editor::SerializedVar> variables;
 
-	variables.push_back(Editor::SerializedVar("trigger", static_cast<void*>(&trigger), Editor::VarType::Bool));
+	variables.push_back(Editor::SerializedVar("trigger", static_cast<void*>(&trigger), Var::Type::Bool));
 	variables.push_back(Editor::SerializedVar("X offset", static_cast<void*>(&offsetX), 
-		Editor::VarType::Float));
+		Var::Type::Float));
 	variables.push_back(Editor::SerializedVar("Y offset", static_cast<void*>(&offsetY),
-		Editor::VarType::Float));
+		Var::Type::Float));
 	variables.push_back(Editor::SerializedVar("collision_check_type", &collision_check_type,
-		Editor::VarType::Dropdown, collisiondetection_to_vector()));
+		Var::Type::Dropdown, collisiondetection_to_vector()));
 
 
 	return variables;

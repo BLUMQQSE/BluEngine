@@ -33,11 +33,13 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	init_fonts();
 	init_buttons();
 
-	active_scene = new Scene("default.json");
+	active_scene = new Scene("editor-test-scene.json");
 
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, static_cast<void*>(active_scene));
 	//SceneManager::Instance()->init(active_scene);
-	SceneManager::Instance()->load_scene_prefab("default.json");
+	SceneManager::Instance()->load_scene_prefab("editor-test-scene.json");
+
+	active_scene->set_view(scene_view);
 
 	std::vector<GameObject*> obj = SceneManager::Instance()->get_objects_in_scene();
 
@@ -88,7 +90,9 @@ EditorState::~EditorState()
 void EditorState::on_end_state()
 {
 	Debug::Log("Will now clean up editor state on exit");
-	SceneManager::Instance()->save_scene_prefab(active_scene);
+
+	FileManager::Instance()->save_to_file_styled(selected_gameobject->serialize_json(), "tilemap_test.json");
+
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_DESTROY_);
 	State::on_end_state();
 }
@@ -98,6 +102,11 @@ void EditorState::update_input()
 	if (Input::Instance()->using_input_box())
 		return;
 
+	if (Input::Instance()->get_action_down("V"))
+	{
+		selected_gameobject->serialize_json();
+	}
+
 	if (Input::Instance()->get_action_down("MENU"))
 	{
 		std::cout << "MENU\n";
@@ -106,12 +115,14 @@ void EditorState::update_input()
 		else
 			unpause_state();
 	}
+	/*
 	if (Input::Instance()->get_action_down("SPACE"))
 	{
 		FileManager::Instance()->save_to_file_styled(selected_gameobject->get_component<TilemapComponent>().serialize_json(),
 			"test_file.json");
 
 	}
+	*/
 }
 
 void EditorState::update_sfml(sf::Event sfEvent)
@@ -126,7 +137,6 @@ void EditorState::update()
 	if (!paused)
 	{
 		State::update();
-
 		if(selected_gameobject)
 			selected_gameobject->update();
 
@@ -172,6 +182,8 @@ void EditorState::render()
 
 	if (!paused)
 	{
+		active_scene->render(scene_view);
+
 		render_gui();
 		for (auto& it : buttons)
 		{
@@ -208,6 +220,10 @@ void EditorState::init_variables()
 void EditorState::init_views()
 {
 	scene_view = new sf::View();
+	scene_view->setSize(graphics_settings->resolution.width, graphics_settings->resolution.height);
+	scene_view->setCenter(graphics_settings->resolution.width / 2.f, graphics_settings->resolution.height / 2.f);
+	scene_view->zoom(1.f);
+	/*
 	scene_view->setSize(
 		sf::Vector2f(
 			graphics_settings->resolution.width,
@@ -218,6 +234,9 @@ void EditorState::init_views()
 		graphics_settings->resolution.width / 2.f,
 		graphics_settings->resolution.height / 2.f
 	);
+	*/
+
+
 
 	tile_selector_view = new sf::View();
 	
@@ -256,8 +275,7 @@ void EditorState::update_gui()
 	{
 		return;
 	}
-
-	if (!Input::Instance()->using_input_box())
+	if (!Input::Instance()->using_input_box() && !editor_view->in_bound())
 	{
 		float delta = Time::Instance()->delta_time();
 		if (Input::Instance()->get_action("CAM_UP"))
@@ -375,6 +393,7 @@ void EditorState::init_buttons()
 void EditorState::init_tilemap()
 {
 	selected_gameobject = new GameObject();
+	selected_gameobject->set_world_position(Vector2f(0, 0));
 	selected_gameobject->add_component<TilemapComponent>(0, 0, UNIT_SIZE, 20, 20);
 	selected_gameobject->add_component<TilemapColliderComponent>();
 	selected_gameobject->init();

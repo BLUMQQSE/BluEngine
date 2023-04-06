@@ -15,7 +15,6 @@ public:
     sf::IntRect& get_rect() { return icon_rect; }
     ItemNS::WearableLocation get_wearable_location() { return wearable_location; }
     inline std::string get_prefab_file_name() { return prefab_file_name; }
-
    
 
 protected:
@@ -24,11 +23,14 @@ protected:
     std::string texture_file_name;
     std::string prefab_file_name;
 
+    bool tradable = false;
+    float worth = 0.0f;
+    float cost = 0.0f;
+
     ItemNS::WearableLocation wearable_location;
     int stackable_limit;
 
     // Inherited via IData
-    virtual Json::Value serialize_json() override;
     virtual void unserialize_json(Json::Value obj) override;
 
 };

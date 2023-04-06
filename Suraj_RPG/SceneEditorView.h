@@ -26,6 +26,8 @@ public:
 
 	void init();
 
+	const bool in_bound() const;
+
 	void toggle_editor(EditorPanel panel_to_toggle);
 	void update();
 	virtual void update_sfml(sf::Event sfEvent);
@@ -37,12 +39,24 @@ public:
 private:
 	GUI::Panel* heir_panel;
 	GUI::Panel* inspec_panel;
+	GUI::Panel* scene_editor_panel;
+
+	GUI::InputBox* file_name;
+	GUI::InputBox* component_name;
+
+	GUI::Button* load_file;
+	GUI::Button* save_file;
+	GUI::Button* add_gameobject;
+	GUI::Button* remove_gameobject;
+	GUI::Button* add_component;
+	GUI::Button* remove_component;
 
 	sf::View* heir_view;
 	sf::View* inspec_view;
 
 	bool heir_active = true;
 	bool inspec_active = true;
+	bool scene_editor_active = true;
 
 
 	bool gameobject_held = false;
@@ -61,8 +75,12 @@ private:
 	void create_heir_panel();
 	void update_heir_panel();
 
+	void clear_inspec_panel();
 	void create_inspec_panel();
 	void update_inspec_panel();
+
+	void create_scene_editor_panel();
+	void update_scene_editor_panel();
 
 
 	GUI::Panel* create_component_panel(float pos_y, float width, std::string component_name,

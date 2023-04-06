@@ -18,6 +18,7 @@ public:
     AudioSource();
     virtual ~AudioSource();
 
+    virtual void init() override;
     virtual void awake() override;
     virtual void update() override;
 

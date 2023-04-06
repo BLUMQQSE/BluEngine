@@ -149,6 +149,7 @@ private:
 	void render();
 	void render_gizmos();
 	void clear();
+	void clear_gizmos();
 
 	void fixed_update();
 

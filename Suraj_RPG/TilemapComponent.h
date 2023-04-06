@@ -19,14 +19,15 @@ public:
 		unsigned width, unsigned height);
 	virtual ~TilemapComponent();
 
-	float& grid_size();
-	sf::Texture* tile_sheet(std::string key);
-
 	virtual void init() override;
+	virtual void awake() override;
 	virtual void update() override;
 	virtual void late_update() override;
 	virtual void fixed_update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
+
+	float& grid_size();
+	sf::Texture* tile_sheet(std::string key);
 
 	void add_tiles(const unsigned x, const unsigned y, Sorting::Layer layer,
 		const sf::IntRect texture_rect, TileNS::Type tile_type = TileNS::Type::DEFAULT,
@@ -57,6 +58,8 @@ public:
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
+
+	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 
 private:
 	Vector2i position;
@@ -101,6 +104,7 @@ private:
 	void clear_map();
 	void create_empty_map();
 
+	void resize_map();
 
 	//TilemapColliderComponent* tilemap_collider;
 };

@@ -70,7 +70,9 @@ public:
     virtual void awake() override;
 
     virtual void update() override;
-   
+    /// <summary>
+    /// Currently Close all not working
+    /// </summary>
     void toggle_inventory(InventoryNS::WindowToggle window_to_toggle);
     void set_external(InventoryWindow* inv);
     void remove_external();

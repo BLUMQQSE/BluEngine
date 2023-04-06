@@ -5,16 +5,19 @@ namespace bm98
 
 class ItemData;
 
-class Item :
+class ItemController :
     public IInteractable
 {
 public:
-	Item() {}
-	~Item() {}
+	ItemController() {}
+	~ItemController() {}
+
+	virtual ItemData* get_data() { return item_data; }
+	virtual void set_data(ItemData* data) { item_data = data; };
 
 protected:
     ItemNS::State item_state = ItemNS::State::DROPPED;
-	ItemData* data;
+	ItemData* item_data;
 
 	virtual void handle_instant_interaction() override;
 	// Inherited via IData

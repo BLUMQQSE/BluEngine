@@ -387,6 +387,13 @@ FloatConvex FloatConvex::CombineShapes(FloatConvex a, FloatConvex b)
 	return convex;
 }
 
+void FloatConvex::init()
+{
+	setPointCount(point_count);
+	model.resize(point_count);
+	set_position(position);
+}
+
 void FloatConvex::move(float x, float y)
 {
 	set_position(Vector2f(position.x + x, position.y + y));

@@ -991,6 +991,7 @@ void InputBox::set_position(float x, float y)
 
 void InputBox::set_selected(bool sel)
 {
+	Input::Instance()->set_using_input_box(sel);
 	selected = sel;
 
 	if (!selected)

@@ -16,7 +16,7 @@ public:
 	Vector2f();
 	Vector2f(float x, float y);
 	Vector2f(sf::Vector2f vec);
-	
+
 	float sqr_magnitude();
 	float magnitude();
 
@@ -205,6 +205,8 @@ public:
 	/// <param name="b"></param>
 	/// <returns></returns>
 	static FloatConvex CombineShapes(FloatConvex a, FloatConvex b);
+
+	void init();
 
 	void move(float x, float y);
 	void set_position(sf::Vector2f position);

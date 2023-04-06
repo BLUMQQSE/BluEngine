@@ -105,6 +105,7 @@ void InventoryGUIController::toggle_inventory(InventoryNS::WindowToggle window_t
 			external_window->set_render(false);
 
 		hand.send_back();
+		break;
 	case bm98::InventoryNS::WindowToggle::OPEN_ALL:
 		general_window->set_render(true);
 		combat_window->set_render(true);
@@ -237,27 +238,32 @@ void InventoryGUIController::handle_right_click()
 
 	if (hand.item.item)
 	{
-		if(!mouse_inven->check_compatability(slot_num, hand.item.item))
-		// place one item if possible
-		if (mouse_inven->get_item(slot_num))
+		if (mouse_inven->check_compatability(slot_num, hand.item.item))
+			// place one item if possible
 		{
-			if (mouse_inven->get_item(slot_num) != hand.item.item)
-				return;
+			if (mouse_inven->get_item(slot_num))
+			{
+				if (mouse_inven->get_item(slot_num) != hand.item.item)
+					return;
 
-			int left_over = mouse_inven->add_item(slot_num, hand.item.item, 1);
-			if (left_over == 0)
-				hand.clear();
-			else
+				int left_over = mouse_inven->add_item(slot_num, hand.item.item, 1);
+				if (left_over == 1)
+					return;
+
 				hand.item.current_capacity--;
 
-		}
-		else
-		{
-			// place into empty slot
-			mouse_inven->add_item(slot_num, hand.item.item, 1);
-			hand.item.current_capacity--;
-			if(hand.item.current_capacity == 0)
-				hand.clear();
+				if (hand.item.current_capacity == 0)
+					hand.clear();
+
+			}
+			else
+			{
+				// place into empty slot
+				mouse_inven->add_item(slot_num, hand.item.item, 1);
+				hand.item.current_capacity--;
+				if (hand.item.current_capacity == 0)
+					hand.clear();
+			}
 		}
 	}
 	else

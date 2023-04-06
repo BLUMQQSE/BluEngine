@@ -41,7 +41,8 @@
 #include "InventoryGUIController.h"
 #include "Interactor.h"
 #include "IInteractable.h"
-#include "Item.h"
+#include "ItemController.h"
+#include "WeaponController.h";
 #include "Chest.h"
 
 namespace bm98
@@ -65,6 +66,7 @@ GameObject::~GameObject()
 void GameObject::init()
 {
 	init_components();
+	set_world_position(position);
 }
 
 void GameObject::awake()
@@ -228,13 +230,20 @@ std::vector<Editor::SerializedVar> GameObject::get_editor_values()
 
 	std::vector<Editor::SerializedVar> variables;
 
-	variables.push_back(Editor::SerializedVar("name", static_cast<void*>(&info.name), Editor::VarType::String));
+	variables.push_back(Editor::SerializedVar("name", static_cast<void*>(&info.name), Var::Type::String));
 	variables.push_back(Editor::SerializedVar("layer", static_cast<void*>(&info.layer),
-		Editor::VarType::Dropdown, Sorting::ToVector()));
-	variables.push_back(Editor::SerializedVar("position", static_cast<void*>(&position), Editor::VarType::Vector2f));
-	variables.push_back(Editor::SerializedVar("local_position", static_cast<void*>(&local_position), Editor::VarType::Vector2f));
+		Var::Type::Dropdown, Sorting::ToVector()));
+	variables.push_back(Editor::SerializedVar("position", static_cast<void*>(&position), Var::Type::Vector2f));
+	variables.push_back(Editor::SerializedVar("local_position", static_cast<void*>(&local_position), 
+		Var::Type::Vector2f));
 
 	return variables;
+}
+
+void GameObject::editor_update()
+{
+	Renderer::Instance()->refresh();
+	init_components();
 }
 
 const bool& GameObject::is_active()
@@ -293,12 +302,12 @@ const size_t GameObject::get_unique_runtime_id() const
 	return unique_runtime_id;
 }
 
-const GameObject::Info& GameObject::get_info() const
+GameObject::Info& GameObject::get_info()
 {
 	return info;
 }
 
-const sf::Vector2f GameObject::get_center() const
+Vector2f GameObject::get_center()
 {
 	if (has_component<SpriteComponent>())
 	{
@@ -442,114 +451,121 @@ void GameObject::unserialize_json(Json::Value obj)
 	std::unordered_map<std::string, Json::Value> comps_data;
 	for (Json::Value component : obj["components"])
 	{
-		if (component["name"].asString() == typeid(TilemapComponent).name())
+		std::string component_name = component["name"].asString();
+		Json::Value component_value = component["value"];
+		if (component_name == typeid(TilemapComponent).name())
 		{
-			comps_data[typeid(TilemapComponent).name()] = component["value"];
+			comps_data[typeid(TilemapComponent).name()] = component_value;
 			add_component<TilemapComponent>();
 		}
-		else if (component["name"].asString() == typeid(TilemapColliderComponent).name())
+		else if (component_name == typeid(TilemapColliderComponent).name())
 		{
-			comps_data[typeid(TilemapColliderComponent).name()] = component["value"];
+			comps_data[typeid(TilemapColliderComponent).name()] = component_value;
 			add_component<TilemapColliderComponent>();
 		}
-		else if (component["name"].asString() == typeid(SpriteComponent).name())
+		else if (component_name == typeid(SpriteComponent).name())
 		{
-			comps_data[typeid(SpriteComponent).name()] = component["value"];
+			comps_data[typeid(SpriteComponent).name()] = component_value;
 			add_component<SpriteComponent>();
 		}
-		else if (component["name"].asString() == typeid(AnimatedSpriteComponent).name())
+		else if (component_name == typeid(AnimatedSpriteComponent).name())
 		{
-			comps_data[typeid(AnimatedSpriteComponent).name()] = component["value"];
+			comps_data[typeid(AnimatedSpriteComponent).name()] = component_value;
 			add_component<AnimatedSpriteComponent>();
 		}
-		else if (component["name"].asString() == typeid(AnimationComponent).name())
+		else if (component_name == typeid(AnimationComponent).name())
 		{
-			comps_data[typeid(AnimationComponent).name()] = component["value"];
+			comps_data[typeid(AnimationComponent).name()] = component_value;
 			add_component<AnimationComponent>();
 		}
-		else if (component["name"].asString() == typeid(BoxColliderComponent).name())
+		else if (component_name == typeid(BoxColliderComponent).name())
 		{
-			comps_data[typeid(BoxColliderComponent).name()] = component["value"];
+			comps_data[typeid(BoxColliderComponent).name()] = component_value;
 			add_component<BoxColliderComponent>();
 		}
-		else if (component["name"].asString() == typeid(CapsuleColliderComponent).name())
+		else if (component_name == typeid(CapsuleColliderComponent).name())
 		{
-			comps_data[typeid(CapsuleColliderComponent).name()] = component["value"];
+			comps_data[typeid(CapsuleColliderComponent).name()] = component_value;
 			add_component<CapsuleColliderComponent>();
 		}
-		else if (component["name"].asString() == typeid(ChildAnimationComponent).name())
+		else if (component_name == typeid(ChildAnimationComponent).name())
 		{
-			comps_data[typeid(ChildAnimationComponent).name()] = component["value"];
+			comps_data[typeid(ChildAnimationComponent).name()] = component_value;
 			add_component<ChildAnimationComponent>();
 		}
-		else if (component["name"].asString() == typeid(RigidbodyComponent).name())
+		else if (component_name == typeid(RigidbodyComponent).name())
 		{
-			comps_data[typeid(RigidbodyComponent).name()] = component["value"];
+			comps_data[typeid(RigidbodyComponent).name()] = component_value;
 			add_component<RigidbodyComponent>();
 		}
-		else if (component["name"].asString() == typeid(PlayerController).name())
+		else if (component_name == typeid(PlayerController).name())
 		{
-			comps_data[typeid(PlayerController).name()] = component["value"];
+			comps_data[typeid(PlayerController).name()] = component_value;
 			add_component<PlayerController>();
 		}
-		else if (component["name"].asString() == typeid(ButtonComponent).name())
+		else if (component_name == typeid(ButtonComponent).name())
 		{
-			comps_data[typeid(ButtonComponent).name()] = component["value"];
+			comps_data[typeid(ButtonComponent).name()] = component_value;
 			add_component<ButtonComponent>();
 		}
-		else if (component["name"].asString() == typeid(DontDestroyOnLoad).name())
+		else if (component_name == typeid(DontDestroyOnLoad).name())
 		{
-			comps_data[typeid(DontDestroyOnLoad).name()] = component["value"];
+			comps_data[typeid(DontDestroyOnLoad).name()] = component_value;
 			add_component<DontDestroyOnLoad>();
 		}
-		else if (component["name"].asString() == typeid(SceneChange).name())
+		else if (component_name == typeid(SceneChange).name())
 		{
-			comps_data[typeid(SceneChange).name()] = component["value"];
+			comps_data[typeid(SceneChange).name()] = component_value;
 			add_component<SceneChange>();
 		}
-		else if (component["name"].asString() == typeid(CameraComponent).name())
+		else if (component_name == typeid(CameraComponent).name())
 		{
-			comps_data[typeid(CameraComponent).name()] = component["value"];
+			comps_data[typeid(CameraComponent).name()] = component_value;
 			add_component<CameraComponent>();
 		}
-		else if (component["name"].asString() == typeid(AudioSource).name())
+		else if (component_name == typeid(AudioSource).name())
 		{
-			comps_data[typeid(AudioSource).name()] = component["value"];
+			comps_data[typeid(AudioSource).name()] = component_value;
 			add_component<AudioSource>();
 		}
-		else if (component["name"].asString() == typeid(Inventory).name())
+		else if (component_name == typeid(Inventory).name())
 		{
-			comps_data[typeid(Inventory).name()] = component["value"];
+			comps_data[typeid(Inventory).name()] = component_value;
 			add_component<Inventory>();
 		}
-		else if (component["name"].asString() == typeid(InventoryWindow).name())
+		else if (component_name == typeid(InventoryWindow).name())
 		{
-			comps_data[typeid(InventoryWindow).name()] = component["value"];
+			comps_data[typeid(InventoryWindow).name()] = component_value;
 			add_component<InventoryWindow>();
 		}
-		else if (component["name"].asString() == typeid(InventoryGUIController).name())
+		else if (component_name == typeid(InventoryGUIController).name())
 		{
-			comps_data[typeid(InventoryGUIController).name()] = component["value"];
+			comps_data[typeid(InventoryGUIController).name()] = component_value;
 			add_component<InventoryGUIController>();
 		}
-		else if (component["name"].asString() == typeid(Interactor).name())
+		else if (component_name == typeid(Interactor).name())
 		{
-			comps_data[typeid(Interactor).name()] = component["value"];
+			comps_data[typeid(Interactor).name()] = component_value;
 			add_component<Interactor>();
 		}
-		else if (component["name"].asString() == typeid(IInteractable).name())
+		else if (component_name == typeid(IInteractable).name())
 		{
-			comps_data[typeid(IInteractable).name()] = component["value"];
+			comps_data[typeid(IInteractable).name()] = component_value;
 			add_component<IInteractable>();
 		}
-		else if (component["name"].asString() == typeid(Item).name())
+		else if (component_name == typeid(ItemController).name())
 		{
-			comps_data[typeid(Item).name()] = component["value"];
-			add_component<Item>();
+			comps_data[typeid(ItemController).name()] = component_value;
+			add_component<ItemController>();
 		}
-		else if (component["name"].asString() == typeid(Chest).name())
+		else if (component_name == typeid(WeaponController).name())
 		{
-		comps_data[typeid(Chest).name()] = component["value"];
+		comps_data[typeid(WeaponController).name()] = component_value;
+		add_component<WeaponController>();
+		}
+		else if (component_name == typeid(Chest).name())
+		{
+		comps_data[typeid(Chest).name()] = component_value;
 		add_component<Chest>();
 		}
 	}
@@ -592,6 +608,200 @@ void GameObject::start_components()
 {
 	for (auto& c : components)
 		c->start();
+}
+
+void GameObject::add_component(std::string component_name)
+{
+	if (component_name == "TilemapComponent")
+	{
+		add_component<TilemapComponent>();
+	}
+	else if (component_name == "TilemapColliderComponent")
+	{
+		add_component<TilemapColliderComponent>();
+	}
+	else if (component_name == "SpriteComponent")
+	{
+		add_component<SpriteComponent>();
+	}
+	else if (component_name == "AnimatedSpriteComponent")
+	{
+		add_component<AnimatedSpriteComponent>();
+	}
+	else if (component_name == "AnimationComponent")
+	{
+		add_component<AnimationComponent>();
+	}
+	else if (component_name == "BoxColliderComponent")
+	{
+		add_component<BoxColliderComponent>();
+	}
+	else if (component_name == "CapsuleColliderComponent")
+	{
+		add_component<CapsuleColliderComponent>();
+	}
+	else if (component_name == "ChildAnimationComponent")
+	{
+		add_component<ChildAnimationComponent>();
+	}
+	else if (component_name == "RigidbodyComponent")
+	{
+		add_component<RigidbodyComponent>();
+	}
+	else if (component_name == "PlayerController")
+	{
+		add_component<PlayerController>();
+	}
+	else if (component_name == "ButtonComponent")
+	{
+		add_component<ButtonComponent>();
+	}
+	else if (component_name == "DontDestroyOnLoad")
+	{
+		add_component<DontDestroyOnLoad>();
+	}
+	else if (component_name == "SceneChange")
+	{
+		add_component<SceneChange>();
+	}
+	else if (component_name == "CameraComponent")
+	{
+		add_component<CameraComponent>();
+	}
+	else if (component_name == "AudioSource")
+	{
+		add_component<AudioSource>();
+	}
+	else if (component_name == "Inventory")
+	{
+		add_component<Inventory>();
+	}
+	else if (component_name == "InventoryWindow")
+	{
+		add_component<InventoryWindow>();
+	}
+	else if (component_name == "InventoryGUIController")
+	{
+		add_component<InventoryGUIController>();
+	}
+	else if (component_name == "Interactor")
+	{
+		add_component<Interactor>();
+	}
+	else if (component_name == "IInteractable")
+	{
+		add_component<IInteractable>();
+	}
+	else if (component_name == "ItemController")
+	{
+		add_component<ItemController>();
+	}
+	else if (component_name == "WeaponController")
+	{
+		add_component<WeaponController>();
+	}
+	else if (component_name == "Chest")
+	{
+		add_component<Chest>();
+	}
+}
+
+void GameObject::remove_component(std::string component_name)
+{
+	std::cout << "remove_component()\n";
+	if (component_name == "TilemapComponent")
+	{
+		remove_component<TilemapComponent>(&get_component<TilemapComponent>());
+	}
+	else if (component_name == "TilemapColliderComponent")
+	{
+		remove_component<TilemapColliderComponent>(&get_component<TilemapColliderComponent>());
+	}
+	else if (component_name == "SpriteComponent")
+	{
+		remove_component<SpriteComponent>(&get_component<SpriteComponent>());
+	}
+	else if (component_name == "AnimatedSpriteComponent")
+	{
+		remove_component<AnimatedSpriteComponent>(&get_component<AnimatedSpriteComponent>());
+	}
+	else if (component_name == "AnimationComponent")
+	{
+		remove_component<AnimationComponent>(&get_component<AnimationComponent>());
+	}
+	else if (component_name == "BoxColliderComponent")
+	{
+		remove_component<BoxColliderComponent>(&get_component<BoxColliderComponent>());
+	}
+	else if (component_name == "CapsuleColliderComponent")
+	{
+		remove_component<CapsuleColliderComponent>(&get_component<CapsuleColliderComponent>());
+	}
+	else if (component_name == "ChildAnimationComponent")
+	{
+		remove_component<ChildAnimationComponent>(&get_component<ChildAnimationComponent>());
+	}
+	else if (component_name == "RigidbodyComponent")
+	{
+		remove_component<RigidbodyComponent>(&get_component<RigidbodyComponent>());
+	}
+	else if (component_name == "PlayerController")
+	{
+		remove_component<PlayerController>(&get_component<PlayerController>());
+	}
+	else if (component_name == "ButtonComponent")
+	{
+		remove_component<ButtonComponent>(&get_component<ButtonComponent>());
+	}
+	else if (component_name == "DontDestroyOnLoad")
+	{
+		remove_component<DontDestroyOnLoad>(&get_component<DontDestroyOnLoad>());
+	}
+	else if (component_name == "SceneChange")
+	{
+		remove_component<SceneChange>(&get_component<SceneChange>());
+	}
+	else if (component_name == "CameraComponent")
+	{
+		remove_component<CameraComponent>(&get_component<CameraComponent>());
+	}
+	else if (component_name == "AudioSource")
+	{
+		remove_component<AudioSource>(&get_component<AudioSource>());
+	}
+	else if (component_name == "Inventory")
+	{
+		remove_component<Inventory>(&get_component<Inventory>());
+	}
+	else if (component_name == "InventoryWindow")
+	{
+		remove_component<InventoryWindow>(&get_component<InventoryWindow>());
+	}
+	else if (component_name == "InventoryGUIController")
+	{
+		remove_component<InventoryGUIController>(&get_component<InventoryGUIController>());
+	}
+	else if (component_name == "Interactor")
+	{
+		remove_component<Interactor>(&get_component<Interactor>());
+	}
+	else if (component_name == "IInteractable")
+	{
+		remove_component<IInteractable>(&get_component<IInteractable>());
+	}
+	else if (component_name == "ItemController")
+	{
+		remove_component<ItemController>(&get_component<ItemController>());
+	}
+	else if (component_name == "WeaponController")
+	{
+		remove_component<WeaponController>(&get_component<WeaponController>());
+	}
+	else if (component_name == "Chest")
+	{
+		std::cout << "removing chest\n";
+		remove_component<Chest>(&get_component<Chest>());
+	}
 }
 
 void GameObject::init_variables()

@@ -58,6 +58,12 @@
     <Filter Include="Header Files\JSON">
       <UniqueIdentifier>{9d941b67-eab8-4191-9a14-4751833ab3d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts\Destruction">
+      <UniqueIdentifier>{4f524afa-1451-411d-a968-ea0b64e4f2cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Items">
+      <UniqueIdentifier>{cc651e0b-64a6-4bd1-aeaa-dd88acdfc0fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -246,9 +252,6 @@
     <ClCompile Include="ConsoleManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
     <ClCompile Include="InventoryWindow.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
@@ -260,6 +263,27 @@
     </ClCompile>
     <ClCompile Include="Delay.cpp">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Destructor.cpp">
+      <Filter>Scripts\Destruction</Filter>
+    </ClCompile>
+    <ClCompile Include="IDestructable.cpp">
+      <Filter>Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Dialogue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemController.cpp">
+      <Filter>Scripts\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponController.cpp">
+      <Filter>Scripts\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponData.cpp">
+      <Filter>DataAssets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -491,9 +515,6 @@
     <ClInclude Include="ConsoleManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
     <ClInclude Include="InventoryWindow.h">
       <Filter>Scripts</Filter>
     </ClInclude>
@@ -505,6 +526,27 @@
     </ClInclude>
     <ClInclude Include="Delay.h">
       <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Destructor.h">
+      <Filter>Scripts\Destruction</Filter>
+    </ClInclude>
+    <ClInclude Include="IDestructable.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialogue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueSystem.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemController.h">
+      <Filter>Scripts\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponController.h">
+      <Filter>Scripts\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponData.h">
+      <Filter>DataAssets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

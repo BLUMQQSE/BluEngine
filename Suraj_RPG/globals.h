@@ -5,6 +5,75 @@ namespace bm98
 
 #define PRECISION std::fixed << std::setprecision(1)
 
+namespace Var
+{
+enum class Type
+{
+	Int,
+	Float,
+	Bool,
+	Vector2f,
+	Vector2i,
+	FloatConvex,
+	Dropdown,
+	Header,
+	String,
+};
+
+static std::string ToString(Type type)
+{
+	switch (type)
+	{
+	case bm98::Var::Type::Int:
+		return "INT";
+	case bm98::Var::Type::Float:
+		return "FLOAT";
+	case bm98::Var::Type::Bool:
+		return "BOOL";
+	case bm98::Var::Type::Vector2f:
+		return "VECTOR2F";
+	case bm98::Var::Type::Vector2i:
+		return "VECTOR2I";
+	case bm98::Var::Type::FloatConvex:
+		return "FLOATCONVEX";
+	case bm98::Var::Type::Dropdown:
+		return "DROPDOWN";
+	case bm98::Var::Type::Header:
+		return "HEADER";
+	case bm98::Var::Type::String:
+		return "STRING";
+	default:
+		return "BOOL";
+	}
+}
+
+static Type ToType(std::string type)
+{
+	if (type == "INT")
+		return Type::Int;
+	if (type == "FLOAT")
+		return Type::Float;
+	if (type == "BOOL")
+		return Type::Bool;
+	if (type == "VECTOR2F")
+		return Type::Vector2f;
+	if (type == "VECTOR2I")
+		return Type::Vector2i;
+	if (type == "FLOATCONVEX")
+		return Type::FloatConvex;
+	if (type == "DROPDOWN")
+		return Type::Dropdown;
+	if (type == "HEADER")
+		return Type::Header;
+	if (type == "STRING")
+		return Type::String;
+
+	return Type::Bool;
+}
+
+}
+
+
 /// <summary> Namespace containing Interaction enums and conversion methods. </summary>
 namespace Interaction
 {
@@ -64,6 +133,11 @@ enum class Priority
 	MUST,
 	_LAST_DONT_REMOVE
 };
+
+static std::vector<std::string> ToPriorityVector()
+{
+	return {"LOW", "MID", "HIGH", "MUST"};
+}
 
 /// <returns>A Priority corresponding to the string value provided.</returns>
 static Priority ToPriority(std::string s)
@@ -343,6 +417,30 @@ struct LayerMask
 	{
 		for (std::size_t i = 0; i < layers.size(); i++)
 			layers[static_cast<int>(l[i])] = false;
+	}
+
+	Json::Value serialize_field()
+	{
+		Json::Value obj;
+		for (auto mask : ToVector(layers))
+		{
+			if (mask.second)
+			{
+				obj.append(mask.first);
+				//Json::Value obj2;
+				//obj2["layer"] = mask.first;
+				//obj.append(obj2);
+			}
+		}
+		return obj;
+	}
+
+	void unserialize_field(Json::Value obj)
+	{
+		for (auto layer : obj)
+		{
+			add_layer(ToLayer(layer.asString()));
+		}
 	}
 
 	/// <returns>A vector of string values and their respective bool flags for all layers of the LayerMask 

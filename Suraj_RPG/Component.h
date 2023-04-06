@@ -13,26 +13,13 @@ class Collider;
 namespace Editor
 {
 
-enum class VarType
-{
-	Int,
-	Float,
-	Bool,
-	Vector2f,
-	Vector2i,
-	FloatConvex,
-	Dropdown,
-	Header,
-	String,
-};
-
 /// <summary>
 /// Struct containing a void* for a variable and a string identifier
 /// for what type to convert it back to.
 /// </summary>
 struct SerializedVar
 {
-	SerializedVar(std::string name, void* variable, VarType type, 
+	SerializedVar(std::string name, void* variable, Var::Type type, 
 		std::vector<std::string> extra_data = std::vector<std::string>())
 	{
 		this->name = name;
@@ -44,7 +31,7 @@ struct SerializedVar
 	std::string name;
 	void* variable;
 	std::vector<std::string> extra_data;
-	VarType type;
+	Var::Type type;
 
 };
 }

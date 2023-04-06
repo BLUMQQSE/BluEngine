@@ -17,6 +17,12 @@ AudioSource::~AudioSource()
 	sound.stop();
 }
 
+void AudioSource::init()
+{
+	if(ResourceManager::Instance()->has_sound_buffer(current_audio_clip))
+		sound.setBuffer(ResourceManager::Instance()->get_sound_buffer(current_audio_clip));
+}
+
 void AudioSource::awake()
 {
 	//sound.setMinDistance(100);
@@ -35,8 +41,8 @@ void AudioSource::awake()
 void AudioSource::update()
 {
 	sound.setPosition(sf::Vector3f(
-		game_object->get_world_position().x,
-		game_object->get_world_position().y,
+		game_object->get_center().x,
+		game_object->get_center().y,
 		0
 		));
 }
@@ -46,16 +52,16 @@ std::vector<Editor::SerializedVar> AudioSource::get_editor_values()
 	std::vector<Editor::SerializedVar> values;
 
 	values.push_back(Editor::SerializedVar("playing", static_cast<void*>(&playing),
-		Editor::VarType::Bool));
+		Var::Type::Bool));
 	values.push_back(Editor::SerializedVar("loop", static_cast<void*>(&loop),
-		Editor::VarType::Bool));
+		Var::Type::Bool));
 	values.push_back(Editor::SerializedVar("muted", static_cast<void*>(&muted),
-		Editor::VarType::Bool));
+		Var::Type::Bool));
 	values.push_back(Editor::SerializedVar("play_on_awake", static_cast<void*>(&play_on_awake),
-		Editor::VarType::Bool));
+		Var::Type::Bool));
 
 	values.push_back(Editor::SerializedVar("current_audio", static_cast<void*>(&current_audio_clip),
-		Editor::VarType::String));
+		Var::Type::String));
 
 
 	return values;
@@ -96,7 +102,6 @@ Json::Value AudioSource::serialize_json()
 void AudioSource::unserialize_json(Json::Value obj)
 {
 	current_audio_clip = obj["current-audio-clip"].asString();
-	sound.setBuffer(ResourceManager::Instance()->get_sound_buffer(current_audio_clip));
 }
 
 void AudioSource::set_active(bool active)

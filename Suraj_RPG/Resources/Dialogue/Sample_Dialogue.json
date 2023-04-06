@@ -1,0 +1,41 @@
+{
+    "statements" :
+    [
+        {
+            "name" : "Shop-Morning-Intro",
+            "text" : 
+            [
+                "Good morning, can I interest you in any purchases?"
+            ],
+            "choices" :
+            [
+                {
+                    "index" : 0,
+                    "text" : "Lets see what you got.",
+                    "statement-link" : "Shop-Exchange"
+                }, 
+                {
+                    "index" : 1,
+                    "text" : "What can you tell me about the town?",
+                    "statement-link" : "Shop-Town-Information"
+                }, 
+                {
+                    "index" : 2,
+                    "text" :  "Nevermind" ,
+                    "events" : 
+                    [
+                        "INTERACTION_EXIT_INTERACTION"
+                    ]
+                }
+            ]
+        }
+    ],
+    "global-variables" :
+    [
+        {
+            "type" : "BOOL",
+            "name" : "told-player-town-info",
+            "value" : false
+        }
+    ]
+}

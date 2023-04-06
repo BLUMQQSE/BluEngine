@@ -185,6 +185,7 @@ void Game::check_fixed_update()
 
         if (Time::Instance()->fixed_delta_time() >= .01f)
         {
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_);
             states.top()->fixed_update();
             EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
             EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);

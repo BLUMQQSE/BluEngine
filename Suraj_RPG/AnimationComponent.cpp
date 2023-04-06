@@ -110,14 +110,6 @@ Json::Value AnimationComponent::serialize_json()
 void AnimationComponent::unserialize_json(Json::Value obj)
 {
 
-	/* Currently useless to save animations
-	for (Json::Value anim : obj["animations"])
-	{
-		animations[anim["key"].asString()] = new Animation(game_object->get_component<SpriteComponent>().get_sprite(),
-			game_object->get_component<SpriteComponent>().get_texture_sheet());
-		animations[anim["key"].asString()]->unserialize_json(anim["animation"]);
-	}
-	*/
 }
 
 #pragma endregion

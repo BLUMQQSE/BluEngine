@@ -55,6 +55,8 @@ public:
 	ColliderComponent();
 	virtual ~ColliderComponent();
 
+	virtual void init() override;
+
 	virtual bool intersects(const FloatConvex collider);
 
 	// Inherited via IData

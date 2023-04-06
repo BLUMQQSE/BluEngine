@@ -19,6 +19,9 @@ public:
 	virtual void fixed_update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
+	const int get_grid_x() { return grid_x; }
+	const int get_grid_y() { return grid_y; }
+
 	const bool is_static() const;
 	const bool get_collision() const;
 	FloatConvex get_collider();

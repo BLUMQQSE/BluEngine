@@ -7,6 +7,7 @@ namespace bm98
 {
 AnimatedSpriteComponent::AnimatedSpriteComponent()
 {
+	animation = new Animation(game_object->get_component<SpriteComponent>().get_sprite(), game_object->get_component<SpriteComponent>().get_texture_sheet());
 }
 
 AnimatedSpriteComponent::AnimatedSpriteComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,
@@ -32,7 +33,6 @@ AnimatedSpriteComponent::~AnimatedSpriteComponent()
 
 void AnimatedSpriteComponent::init()
 {
-	animation = new Animation(game_object->get_component<SpriteComponent>().get_sprite(), game_object->get_component<SpriteComponent>().get_texture_sheet());
 }
 
 void AnimatedSpriteComponent::update()
@@ -44,15 +44,12 @@ Json::Value AnimatedSpriteComponent::serialize_json()
 {
 	Json::Value obj;
 
-
-	//obj["animation"] = animation->serialize_json();
-
 	return obj;
 }
 
 void AnimatedSpriteComponent::unserialize_json(Json::Value obj)
 {
-	//animation->unserialize_json(obj["animation"]);
+
 } 
 
 void AnimatedSpriteComponent::start()

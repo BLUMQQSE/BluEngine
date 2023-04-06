@@ -21,7 +21,6 @@ void Renderer::init(RenderTarget* render_target)
 void Renderer::add(RenderObject render_object)
 {
 	render_objects.insert(render_object);
-	
 }
 
 void Renderer::add_gizmo(GizmoObject gizmo)
@@ -114,7 +113,7 @@ void Renderer::render()
 		}
 		window->draw(*f.drawable);
 	}
-
+	render_gizmos();
 }
 
 void Renderer::render_gizmos()
@@ -131,10 +130,13 @@ void Renderer::clear()
 	id = 0;
 }
 
+void Renderer::clear_gizmos()
+{
+	gizmos.clear();
+}
+
 void Renderer::fixed_update()
 {
-	
-	gizmos.clear();
 }
 
 sf::Vector2u Renderer::get_window_size()
@@ -154,6 +156,7 @@ Renderer::Renderer()
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_RENDER_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_, this);
 }
 
 const unsigned& Renderer::get_id()
@@ -188,7 +191,9 @@ void Renderer::handle_event(Event* event)
 	case EventID::_SYSTEM_RENDERER_REFRESH_:
 		refresh();
 		break;
-		
+	case EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_:
+		clear_gizmos();
+		break;
 	}
 }
 

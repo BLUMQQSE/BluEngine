@@ -10,6 +10,7 @@ class Interactor;
 
 class IInteractable : public Component
 {
+
 public:
     IInteractable() {}
     virtual ~IInteractable() {}

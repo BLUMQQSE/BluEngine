@@ -25,6 +25,7 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 	this->max_size.y = height + 1;
 	load_tile_sheets();
 	this->layers = static_cast<int>(Sorting::Layer::UI);
+	
 	for (int i = 0; i < static_cast<int>(Sorting::Layer::UI); i++)
 	{
 		physical_layers[i] = PhysicsNS::Layer::DEFAULT;
@@ -45,7 +46,7 @@ TilemapComponent::TilemapComponent(int position_x, int position_y, float grid_si
 	
 	set_sorting_layer(Sorting::Layer::UI);
 	set_z_order(0);
-	Renderer::Instance()->add(Renderer::RenderObject(&outline, this));
+	
 
 	update_tilemap_changes();
 }
@@ -56,21 +57,19 @@ TilemapComponent::~TilemapComponent()
 	clear_map();
 }
 
-float& TilemapComponent::grid_size()
-{
-	return grid_size_f;
-}
-
-sf::Texture* TilemapComponent::tile_sheet(std::string key)
-{
-	return &tile_sheets.at(key);
-}
-
 void TilemapComponent::init()
 {
+	// TEST WORKING LATER
+	//load_tile_sheets();
+	//grid_size_f = static_cast<float>(grid_size_u);
+	//resize_map();
+	//update_tilemap_changes();
+}
+
+void TilemapComponent::awake()
+{
 	load_tile_sheets();
-	layers = ((int)Sorting::Layer::UI);
-	
+	Renderer::Instance()->add(Renderer::RenderObject(&outline, this));
 }
 
 void TilemapComponent::update()
@@ -94,6 +93,16 @@ void TilemapComponent::add_to_buffer(sf::View* view)
 	{
 		x->add_to_buffer(view);
 	}
+}
+
+float& TilemapComponent::grid_size()
+{
+	return grid_size_f;
+}
+
+sf::Texture* TilemapComponent::tile_sheet(std::string key)
+{
+	return &tile_sheets.at(key);
 }
 
 void TilemapComponent::add_tiles(const unsigned x, const unsigned y, Sorting::Layer layer, const sf::IntRect texture_rect, TileNS::Type tile_type,
@@ -332,10 +341,20 @@ Json::Value TilemapComponent::serialize_json()
 	obj["grid-size"] = grid_size_u;
 	obj["file-path"] = file_path;
 
-	for (auto r : map_renderables)
-	{
-		obj["tiles"].append(r->serialize_json());
-	}
+	//for (auto r : map_renderables)
+	//{
+	//	obj["tiles"].append(r->serialize_json());
+	//}
+
+	for(int x = 0; x < map.size(); x++)
+		for(int y = 0; y < map[x].size(); y++)
+			for (int z = 0; z < map[x][y].size(); z++)
+			{
+				if (map[x][y][z])
+				{
+					obj["tiles"].append(map[x][y][z]->serialize_json());
+				}
+			}
 
 	return obj;
 }
@@ -388,6 +407,16 @@ void TilemapComponent::unserialize_json(Json::Value obj)
 	}
 
 	update_tilemap_changes();
+}
+
+std::vector<Editor::SerializedVar> TilemapComponent::get_editor_values()
+{
+	std::vector<Editor::SerializedVar> values;
+
+	values.push_back(Editor::SerializedVar("grid_size", &grid_size_u, Var::Type::Int));
+	values.push_back(Editor::SerializedVar("tilemap_size_X", &max_size, Var::Type::Vector2i));
+
+	return values;
 }
 
 void TilemapComponent::load_tile_sheets()
@@ -454,6 +483,32 @@ void TilemapComponent::create_empty_map()
 			}
 		}
 	}
+}
+
+void TilemapComponent::resize_map()
+{
+	for (std::size_t x = 0; x < map.size(); x++)
+	{
+		for (std::size_t y = 0; y < map[x].size(); y++)
+		{
+			for (size_t z = 0; z < this->layers; z++)
+			{
+				if (map[x][y][z])
+				{
+					if (x >= max_size.x || y >= max_size.y)
+					{
+						delete map[x][y][z];
+					}
+				}
+			}
+		}
+		map[x].resize(max_size.y);
+	}
+	map.resize(max_size.x);
+
+	// TODO: Remove all map renderables which are nullptr
+	// TODO: Remove all map_updatables which are nullptr
+
 }
 
 }

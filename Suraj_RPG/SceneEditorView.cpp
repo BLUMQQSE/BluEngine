@@ -11,16 +11,19 @@ SceneEditorView::SceneEditorView()
 	EventSystem::Instance()->subscribe(EventID::SCENE_ADDED_GAMEOBJECT, this);
 	EventSystem::Instance()->subscribe(EventID::SCENE_REMOVED_GAMEOBJECT, this);
 	EventSystem::Instance()->subscribe(EventID::SCENE_CHANGE, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_ORDER_CHANGE, this);
-
+	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE, this);
+	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED, this);
+	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED, this);
 
 	init();
+	create_scene_editor_panel();
 }
 
 SceneEditorView::~SceneEditorView()
 {
 	delete heir_panel;
 	delete inspec_panel;
+	delete scene_editor_panel;
 }
 
 void SceneEditorView::init()
@@ -30,6 +33,30 @@ void SceneEditorView::init()
 	inspec_panel = new GUI::Panel(Renderer::Instance()->get_window_size().x - 
 		Renderer::Instance()->get_window_size().x / 6, 0,
 		Renderer::Instance()->get_window_size().x / 6, Renderer::Instance()->get_window_size().y);
+
+	scene_editor_panel = new GUI::Panel(heir_panel->get_width(), Renderer::Instance()->get_window_size().y - 200.f, 
+		inspec_panel->get_position().x - (heir_panel->get_position().x + heir_panel->get_width()), 200.f);
+}
+
+const bool SceneEditorView::in_bound() const
+{
+	if (inspec_active)
+	{
+		if (inspec_panel->mouse_in_bounds())
+			return true;
+	}
+	if (heir_active)
+	{
+		if (heir_panel->mouse_in_bounds())
+			return true;
+	}
+	if (scene_editor_active)
+	{
+		if (scene_editor_panel->mouse_in_bounds())
+			return true;
+	}
+
+	return false;
 }
 
 void SceneEditorView::toggle_editor(EditorPanel panel_to_toggle)
@@ -76,6 +103,23 @@ void SceneEditorView::update()
 	{
 		inspec_panel->update();
 		update_inspec_panel();
+
+		if (selected_gameobject
+			&&
+			(
+				Input::Instance()->get_action_down("ENTER") ||
+				Input::Instance()->get_action_down("SPACE")) ||
+				Input::Instance()->get_mouse_down(Input::Mouse::LEFT)
+			)
+		{
+			// Reinitialize gameobject to update any changes which may have occured
+			selected_gameobject->editor_update();
+		}
+	}
+	if (scene_editor_active)
+	{
+		scene_editor_panel->update();
+		update_scene_editor_panel();
 	}
 }
 
@@ -85,6 +129,8 @@ void SceneEditorView::update_sfml(sf::Event sfEvent)
 		heir_panel->update_sfml(sfEvent);
 	if (inspec_active)
 		inspec_panel->update_sfml(sfEvent);
+	if (scene_editor_active)
+		scene_editor_panel->update_sfml(sfEvent);
 }
 
 void SceneEditorView::handle_event(Event* event)
@@ -103,8 +149,16 @@ void SceneEditorView::handle_event(Event* event)
 	case EventID::SCENE_CHANGE:
 		create_heir_panel();
 		break;
-	case EventID::SCENE_ORDER_CHANGE:
+	case EventID::SCENE_GAMEOBJECT_ORDER_CHANGE:
 		create_heir_panel();
+		break;
+	case EventID::GAMEOBJECT_COMPONENT_ADDED:
+		if(selected_gameobject)
+			create_inspec_panel();
+		break;
+	case EventID::GAMEOBJECT_COMPONENT_REMOVED:
+		if(selected_gameobject)
+			create_inspec_panel();
 		break;
 	}
 }
@@ -205,10 +259,15 @@ void SceneEditorView::update_heir_panel()
 	}
 }
 
-void SceneEditorView::create_inspec_panel()
+void SceneEditorView::clear_inspec_panel()
 {
 	inspec_panel->clear();
 	variables_in_components.clear();
+}
+
+void SceneEditorView::create_inspec_panel()
+{
+	clear_inspec_panel();
 	std::vector<std::pair<Component*,
 		std::vector<bm98::Editor::SerializedVar>>> selected_gameobject_components;
 
@@ -221,14 +280,17 @@ void SceneEditorView::create_inspec_panel()
 	
 	}
 
-
-
 	int component_panel_height = 0;
+
+	inspec_panel->add_element(selected_gameobject->get_info().name, create_component_panel(component_panel_height, inspec_panel->get_width(),
+		selected_gameobject->get_info().name, selected_gameobject->get_editor_values()));
+
+	component_panel_height += inspec_panel->get_panel(selected_gameobject->get_info().name)->get_height();
+
 	for (std::size_t i = 0; i < selected_gameobject_components.size(); i++)
 	{
 		std::string component_name = typeid(*components[i]).name();
 		component_name = component_name.substr(12);
-
 		inspec_panel->add_element(typeid(*components[i]).name(), create_component_panel(component_panel_height, inspec_panel->get_width(),
 			component_name, selected_gameobject_components[i].second));
 
@@ -242,6 +304,100 @@ void SceneEditorView::update_inspec_panel()
 	for (auto& component_panel : variables_in_components)
 	{
 		update_component_panel(component_panel);
+	}
+}
+
+void SceneEditorView::create_scene_editor_panel()
+{
+	file_name = new GUI::InputBox(50, 0, 300, 30, 16, ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+	load_file = new GUI::Button(380, 0, 60.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+		"Load", 12,
+		sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
+		sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
+	save_file = new GUI::Button(460, 0, 60.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+		"Save", 12,
+		sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
+		sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
+
+	component_name = new GUI::InputBox(50, 50, 300, 30, 16, ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+	add_component = new GUI::Button(380, 50, 60.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+		"Add", 12,
+		sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
+		sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
+	remove_component = new GUI::Button(460, 50, 60.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+		"Remove", 12,
+		sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
+		sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
+
+	add_gameobject = new GUI::Button(50, 100, 120.f, 50.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+		"Add GameObject", 12,
+		sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
+		sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
+	remove_gameobject = new GUI::Button(180, 100, 120.f, 50.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+		"Remove GameObject", 12,
+		sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
+		sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
+
+	scene_editor_panel->add_element("file_name", file_name);
+	scene_editor_panel->add_element("load_file", load_file);
+	scene_editor_panel->add_element("save_file", save_file);
+	scene_editor_panel->add_element("component_name", component_name);
+	scene_editor_panel->add_element("add_component", add_component);
+	scene_editor_panel->add_element("remove_component", remove_component);
+	scene_editor_panel->add_element("add_gameobject", add_gameobject);
+	scene_editor_panel->add_element("remove_gameobject", remove_gameobject);
+
+}
+
+void SceneEditorView::update_scene_editor_panel()
+{
+	if (!scene_editor_panel->mouse_in_bounds())
+		return;
+	std::string input;
+	if (scene_editor_panel->get_button("load_file")->is_pressed())
+	{
+		input = scene_editor_panel->get_inputbox("file_name")->get_text();
+		if (input.find(".json") == std::string::npos)
+			return;
+
+		SceneManager::Instance()->load_scene_prefab(input);
+
+	}
+	else if (scene_editor_panel->get_button("save_file")->is_pressed())
+	{
+		SceneManager::Instance()->save_scene_prefab();	
+	}
+	else if (scene_editor_panel->get_button("add_component")->is_pressed())
+	{
+		if (!selected_gameobject)
+			return;
+		input = scene_editor_panel->get_inputbox("component_name")->get_text();
+		
+		selected_gameobject->add_component(input);
+	}
+	else if (scene_editor_panel->get_button("remove_component")->is_pressed())
+	{
+		if (!selected_gameobject)
+			return;
+
+		input = scene_editor_panel->get_inputbox("component_name")->get_text();
+
+		selected_gameobject->remove_component(input);
+	}
+	else if (scene_editor_panel->get_button("add_gameobject")->is_pressed())
+	{
+		GameObject* go = new GameObject();
+		go->get_info().name = "Empty";
+		SceneManager::Instance()->instantiate_gameobject(go);
+	}
+	else if (scene_editor_panel->get_button("remove_gameobject")->is_pressed())
+	{
+		if (!selected_gameobject)
+			return;
+		SceneManager::Instance()->destroy_gameobject(selected_gameobject);
+		clear_inspec_panel();
+		selected_gameobject = nullptr;
 	}
 }
 
@@ -259,88 +415,158 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 	{
 		switch (vars[i].type)
 		{
-		case Editor::VarType::Int:
+		case Var::Type::Int:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::InputBox(150, height, 40, 12, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+
+			GUI::InputBox* input_box = new GUI::InputBox(150, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+			items_in_panel.push_back(std::make_pair(vars[i].name, input_box));
+
+			int value = *static_cast<int*>(vars[i].variable);
+			std::stringstream s;
+			s << PRECISION << value;
+			input_box->set_text(s.str());
 
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Float:
+		case Var::Type::Float:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::InputBox(150, height, 40, 12, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+
+			GUI::InputBox* input_box = new GUI::InputBox(150, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+			items_in_panel.push_back(std::make_pair(vars[i].name, input_box));
+
+			float value = *static_cast<float*>(vars[i].variable);
+			std::stringstream s;
+			s << PRECISION << value;
+			input_box->set_text(s.str());
 
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Bool:
+		case Var::Type::Bool:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::Checkbox(150, height, 12)));
+
+			GUI::Checkbox* check_box = new GUI::Checkbox(150, height, 12);
+
+			items_in_panel.push_back(std::make_pair(vars[i].name, check_box));
+
+			bool value = *static_cast<bool*>(vars[i].variable);
+			check_box->set_checked(value);
 
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Dropdown:
+		case Var::Type::Dropdown:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::DropDownList(150, height, 80, 15,
+
+			GUI::DropDownList* drop_down = new GUI::DropDownList(150, height, 80, 15,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"),
-				vars[i].extra_data, 0, 12)));
+				vars[i].extra_data, 0, 12);
+
+			items_in_panel.push_back(std::make_pair(vars[i].name, drop_down));
+
+			int value = *static_cast<int*>(vars[i].variable);
+			drop_down->set_selected_index(value);
 
 			height += 30;
 			break;
 		}
-		case Editor::VarType::Vector2f:
+		case Var::Type::Vector2f:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair("x_" + vars[i].name, new GUI::InputBox(110, height, 40, 12, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
-			items_in_panel.push_back(std::make_pair("y_" + vars[i].name, new GUI::InputBox(170, height, 40, 12, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+
+			GUI::InputBox* x = new GUI::InputBox(110, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+			items_in_panel.push_back(std::make_pair("x_" + vars[i].name, x));
+
+			GUI::InputBox* y = new GUI::InputBox(170, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+			items_in_panel.push_back(std::make_pair("y_" + vars[i].name, y));
+
+			Vector2f vec = *static_cast<Vector2f*>(vars[i].variable);
+			std::stringstream s;
+			s << PRECISION << vec.x;
+			x->set_text(s.str());
+			s.str("");
+			s << PRECISION << vec.y;
+			y->set_text(s.str());
 
 			height += 20;
 			break;
 		}
-		case Editor::VarType::Vector2i:
+		case Var::Type::Vector2i:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair("ix_" + vars[i].name, new GUI::InputBox(110, height, 40, 12, 12, 
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
-			items_in_panel.push_back(std::make_pair("iy_" + vars[i].name, new GUI::InputBox(170, height, 40, 12, 12, 
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+
+			GUI::InputBox* x = new GUI::InputBox(110, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+			items_in_panel.push_back(std::make_pair("ix_" + vars[i].name, x));
+
+			GUI::InputBox* y = new GUI::InputBox(170, height, 40, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+			items_in_panel.push_back(std::make_pair("iy_" + vars[i].name, y));
+
+			Vector2i vec = *static_cast<Vector2i*>(vars[i].variable);
+			std::stringstream s;
+			s << PRECISION << vec.x;
+			x->set_text(s.str());
+			s.str("");
+			s << PRECISION << vec.y;
+			y->set_text(s.str());
 
 			height += 20;
 			break;
 		}
-		case Editor::VarType::FloatConvex:
+		case Var::Type::FloatConvex:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 			FloatConvex polygon = *static_cast<FloatConvex*>(vars[i].variable);
 			std::cout << polygon.getPointCount() << " points\n";
+
+			FloatConvex poly = *static_cast<FloatConvex*>(vars[i].variable);
+			std::vector<Vector2f> model = poly.get_model();
+			std::stringstream s;
 			for (std::size_t i = 0; i < polygon.getPointCount(); i++)
 			{
-				items_in_panel.push_back(std::make_pair(std::to_string(i) + "_x_" + vars[i].name, new GUI::InputBox(110, height, 40, 12, 12,
-					ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
-				items_in_panel.push_back(std::make_pair(std::to_string(i) + "_y_" + vars[i].name, new GUI::InputBox(170, height, 40, 12, 12,
-					ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+				GUI::InputBox* x = new GUI::InputBox(110, height, 40, 12, 12,
+					ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+				items_in_panel.push_back(std::make_pair(std::to_string(i) + "_x_" + vars[i].name, x));
+				GUI::InputBox* y = new GUI::InputBox(170, height, 40, 12, 12,
+					ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+				items_in_panel.push_back(std::make_pair(std::to_string(i) + "_y_" + vars[i].name, y));
+
+				s.str("");
+				s << PRECISION << model[i].x;
+				x->set_text(s.str());
+				s.str("");
+				s << PRECISION << model[i].y;
+				y->set_text(s.str());
+
 				height += 20;
 			}
 
 			break;
 		}
-		case Editor::VarType::Header:
+		case Var::Type::Header:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 16, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
@@ -348,12 +574,20 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 			height += 20;
 			break;
 		}
-		case Editor::VarType::String:
+		case Var::Type::String:
 		{
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
-			items_in_panel.push_back(std::make_pair(vars[i].name, new GUI::InputBox(70, height, 140, 12, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"))));
+
+			GUI::InputBox* input_box = new GUI::InputBox(70, height, 140, 12, 12,
+				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+
+			items_in_panel.push_back(std::make_pair(vars[i].name, input_box));
+
+			std::string value = "empty";
+			if (vars[i].variable)
+				value = *static_cast<std::string*>(vars[i].variable);
+			input_box->set_text(value);
 
 			height += 20;
 			break;
@@ -383,21 +617,21 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 
 		switch (vars.second[i].type)
 		{
-		case Editor::VarType::Int:
+		case Var::Type::Int:
 		{
 			int value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text_value();
 			*static_cast<int*>(vars.second[i].variable) = value;
 
 			break;
 		}
-		case Editor::VarType::Float:
+		case Var::Type::Float:
 		{
 			float value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text_value();			
 			*static_cast<float*>(vars.second[i].variable) = value;
 
 			break;
 		}
-		case Editor::VarType::Bool:
+		case Var::Type::Bool:
 		{
 			bool value = dynamic_cast<GUI::Checkbox*>(vars.first->get_element(vars.second[i].name))->is_checked();
 
@@ -405,14 +639,14 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 
 			break;
 		}
-		case Editor::VarType::Dropdown:
+		case Var::Type::Dropdown:
 		{
 			int value = dynamic_cast<GUI::DropDownList*>(vars.first->get_element(vars.second[i].name))->get_selected_index();
 			*static_cast<int*>(vars.second[i].variable) = value;
 
 			break;
 		}
-		case Editor::VarType::Vector2f:
+		case Var::Type::Vector2f:
 		{
 
 			float x_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("x_"+vars.second[i].name))->get_text_value();
@@ -421,7 +655,7 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 			*static_cast<Vector2f*>(vars.second[i].variable) = Vector2f(x_value, y_value);
 			break;
 		}
-		case Editor::VarType::Vector2i:
+		case Var::Type::Vector2i:
 		{
 			int x_value = (int)dynamic_cast<GUI::InputBox*>(vars.first->get_element("ix_" + vars.second[i].name))->get_text_value();
 			int y_value = (int)dynamic_cast<GUI::InputBox*>(vars.first->get_element("iy_" + vars.second[i].name))->get_text_value();
@@ -430,7 +664,7 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 
 			break;
 		}
-		case Editor::VarType::FloatConvex:
+		case Var::Type::FloatConvex:
 		{
 
 			FloatConvex poly = *static_cast<FloatConvex*>(vars.second[i].variable);
@@ -448,11 +682,11 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 
 			break;
 		}
-		case Editor::VarType::Header:
+		case Var::Type::Header:
 		{
 			break;
 		}
-		case Editor::VarType::String:
+		case Var::Type::String:
 		{
 			std::string value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text();
 			*static_cast<std::string*>(vars.second[i].variable) = value;

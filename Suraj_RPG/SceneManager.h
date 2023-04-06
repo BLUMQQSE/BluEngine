@@ -39,7 +39,7 @@ public:
 	/// <summary>
 	/// Saves a scene prefab. Should only be used by editor state.
 	/// </summary>
-	void save_scene_prefab(Scene* scene);
+	void save_scene_prefab();
 
 	/// <summary>
 	/// Instantiates game objects into the active scene.

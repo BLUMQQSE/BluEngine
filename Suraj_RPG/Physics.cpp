@@ -94,7 +94,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 {
 	if (distance == INFINITY)
 		distance = 10000.0f;
-	FloatConvex ray = FloatConvex::Line(origin, origin + direction.get_normalized() * distance, 3);
+	FloatConvex ray = FloatConvex::Line(origin, origin + direction.get_normalized() * distance, 2);
 	ray.setFillColor(sf::Color::Cyan);
 	bool hit_something = false;
 	std::vector<GameObject*> rel = ignore->get_all_relatives();
@@ -151,7 +151,7 @@ int Physics::OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask
 	FloatConvex circle = FloatConvex::Circle(pos, radius, 10);
 	circle.setFillColor(sf::Color::Transparent);
 	circle.setOutlineColor(sf::Color::Cyan);
-	circle.setOutlineThickness(2);
+	circle.setOutlineThickness(1);
 
 	std::vector<GameObject*> rel = object_to_ignore->get_all_relatives();
 

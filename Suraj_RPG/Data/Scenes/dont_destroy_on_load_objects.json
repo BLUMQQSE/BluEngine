@@ -175,9 +175,7 @@
 					{
 						"interactable-mask" : 
 						[
-							{
-								"layer" : "INTERACTABLE"
-							}
+							"INTERACTABLE"
 						],
 						"interaction-radius" : 60.0
 					}

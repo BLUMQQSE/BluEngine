@@ -78,15 +78,15 @@ std::vector<Editor::SerializedVar> RigidbodyComponent::get_editor_values()
 	
 	//variables.push_back(Editor::SerializedVar("This is a header", nullptr, Editor::VarType::Header));
 
-	variables.push_back(Editor::SerializedVar("velocity", static_cast<void*>(&velocity), Editor::VarType::Vector2f));
+	variables.push_back(Editor::SerializedVar("velocity", static_cast<void*>(&velocity), Var::Type::Vector2f));
 	variables.push_back(Editor::SerializedVar("max_velocity", static_cast<void*>(&max_velocity),
-		Editor::VarType::Float));
+		Var::Type::Float));
 	variables.push_back(Editor::SerializedVar("acceleration", static_cast<void*>(&acceleration),
-		Editor::VarType::Float));
+		Var::Type::Float));
 	variables.push_back(Editor::SerializedVar("deceleration", static_cast<void*>(&deceleration)
-		, Editor::VarType::Float));
+		, Var::Type::Float));
 	variables.push_back(Editor::SerializedVar("body_type", static_cast<void*>(&body_type),
-		Editor::VarType::Dropdown, body_type_to_vector()));
+		Var::Type::Dropdown, body_type_to_vector()));
 
 	return variables;
 }

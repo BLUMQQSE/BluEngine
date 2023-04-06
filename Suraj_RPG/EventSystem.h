@@ -6,7 +6,6 @@ namespace bm98::core
 
 enum class EventID
 {
-
 #pragma region System
 	
 	/// <summary>System event to process all events for the previous frame.</summary>
@@ -37,8 +36,8 @@ enum class EventID
 	_SYSTEM_RENDERER_REFRESH_,
 	_SYSTEM_RENDERER_RENDER_,
 	_SYSTEM_RENDERER_CLEAR_,
+	_SYSTEM_RENDERER_CLEAR_GIZMOS_,
 	_SYSTEM_RENDERER_FIXED_UPDATE_,
-
 #pragma endregion
 
 #pragma region ResourceManager
@@ -80,14 +79,12 @@ enum class EventID
 
 #pragma endregion
 
-
 #pragma region Interaction
 
 	INTERACTION_INVENTORY_UPDATED,
 	INTERACTION_EXIT_INTERACTION,
 
 #pragma endregion
-
 
 #pragma region Scene
 
@@ -97,7 +94,7 @@ enum class EventID
 	SCENE_REMOVED_GAMEOBJECT,
 	/// <summary>Scene has changed.</summary>
 	SCENE_CHANGE,
-	SCENE_ORDER_CHANGE,
+	SCENE_GAMEOBJECT_ORDER_CHANGE,
 
 #pragma endregion
 
@@ -116,8 +113,77 @@ enum class EventID
 
 #pragma endregion
 
-
 };
+
+/// <summary>
+/// Excludes SYSTEM events.
+/// </summary>
+static EventID ToEventID(std::string eventID)
+{
+	if(eventID == "SCRIPTS_LOAD_SCENE")
+		return EventID::SCRIPTS_LOAD_SCENE;
+	if (eventID == "SCRIPTS_SAVE_SCENE")
+		return EventID::SCRIPTS_SAVE_SCENE;
+	if (eventID == "INTERACTION_INVENTORY_UPDATED")
+		return EventID::INTERACTION_INVENTORY_UPDATED;
+	if (eventID == "INTERACTION_EXIT_INTERACTION")
+		return EventID::INTERACTION_EXIT_INTERACTION;
+	if (eventID == "SCENE_ADDED_GAMEOBJECT")
+		return EventID::SCENE_ADDED_GAMEOBJECT;
+	if (eventID == "SCENE_REMOVED_GAMEOBJECT")
+		return EventID::SCENE_REMOVED_GAMEOBJECT;
+	if (eventID == "SCENE_CHANGE")
+		return EventID::SCENE_CHANGE;
+	if (eventID == "SCENE_GAMEOBJECT_ORDER_CHANGE")
+		return EventID::SCENE_GAMEOBJECT_ORDER_CHANGE;
+	if (eventID == "GAMEOBJECT_INSTANTIATE")
+		return EventID::GAMEOBJECT_INSTANTIATE;
+	if (eventID == "GAMEOBJECT_DESTROY")
+		return EventID::GAMEOBJECT_DESTROY;
+	if (eventID == "GAMEOBJECT_PARENT_CHANGE")
+		return EventID::GAMEOBJECT_PARENT_CHANGE;
+	if (eventID == "GAMEOBJECT_COMPONENT_ADDED")
+		return EventID::GAMEOBJECT_COMPONENT_ADDED;
+	if (eventID == "GAMEOBJECT_COMPONENT_REMOVED")
+		return EventID::GAMEOBJECT_COMPONENT_REMOVED;
+}
+/// <summary>
+/// Exclude SYSTEM events.
+/// </summary>
+static std::string ToString(EventID eventID)
+{
+	switch (eventID)
+	{
+	case bm98::core::EventID::SCRIPTS_LOAD_SCENE:
+		return "SCRIPTS_LOAD_SCENE";
+	case bm98::core::EventID::SCRIPTS_SAVE_SCENE:
+		return "SCRIPTS_SAVE_SCENE";
+	case bm98::core::EventID::INTERACTION_INVENTORY_UPDATED:
+		return "INTERACTION_INVENTORY_UPDATED";
+	case bm98::core::EventID::INTERACTION_EXIT_INTERACTION:
+		return "INTERACTION_EXIT_INTERACTION";
+	case bm98::core::EventID::SCENE_ADDED_GAMEOBJECT:
+		return "SCENE_ADDED_GAMEOBJECT";
+	case bm98::core::EventID::SCENE_REMOVED_GAMEOBJECT:
+		return "SCENE_REMOVED_GAMEOBJECT";
+	case bm98::core::EventID::SCENE_CHANGE:
+		return "SCENE_CHANGE";
+	case bm98::core::EventID::SCENE_GAMEOBJECT_ORDER_CHANGE:
+		return "SCENE_GAMEOBJECT_ORDER_CHANGE";
+	case bm98::core::EventID::GAMEOBJECT_INSTANTIATE:
+		return "GAMEOBJECT_INSTANTIATE";
+	case bm98::core::EventID::GAMEOBJECT_DESTROY:
+		return "GAMEOBJECT_DESTROY";
+	case bm98::core::EventID::GAMEOBJECT_PARENT_CHANGE:
+		return "GAMEOBJECT_PARENT_CHANGE";
+	case bm98::core::EventID::GAMEOBJECT_COMPONENT_ADDED:
+		return "GAMEOBJECT_COMPONENT_ADDED";
+	case bm98::core::EventID::GAMEOBJECT_COMPONENT_REMOVED:
+		return "GAMEOBJECT_COMPONENT_REMOVED";
+	default:
+		return "";
+	}
+}
 
 
 class Event

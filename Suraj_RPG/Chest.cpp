@@ -5,6 +5,7 @@
 #include "InventoryGUIController.h"
 #include "InventoryWindow.h"
 #include "Input.h"
+#include "SpriteComponent.h"
 
 namespace bm98
 {
@@ -23,11 +24,13 @@ void Chest::initiate_interaction(Interactor* interactor)
 	// Orient interactor to chest
 	interactor->get_game_object()->get_component<RigidbodyComponent>().set_velocity(Vector2f::Zero());
 	interactor->get_game_object()->get_component<RigidbodyComponent>().set_orientation(
-		Orientation::VectorToDirection(this->game_object->get_world_position() - interactor->get_game_object()->get_world_position()));
+		Orientation::VectorToDirection(this->game_object->get_center() - interactor->get_game_object()->get_center()));
 
 	if (interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
 		// TODO: play "open_chest" animation
+		game_object->get_component<SpriteComponent>().get_sprite().setTextureRect(sf::IntRect(0, 32, 32, 32));
+
 		// TODO: play "open_chest" audio
 
 		interactor->get_game_object()->get_component<InventoryGUIController>().set_external(&game_object->get_component<InventoryWindow>());
@@ -55,12 +58,13 @@ void Chest::exit_interaction()
 	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
 		// TODO: play "close_chest" animation
+		game_object->get_component<SpriteComponent>().get_sprite().setTextureRect(sf::IntRect(0, 0, 32, 32));
 		// TODO: play "close_chest" audio
 
 
 
-		current_interactor->get_game_object()->get_component<InventoryGUIController>().remove_external();
 		current_interactor->get_game_object()->get_component<InventoryGUIController>().toggle_inventory(InventoryNS::WindowToggle::CLOSE_ALL);
+		current_interactor->get_game_object()->get_component<InventoryGUIController>().remove_external();
 	}
 
 	IInteractable::exit_interaction();

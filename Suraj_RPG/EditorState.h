@@ -53,7 +53,6 @@ private:
         TileNS::Type tile_type;
     };
 
-    sf::View* scene_view;
 
     sf::View* object_heir_view;
     sf::View* component_view;
@@ -92,6 +91,8 @@ private:
 
     SceneEditorView* editor_view;
     Scene* active_scene;
+    sf::View* scene_view;
+
     std::string active_scene_name;
 
 };

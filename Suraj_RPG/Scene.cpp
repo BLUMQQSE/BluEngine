@@ -35,11 +35,9 @@ Scene::~Scene()
 
 void Scene::init()
 {
-
 	for (auto& o : objects_in_scene)
 		if (o->has_component<CameraComponent>())
-			scene_view = &o->get_component<CameraComponent>().get_camera_view();
-	
+			scene_view = &o->get_component<CameraComponent>().get_camera_view();	
 }
 
 void Scene::update()
@@ -68,6 +66,11 @@ void Scene::render(sf::View* view)
 	{
 		objects_in_scene[i]->add_to_buffer(scene_view);
 	}
+}
+
+void Scene::set_view(sf::View* view)
+{
+	scene_view = view;
 }
 
 std::string Scene::get_name()
@@ -100,7 +103,7 @@ void Scene::set_name(std::string name)
 
 void Scene::insert_gameobject(GameObject* go, bool initialize)
 {
-	
+	go->add_to_buffer(scene_view);
 	if (initialize)
 	{
 		std::vector<GameObject*> objs;
@@ -283,7 +286,7 @@ void Scene::handle_event(Event* event)
 	{
 	case EventID::GAMEOBJECT_PARENT_CHANGE:
 		insert_sort();
-		EventSystem::Instance()->push_event(EventID::SCENE_ORDER_CHANGE);
+		EventSystem::Instance()->push_event(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE);
 		break;
 	case EventID::GAMEOBJECT_INSTANTIATE:
 	{

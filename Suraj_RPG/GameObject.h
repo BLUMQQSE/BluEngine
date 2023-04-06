@@ -153,12 +153,6 @@ public:
 		set_world_position(position + offset);
 	}
 
-private:
-
-	void set_child_position(const Vector2f pos)
-	{
-
-	}
 
 public:
 
@@ -219,6 +213,7 @@ public:
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values();
+	virtual void editor_update();
 
 	const bool& is_active();
 	void set_active(bool active);
@@ -232,8 +227,8 @@ public:
 	void remove_child(GameObject* child);
 
 	const size_t get_unique_runtime_id() const;
-	const Info& get_info() const;
-	const sf::Vector2f get_center() const;
+	Info& get_info();
+	Vector2f get_center();
 	GameObject* get_parent();
 	/// <summary>
 	/// Returns all parents to root ancestor, as well as all children.
@@ -307,7 +302,7 @@ public:
 				component_array[get_component_type_id<T>()] = nullptr;
 				component_bitset[get_component_type_id<T>()] = false;
 
-				EventSystem::instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED,
+				EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED,
 					static_cast<void*>(comp), static_cast<void*>(this));
 			}
 		}
@@ -341,6 +336,9 @@ public:
 		return components_of_type;
 
 	}
+
+	void add_component(std::string c);
+	void remove_component(std::string c);
 
 protected:
 	bool active = true;

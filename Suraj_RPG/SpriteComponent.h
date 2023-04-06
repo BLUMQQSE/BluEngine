@@ -12,6 +12,7 @@ public:
     virtual ~SpriteComponent();
 
     virtual void init() override;
+    virtual void awake() override;
     virtual void update() override;
 
     virtual void set_world_position(const Vector2f pos) override;
@@ -38,7 +39,7 @@ private:
     sf::Sprite sprite;
     sf::Texture* texture_sheet;
 
-    sf::Vector2i size = sf::Vector2i(32, 32);
+    Vector2i size = Vector2i(32, 32);
     std::string file_path;
 
 };

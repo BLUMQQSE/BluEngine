@@ -33,7 +33,10 @@ BoxColliderComponent::BoxColliderComponent(float offset_x,
 
 	collider_bounds.setFillColor(sf::Color::Transparent);
 	collider_bounds.setOutlineThickness(-1.f);
-	collider_bounds.setOutlineColor(sf::Color::Red);
+	if (trigger)
+		collider_bounds.setOutlineColor(sf::Color(135, 235, 162, 150));
+	else
+		collider_bounds.setOutlineColor(sf::Color(255, 20, 20, 150));
 
 }
 
@@ -44,24 +47,19 @@ BoxColliderComponent::~BoxColliderComponent()
 
 void BoxColliderComponent::init()
 {
-	Renderer::Instance()->add(Renderer::RenderObject(&collider_bounds, this));
+	collider_bounds.setFillColor(sf::Color::Transparent);
+	collider_bounds.setOutlineThickness(-1.f);
+	if (trigger)
+		collider_bounds.setOutlineColor(sf::Color(135, 235, 162, 200));
+	else
+		collider_bounds.setOutlineColor(sf::Color(255, 20, 20, 200));
+
+	collider_bounds.set_position(game_object->get_world_position());
 }
 
 void BoxColliderComponent::awake()
 {	
-	
-	//collider_bounds = FloatConvex::polygon
-	//(
-	//	Vector2f(game_object->get_world_position().x + offsetX,
-	//		game_object->get_world_position().y + offsetY),
-	//	{ {Vector2f(0, 0), Vector2f(width, 0), Vector2f(width, height), Vector2f(0, height)} }
-	//);
-	
-
-	collider_bounds.setFillColor(sf::Color::Transparent);
-	collider_bounds.setOutlineThickness(-1.f);
-	collider_bounds.setOutlineColor(sf::Color::Red);
-
+	Renderer::Instance()->add(Renderer::RenderObject(&collider_bounds, this));
 }
 
 void BoxColliderComponent::update()
@@ -93,7 +91,7 @@ Json::Value BoxColliderComponent::serialize_json()
 
 	return obj;
 }
-void BoxColliderComponent::unserialize_json(Json::Value obj)
+void BoxColliderComponent:: unserialize_json(Json::Value obj)
 {
 	ColliderComponent::unserialize_json(obj);
 
@@ -110,8 +108,8 @@ std::vector<Editor::SerializedVar> BoxColliderComponent::get_editor_values()
 
 	variables = ColliderComponent::get_editor_values();
 
-	variables.push_back(Editor::SerializedVar("width", & width, Editor::VarType::Float));
-	variables.push_back(Editor::SerializedVar("height", &height, Editor::VarType::Float));
+	variables.push_back(Editor::SerializedVar("width", & width, Var::Type::Float));
+	variables.push_back(Editor::SerializedVar("height", &height, Var::Type::Float));
 
 
 	return variables;

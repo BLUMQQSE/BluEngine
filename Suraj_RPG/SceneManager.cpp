@@ -59,10 +59,13 @@ void SceneManager::load_scene(std::string scene_name)
 
 void SceneManager::load_scene_prefab(std::string scene_name)
 {
-	active_scene->clear_scene();
 
 	Json::Value obj = FileManager::Instance()->load_from_file(scenes_file_path + scene_name);
 	
+	if (obj.size() == 0)
+		return;
+	active_scene->clear_scene();
+
 	active_scene->set_name(scene_name);
 	active_scene->unserialize_json(obj);
 
@@ -93,9 +96,9 @@ void SceneManager::clear_active_scene()
 	active_scene->clear_scene(true);
 }
 
-void SceneManager::save_scene_prefab(Scene* scene)
+void SceneManager::save_scene_prefab()
 {
-	FileManager::Instance()->save_to_file_styled(scene->serialize_json(), scenes_file_path + scene->get_name());
+	FileManager::Instance()->save_to_file_styled(active_scene->serialize_json(), scenes_file_path + active_scene->get_name());
 }
 
 void SceneManager::instantiate_gameobject(GameObject* game_object)

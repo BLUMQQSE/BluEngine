@@ -22,6 +22,8 @@ public:
 	void fixed_update();
 	void render(sf::View* view = nullptr);
 
+	void set_view(sf::View* view);
+
 	std::string get_name();
 	std::vector<GameObject*> get_objects();
 	std::vector<GameObject*> get_dont_destroy_objects();

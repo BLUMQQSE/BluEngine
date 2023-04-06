@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "Inventory.h"
 #include "ResourceManager.h"
+#include "SceneManager.h"
+#include "GameObject.h"
 #include "EventSystem.h"
+#include "ItemController.h"
+#include "WeaponController.h"
 
 namespace bm98
 {
@@ -144,6 +148,28 @@ int Inventory::add_item(int index, ItemData* item, int count)
 
 	}
 
+	// we've successfully placed the item, so now instantiate if placed into combat
+	if (result == 0 && inventory_type == InventoryNS::Type::COMBAT && item)
+	{
+		GameObject* go = new GameObject();
+		if (ResourceManager::Instance()->has_prefab_data(item->get_prefab_file_name()))
+		{
+			//ItemData* item = (ItemData*) ResourceManager::Instance()->get_data_asset("SwordData.json");
+			//WeaponData* weapon = (WeaponData*)item;
+
+			go->unserialize_json(ResourceManager::Instance()->get_prefab_data(item->get_prefab_file_name()));
+
+			ItemController* cont = go->get_component_of_type<ItemController>();
+			if (cont)
+			{
+				cont->set_data(item);
+			}
+		}
+		go->get_info().name = ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index));
+		go->set_parent(this->game_object);
+		SceneManager::Instance()->instantiate_gameobject(go);
+	}
+
 	return result;
 }
 
@@ -161,6 +187,14 @@ ItemData* Inventory::remove_item(int index, int count)
 	if (content[index].current_capacity == 0)
 		content[index].item = nullptr;
 
+	// we've successfully found item we're removing, now destroy gameobject if combat inventory
+	if (item && inventory_type == InventoryNS::Type::COMBAT && item)
+	{
+		std::cout << "destroying " << ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index)) << "\n";
+		SceneManager::Instance()->destroy_gameobject(this->game_object->get_child(
+			ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index))));
+	}
+
 	return item;
 }
 
@@ -168,8 +202,8 @@ std::vector<Editor::SerializedVar> Inventory::get_editor_values()
 {
 	std::vector<Editor::SerializedVar> values;
 
-	values.push_back(Editor::SerializedVar("size", static_cast<void*>(&max_size), Editor::VarType::Int));
-	values.push_back(Editor::SerializedVar("type", static_cast<void*>(&inventory_type), Editor::VarType::Dropdown, InventoryNS::ToVector()));
+	values.push_back(Editor::SerializedVar("size", static_cast<void*>(&max_size), Var::Type::Int));
+	values.push_back(Editor::SerializedVar("type", static_cast<void*>(&inventory_type), Var::Type::Dropdown, InventoryNS::ToVector()));
 
 	/*
 	for (int i = 0; i < max_size; i++)
