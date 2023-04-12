@@ -1,4 +1,5 @@
 #pragma once
+#include "EventSystem.h"
 #include "Component.h"
 #include "Math.h"
 namespace bm98
@@ -11,9 +12,9 @@ class Interactor;
 class Inventory;
 class InventoryGUIController;
 
-
+using namespace core;
 class PlayerController :
-    public Component
+    public Component, public Listener
 {
 
 public:
@@ -54,6 +55,10 @@ private:
 
     void update_input();
     void update_animations();
+
+
+    // Inherited via Listener
+    virtual void handle_event(Event* event) override;
 
 };
 

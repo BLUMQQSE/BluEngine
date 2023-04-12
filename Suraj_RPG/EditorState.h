@@ -1,5 +1,6 @@
 #pragma once
 #include "State.h"
+#include "TextureSelector.h"
 namespace bm98
 {
 
@@ -35,33 +36,14 @@ protected:
     void init_gui();
     void update_gui();
     void render_gui();
-    void init_buttons();
 
     void init_tilemap();
 
 private:
-
-    enum class EditingState
-    {
-        SCENE,
-        PREFAB
-    };
-
-    struct TileModifier
-    {
-        bool collision;
-        TileNS::Type tile_type;
-    };
-
-
     sf::View* object_heir_view;
     sf::View* component_view;
     sf::View* prefab_view;
     sf::View* inspector_view;
-
-    sf::View* tile_selector_view;
-
-    EditingState current_state;
 
     GameObject* selected_gameobject = nullptr;
 
@@ -84,7 +66,6 @@ private:
     PauseMenu* pmenu;
 
     GUI::TextureSelector* texture_selector;
-    TileModifier tile_modifier;
 
     //TilemapComponent* tilemap;
     //GameObject* tilemap_go;

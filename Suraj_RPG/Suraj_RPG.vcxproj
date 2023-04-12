@@ -175,6 +175,7 @@
     <ClCompile Include="ChildAnimationComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Collisions.cpp" />
+    <ClCompile Include="CombatInventory.cpp" />
     <ClCompile Include="ConsoleManager.cpp" />
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="Delay.cpp" />
@@ -235,6 +236,7 @@
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="TextureSelector.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TilemapColliderComponent.cpp" />
     <ClCompile Include="TilemapComponent.cpp" />
@@ -269,6 +271,7 @@
     <ClInclude Include="ChildAnimationComponent.h" />
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Collisions.h" />
+    <ClInclude Include="CombatInventory.h" />
     <ClInclude Include="ConsoleManager.h" />
     <ClInclude Include="DataAsset.h" />
     <ClInclude Include="Delay.h" />
@@ -324,6 +327,7 @@
     <ClInclude Include="SettingsState.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="TextureSelector.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TilemapColliderComponent.h" />
     <ClInclude Include="TilemapComponent.h" />

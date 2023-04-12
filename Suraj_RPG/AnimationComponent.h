@@ -11,9 +11,16 @@ public:
 	AnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet);
 	virtual ~AnimationComponent();
 
+	virtual void init() override;
+
+	/// <summary>
+	/// Should only be observed on a late_update().
+	/// </summary>
+	virtual void late_update() override;
+
 	bool play(const std::string key, const float modifier = 1, const float modifier_max = 1);
 
-	std::string get_active_animation_key();
+	std::string& get_active_animation_key();
 	float get_modifier();
 	float get_max_modifier();
 	std::map<std::string, Animation*> get_animations();
@@ -22,16 +29,12 @@ public:
 		int start_frame_x, int start_frame_y, int frames_x, int frames_y,
 		int frame_width, int frame_height, bool loop_animation, bool must_complete = false);
 
-	virtual void init() override;
-	// Inherited via IData
-	virtual Json::Value serialize_json() override;
-	virtual void unserialize_json(Json::Value obj) override;
+	const bool frame_changed() const;
 
 protected:
 
 
 private:
-
 
 	sf::Sprite* sprite;
 	sf::Texture* texture_sheet;

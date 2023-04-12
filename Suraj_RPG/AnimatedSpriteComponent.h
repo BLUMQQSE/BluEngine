@@ -20,6 +20,11 @@ public:
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 
+	/// <summary>
+	/// Should only be observed on a late_update().
+	/// </summary>
+	const bool frame_changed() const;
+
 	void start();
 	void stop();
 	void next();

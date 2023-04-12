@@ -14,7 +14,7 @@ AudioSource::AudioSource()
 
 AudioSource::~AudioSource()
 {
-	sound.stop();
+	//sound.stop();
 }
 
 void AudioSource::init()
@@ -45,6 +45,11 @@ void AudioSource::update()
 		game_object->get_center().y,
 		0
 		));
+}
+
+void AudioSource::on_destroy()
+{
+	sound.~Sound();
 }
 
 std::vector<Editor::SerializedVar> AudioSource::get_editor_values()

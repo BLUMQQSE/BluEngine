@@ -22,8 +22,8 @@ public:
 
 public:
 
-    Inventory();
-    virtual ~Inventory();
+    Inventory() {}
+    virtual ~Inventory() {}
 
     virtual void init() override;
 
@@ -72,7 +72,7 @@ public:
 
     virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 
-private:
+protected:
     std::vector<InventoryItem> content;
     int max_size;
     InventoryNS::Type inventory_type = InventoryNS::Type::GENERAL;

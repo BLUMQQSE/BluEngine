@@ -44,36 +44,6 @@ std::string Vector2f::to_string()
 	return std::string("(" + std::to_string(x) + ", " + std::to_string(y) + ")");
 }
 
-Vector2f Vector2f::Down()
-{
-	return Vector2f(0, 1);
-}
-
-Vector2f Vector2f::Up()
-{
-	return Vector2f(0, -1);
-}
-
-Vector2f Vector2f::Left()
-{
-	return Vector2f(-1, 0);
-}
-
-Vector2f Vector2f::Right()
-{
-	return Vector2f(1, 0);
-}
-
-Vector2f Vector2f::Zero()
-{
-	return Vector2f(0, 0);
-}
-
-Vector2f Vector2f::Infinity()
-{
-	return Vector2f(INFINITY, INFINITY);
-}
-
 float Vector2f::Distance(sf::Vector2f a, sf::Vector2f b)
 {
 	return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
@@ -106,16 +76,6 @@ Vector2f Vector2f::get_normalized()
 void Vector2f::Normalize(Vector2f& vec)
 {
 	vec = vec.get_normalized();
-}
-
-Vector2f Vector2f::GetLeft(Vector2f a)
-{
-	return Vector2f(-a.y, a.x);
-}
-
-Vector2f Vector2f::GetRight(Vector2f a)
-{
-	return Vector2f(a.y, -a.x);
 }
 
 bool Vector2f::equals(sf::Vector2f a)
@@ -167,31 +127,6 @@ Vector2i::Vector2i(sf::Vector2i vec)
 int Vector2i::sqr_magnitude()
 {
 	return std::pow(x, 2) + std::pow(y, 2);
-}
-
-Vector2i Vector2i::Down()
-{
-	return Vector2i(0.f, 1.f);
-}
-
-Vector2i Vector2i::Up()
-{
-	return Vector2i(0.f, -1.f);
-}
-
-Vector2i Vector2i::Left()
-{
-	return Vector2i(-1.f, 0);
-}
-
-Vector2i Vector2i::Right()
-{
-	return Vector2i(1.f, 0.f);
-}
-
-Vector2i Vector2i::Zero()
-{
-	return Vector2i(0, 0);
 }
 
 int Vector2i::Distance(sf::Vector2i a, sf::Vector2i b)
@@ -430,11 +365,6 @@ void FloatConvex::rotate(float rot_offset)
 
 }
 
-Vector2f FloatConvex::get_position()
-{
-	return position;
-}
-
 Vector2f FloatConvex::get_center()
 {
 	Vector2f c;
@@ -462,18 +392,15 @@ Vector2f FloatConvex::get_model_center()
 	return c;
 }
 
-std::vector<Vector2f> FloatConvex::get_model()
-{
-	return model;
-}
-
-FloatConvex::ShapeType FloatConvex::get_shape_type()
-{
-	return shape_type;
-}
-
 Vector2f FloatConvex::Intersection(FloatConvex a, FloatConvex b)
 {
+	if (a.get_shape_type() == ShapeType::CIRCLE && b.get_shape_type() == ShapeType::CIRCLE)
+	{
+		if(PreliminaryCircleCheck(a, b) == false)
+		return Vector2f::Infinity();
+	}
+	else if (PreliminaryRectCheck(a, b) == false)
+		return Vector2f::Infinity();
 	Vector2f normal = Vector2f::Infinity();
 	float depth = INFINITY;
 
@@ -584,6 +511,28 @@ void FloatConvex::unserialize_json(Json::Value obj)
 
 	set_position(position);
 
+}
+
+bool FloatConvex::PreliminaryRectCheck(FloatConvex a, FloatConvex b)
+{
+	return a.getGlobalBounds().intersects(b.getGlobalBounds());
+}
+
+bool FloatConvex::PreliminaryCircleCheck(FloatConvex a, FloatConvex b)
+{
+	Vector2f a_center = a.get_center();
+	Vector2f b_center = b.get_center();
+
+	float a_radius = Vector2f::Distance(a.getPoint(0), a_center);
+	float b_radius = Vector2f::Distance(b.getPoint(0), b_center);
+
+	float dist_between_centers = Vector2f::Distance(a_center, b_center);
+
+	if (dist_between_centers < a_radius + b_radius)
+		return true;
+
+	return false;
+	
 }
 
 void FloatConvex::SortPolyModel(FloatConvex& poly)

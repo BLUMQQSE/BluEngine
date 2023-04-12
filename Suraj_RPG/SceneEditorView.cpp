@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "GameObject.h"
 #include "ResourceManager.h"
+#include "TextureSelector.h"
 namespace bm98
 {
 SceneEditorView::SceneEditorView()
@@ -14,9 +15,11 @@ SceneEditorView::SceneEditorView()
 	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED, this);
-
+	
 	init();
 	create_scene_editor_panel();
+
+	texture_selector = std::make_unique<GUI::TextureSelector>();
 }
 
 SceneEditorView::~SceneEditorView()
@@ -36,6 +39,11 @@ void SceneEditorView::init()
 
 	scene_editor_panel = new GUI::Panel(heir_panel->get_width(), Renderer::Instance()->get_window_size().y - 200.f, 
 		inspec_panel->get_position().x - (heir_panel->get_position().x + heir_panel->get_width()), 200.f);
+
+	heir_panel->set_render(heir_active);
+	inspec_panel->set_render(inspec_active);
+	scene_editor_panel->set_render(scene_editor_active);
+
 }
 
 const bool SceneEditorView::in_bound() const
@@ -195,6 +203,8 @@ void SceneEditorView::create_heir_panel()
 		x = 0;
 	}
 
+	heir_panel->set_render(heir_active);
+
 	if (!selected_gameobject)
 		selected_gameobject = objs[0];
 
@@ -231,7 +241,9 @@ void SceneEditorView::update_heir_panel()
 				}
 			}
 			if (gameobject_held)
+			{
 				selected_gameobject->set_parent(nullptr);
+			}
 		}
 		else
 		{
@@ -251,12 +263,14 @@ void SceneEditorView::update_heir_panel()
 		{
 			if (ois.first->mouse_in_bounds())
 			{
+				// TODO: need to reset or clear texture selector
 				selected_gameobject = ois.second;
 				gameobject_held = true;
 				create_inspec_panel();
 			}
 		}
 	}
+	//heir_panel->set_render(heir_active);
 }
 
 void SceneEditorView::clear_inspec_panel()
@@ -297,6 +311,7 @@ void SceneEditorView::create_inspec_panel()
 		component_panel_height += inspec_panel->get_panel(typeid(*components[i]).name())->get_height();
 
 	}
+	//inspec_panel->set_render(inspec_active);
 }
 
 void SceneEditorView::update_inspec_panel()
@@ -305,6 +320,7 @@ void SceneEditorView::update_inspec_panel()
 	{
 		update_component_panel(component_panel);
 	}
+	//inspec_panel->set_render(inspec_active);
 }
 
 void SceneEditorView::create_scene_editor_panel()
@@ -348,6 +364,8 @@ void SceneEditorView::create_scene_editor_panel()
 	scene_editor_panel->add_element("add_gameobject", add_gameobject);
 	scene_editor_panel->add_element("remove_gameobject", remove_gameobject);
 
+	//scene_editor_panel->set_render(scene_editor_active);
+
 }
 
 void SceneEditorView::update_scene_editor_panel()
@@ -374,7 +392,7 @@ void SceneEditorView::update_scene_editor_panel()
 			return;
 		input = scene_editor_panel->get_inputbox("component_name")->get_text();
 		
-		selected_gameobject->add_component(input);
+		selected_gameobject->editor_add_component(input);
 	}
 	else if (scene_editor_panel->get_button("remove_component")->is_pressed())
 	{
@@ -383,7 +401,7 @@ void SceneEditorView::update_scene_editor_panel()
 
 		input = scene_editor_panel->get_inputbox("component_name")->get_text();
 
-		selected_gameobject->remove_component(input);
+		selected_gameobject->editor_remove_component(input);
 	}
 	else if (scene_editor_panel->get_button("add_gameobject")->is_pressed())
 	{
@@ -399,6 +417,8 @@ void SceneEditorView::update_scene_editor_panel()
 		clear_inspec_panel();
 		selected_gameobject = nullptr;
 	}
+
+	//scene_editor_panel->set_render(scene_editor_active);
 }
 
 GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, std::string component_name

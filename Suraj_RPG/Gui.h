@@ -10,6 +10,7 @@ enum class ButtonState
 };
 namespace bm98
 {
+class Panel;
 class IRenderable;
 }
 namespace bm98::GUI
@@ -17,38 +18,20 @@ namespace bm98::GUI
 class GUIObject : public IRenderable
 {
 public:
-	GUIObject()
-	{
-
-	}
-	virtual ~GUIObject()
-	{
-	}
-	virtual void update()
-	{
-
-	}
-	virtual void add_to_buffer(sf::View* = nullptr)
-	{
-
-	}
+	GUIObject() {}
+	virtual ~GUIObject() {}
+	virtual void update() {}
+	virtual void add_to_buffer(sf::View* = nullptr) {}
 	virtual void set_position(float x, float y)
 	{
 		position.x = x;
 		position.y = y;
 	}
-	virtual sf::Vector2f get_position()
-	{
-		return position;
-	}
-	virtual void update_sfml(sf::Event sfEvent)
-	{
-
-	}
+	virtual sf::Vector2f get_position() { return position; }
+	virtual void update_sfml(sf::Event sfEvent) {}
 
 protected:
 	sf::Vector2f position;
-	//sf::View* view;
 };
 
 class Button : public GUIObject
@@ -189,67 +172,6 @@ private:
 
 };
 
-// WORTHWILE NOTING, THIS DOES CLASS DOES NOT YET ACCOUNT FOR
-// FOR SENDING VIEW TO ITS OBJECTS
-class TextureSelector : public GUIObject
-{
-public:
-	TextureSelector(float x, float y, float width, float height,
-		float grid_size, const sf::Texture* texture_sheet, sf::Font& font,
-		std::vector<std::string> tile_sets, sf::View* texture_view);
-	virtual ~TextureSelector();
-
-	const bool& mouse_in_bounds() const;
-	const bool& mouse_in_container() const;
-	/// <summary>
-	/// Returns int rect containing texture in sprite sheet which is highlighted.
-	/// </summary>
-	const sf::IntRect& get_texture_rect() const;
-	sf::IntRect convert_rect_to_grid(sf::IntRect rect);
-	const Sorting::Layer get_layer() const;
-	DropDownList* get_layer_dropdown();
-	DropDownList* get_tiletype_selector();
-	DropDownList* get_tileset_selector();
-	Checkbox* get_collision_checkbox();
-	Checkbox* get_animation_checkbox();
-
-	void toggle_hidden();
-	void init_buttons(float x, float y);
-	void init_dropdowns(float x, float y, std::vector<std::string> list);
-	void init_checkboxes(float x, float y, float size);
-	void set_texture_sheet(sf::Texture* texture);
-
-	void set_texture_rect();
-
-	virtual void update() override;
-	virtual void add_to_buffer(sf::View* view = nullptr) override;
-
-protected:
-
-private:
-	sf::View* text_view;
-	bool text_view_render = false;
-
-	sf::RectangleShape container;
-	sf::RectangleShape bounds;
-	sf::Sprite sheet;
-	sf::Font& font;
-
-	DropDownList* layer_selector;
-	DropDownList* tile_collection_selector;
-	DropDownList* tile_type_selector;
-	Checkbox* collision_checkbox;
-	Checkbox* animation_checkbox;
-
-	sf::RectangleShape selector;
-	sf::IntRect texture_rect;
-	sf::Vector2u texture_start;
-	sf::Vector2u mouse_pos_grid;
-
-	float grid_size;
-	bool hidden;
-
-};
 
 #define DELETE_KEY 8
 #define ENTER_KEY 13

@@ -5,138 +5,6 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SpriteComponent",
-					"value" : 
-					{
-						"class bm98::IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "BACKGROUND",
-							"z-order" : 0
-						},
-						"size" : 
-						{
-							"x" : 32,
-							"y" : 32
-						},
-						"sprite-file-path" : "chest.png"
-					}
-				},
-				{
-					"name" : "class bm98::BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 50.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 50.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 600.0,
-								"y" : 300.0
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 0.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 0.0,
-						"trigger" : false
-					}
-				},
-				{
-					"name" : "class bm98::RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 0.0,
-						"body-type" : "KINEMATIC",
-						"deceleration" : 0.0,
-						"max-velocity" : 0.0,
-						"orientation" : "DOWN"
-					}
-				},
-				{
-					"name" : "class bm98::Chest",
-					"value" : 
-					{
-						"class bm98::IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INPUT",
-							"require-player-input" : true
-						}
-					}
-				},
-				{
-					"name" : "class bm98::Inventory",
-					"value" : 
-					{
-						"content" : 
-						[
-							{
-								"current-capacity" : 1,
-								"index" : 0,
-								"item" : "SwordData.json"
-							}
-						],
-						"inventory-type" : "GENERAL",
-						"max-size" : 8
-					}
-				},
-				{
-					"name" : "class bm98::InventoryWindow",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "Chest",
-				"physics-layer" : "ACTOR",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 600.0,
-					"y" : 300.0
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
 					"name" : "class bm98::SceneChange",
 					"value" : 
 					{
@@ -217,6 +85,181 @@
 				"position" : 
 				{
 					"x" : 300.0,
+					"y" : 0.0
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::SpriteComponent",
+					"value" : 
+					{
+						"class bm98::IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "BACKGROUND",
+							"z-order" : 0
+						},
+						"size" : 
+						{
+							"x" : 32,
+							"y" : 32
+						},
+						"sprite-file-path" : "chest.png"
+					}
+				},
+				{
+					"name" : "class bm98::BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 50.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 50.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 200.0,
+								"y" : 300.0
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 0.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 0.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "class bm98::RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.0,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 0.0,
+						"max-velocity" : 0.0,
+						"orientation" : "DOWN"
+					}
+				},
+				{
+					"name" : "class bm98::Chest",
+					"value" : 
+					{
+						"class bm98::IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INPUT",
+							"require-player-input" : true
+						}
+					}
+				},
+				{
+					"name" : "class bm98::Inventory",
+					"value" : 
+					{
+						"content" : 
+						[
+							{
+								"current-capacity" : 1,
+								"index" : 0,
+								"item" : "SwordData.json"
+							}
+						],
+						"inventory-type" : "GENERAL",
+						"max-size" : 8
+					}
+				},
+				{
+					"name" : "class bm98::InventoryWindow",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "Chest",
+				"physics-layer" : "ACTOR",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 300.0
+				},
+				"position" : 
+				{
+					"x" : 200.0,
+					"y" : 300.0
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::SpriteComponent",
+					"value" : 
+					{
+						"class bm98::IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "BACKGROUND",
+							"z-order" : 0
+						},
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
+						"sprite-file-path" : "player.png"
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Dummy",
+				"physics-layer" : "PLAYER",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 200.0,
 					"y" : 0.0
 				},
 				"rotation" : 0.0
@@ -321,49 +364,6 @@
 				{
 					"x" : 200.0,
 					"y" : 200.0
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "class bm98::SpriteComponent",
-					"value" : 
-					{
-						"class bm98::IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "BACKGROUND",
-							"z-order" : 0
-						},
-						"size" : 
-						{
-							"x" : 64,
-							"y" : 64
-						},
-						"sprite-file-path" : "player.png"
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "Dummy",
-				"physics-layer" : "PLAYER",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 600.0,
-					"y" : 300.0
 				},
 				"rotation" : 0.0
 			}

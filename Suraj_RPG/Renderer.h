@@ -75,7 +75,6 @@ public:
 	void add(RenderObject render_object);
 	void add_gizmo(GizmoObject gizmo);
 	void remove(sf::Drawable* drawable);
-	void remove(RenderObject render_object);
 
 	/// <summary>
 	/// Returns true if element is top ui element under the mouse.

@@ -286,26 +286,49 @@ public:
 		component_bitset[get_component_type_id<T>()] = true;
 		
 		EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED,
-			static_cast<void*>(c), static_cast<void*>(this));
+			static_cast<void*>(c), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 
 	}
 
-	template <typename T> void remove_component(T* comp)
+	template <typename T> void remove_component()
 	{
 		if (component_bitset[get_component_type_id<T>()])
 		{
-			std::vector<Component*>::iterator iter = std::find(components.begin(), components.end(), comp);
+			std::vector<Component*>::iterator iter = std::find(components.begin(), components.end(), &get_component<T>());
 			if (iter != components.end())
 			{
-				components_to_remove.push_back(comp);
+				components_to_remove.push_back(&get_component<T>());
 
 				component_array[get_component_type_id<T>()] = nullptr;
 				component_bitset[get_component_type_id<T>()] = false;
 
 				EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED,
-					static_cast<void*>(comp), static_cast<void*>(this));
+					static_cast<void*>(&get_component<T>()), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 			}
 		}
+	}
+
+	template <typename T> void remove_component_of_type()
+	{
+		for (std::size_t i = 0; i < components.size(); i++)
+		{
+			if (dynamic_cast<T*>(components[i]))
+			{
+				T* g = get_component_of_type<T>();
+				std::vector<Component*>::iterator iter = std::find(components.begin(), components.end(), g);
+				if (iter != components.end())
+				{
+					components_to_remove.push_back(g);
+
+					component_array[get_component_type_id<T>()] = nullptr;
+					component_bitset[get_component_type_id<T>()] = false;
+
+					EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED,
+						static_cast<void*>(g), Caller(Caller::Name::GAMEOBJECT, (void*)this));
+				}
+			}
+		}
+		//return nullptr;
 	}
 
 	template <typename T> T& get_component() const
@@ -337,8 +360,9 @@ public:
 
 	}
 
-	void add_component(std::string c);
-	void remove_component(std::string c);
+	void editor_add_component(std::string c);
+	void editor_remove_component(std::string c);
+	void handle_removed_components();
 
 protected:
 	bool active = true;

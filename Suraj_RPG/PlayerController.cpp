@@ -19,12 +19,14 @@
 #include "Interactor.h"
 #include "IInteractable.h"
 #include "InventoryGUIController.h"
+#include "Interactor.h"
 namespace bm98
 {
 using namespace core;
 bm98::PlayerController::PlayerController()
 {
-	
+	EventSystem::Instance()->subscribe(EventID::ANIMATION_COMPLETE, this);
+	EventSystem::Instance()->subscribe(EventID::ANIMATION_FRAME_CHANGE, this);
 }
 
 bm98::PlayerController::~PlayerController()
@@ -58,28 +60,6 @@ void bm98::PlayerController::update()
 	if (interactor->is_interacting())
 		return;
 
-	if (Input::Instance()->get_action_down("INTERACT"))
-	{
-		if (game_object->check_for_child("pants"))
-		{
-			SceneManager::Instance()->destroy_gameobject(SceneManager::Instance()->find("pants", game_object));
-			return;
-		}
-
-		GameObject* pants = new GameObject();
-
-		pants->info.name = "pants";
-		pants->add_component<SpriteComponent>("pants.png");
-		pants->add_component<AudioSource>();
-		SpriteComponent* sc = &pants->get_component<SpriteComponent>();
-		pants->add_component<ChildAnimationComponent>();
-		sc->set_sorting_layer(Sorting::Layer::ACTOR);
-		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
-		pants->set_parent(this->game_object);
-		SceneManager::Instance()->instantiate_gameobject(pants);
-		
-	}
-
 	Vector2f movement = game_object->get_center() - camera->get_game_object()->get_center();
 	
 	camera->get_game_object()->move(movement);
@@ -94,12 +74,9 @@ void bm98::PlayerController::fixed_update()
 	if (interactor->is_interacting())
 		return;
 	
-	rigid->apply_acceleration(movement_input);
+	if(!attack)
+		rigid->apply_acceleration(movement_input);
 
-	//Global::LayerMask mask = Global::LayerMask(true);
-	//if (Physics::raycast(game_object->get_transform().position, movement_input.get_normalized(), 80,
-		//mask))
-		//std::cout << "raycast working...\n";
 }
 
 void bm98::PlayerController::add_to_buffer(sf::View*)
@@ -143,18 +120,20 @@ void PlayerController::unserialize_json(Json::Value obj)
 
 void PlayerController::init_animations()
 {
-	anim->add_animation("IDLE_UP", 30.f, 0, 0, 0, 0, 64, 64, true);
-	anim->add_animation("IDLE_LEFT", 30.f, 0, 1, 0, 0, 64, 64, true);
-	anim->add_animation("IDLE_DOWN", 30.f, 0, 2, 0, 0, 64, 64, true);
-	anim->add_animation("IDLE_RIGHT", 30.f, 0, 3, 0, 0, 64, 64, true);
+	anim->add_animation("IDLE_UP", 30.f, 0, 0, 1, 0, 64, 64, true);
+	anim->add_animation("IDLE_LEFT", 30.f, 0, 1, 1, 0, 64, 64, true);
+	anim->add_animation("IDLE_DOWN", 30.f, 0, 2, 1, 0, 64, 64, true);
+	anim->add_animation("IDLE_RIGHT", 30.f, 0, 3, 1, 0, 64, 64, true);
 
-	anim->add_animation("WALK_UP", 30.f, 0, 4, 2, 0, 64, 64, true);
-	anim->add_animation("WALK_LEFT", 30.f, 0, 5, 2, 0, 64, 64, true);
-	anim->add_animation("WALK_DOWN", 30.f, 0, 6, 2, 0, 64, 64, true);
-	anim->add_animation("WALK_RIGHT", 30.f, 0, 7, 2, 0, 64, 64, true);
+	anim->add_animation("WALK_UP", 30.f, 0, 4, 3, 0, 64, 64, true);
+	anim->add_animation("WALK_LEFT", 30.f, 0, 5, 3, 0, 64, 64, true);
+	anim->add_animation("WALK_DOWN", 30.f, 0, 6, 3, 0, 64, 64, true);
+	anim->add_animation("WALK_RIGHT", 30.f, 0, 7, 3, 0, 64, 64, true);
 
-	anim->add_animation("ATTACK_UP", 30.f, 0, 16, 4, 0, 64, 64,
-		false, true);
+	anim->add_animation("ATTACK_UP", 30.f, 0, 16, 5, 0, 64, 64, false, true);
+	anim->add_animation("ATTACK_LEFT", 30.f, 0, 17, 5, 0, 64, 64, false, true);
+	anim->add_animation("ATTACK_DOWN", 30.f, 0, 18, 5, 0, 64, 64, false, true);
+	anim->add_animation("ATTACK_RIGHT", 30.f, 0, 19, 5, 0, 64, 64, false, true);
 
 	anim->play("IDLE_DOWN");
 }
@@ -166,7 +145,25 @@ void bm98::PlayerController::update_input()
 
 	if (Input::Instance()->get_action_down("INTERACT"))
 	{
+		
+		if (game_object->check_for_child("pants"))
+		{
+			SceneManager::Instance()->destroy_gameobject(SceneManager::Instance()->find("pants", game_object));
+			return;
+		}
 
+		GameObject* pants = new GameObject();
+
+		pants->info.name = "pants";
+		pants->add_component<SpriteComponent>("pants.png");
+		pants->add_component<AudioSource>();
+		SpriteComponent* sc = &pants->get_component<SpriteComponent>();
+		pants->add_component<ChildAnimationComponent>();
+		sc->set_sorting_layer(Sorting::Layer::ACTOR);
+		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
+		pants->set_parent(this->game_object);
+		SceneManager::Instance()->instantiate_gameobject(pants);
+		
 	}
 	if (Input::Instance()->get_action_down("INVENTORY"))
 	{
@@ -199,10 +196,19 @@ void bm98::PlayerController::update_input()
 }
 void PlayerController::update_animations()
 {
-	//if (attack)
-	//{
-		//attack = anim->play("ATTACK_UP");
-	//}
+	if (attack)
+	{
+		if (rigid->get_orientation() == Orientation::Direction::UP)
+			anim->play("ATTACK_UP");
+		else if (rigid->get_orientation() == Orientation::Direction::LEFT)
+			anim->play("ATTACK_LEFT");
+		else if (rigid->get_orientation() == Orientation::Direction::DOWN)
+			anim->play("ATTACK_DOWN");
+		else if (rigid->get_orientation() == Orientation::Direction::RIGHT)
+			anim->play("ATTACK_RIGHT");
+
+		return;
+	}
 	Vector2f movement = rigid->get_velocity();
 	if (movement.x == 0 && movement.y == 0
 		&& rigid->get_orientation() == Orientation::Direction::UP)
@@ -234,6 +240,69 @@ void PlayerController::update_animations()
 		&& rigid->get_orientation() == Orientation::Direction::DOWN)
 		anim->play("WALK_DOWN", rigid->get_velocity().y,
 			rigid->get_max_velocity());
+}
+
+void PlayerController::handle_event(Event* event)
+{
+	switch (event->get_event_id())
+	{
+	case EventID::ANIMATION_FRAME_CHANGE:
+	{
+		if (event->get_parameter())
+		{
+			// need to ensure this is a AnimationComponent and NOT a ChildAnimationComponent
+			if (event->get_caller().name != Caller::Name::ANIMATION_COMPONENT)
+				return;
+
+			AnimationComponent* anim = static_cast<AnimationComponent*>(event->get_caller().pointer);
+			if (this->game_object != anim->get_game_object())
+				return;
+
+		}
+		break;
+	}
+	case EventID::ANIMATION_COMPLETE:
+	{
+
+		if (event->get_parameter())
+		{
+			// need to ensure this is a AnimationComponent and NOT a ChildAnimationComponent
+			if (event->get_caller().name != Caller::Name::ANIMATION_COMPONENT)
+				return;
+
+			AnimationComponent* anim = static_cast<AnimationComponent*>(event->get_caller().pointer);
+			if (this->game_object != anim->get_game_object())
+				return;
+
+			std::string anim_name = *static_cast<std::string*>(event->get_parameter());
+			if (anim_name == "ATTACK_UP")
+			{
+				attack = false;
+				this->anim->play("IDLE_UP");
+			}
+			else if (anim_name == "ATTACK_LEFT")
+			{
+				attack = false;
+				this->anim->play("IDLE_LEFT");
+			}
+			else if (anim_name == "ATTACK_DOWN")
+			{
+				attack = false;
+				this->anim->play("IDLE_DOWN");
+			}
+			else if (anim_name == "ATTACK_RIGHT")
+			{
+				attack = false;
+				this->anim->play("IDLE_RIGHT");
+			}
+			// then check if the parameter = ATTACK_UP
+				// play("idle_up")
+		}
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 }

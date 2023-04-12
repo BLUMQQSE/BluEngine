@@ -30,8 +30,11 @@ void Renderer::add_gizmo(GizmoObject gizmo)
 	gizmos.push_back(gizmo);
 }
 
+
 void Renderer::remove(sf::Drawable* drawable)
-{
+{	
+	
+
 	for (const auto& f : render_objects)
 	{
 		if (f.drawable == drawable)
@@ -40,11 +43,6 @@ void Renderer::remove(sf::Drawable* drawable)
 			return;
 		}
 	}
-}
-
-void Renderer::remove(RenderObject render_object)
-{
-	render_objects.erase(render_object);
 }
 
 //Work in progress
@@ -94,7 +92,6 @@ void Renderer::set_view(sf::View view)
 
 void Renderer::render()
 {
-	
 	for (const auto& f : render_objects)
 	{	
 		if (!f.render)

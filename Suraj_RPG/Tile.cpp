@@ -169,10 +169,10 @@ Json::Value Tile::serialize_json()
 	obj["grid.x"] = grid_x;
 	obj["grid.y"] = grid_y;
 	obj["layer"] = Sorting::ToString(layer);
-	obj["texture_rect.left"] = texture_rect.left;
-	obj["texture_rect.width"] = texture_rect.width;
-	obj["texture_rect.top"] = texture_rect.top;
-	obj["texture_rect.height"] = texture_rect.height;
+	obj["texture-rect.left"] = texture_rect.left;
+	obj["texture-rect.width"] = texture_rect.width;
+	obj["texture-rect.top"] = texture_rect.top;
+	obj["texture-rect.height"] = texture_rect.height;
 	obj["collision"] = collision;
 	obj["tile-type"] = TileNS::ToString(type);
 	obj["texture-source"] = texture_source;

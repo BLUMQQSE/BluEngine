@@ -28,6 +28,13 @@ public:
 	bool animation_complete;
 	bool paused;
 
+	/// <summary> 
+	/// True if frame changed this play cycle. Should only be observed on late_update
+	///or after calling play.
+	/// </summary>
+	bool frame_changed = false;
+	bool animation_ended_this_frame = false;
+
 	/// <summary>
 	///	Constructor used by AnimationComponent.
 	/// </summary>
@@ -88,25 +95,39 @@ public:
 
 	bool play(const float& modifier, const float& modifier_max)
 	{
-		//std::cout << "Start:\nx: " << start_rect.left << "\ny: " << start_rect.top << "\nCurrent:\n" <<
-			//"x: " << current_rect.left << "\ny: " << current_rect.top << "\nEnd:\n" << "x: " << end_rect.left <<
-			//"\ny: " << end_rect.top << "\n";
 		if (paused)
 			return false;
+		
+		if (frame_changed)
+			frame_changed = false;
+		if (animation_ended_this_frame)
+		{
+			animation_ended_this_frame = false;
+		}
 		if (timer >= animation_timer)
 		{
 			timer = 0.f;
-			//std::cout << "current_rect.left: " << current_rect.left << "\n";
 			if (current_rect.left != end_rect.left)
 			{
 				current_rect.left += frame_width;
+				frame_changed = true;
 			}
 			else
 			{
 				if (loop_animation)
+				{
 					current_rect.left = start_rect.left;
+					// Dont waste time frame changing if animation is just a single frame
+					if(start_rect.left != end_rect.left)
+						frame_changed = true;
+				}
 				else
 				{
+					// Ensure this gets set true only once
+					if (!animation_complete)
+					{
+						animation_ended_this_frame = true;
+					}
 					animation_complete = true;
 					return false;
 				}
@@ -117,11 +138,17 @@ public:
 		}
 		else
 		{
-			if (modifier / modifier_max < 0.5f)
+			float boost = modifier / modifier_max;
+			if (boost < 0.5f)
+			{
 				timer += (0.5f) * 100.f * Time::Instance()->delta_time();
+			}
 			else
-				timer += (modifier / modifier_max) * 100.f * Time::Instance()->delta_time();
-
+			{
+				if (modifier == 1)
+					boost *= 25;
+				timer += boost * 100.f * Time::Instance()->delta_time();
+			}
 		}
 		sprite.setTextureRect(current_rect);
 		return true;

@@ -241,8 +241,8 @@ void GameEditorView::create_inspec_panel()
 		component_panel_height += inspec_panel->get_panel(typeid(*components[i]).name())->get_height();
 
 	}
-	if (!inspec_active)
-		inspec_panel->set_render(false);
+	//if (!inspec_active)
+	//	inspec_panel->set_render(false);
 }
 
 void GameEditorView::update_inspec_panel()

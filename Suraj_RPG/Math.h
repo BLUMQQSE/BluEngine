@@ -22,12 +22,12 @@ public:
 
 	std::string to_string();
 	
-	static Vector2f Down();
-	static Vector2f Up();
-	static Vector2f Left();
-	static Vector2f Right();
-	static Vector2f Zero();
-	static Vector2f Infinity();
+	inline static Vector2f Down() { return Vector2f(0, 1); }
+	inline static Vector2f Up() { return Vector2f(0, -1); }
+	inline static Vector2f Left() { return Vector2f(-1, 0); }
+	inline static Vector2f Right() { return Vector2f(1, 0); }
+	inline static Vector2f Zero() { return Vector2f(0, 0); }
+	inline static Vector2f Infinity() { return Vector2f(INFINITY, INFINITY); }
 
 	static float Distance(sf::Vector2f a, sf::Vector2f b);
 	static float SqrDistance(sf::Vector2f a, sf::Vector2f b);
@@ -44,8 +44,8 @@ public:
 	/// Returns left normal. Should be used by FloatConvex to get normals
 	/// exiting shape.
 	/// </summary>
-	static Vector2f GetLeft (Vector2f a);
-	static Vector2f GetRight(Vector2f a);
+	inline static Vector2f GetLeft(Vector2f a) { return Vector2f(-a.y, a.x); }
+	inline static Vector2f GetRight(Vector2f a) { return Vector2f(a.y, -a.x); }
 
 	bool equals(sf::Vector2f a);
 
@@ -64,11 +64,12 @@ public:
 
 	int sqr_magnitude();
 
-	static Vector2i Down();
-	static Vector2i Up();
-	static Vector2i Left();
-	static Vector2i Right();
-	static Vector2i Zero();
+	inline static Vector2i Down() { return Vector2i(0, 1); }
+	inline static Vector2i Up() { return Vector2i(0, -1); }
+	inline static Vector2i Left() { return Vector2i(-1, 0); }
+	inline static Vector2i Right() { return Vector2i(1, 0); }
+	inline static Vector2i Zero() { return Vector2i(0,0); }
+	inline static Vector2i Infinity() { return Vector2i(INFINITY, INFINITY); }
 
 	static int Distance(sf::Vector2i a, sf::Vector2i b);
 	static int SqrDistance(sf::Vector2i a, sf::Vector2i b);
@@ -212,11 +213,11 @@ public:
 	void set_position(sf::Vector2f position);
 	void set_rotation(float new_rot);
 	void rotate(float rot_offset);
-	Vector2f get_position();
+	inline Vector2f get_position() { return position; }
 	Vector2f get_center();
 	Vector2f get_model_center();
-	std::vector<Vector2f> get_model();
-	ShapeType get_shape_type();
+	inline std::vector<Vector2f> get_model() { return model; }
+	inline ShapeType get_shape_type() { return shape_type; }
 
 	/// <summary>
 	/// Determines if two shapes overlap.
@@ -242,6 +243,8 @@ private:
 	using ConvexShape::getPosition;
 	using ConvexShape::setPosition;
 
+	static bool PreliminaryRectCheck(FloatConvex a, FloatConvex b);
+	static bool PreliminaryCircleCheck(FloatConvex a, FloatConvex b);
 
 	static void SortPolyModel(FloatConvex& poly);
 	static float GetAngle(Vector2f a, Vector2f b, Vector2f c);

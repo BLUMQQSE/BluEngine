@@ -87,6 +87,8 @@ void Game::update_sfml_events()
 {
     while (window->pollEvent(sfevent))
     {
+        if (states.size() > 0)
+            states.top()->update_sfml(sfevent);
         if (sfevent.type == sf::Event::Closed)
         {
             end_application();
@@ -101,11 +103,11 @@ void Game::update_sfml_events()
         {
             EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_SCROLL_, static_cast<void*>(&sfevent.mouseWheel.delta));
         }
-
-        if (sfevent.type == sf::Event::TextEntered)
+        if (sfevent.type == sf::Event::Resized)
         {
-            if (states.size() > 0)
-                states.top()->update_sfml(sfevent);
+            // update the view to the new size of the window
+            sf::FloatRect visibleArea(0, 0, sfevent.size.width, sfevent.size.height);
+            window->setView(sf::View(visibleArea));
         }
     }
 
@@ -244,12 +246,12 @@ void Game::init_window()
     }
     else
         window = new sf::RenderWindow(graphics_settings.resolution, graphics_settings.game_title,
-            sf::Style::Titlebar | sf::Style::Close, graphics_settings.context_settings);
+            sf::Style::Default, graphics_settings.context_settings);
 
     window->setFramerateLimit(graphics_settings.framerate_limit);
     window->setVerticalSyncEnabled(graphics_settings.vertical_sync);
     window->setKeyRepeatEnabled(false);
-
+    
 
    
 }

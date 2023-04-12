@@ -9,15 +9,6 @@
 
 namespace bm98
 {
-Inventory::Inventory()
-{
-
-}
-
-Inventory::~Inventory()
-{
-
-}
 
 void Inventory::init()
 {
@@ -115,7 +106,8 @@ int Inventory::get_first_available_include_match(ItemData* item)
 
 int Inventory::add_item(int index, ItemData* item, int count)
 {
-	core::EventSystem::Instance()->push_event(core::EventID::INTERACTION_INVENTORY_UPDATED, nullptr, static_cast<void*>(this));
+	core::EventSystem::Instance()->push_event(core::EventID::INTERACTION_INVENTORY_UPDATED, nullptr, 
+		Caller(Caller::Name::INVENTORY, (void*) this));
 
 	int result = 0;
 	if (content[index].current_capacity == 0)
@@ -180,7 +172,8 @@ ItemData* Inventory::remove_item(int index, int count)
 	if (content[index].current_capacity == 0)
 		return nullptr;
 
-	core::EventSystem::Instance()->push_event(core::EventID::INTERACTION_INVENTORY_UPDATED, nullptr, static_cast<void*>(this));
+	core::EventSystem::Instance()->push_event(core::EventID::INTERACTION_INVENTORY_UPDATED, nullptr,
+		Caller(Caller::Name::INVENTORY, (void*)this));
 
 	item = content[index].item;
 	content[index].current_capacity = std::max(0, content[index].current_capacity - count);

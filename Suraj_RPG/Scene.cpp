@@ -318,7 +318,7 @@ void Scene::handle_event(Event* event)
 	}
 	case EventID::GAMEOBJECT_COMPONENT_ADDED:
 	{
-		GameObject* obj = static_cast<GameObject*>(event->get_caller());
+		GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
 		Component* c = static_cast<Component*>(event->get_parameter());
 
 		if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
@@ -329,7 +329,7 @@ void Scene::handle_event(Event* event)
 	}
 	case EventID::GAMEOBJECT_COMPONENT_REMOVED:
 	{
-		GameObject* obj = static_cast<GameObject*>(event->get_caller());
+		GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
 		Component* c = static_cast<Component*>(event->get_parameter());
 
 		if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))

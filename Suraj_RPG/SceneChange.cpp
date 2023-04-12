@@ -12,9 +12,14 @@ void SceneChange::handle_instant_interaction()
 {
 	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
-		current_interactor->get_game_object()->set_world_position(destination);
-		if (destination_scene_name != SceneManager::Instance()->get_active_scene_name())
-			EventSystem::Instance()->push_event(EventID::SCRIPTS_LOAD_SCENE, &destination_scene_name);
+		if (destination.scene_name != SceneManager::Instance()->get_active_scene_name())
+		{
+			EventSystem::Instance()->push_event(EventID::SCRIPTS_LOAD_SCENE, &destination,
+				Caller(Caller::Name::SCENE_CHANGE, (void*)this));
+		
+		}
+		else
+			current_interactor->get_game_object()->set_world_position(destination.position);
 	}
 }
 
@@ -25,8 +30,8 @@ Json::Value SceneChange::serialize_json()
 	Json::Value obj;
 	obj[typeid(IInteractable).name()] = IInteractable::serialize_json();
 
-	obj["destination"] = destination.serialize_json();
-	obj["destination-scene"] = destination_scene_name;
+	obj["destination-position"] = destination.position.serialize_json();
+	obj["destination-scene"] = destination.scene_name;
 
 	return obj;
 }
@@ -34,8 +39,8 @@ Json::Value SceneChange::serialize_json()
 void SceneChange::unserialize_json(Json::Value obj)
 {
 	IInteractable::unserialize_json(obj[typeid(IInteractable).name()]);
-	destination.unserialize_json(obj["destination"]);
-	destination_scene_name = obj["destination-scene"].asString();
+	destination.position.unserialize_json(obj["destination-position"]);
+	destination.scene_name = obj["destination-scene"].asString();
 }
 
 #pragma endregion

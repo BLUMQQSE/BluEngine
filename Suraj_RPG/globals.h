@@ -786,4 +786,5 @@ enum class WindowToggle
 };
 
 }
+
 }

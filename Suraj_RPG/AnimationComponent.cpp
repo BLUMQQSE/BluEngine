@@ -26,6 +26,17 @@ AnimationComponent::~AnimationComponent()
 	}
 }
 
+void AnimationComponent::init()
+{
+	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
+	texture_sheet = &game_object->get_component<SpriteComponent>().get_texture_sheet();
+}
+
+void AnimationComponent::late_update()
+{
+	
+}
+
 /// <summary>
 /// Plays animation mapped to key.
 /// </summary>
@@ -52,10 +63,24 @@ bool AnimationComponent::play(const std::string key, const float modifier, const
 	active_animation_key = key;
 	this->modifier = modifier;
 	this->max_modifier = modifier_max;
-	return(animations[key]->play(std::abs(modifier), std::abs(modifier_max)));
+
+	bool play = animations[key]->play(std::abs(modifier), std::abs(modifier_max));
+
+	if (animations.at(active_animation_key)->frame_changed)
+	{
+		EventSystem::Instance()->push_event(EventID::ANIMATION_FRAME_CHANGE, &active_animation_key,
+			Caller(Caller::Name::ANIMATION_COMPONENT, (void*)this));
+	}
+	if (animations.at(active_animation_key)->animation_ended_this_frame)
+	{
+		EventSystem::Instance()->push_event(EventID::ANIMATION_COMPLETE, &active_animation_key,
+			Caller(Caller::Name::ANIMATION_COMPONENT, (void*)this));
+	}
+
+	return play;
 }
 
-std::string AnimationComponent::get_active_animation_key()
+std::string& AnimationComponent::get_active_animation_key()
 {
 	return active_animation_key;
 }
@@ -80,36 +105,13 @@ void AnimationComponent::add_animation(const std::string key,
 	int frame_width, int frame_height, bool loop_animation, bool must_complete)
 {
 	animations[key] = new Animation(*this->sprite, *this->texture_sheet, anim_timer * UNIT_SIZE,
-		start_frame_x, start_frame_y, frames_x, frames_y, frame_width, frame_height,
+		start_frame_x, start_frame_y, frames_x - 1, frames_y - 1, frame_width, frame_height,
 		loop_animation, must_complete);
 }
 
-void AnimationComponent::init()
+const bool AnimationComponent::frame_changed() const
 {
-	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
-	texture_sheet = &game_object->get_component<SpriteComponent>().get_texture_sheet();
-}
-
-Json::Value AnimationComponent::serialize_json()
-{
-	Json::Value obj;
-	
-	/* Currently useless to save animations
-	for (auto& a : animations)
-	{
-		Json::Value obj2;
-		obj2["key"] = a.first;
-		obj2["animation"] = a.second->serialize_json();
-		
-		obj["animations"].append(obj2);
-	}
-	*/
-	return obj;
-}
-
-void AnimationComponent::unserialize_json(Json::Value obj)
-{
-
+	return animations.at(active_animation_key)->frame_changed;
 }
 
 #pragma endregion

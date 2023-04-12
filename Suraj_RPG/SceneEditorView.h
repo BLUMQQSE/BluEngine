@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Gui.h"
+#include "TextureSelector.h"
 #include "EventSystem.h"
 #include "Timer.h"
 
@@ -58,7 +59,6 @@ private:
 	bool inspec_active = true;
 	bool scene_editor_active = true;
 
-
 	bool gameobject_held = false;
 
 	std::unordered_map<GUI::Button*, GameObject*> objects_in_scene_map;
@@ -70,7 +70,8 @@ private:
 
 	GameObject* selected_gameobject;
 
-	//std::unordered_map<GUI::Panel*, Component*> component_panels;
+	//GUI::TextureSelector* texture_selector;
+	std::unique_ptr<GUI::TextureSelector> texture_selector;
 
 	void create_heir_panel();
 	void update_heir_panel();

@@ -60,11 +60,8 @@ void InventoryWindow::handle_event(Event* event)
 	{
 	case EventID::INTERACTION_INVENTORY_UPDATED:
 		
-		if (static_cast<Inventory*>(event->get_caller()) != inventory)
-			return;
-		// update all inventory items
-		refresh_window();
-
+		if (static_cast<Inventory*>(event->get_caller().pointer) == inventory)
+			refresh_window();
 		break;
 	default:
 		break;

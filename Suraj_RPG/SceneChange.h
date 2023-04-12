@@ -8,12 +8,17 @@ class SceneChange :
 {
 
 public:
+	struct Destination
+	{
+		Vector2f position;
+		std::string scene_name;
+	};
+
 	SceneChange() {}
 	virtual ~SceneChange() {}	
 
 protected:
-	Vector2f destination;
-	std::string destination_scene_name;
+	Destination destination;
 
 	virtual void handle_instant_interaction() override;
 	// Inherited via IData

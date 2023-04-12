@@ -6,32 +6,12 @@ namespace bm98::core
 
 #pragma region Event
 
-Event::Event(EventID event_id, void* parameter, void* caller)
+Event::Event(EventID event_id, void* parameter, Caller caller)
 {
 	this->event_id = event_id;
 	this->parameter = parameter;
 	this->caller = caller;
 }
-
-Event::~Event()
-{
-}
-
-EventID Event::get_event_id() const
-{
-	return event_id;
-}
-
-void* Event::get_parameter()
-{
-	return parameter;
-}
-
-void* Event::get_caller()
-{
-	return caller;
-}
-
 
 #pragma endregion
 
@@ -99,7 +79,7 @@ void EventSystem::unsubscribe_all(Listener* client)
 	}
 }
 
-void EventSystem::push_event(EventID event_id, void* data, void* caller)
+void EventSystem::push_event(EventID event_id, void* data, Caller caller)
 {
 	
 	Event new_event(event_id, data, caller);

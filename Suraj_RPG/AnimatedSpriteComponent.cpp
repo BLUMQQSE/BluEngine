@@ -38,6 +38,16 @@ void AnimatedSpriteComponent::init()
 void AnimatedSpriteComponent::update()
 {
 	animation->play(1, 1);
+	if (animation->frame_changed)
+	{
+		EventSystem::Instance()->push_event(EventID::ANIMATION_FRAME_CHANGE, nullptr, 
+			Caller(Caller::Name::ANIMATED_SPRITE_COMPONENT, (void*)this));
+	}
+	if (animation->animation_ended_this_frame)
+	{
+		EventSystem::Instance()->push_event(EventID::ANIMATION_COMPLETE, nullptr, 
+			Caller(Caller::Name::ANIMATED_SPRITE_COMPONENT, (void*)this));
+	}
 }
 
 Json::Value AnimatedSpriteComponent::serialize_json()
@@ -50,7 +60,12 @@ Json::Value AnimatedSpriteComponent::serialize_json()
 void AnimatedSpriteComponent::unserialize_json(Json::Value obj)
 {
 
-} 
+}
+
+const bool AnimatedSpriteComponent::frame_changed() const
+{
+	return animation->frame_changed;
+}
 
 void AnimatedSpriteComponent::start()
 {

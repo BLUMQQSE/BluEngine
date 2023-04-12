@@ -285,6 +285,12 @@
     <ClCompile Include="WeaponData.cpp">
       <Filter>DataAssets</Filter>
     </ClCompile>
+    <ClCompile Include="TextureSelector.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="CombatInventory.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -547,6 +553,12 @@
     </ClInclude>
     <ClInclude Include="WeaponData.h">
       <Filter>DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureSelector.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CombatInventory.h">
+      <Filter>Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

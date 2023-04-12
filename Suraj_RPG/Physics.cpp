@@ -148,7 +148,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, GameObject* ignore, f
 int Physics::OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
 	GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions)
 {
-	FloatConvex circle = FloatConvex::Circle(pos, radius, 10);
+	FloatConvex circle = FloatConvex::Circle(pos, radius, 30);
 	circle.setFillColor(sf::Color::Transparent);
 	circle.setOutlineColor(sf::Color::Cyan);
 	circle.setOutlineThickness(1);

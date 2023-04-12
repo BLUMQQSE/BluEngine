@@ -4,7 +4,7 @@
 #include "FileManager.h"
 #include "GameObject.h"
 #include "EventSystem.h"
-
+#include "SceneChange.h"
 namespace bm98::core
 {
 //std::string SceneManager::scenes_file_path = "Data/Scenes/";
@@ -180,8 +180,21 @@ void SceneManager::handle_event(Event* event)
 	case EventID::SCRIPTS_SAVE_SCENE:
 		save_scene();
 	case EventID::SCRIPTS_LOAD_SCENE:
-		load_scene(*static_cast<std::string*>(event->get_parameter()));
-		break;
+	{
+		// Scene change calling to load scene
+		if (event->get_caller().name == Caller::Name::SCENE_CHANGE)
+		{
+			SceneChange::Destination dest = *static_cast<SceneChange::Destination*>(event->get_parameter());
+			load_scene(dest.scene_name);
+			GameObject* player = find_with_tag(Tags::Tag::PLAYER, nullptr);
+			player->set_world_position(dest.position);
+		}
+		else
+		{
+			load_scene(*static_cast<std::string*>(event->get_parameter()));
+		}
+	}
+	break;
 	}
 }
 

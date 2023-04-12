@@ -22,6 +22,8 @@ public:
     virtual void awake() override;
     virtual void update() override;
 
+    virtual void on_destroy() override;
+
     virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 
     void play();

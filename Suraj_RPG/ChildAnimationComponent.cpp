@@ -66,6 +66,20 @@ void ChildAnimationComponent::update()
 
 }
 
+void ChildAnimationComponent::late_update()
+{
+	if (parent_animation_component->get_animations()[parent_animation_component->get_active_animation_key()]->frame_changed)
+	{
+		EventSystem::Instance()->push_event(EventID::ANIMATION_FRAME_CHANGE, nullptr, 
+			Caller(Caller::Name::CHILD_ANIMATION_COMPONENT, (void*)this));
+	}
+	if (parent_animation_component->get_animations()[parent_animation_component->get_active_animation_key()]->animation_ended_this_frame)
+	{
+		EventSystem::Instance()->push_event(EventID::ANIMATION_COMPLETE, nullptr, 
+			Caller(Caller::Name::CHILD_ANIMATION_COMPONENT, (void*)this));
+	}
+}
+
 Json::Value ChildAnimationComponent::serialize_json()
 {
 	Json::Value obj;
