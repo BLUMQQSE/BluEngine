@@ -1,4 +1,5 @@
 #pragma once
+#include "Debug.h"
 #include "IData.h"
 #include "IObject.h"
 #include "Math.h"

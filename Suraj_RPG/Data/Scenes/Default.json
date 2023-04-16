@@ -6397,7 +6397,7 @@
 				"position" : 
 				{
 					"x" : 450.0,
-					"y" : 0.0
+					"y" : -10.0
 				},
 				"rotation" : 0.0
 			}
@@ -6632,7 +6632,7 @@
 			],
 			"info" : 
 			{
-				"name" : "Sword",
+				"name" : "Sword2",
 				"physics-layer" : "INTERACTABLE",
 				"tag" : "UNTAGGED"
 			},
@@ -6735,7 +6735,7 @@
 			],
 			"info" : 
 			{
-				"name" : "Sword",
+				"name" : "Sword3",
 				"physics-layer" : "INTERACTABLE",
 				"tag" : "UNTAGGED"
 			},

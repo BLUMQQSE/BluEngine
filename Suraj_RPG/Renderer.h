@@ -32,8 +32,6 @@ public:
 			this->z_order = z_order;
 			this->view = view;
 			this->shader = shader;
-			this->private_entry_key = Renderer::Instance()->get_id();
-			Renderer::Instance()->Instance()->increase_id();
 		}
 
 		RenderObject(sf::Drawable* drawable, IRenderable* renderable)
@@ -45,8 +43,6 @@ public:
 			this->view = renderable->get_view_pointer();
 			this->shader = renderable->get_shader_pointer();
 			this->drawable = drawable;
-			this->private_entry_key = Renderer::Instance()->get_id();
-			Renderer::Instance()->increase_id();
 		}
 
 		Sorting::Layer& sorting_layer;
@@ -55,7 +51,6 @@ public:
 		char& z_order;
 		sf::View** view;
 		sf::Shader** shader;
-		unsigned private_entry_key;
 
 	};
 
@@ -73,8 +68,12 @@ public:
 	void init(RenderTarget* render_target);
 
 	void add(RenderObject render_object);
+	void add_ui(RenderObject ui_render_object);
+
 	void add_gizmo(GizmoObject gizmo);
+
 	void remove(sf::Drawable* drawable);
+	void remove_ui(sf::Drawable* drawable);
 
 	/// <summary>
 	/// Returns true if element is top ui element under the mouse.
@@ -91,7 +90,6 @@ public:
 	/// </summary>
 	void refresh();
 
-	void set_view(sf::View view = Instance()->window->getDefaultView());
 	//static const bool& top_ui(const sf::Drawable& drawable);
 	//static void add_tile(RenderObject render_object);
 	// should run once on state change
@@ -114,43 +112,32 @@ private:
 
 	RenderTarget* window;
 
-	struct cmpStruct
-	{
-		bool operator() (const RenderObject ro1, const RenderObject ro2) const
-		{
-			if ((unsigned)ro2.sorting_layer == (unsigned)ro1.sorting_layer)
-			{
-				if (ro2.z_order != ro1.z_order)
-					return (ro2.z_order > ro1.z_order);
-				return ro2.private_entry_key > ro1.private_entry_key;
-			}
-			return ((unsigned)ro2.sorting_layer > (unsigned)ro1.sorting_layer);
-		}
-	};
-
-	unsigned id = 0;
 	bool draw_gizmos = true;
-	std::set<RenderObject, cmpStruct> render_objects;
+
 	std::vector<GizmoObject> gizmos;
 
-	//static sf::Drawable* _top_ui;
+	std::list<RenderObject> renderables;
+	std::list<RenderObject> ui_renderables;
+
+	//sf::Drawable* _top_ui;
 
 
 	// Inherited via RenderTarget
 	virtual sf::Vector2u getSize() const override;
 
-	const unsigned& get_id();
-	void increase_id();
-
 	// Inherited via Listener
 	virtual void handle_event(Event* event) override;
 
 	void render();
+
+	void render_ui();
+
 	void render_gizmos();
 	void clear();
 	void clear_gizmos();
-
 	void fixed_update();
+
+	void sort();
 
 };
 

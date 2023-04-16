@@ -26,7 +26,7 @@ struct GameSettings
 
 extern bool DEBUG_MODE;
 
-class Game : IData
+class Game : public IData
 {
 public:
 	Game();
@@ -87,6 +87,7 @@ private:
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 	//void check_first_launch();
+
 
 };
 

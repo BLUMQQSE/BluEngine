@@ -6,8 +6,6 @@
 #include "Collisions.h"
 #include "SceneManager.h"
 
-
-
 #pragma region GUI
 
 #include "ButtonComponent.h"
@@ -716,7 +714,6 @@ void GameObject::editor_add_component(std::string component_name)
 
 void GameObject::editor_remove_component(std::string component_name)
 {
-	std::cout << "remove_component()\n";
 	if (component_name == "TilemapComponent")
 	{
 		remove_component<TilemapComponent>();
@@ -811,11 +808,11 @@ void GameObject::editor_remove_component(std::string component_name)
 	}
 	else if (component_name == "Chest")
 	{
-		std::cout << "removing chest\n";
 		remove_component<Chest>();
 	}
-
+	
 	handle_removed_components();
+		
 }
 
 void GameObject::handle_removed_components()

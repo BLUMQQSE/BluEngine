@@ -83,9 +83,14 @@ EditorState::~EditorState()
 	}
 }
 
+void EditorState::init_state()
+{
+	Debug::Instance()->core_log("ENTERING EditorState", Debug::LogLevel::INFO);
+}
+
 void EditorState::on_end_state()
 {
-	Debug::Log("Will now clean up editor state on exit");
+	Debug::Instance()->core_log("EXITING EditorState", Debug::LogLevel::INFO);
 
 	FileManager::Instance()->save_to_file_styled(selected_gameobject->serialize_json(), "tilemap_test.json");
 

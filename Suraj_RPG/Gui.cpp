@@ -57,16 +57,16 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(id+10, false);
-	Renderer::Instance()->add(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
-	Renderer::Instance()->add(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
 
 Button::~Button()
 {
-	Renderer::Instance()->remove(&shape);
-	Renderer::Instance()->remove(&text);
+	Renderer::Instance()->remove_ui(&shape);
+	Renderer::Instance()->remove_ui(&text);
 }
 
 void Button::update()
@@ -358,16 +358,16 @@ Checkbox::Checkbox(float x, float y, float size)
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(1, false);
-	Renderer::Instance()->add(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
-	Renderer::Instance()->add(Renderer::RenderObject(&check, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&check, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
 
 Checkbox::~Checkbox()
 {
-	Renderer::Instance()->remove(&box);
-	Renderer::Instance()->remove(&check);
+	Renderer::Instance()->remove_ui(&box);
+	Renderer::Instance()->remove_ui(&check);
 }
 
 void Checkbox::update()
@@ -467,19 +467,24 @@ ScrollView::ScrollView(float x, float y, float width, float height, bool vertica
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(0, false);
-	Renderer::Instance()->add(Renderer::RenderObject(&bounds, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&bounds, get_render(), get_sorting_layer(),
 		get_z_order(), &scroll_view));
 	if (vertical)
-		Renderer::Instance()->add(Renderer::RenderObject(&vertical_handle, get_render(), get_sorting_layer(),
+		Renderer::Instance()->add_ui(Renderer::RenderObject(&vertical_handle, get_render(), get_sorting_layer(),
 			get_z_order(), &scroll_view));
 	if (horizontal)
-		Renderer::Instance()->add(Renderer::RenderObject(&horizontal_handle, get_render(), get_sorting_layer(),
+		Renderer::Instance()->add_ui(Renderer::RenderObject(&horizontal_handle, get_render(), get_sorting_layer(),
 			get_z_order(), &scroll_view));
 
 }
 
 ScrollView::~ScrollView()
 {
+	Renderer::Instance()->remove_ui(&bounds);
+	if (vertical)
+		Renderer::Instance()->remove_ui(&vertical_handle);
+	if (horizontal)
+		Renderer::Instance()->remove_ui(&horizontal_handle);
 	delete scroll_view;
 }
 
@@ -603,16 +608,16 @@ InputBox::InputBox(float x, float y, float width, float height, float character_
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(3, false);
-	Renderer::Instance()->add(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
-	Renderer::Instance()->add(Renderer::RenderObject(&text, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&text, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
 
 InputBox::~InputBox()
 {
-	Renderer::Instance()->remove(&text);
-	Renderer::Instance()->remove(&box);
+	Renderer::Instance()->remove_ui(&text);
+	Renderer::Instance()->remove_ui(&box);
 }
 
 void InputBox::update_sfml(sf::Event sfEvent)
@@ -803,13 +808,13 @@ Label::Label(float x, float y, float character_size,
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(3, false);
-	Renderer::Instance()->add(Renderer::RenderObject(&text_content, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&text_content, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
 
 Label::~Label()
 {
-	Renderer::Instance()->remove(&text_content);
+	Renderer::Instance()->remove_ui(&text_content);
 }
 
 void Label::add_to_buffer(sf::View* view)
@@ -847,14 +852,14 @@ Panel::Panel(float x, float y, float width, float height, sf::Color color)
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(0, false);
-	Renderer::Instance()->add(Renderer::RenderObject(&panel_shape, get_render(), get_sorting_layer(),
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&panel_shape, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 	
 }
 
 Panel::~Panel()
 {
-	Renderer::Instance()->remove(&panel_shape);
+	Renderer::Instance()->remove_ui(&panel_shape);
 	clear();
 	
 }
@@ -946,7 +951,7 @@ std::unordered_map<std::string, GUIObject*> Panel::get_content()
 
 void Panel::display_mouse_pos(sf::Font& font)
 {
-	Debug::mouse_position_display(font, get_view(), position);
+	Debug::Instance()->mouse_position_display(font, get_view(), position);
 }
 
 GUIObject* Panel::get_element(std::string key)
@@ -1053,15 +1058,15 @@ Slider::Slider(float x, float y, float width, float min_value, float max_value,
 	slider.setOutlineColor(sf::Color::White);
 
 	set_sorting_layer(Sorting::Layer::UI, false);
-	Renderer::Instance()->add(Renderer::RenderObject(&slider_back, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
-	Renderer::Instance()->add(Renderer::RenderObject(&slider, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&slider_back, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&slider, get_render(), get_sorting_layer(), get_z_order(), get_view_pointer()));
 
 }
 
 Slider::~Slider()
 {
-	Renderer::Instance()->remove(&slider_back);
-	Renderer::Instance()->remove(&slider);
+	Renderer::Instance()->remove_ui(&slider_back);
+	Renderer::Instance()->remove_ui(&slider);
 }
 
 void Slider::update()

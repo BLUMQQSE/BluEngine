@@ -29,7 +29,6 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 	init_buttons();
 
 
-
 	if (!music.openFromFile("Resources/Audio/Music/mainmenu.wav"))
 		std::cout << "failure\n";
 
@@ -37,7 +36,6 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 	music.setVolume(0.0);
 	music.setLoop(true);
 	music.play();
-
 
 }
 
@@ -49,6 +47,7 @@ MainMenuState::~MainMenuState()
 
 void MainMenuState::init_state()
 {
+	Debug::Instance()->core_log("ENTERING MainMenuState", Debug::LogLevel::INFO);
 	init_background();
 	init_buttons();
 
@@ -58,7 +57,8 @@ void MainMenuState::init_state()
 void MainMenuState::on_end_state()
 {
 	music.stop();
-	Debug::Log("Will now clean up main menu state on exit");
+	Renderer::Instance()->remove_ui(&background);
+	Debug::Instance()->core_log("EXITING MainMenuState", Debug::LogLevel::INFO);
 	delete_buttons();
 }
 
@@ -67,22 +67,13 @@ void MainMenuState::update_input()
 	
 	if (buttons["NEW_GAME"]->is_pressed())
 	{
-		//TODO: Add a new game state which options for creating
-		//a new game
+		//TODO: Add a new game state which options for creating a new game
 
-		//Need to create a directory:
-		/*
-		Default_Save
-			Data
-				Scenes
-			Backups
-		*/
-		//std::filesystem::current_path(std::filesystem::temp_directory_path());
-		// 
 		std::filesystem::remove_all("Saves");
 
 		std::filesystem::create_directories("Saves/DefaultSave/Data/Scenes");
 		std::filesystem::create_directory("Saves/DefaultSave/Backups");
+
 
 		std::string path = "Data/Scenes/";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -94,6 +85,7 @@ void MainMenuState::update_input()
 		on_end_state();
 		states->push(new GameState(window, states, graphics_settings, "DefaultSave"));
 		return;
+	
 	}
 	if (buttons["LOAD_GAME"]->is_pressed())
 	{
@@ -141,7 +133,6 @@ void MainMenuState::render()
 	{
 		it.second->add_to_buffer();
 	}
-	//Renderer::add(Renderer::RenderObject(&background, SortingLayer::BACKGROUND));
 }
 
 #pragma endregion
@@ -156,7 +147,7 @@ void MainMenuState::init_variables()
 
 void MainMenuState::init_background()
 {
-	Renderer::Instance()->add(Renderer::RenderObject(&background, _render, background_layer, z_order));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&background, _render, background_layer, z_order));
 }
 
 void MainMenuState::init_buttons()
@@ -191,11 +182,5 @@ void MainMenuState::delete_buttons()
 	buttons.clear();
 }
 
-/*
-void MainMenuState::init_fonts()
-{
-	init_fonts_from_file("Fonts/greek_futura_ldr.ttf");
-}
-*/
 #pragma endregion
 }

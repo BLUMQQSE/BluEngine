@@ -19,6 +19,7 @@ public:
     SettingsState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings);
     virtual ~SettingsState();
 
+    virtual void init_state() override;
     virtual void init_variables() override;
 
     virtual void update_input() override;

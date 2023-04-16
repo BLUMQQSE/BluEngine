@@ -19,7 +19,6 @@
 #include "Interactor.h"
 #include "IInteractable.h"
 #include "InventoryGUIController.h"
-#include "Interactor.h"
 namespace bm98
 {
 using namespace core;
@@ -130,10 +129,10 @@ void PlayerController::init_animations()
 	anim->add_animation("WALK_DOWN", 30.f, 0, 6, 3, 0, 64, 64, true);
 	anim->add_animation("WALK_RIGHT", 30.f, 0, 7, 3, 0, 64, 64, true);
 
-	anim->add_animation("ATTACK_UP", 30.f, 0, 16, 5, 0, 64, 64, false, true);
-	anim->add_animation("ATTACK_LEFT", 30.f, 0, 17, 5, 0, 64, 64, false, true);
-	anim->add_animation("ATTACK_DOWN", 30.f, 0, 18, 5, 0, 64, 64, false, true);
-	anim->add_animation("ATTACK_RIGHT", 30.f, 0, 19, 5, 0, 64, 64, false, true);
+	anim->add_animation("ATTACK_UP",  15.f, 0, 16, 5, 0, 64, 64, false, true);
+	anim->add_animation("ATTACK_LEFT", 15.f, 0, 17, 5, 0, 64, 64, false, true);
+	anim->add_animation("ATTACK_DOWN", 15.f, 0, 18, 5, 0, 64, 64, false, true);
+	anim->add_animation("ATTACK_RIGHT", 15.f, 0, 19, 5, 0, 64, 64, false, true);
 
 	anim->play("IDLE_DOWN");
 }
@@ -145,7 +144,7 @@ void bm98::PlayerController::update_input()
 
 	if (Input::Instance()->get_action_down("INTERACT"))
 	{
-		
+		/*
 		if (game_object->check_for_child("pants"))
 		{
 			SceneManager::Instance()->destroy_gameobject(SceneManager::Instance()->find("pants", game_object));
@@ -163,7 +162,7 @@ void bm98::PlayerController::update_input()
 		sc->set_z_order(game_object->get_component<SpriteComponent>().get_z_order() + 1);
 		pants->set_parent(this->game_object);
 		SceneManager::Instance()->instantiate_gameobject(pants);
-		
+		*/
 	}
 	if (Input::Instance()->get_action_down("INVENTORY"))
 	{

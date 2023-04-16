@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Debug.h"
 #include "IRenderable.h"
 #include "Renderer.h"
 
@@ -36,15 +37,18 @@ void IRenderable::set_render(bool render)
 void IRenderable::set_z_order(char order, bool refresh_renderer)
 {
 	this->z_order = order;
-	if(refresh_renderer)
+	if (refresh_renderer)
+	{
 		core::Renderer::Instance()->refresh();
+	}
 }
 void IRenderable::set_sorting_layer(Sorting::Layer layer, bool refresh_renderer)
 {
 	this->sorting_layer = layer;
 	if (refresh_renderer)
+	{
 		core::Renderer::Instance()->refresh();
-	
+	}
 }
 bool& IRenderable::get_render()
 {

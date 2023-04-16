@@ -73,7 +73,6 @@ static Type ToType(std::string type)
 
 }
 
-
 /// <summary> Namespace containing Interaction enums and conversion methods. </summary>
 namespace Interaction
 {
@@ -101,7 +100,7 @@ static Type ToType(std::string type)
 	if (type == "INPUT")
 		return Type::INPUT;
 
-	std::cout << "ERROR::INTERACTION::ToType::FAILED TO CONVERT STRING " << type << "\n";
+	//core::Debug::Instance()->core_log("Interaction::ToType() FAILED TO CONVERT STRING: " + type, core::Debug::LogLevel::WARNING);
 	return Type::INSTANT;
 }
 
@@ -116,7 +115,9 @@ static std::string ToString(Type type)
 	case Type::INPUT:
 		return "INPUT";
 	}
-	std::cout << "ERROR::INTERACTION::ToString::FAILED TO CONVERT TYPE " << static_cast<int>(type)<<"\n";
+
+	//core::Debug::Instance()->core_log("Interaction::ToString() FAILED TO CONVERT TYPE " + 
+	//	std::to_string(static_cast<int>(type)), core::Debug::LogLevel::WARNING);
 	return "INSTANT";
 }
 
@@ -196,7 +197,8 @@ static Type ToTiletype(std::string tile_type)
 	if (tile_type == "DAMAGING")
 		return Type::DAMAGING;
 
-	std::cout << "ERROR::TileNS::ToType::UNDEFINED TILETYPE: " << tile_type << "\n";
+	//core::Debug::Instance()->core_log("TileNS::ToTileType() FAILED TO CONVERT STRING: " + tile_type, core::Debug::LogLevel::WARNING);
+
 	return Type::DEFAULT;
 }
 
@@ -210,7 +212,10 @@ static std::string ToString(Type tile_type)
 	case Type::DAMAGING:
 		return "DAMAGING";
 	default:
-		std::cout << "ERROR::TileNS::ToString::UNDEFINED TILETYPE: " << static_cast<int>(tile_type) << "\n";
+
+		//core::Debug::Instance()->core_log("TileNS::ToString() FAILED TO CONVERT TILE TYPE " +
+		//	std::to_string(static_cast<int>(tile_type)), core::Debug::LogLevel::WARNING);
+
 		return "DEFAULT";
 	}
 }
@@ -263,7 +268,8 @@ static Layer ToLayer(std::string layer)
 		return Layer::FOREGROUND;
 	if (layer == "UI")
 		return Layer::UI;
-	std::cout << "ERROR::Sorting::ToLayer::UNDEFINED STRING: " << layer << "\n";
+
+	//core::Debug::Instance()->core_log("Sorting::ToLayer() FAILED TO CONVERT STRING: " + layer, core::Debug::LogLevel::WARNING);
 	return Layer::BACKGROUND;
 }
 
@@ -291,7 +297,8 @@ static std::string ToString(Layer layer)
 	case Layer::UI:
 		return "UI";
 	default:
-		std::cout << "ERROR::Sorting::ToString::UNDEFINED LAYER: " << static_cast<int>(layer) << "\n";
+		//core::Debug::Instance()->core_log("Sorting::ToString() FAILED TO CONVERT LAYER " +
+		//	std::to_string(static_cast<int>(layer)), core::Debug::LogLevel::WARNING);
 		return "null";
 	}
 }
@@ -349,7 +356,7 @@ static Layer ToLayer(std::string layer)
 	if (layer == "PHYSICS_IGNORE")
 		return Layer::PHYSICS_IGNORE;
 
-	std::cout << "ERROR::PhysicsNS::ToLayer::UNDEFINED STRING: " << layer << "\n";
+	//core::Debug::Instance()->core_log("PhysicsNS::ToLayer() FAILED TO CONVERT STRING: " + layer, core::Debug::LogLevel::WARNING);
 	return Layer::DEFAULT;
 }
 
@@ -379,7 +386,8 @@ static std::string ToString(Layer layer)
 	case Layer::PHYSICS_IGNORE:
 		return "PHYSICS_IGNORE";
 	default:
-		std::cout << "ERROR::PhysicsNS::ToString::UNDEFINED PHYISCS LAYER: " << static_cast<int>(layer) << "\n";
+		//core::Debug::Instance()->core_log("PhysicsNS::ToString() FAILED TO CONVERT LAYER " +
+			//std::to_string(static_cast<int>(layer)), core::Debug::LogLevel::WARNING);
 		return "DEFAULT";
 	}
 }
@@ -502,7 +510,7 @@ static Tag ToTag(std::string tag)
 	if (tag == "INTERACTABLE")
 		return Tag::INTERACTABLE;
 
-	std::cout << "ERROR::Tags::ToTag::UNDEFINED STRING: " << tag << "\n";
+	//core::Debug::Instance()->core_log("Tags::ToTag() FAILED TO CONVERT STRING: " + tag, core::Debug::LogLevel::WARNING);
 	return Tag::UNTAGGED;
 }
 
@@ -522,7 +530,9 @@ static std::string ToString(Tag tag)
 	case Tag::INTERACTABLE:
 		return "INTERACTABLE";
 	default:
-		std::cout << "ERROR::Tags::ToString::UNDEFINED TAG: " << static_cast<int>(tag) << "\n";
+
+		//core::Debug::Instance()->core_log("Tags::ToString() FAILED TO CONVERT TAG " +
+			//std::to_string(static_cast<int>(tag)), core::Debug::LogLevel::WARNING);
 		return "null";
 	}
 }
@@ -555,7 +565,7 @@ static Direction ToDirection(std::string direction)
 	if (direction == "RIGHT")
 		return Direction::RIGHT;
 
-	std::cout << "ERROR::Orientation::ToDirection::UNDEFINED STRING: " << direction << "\n";
+	//core::Debug::Instance()->core_log("Orientation::ToDirection() FAILED TO CONVERT STRING: " + direction, core::Debug::LogLevel::WARNING);
 	return Direction::DOWN;
 }
 
@@ -573,8 +583,8 @@ static std::string ToString(Direction direction)
 	case Direction::RIGHT:
 		return "RIGHT";
 	default:
-		std::cout << "ERROR::Orientation::ToString::UNDEFINED Direction: " <<
-			static_cast<int>(direction) << "\n";
+		//core::Debug::Instance()->core_log("Orientation::ToString() FAILED TO CONVERT TAG " +
+		//	std::to_string(static_cast<int>(direction)), core::Debug::LogLevel::WARNING);
 		return "DOWN";
 	}
 }
@@ -643,7 +653,8 @@ static std::string ToString(State state)
 	case bm98::ItemNS::State::IN_USE:
 		return "IN_USE";
 	default:
-		std::cout << "ERROR::ItemNS::ToString::UNDEFINED String: " << static_cast<int>(state) << "\n";
+		//core::Debug::Instance()->core_log("ItemNS::ToString() FAILED TO CONVERT STATE " +
+		//	std::to_string(static_cast<int>(state)), core::Debug::LogLevel::WARNING);
 		return "DROPPED";
 
 		break;
@@ -657,7 +668,8 @@ static State ToState(std::string state)
 	if (state == "IN_USE")
 		return State::IN_USE;
 
-	std::cout << "ERROR::ItemNS::ToState::UNDEFINED State: " << state << "\n";
+
+	//core::Debug::Instance()->core_log("ItemNS::ToState() FAILED TO CONVERT STRING: " + state, core::Debug::LogLevel::WARNING);
 }
 
 static std::vector<std::string> WearableToVector()
@@ -690,6 +702,8 @@ static std::string ToString(WearableLocation loc)
 	case bm98::ItemNS::WearableLocation::MAGIC_SPELL:
 		return "MAGIC_SPELL";
 	default:
+		//core::Debug::Instance()->core_log("ItemNS::ToString() FAILED TO CONVERT WEARABLE LOCATION " +
+		//	std::to_string(static_cast<int>(loc)), core::Debug::LogLevel::WARNING);
 		return "NONE";
 	}
 }
@@ -717,12 +731,13 @@ static WearableLocation ToWearableLocation(std::string loc)
 	if (loc == "MAGIC_SPELL")
 		return WearableLocation::MAGIC_SPELL;
 
+
+	//core::Debug::Instance()->core_log("ItemNS::ToWearableLocation() FAILED TO CONVERT STRING: " + loc, core::Debug::LogLevel::WARNING);
 	return WearableLocation::NONE;
 
 }
 
 }
-
 
 namespace InventoryNS
 {
@@ -748,7 +763,7 @@ static Type ToType(std::string type)
 	if (type == "SHOP")
 		return Type::SHOP;
 
-	std::cout << "ERROR::INVENTORY::ToString::UNDEFINED TYPE " << type << "\n";
+	//core::Debug::Instance()->core_log("InventoryNS::ToType() FAILED TO CONVERT STRING: " + type, core::Debug::LogLevel::WARNING);
 
 }
 
@@ -763,7 +778,8 @@ static std::string ToString(Type type)
 	case bm98::InventoryNS::Type::SHOP:
 		return "SHOP";
 	default:
-
+		//core::Debug::Instance()->core_log("InventoryNS::ToString() FAILED TO CONVERT TYPE " +
+		//	std::to_string(static_cast<int>(type)), core::Debug::LogLevel::WARNING);
 		std::cout << "ERROR::INVENTORY::ToString::UNDEFINED TYPE " <<
 			static_cast<int>(type) << "\n";
 

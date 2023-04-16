@@ -52,22 +52,41 @@ void IInteractable::initiate_interaction(Interactor* interactor)
 	if (!check_can_initiate(interactor))
 		return;
 
+	Debug::LogLevel level = Debug::LogLevel::BASIC;
+	if (interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
+		level = Debug::LogLevel::INFO;
+	
 	if (interaction_type == Interaction::Type::INSTANT)
 	{
+		Debug::Instance()->log(interactor->get_game_object()->get_info().name +
+			debug_instant_message
+			+ game_object->get_info().name, level);
 		current_interactor = interactor;
 		handle_instant_interaction();
 		exit_interaction();
-//		return true;
+		return;
 	}
+
+	Debug::Instance()->log(interactor->get_game_object()->get_info().name + debug_initiate_message
+		+ game_object->get_info().name, level);
 
 	busy = true;
 	current_interactor = interactor;
 	interaction_timer.restart();
-	//return true;
 }
 
 void IInteractable::exit_interaction()
 {
+	if (interaction_type != Interaction::Type::INSTANT)
+	{
+		Debug::LogLevel level = Debug::LogLevel::BASIC;
+		if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
+			level = Debug::LogLevel::INFO;
+
+		Debug::Instance()->log(current_interactor->get_game_object()->get_info().name +
+			debug_exit_message
+			+ game_object->get_info().name, level);
+	}
 	busy = false;
 	if(current_interactor)
 		current_interactor->remove_interactable();

@@ -13,13 +13,20 @@ void Interactor::interact()
 		return;
 
 	if (!potential_interactable->check_can_initiate(this))
+	{
+	//	Debug::Instance()->log(game_object->get_info().name + " COULD NOT INITIATE INTERACTION WITH "
+	//		+ potential_interactable->get_game_object()->get_info().name, Debug::LogLevel::WARNING);
 		return;
-
+	}
 	if (potential_interactable->get_type() != Interaction::Type::INSTANT)
 	{
 		current_interactable = potential_interactable;
 		interacting = true;
 	}
+
+	//Debug::Instance()->log(game_object->get_info().name + " INITIATING INTERACTION WITH "
+	//	+ potential_interactable->get_game_object()->get_info().name);
+
 	potential_interactable->initiate_interaction(this);
 	potential_interactable = nullptr;
 	
@@ -32,7 +39,9 @@ void Interactor::interact(IInteractable* interactable)
 	
 	if (!interactable->check_can_initiate(this))
 	{
-		std::cout << "ERROR::INTERACTOR::interact(IInteractable* interactor):: COULD NOT INITIATE interactable\n";
+		Debug::Instance()->log(game_object->get_info().name + " COULD NOT INITIATE INTERACTION WITH "
+			+ interactable->get_game_object()->get_info().name, Debug::LogLevel::WARNING);
+		return;
 	}
 	if (current_interactable)
 		current_interactable->exit_interaction();
@@ -43,6 +52,8 @@ void Interactor::interact(IInteractable* interactable)
 		interacting = true;
 	}
 
+	Debug::Instance()->log(game_object->get_info().name + " INITIATING INTERACTION WITH "
+		+ interactable->get_game_object()->get_info().name);
 	interactable->initiate_interaction(this);
 
 }

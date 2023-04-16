@@ -9,7 +9,7 @@
 #include "Input.h"
 #include "Physics.h"
 #include "Debug.h"
-#include <windows.h>
+//#include <windows.h>
 #include "EventSystem.h"
 #include "SceneManager.h"
 namespace bm98::core
@@ -20,7 +20,9 @@ bool DEBUG_MODE = true;
 GameSettings Game::game_settings;
 
 Game::Game()
-{
+{ 
+    Debug::Instance()->core_log("LAUNCHING APPLICATION", Debug::LogLevel::INFO);
+
     init_singletons();
 
     unserialize_json(FileManager::Instance()->load_from_file("Data/game.json"));
@@ -34,10 +36,11 @@ Game::Game()
     Renderer::Instance()->init(window);
 
     EventSystem::Instance()->push_event(EventID::_SYSTEM_RESOURCEMANAGER_LOAD_RESOURCES_);
+    Debug::Instance()->core_log("RESOURCES LOADED", Debug::LogLevel::INFO);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_INITIALIZE_, static_cast<void*>(window));
     EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_INITIALIZE_);
 
-    Debug::init();
+    //Debug::Instance()->init();
 
     //Set up input
     Input::Instance()->load_supported_keybinds_from_file("Config/supported_keys.ini");
@@ -51,7 +54,6 @@ Game::Game()
     Input::Instance()->change_keybinds_state("Main_Menu_State");
 
     init_states();
-    
 
 }
 
@@ -59,7 +61,7 @@ Game::~Game()
 {
     if (!successful_shutdown)
     {
-        std::cout << "end_application was called in ~Game()\n";
+        Debug::Instance()->core_log("APPLICATION FAILED TO SUCCESSFULLY SHUTDOWN", Debug::LogLevel::FAILURE);
         end_application();
     }
 
@@ -150,9 +152,11 @@ void Game::update()
     EventSystem::Instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
     if (!states.empty())
     {
-        
-        states.top()->update();
-        states.top()->late_update();
+        // Create a pointer to current state to ensure even if a new state is pushed,
+        //  the current states will be updated AND late updated
+        State* current_state = states.top();
+        current_state->update();
+        current_state->late_update();
 
         EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_LATE_UPDATE_);
 
@@ -272,7 +276,7 @@ void Game::end_application()
         states.pop();
     }
     successful_shutdown = true;
-    std::cout << "Shutting down the game";
+    Debug::Instance()->core_log("SUCCESSFULLY SHUTDOWN", Debug::LogLevel::INFO);
 }
 
 #pragma region IDATA

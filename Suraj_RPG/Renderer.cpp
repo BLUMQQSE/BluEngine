@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "globals.h"
 #include "Renderer.h"
+#include "Debug.h"
 
 namespace bm98::core
 {
-//std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::render_objects;
+//std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::renderables;
 //std::vector<Renderer::GizmoObject> Renderer::gizmos;
 //bool Renderer::draw_gizmos = true;
 //unsigned Renderer::id = 0;
@@ -20,7 +21,69 @@ void Renderer::init(RenderTarget* render_target)
 
 void Renderer::add(RenderObject render_object)
 {
-	render_objects.insert(render_object);
+	std::list<RenderObject>::iterator it;
+	for (it = renderables.begin(); it != renderables.end(); ++it)
+	{
+		if (it->sorting_layer == render_object.sorting_layer)
+		{
+			if (render_object.z_order < it->z_order)
+			{
+				if (it == renderables.begin())
+					renderables.push_front(render_object);
+				else
+					renderables.insert(it, render_object);
+				return;
+			}
+		}
+		if (render_object.sorting_layer < it->sorting_layer)
+		{
+			if (it == renderables.begin())
+				renderables.push_front(render_object);
+			else
+				renderables.insert(it, render_object);
+			
+			return;
+		}
+	}
+	
+
+	// never got placed, so put in back spot
+	renderables.push_back(render_object);
+	
+	//renderables.insert(render_object);
+}
+
+void Renderer::add_ui(RenderObject ui_render_object)
+{
+	std::list<RenderObject>::iterator it;
+	for (it = ui_renderables.begin(); it != ui_renderables.end(); ++it)
+	{
+		if (it->sorting_layer == ui_render_object.sorting_layer)
+		{
+			if (ui_render_object.z_order < it->z_order)
+			{
+				if (it == ui_renderables.begin())
+					ui_renderables.push_front(ui_render_object);
+				else
+					ui_renderables.insert(it, ui_render_object);
+				return;
+			}
+		}
+		if (ui_render_object.sorting_layer < it->sorting_layer)
+		{
+			if (it == ui_renderables.begin())
+				ui_renderables.push_front(ui_render_object);
+			else
+				ui_renderables.insert(it, ui_render_object);
+
+			return;
+		}
+	}
+
+
+	// never got placed, so put in back spot
+	ui_renderables.push_back(ui_render_object);
+
 }
 
 void Renderer::add_gizmo(GizmoObject gizmo)
@@ -34,15 +97,34 @@ void Renderer::add_gizmo(GizmoObject gizmo)
 void Renderer::remove(sf::Drawable* drawable)
 {	
 	
-
-	for (const auto& f : render_objects)
+	std::list<RenderObject>::iterator it;
+	for (it = renderables.begin(); it != renderables.end(); ++it)
 	{
-		if (f.drawable == drawable)
+		if (it->drawable == drawable)
 		{
-			render_objects.erase(f);
+			renderables.erase(it);
 			return;
 		}
 	}
+	
+	Debug::Instance()->core_log("RENDERER ATTEMPTED TO REMOVE NON-EXISTENT RENDERABLE", Debug::LogLevel::WARNING);
+
+}
+
+void Renderer::remove_ui(sf::Drawable* drawable)
+{
+	std::list<RenderObject>::iterator it;
+	for (it = ui_renderables.begin(); it != ui_renderables.end(); ++it)
+	{
+		if (it->drawable == drawable)
+		{
+			ui_renderables.erase(it);
+			return;
+		}
+	}
+
+	Debug::Instance()->core_log("RENDERER ATTEMPTED TO REMOVE NON-EXISTENT UI RENDERABLE", Debug::LogLevel::WARNING);
+
 }
 
 //Work in progress
@@ -53,13 +135,13 @@ bool Renderer::top_ui_under_mouse(sf::Drawable* drawable, sf::View* view)
 	// need to find RenderObject matchign drawable
 	// need to check for any elements which contains mouse position and is higher
 	std::set<Renderer::RenderObject>::iterator iter;
-	for (iter = render_objects.begin(); iter != render_objects.end(); ++iter)
+	for (iter = renderables.begin(); iter != renderables.end(); ++iter)
 	{
 		if (iter->drawable == drawable)
 		{
 			std::set<Renderer::RenderObject>::iterator iter2;
 			bool top = false;
-			for (iter2 = std::next(iter, 1); iter2 != render_objects.end(); ++iter2)
+			for (iter2 = std::next(iter, 1); iter2 != renderables.end(); ++iter2)
 			{
 				if (dynamic_cast<sf::RectangleShape*>(iter2->drawable))
 				{
@@ -77,40 +159,66 @@ bool Renderer::top_ui_under_mouse(sf::Drawable* drawable, sf::View* view)
 
 void Renderer::refresh()
 {
+	Debug::Instance()->core_log("RENDERER REFRESHING: " + std::to_string(renderables.size()) + " objects");
 	std::vector<RenderObject> objects;
-	for (auto& f : render_objects)
+	for (auto& f : renderables)
 		objects.push_back(f);
-	render_objects.clear();
+	renderables.clear();
 	for (auto& o : objects)
 		add(o);
 }
 
-void Renderer::set_view(sf::View view)
-{
-	window->setView(view);
-}
-
 void Renderer::render()
 {
-	for (const auto& f : render_objects)
-	{	
-		if (!f.render)
+	std::list<RenderObject>::iterator it;
+	for (it = renderables.begin(); it != renderables.end(); ++it)
+	{
+		if (!it->render)
 			continue;
 
-		if (f.view)
-			if(*f.view)
-				window->setView(**f.view);
-			else
-				window->setView(window->getDefaultView());
-		
-		if(f.shader)
+		// reset view to default in case was changed in last loop
+		window->setView(window->getDefaultView());
+
+		if (it->view)
+			if (*it->view)
+				window->setView(**it->view);
+
+		if (it->shader)
 		{
-			window->draw(*f.drawable, *f.shader);
+			window->draw(*it->drawable, *it->shader);
 			continue;
 		}
-		window->draw(*f.drawable);
+		window->draw(*it->drawable);
 	}
+
 	render_gizmos();
+	render_ui();
+	
+	
+}
+
+void Renderer::render_ui()
+{
+	std::list<RenderObject>::iterator it;
+	for (it = ui_renderables.begin(); it != ui_renderables.end(); ++it)
+	{
+		if (!it->render)
+			continue;
+
+		// reset view to default in case was changed in last loop
+		window->setView(window->getDefaultView());
+
+		if (it->view)
+			if (*it->view)
+				window->setView(**it->view);
+
+		if (it->shader)
+		{
+			window->draw(*it->drawable, *it->shader);
+			continue;
+		}
+		window->draw(*it->drawable);
+	}
 }
 
 void Renderer::render_gizmos()
@@ -123,8 +231,8 @@ void Renderer::render_gizmos()
 
 void Renderer::clear()
 {
-	render_objects.clear();
-	id = 0;
+	renderables.clear();
+	ui_renderables.clear();
 }
 
 void Renderer::clear_gizmos()
@@ -133,6 +241,10 @@ void Renderer::clear_gizmos()
 }
 
 void Renderer::fixed_update()
+{
+}
+
+void Renderer::sort()
 {
 }
 
@@ -154,16 +266,6 @@ Renderer::Renderer()
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_, this);
-}
-
-const unsigned& Renderer::get_id()
-{
-	return id;
-}
-
-void Renderer::increase_id()
-{
-	id++;
 }
 
 void Renderer::handle_event(Event* event)

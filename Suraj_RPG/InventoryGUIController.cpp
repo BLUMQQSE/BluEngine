@@ -9,7 +9,13 @@
 
 namespace bm98
 {
-
+InventoryGUIController::InventoryGUIController()
+{
+}
+InventoryGUIController::~InventoryGUIController()
+{
+	Renderer::Instance()->remove_ui(&hand.image);
+}
 void InventoryGUIController::init()
 {
 	general_inventory = &game_object->get_child("GeneralInventory")->get_component<Inventory>();
@@ -35,7 +41,7 @@ void InventoryGUIController::awake()
 	GUI::Panel* p = general_window->get_slots()[0];
 	hand.init(p->get_position(), Vector2f(p->get_width(), p->get_height()));
 
-	Renderer::Instance()->add(Renderer::RenderObject(&hand.image, hand.render, hand.layer, hand.z_order));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&hand.image, hand.render, hand.layer, hand.z_order));
 
 }
 

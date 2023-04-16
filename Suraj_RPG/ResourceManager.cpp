@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Debug.h"
 #include "ResourceManager.h"
 #include "FileManager.h"
 #include "DataAsset.h"
@@ -45,8 +46,10 @@ Json::Value ResourceManager::get_prefab_data(std::string prefab_file_name)
 bool ResourceManager::has_prefab_data(std::string prefab_file_name)
 {
 	if (prefab_data.find(prefab_file_name) == prefab_data.end())
+	{
+		Debug::Instance()->core_log("ResourceManager::PREFAB " + prefab_file_name + " DOES NOT EXIST", Debug::LogLevel::WARNING);
 		return false;
-
+	}
 	return true;
 }
 
@@ -58,8 +61,10 @@ DataAsset* ResourceManager::get_data_asset(std::string asset_file_name)
 bool ResourceManager::has_data_asset(std::string asset_file_name)
 {
 	if (asset_data.find(asset_file_name) == asset_data.end())
+	{
+		Debug::Instance()->core_log("ResourceManager::ASSET DATA " + asset_file_name + " DOES NOT EXIST", Debug::LogLevel::WARNING);
 		return false;
-
+	}
 	return true;
 }
 
@@ -84,8 +89,11 @@ Json::Value ResourceManager::get_sound_data(std::string audio_data_file_name)
 bool ResourceManager::has_sound_data(std::string audio_data_file_name)
 {
 	if (sound_data.find(audio_data_file_name) == sound_data.end())
-		return false;
+	{
 
+		Debug::Instance()->core_log("ResourceManager::AUDIO DATA " + audio_data_file_name + " DOES NOT EXIST", Debug::LogLevel::WARNING);
+		return false;
+	}
 	return true;
 }
 
@@ -97,8 +105,11 @@ sf::Texture& ResourceManager::get_texture(std::string texture_file_name)
 bool ResourceManager::has_texture(std::string texture_file_name)
 {
 	if (textures.find(texture_file_name) == textures.end())
+	{
+
+		Debug::Instance()->core_log("ResourceManager::TEXTURE " + texture_file_name + " DOES NOT EXIST", Debug::LogLevel::WARNING);
 		return false;
-		
+	}
 	return true;
 }
 
@@ -110,8 +121,10 @@ sf::Font& ResourceManager::get_font(std::string font_file_name)
 bool ResourceManager::has_font(std::string font_file_name)
 {
 	if (fonts.find(font_file_name) == fonts.end())
+	{
+		Debug::Instance()->core_log("ResourceManager::FONT " + font_file_name+ " DOES NOT EXIST", Debug::LogLevel::WARNING);
 		return false;
-
+	}
 	return true;
 }
 
@@ -198,7 +211,7 @@ void ResourceManager::iterate_audio_directory(std::string dir_path)
 			sf::SoundBuffer sound_to_add;
 			if (!sound_to_add.loadFromFile(dir_path + file_name))
 			{
-				std::cout << "ERROR::RESOURCE_MANAGER::FAILED LOADING FILE: " << dir_path << file_name << "\n";
+				Debug::Instance()->core_log("RESOURCEMANAGER FAILED TO LOAD FILE " + file_name, Debug::LogLevel::FAILURE);
 			}
 			sound_buffers[file_name] = sound_to_add;
 			continue;
@@ -219,7 +232,7 @@ void ResourceManager::iterate_textures_directory(std::string dir_path)
 			sf::Texture texture_to_add;
 			if (!texture_to_add.loadFromFile(dir_path + file_name))
 			{
-				std::cout << "ERROR::RESOURCE_MANAGER::FAILED LOADING FILE: " << dir_path << file_name << "\n";
+				Debug::Instance()->core_log("RESOURCEMANAGER FAILED TO LOAD FILE " + file_name, Debug::LogLevel::FAILURE);
 			}
 			textures[file_name] = texture_to_add;
 			continue;
@@ -240,7 +253,7 @@ void ResourceManager::iterate_fonts_directory(std::string dir_path)
 			sf::Font font_to_add;
 			if (!font_to_add.loadFromFile(dir_path + file_name))
 			{
-				std::cout << "ERROR::RESOURCEMANAGER::FAILED LOADING FILE: " << dir_path << file_name << "\n";
+				Debug::Instance()->core_log("RESOURCEMANAGER FAILED TO LOAD FILE " + file_name, Debug::LogLevel::FAILURE);
 			}
 			fonts[file_name] = font_to_add;
 

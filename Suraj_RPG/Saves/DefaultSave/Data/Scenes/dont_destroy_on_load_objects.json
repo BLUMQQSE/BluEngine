@@ -2,39 +2,6 @@
 	"gameobjects" : 
 	[
 		{
-			"components" : 
-			[
-				{
-					"name" : "class bm98::CameraComponent",
-					"value" : null
-				},
-				{
-					"name" : "class bm98::DontDestroyOnLoad",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "MainCamera",
-				"physics-layer" : "PHYSICS_IGNORE",
-				"tag" : "CAMERA"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 380.59219360351562,
-					"y" : 95.240081787109375
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
 			"children" : 
 			[
 				{
@@ -44,6 +11,24 @@
 							"name" : "class bm98::Inventory",
 							"value" : 
 							{
+								"content" : 
+								[
+									{
+										"current-capacity" : 1,
+										"index" : 0,
+										"item" : "SwordData.json"
+									},
+									{
+										"current-capacity" : 1,
+										"index" : 1,
+										"item" : "SwordData.json"
+									},
+									{
+										"current-capacity" : 1,
+										"index" : 2,
+										"item" : "SwordData.json"
+									}
+								],
 								"inventory-type" : "GENERAL",
 								"max-size" : 18
 							}
@@ -68,8 +53,8 @@
 						},
 						"position" : 
 						{
-							"x" : 348.59219360351562,
-							"y" : 63.240085601806641
+							"x" : 140.17356872558594,
+							"y" : 181.83381652832031
 						},
 						"rotation" : 0.0
 					}
@@ -105,8 +90,8 @@
 						},
 						"position" : 
 						{
-							"x" : 348.59219360351562,
-							"y" : 63.240085601806641
+							"x" : 140.17356872558594,
+							"y" : 181.83381652832031
 						},
 						"rotation" : 0.0
 					}
@@ -151,7 +136,7 @@
 						"body-type" : "KINEMATIC",
 						"deceleration" : 2.0,
 						"max-velocity" : 7.0,
-						"orientation" : "LEFT"
+						"orientation" : "RIGHT"
 					}
 				},
 				{
@@ -183,8 +168,8 @@
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 363.59219360351562,
-								"y" : 63.240085601806641
+								"x" : 155.17356872558594,
+								"y" : 181.83381652832031
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
@@ -236,8 +221,41 @@
 				},
 				"position" : 
 				{
-					"x" : 348.59219360351562,
-					"y" : 63.240085601806641
+					"x" : 140.17356872558594,
+					"y" : 181.83381652832031
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::CameraComponent",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "MainCamera",
+				"physics-layer" : "PHYSICS_IGNORE",
+				"tag" : "CAMERA"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 172.17356872558594,
+					"y" : 213.83381652832031
 				},
 				"rotation" : 0.0
 			}

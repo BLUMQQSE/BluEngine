@@ -335,7 +335,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 			FloatConvex polygon = *static_cast<FloatConvex*>(vars[i].variable);
-			std::cout << polygon.getPointCount() << " points\n";
+
 			for (std::size_t i = 0; i < polygon.getPointCount(); i++)
 			{
 				items_in_panel.push_back(std::make_pair(std::to_string(i) + "_x_" + vars[i].name, new GUI::InputBox(110, height, 40, 12, 12,

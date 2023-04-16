@@ -1,8 +1,4 @@
 #pragma once
-#include <iostream>
-#include <fstream>
-#include "json/json.h"
-#include <string>
 namespace bm98::core
 {
 class FileManager
@@ -20,9 +16,6 @@ public:
 
 	void save_to_file_styled(Json::Value obj, std::string file_path);
 	Json::Value load_from_file(std::string file_path);
-
-	Json::Value serialize_json();
-	void unserialize_json(Json::Value obj);
 
 private:
 	FileManager() {}

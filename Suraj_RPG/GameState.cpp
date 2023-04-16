@@ -64,11 +64,12 @@ GameState::~GameState()
 
 void GameState::init_state()
 {
+	Debug::Instance()->core_log("ENTERING GameState", Debug::LogLevel::INFO);
 }
 
 void GameState::on_end_state()
 {
-	Debug::Log("Will now clean up game state on exit");
+	Debug::Instance()->core_log("EXITING GameState", Debug::LogLevel::INFO);
 	SceneManager::Instance()->save_scene(true);
 	FileManager::Instance()->save_to_file_styled(serialize_json(),
 		FileManager::Instance()->get_save_name()+"gamestate.json");

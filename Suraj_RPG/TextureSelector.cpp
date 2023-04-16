@@ -22,8 +22,8 @@ TextureSelector::TextureSelector()
 
 TextureSelector::~TextureSelector()
 {
-	Renderer::Instance()->remove(&sheet);
-	Renderer::Instance()->remove(&selector);
+	Renderer::Instance()->remove_ui(&sheet);
+	Renderer::Instance()->remove_ui(&selector);
 
 	delete texture_selector_panel;
 	delete sheet_panel;
@@ -87,8 +87,8 @@ void TextureSelector::init(float x, float y, float width, float height, float gr
 	//this->texture_view = texture_view;
 
 	// following two need reset to use text_view
-	Renderer::Instance()->add(Renderer::RenderObject(&sheet, this));
-	Renderer::Instance()->add(Renderer::RenderObject(&selector, this));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&sheet, this));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&selector, this));
 
 	init_dropdowns(tile_sets);
 	init_checkboxes(20);

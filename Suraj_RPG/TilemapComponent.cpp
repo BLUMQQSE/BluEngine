@@ -485,7 +485,7 @@ void TilemapComponent::load_tile_sheets()
 		{
 			if (!tile_sheets[file_name].loadFromFile(entry.path().string()))
 			{
-				Debug::Log("ERROR::TILEMAP::FAILED TO LOAD TEXTURE");
+				Debug::Instance()->log("TILEMAP::FAILED TO LOAD TEXTURE", Debug::LogLevel::FAILURE);
 			}
 		}
 	}

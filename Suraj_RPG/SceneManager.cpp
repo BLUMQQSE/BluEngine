@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Debug.h"
 #include "SceneManager.h"
 #include "Scene.h"
 #include "FileManager.h"
@@ -39,7 +40,7 @@ void SceneManager::destroy()
 
 void SceneManager::load_scene(std::string scene_name)
 {
-	std::cout << "load_scene(" << scene_name << ")\n";
+	Debug::Instance()->core_log("LOADING SCENE: " + scene_name, Debug::LogLevel::INFO);
 	if (active_scene->get_name() != scene_name)
 	{
 		save_scene();
@@ -52,6 +53,8 @@ void SceneManager::load_scene(std::string scene_name)
 	active_scene->set_name(scene_name);
 
 	active_scene->unserialize_json(obj);
+
+	Renderer::Instance()->refresh();
 
 	EventSystem::Instance()->push_event(EventID::SCENE_CHANGE);
 
@@ -74,7 +77,7 @@ void SceneManager::load_scene_prefab(std::string scene_name)
 
 void SceneManager::save_scene(bool save_everything)
 {
-	std::cout << "save_scene("<<active_scene->get_name()<<")\n";
+	Debug::Instance()->core_log("SAVING SCENE: " + active_scene->get_name(), Debug::LogLevel::INFO);
 
 	FileManager::Instance()->save_to_file_styled(active_scene->serialize_undestroyed_objects(), 
 		FileManager::Instance()->get_save_name() + scenes_file_path + "dont_destroy_on_load_objects.json");

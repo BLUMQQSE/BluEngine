@@ -9,6 +9,7 @@ ColliderComponent::ColliderComponent()
 
 ColliderComponent::~ColliderComponent()
 {
+	Renderer::Instance()->remove(&collider_bounds);
 }
 
 void ColliderComponent::init()

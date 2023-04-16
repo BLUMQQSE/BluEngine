@@ -11,7 +11,8 @@ class InventoryGUIController :
     public Component
 {
 public:
-
+    InventoryGUIController();
+    virtual ~InventoryGUIController();
     struct Hand
     {
         Inventory::InventoryItem item;

@@ -18,6 +18,7 @@ public:
     EditorState(sf::RenderWindow* window, std::stack<State*>* states, GraphicsSettings* graphics_settings);
     virtual ~EditorState();
 
+    virtual void init_state() override;
     virtual void on_end_state() override;
     virtual void update_input() override;
 

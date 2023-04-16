@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Debug.h"
 #include "Scene.h"
 #include "Physics.h"
 #include "GameObject.h"
@@ -136,17 +137,18 @@ void Scene::insert_gameobject(GameObject* go, bool initialize)
 
 void Scene::remove_gameobject(GameObject* go)
 {
-	if (std::find(objects_in_scene.begin(), objects_in_scene.end(), go) == objects_in_scene.end())
-	{
-		std::cout << "ERROR::SCENE::REMOVE_GAMEOBJECT::OBJECT DOES NOT EXIST IN SCENE\n";
+	std::vector<GameObject*>::iterator obj = std::find(objects_in_scene.begin(), objects_in_scene.end(), go);
+	if (obj == objects_in_scene.end())
+	{ 
+		Debug::Instance()->core_log("ATTEMPTED TO REMOVE GAMEOBJECT WHICH DOESN'T EXIST", Debug::LogLevel::WARNING);
 		return;
 	}
 
 	go->on_destroy();
 	Physics::Instance()->remove_from_physics(go);
-	objects_in_scene.erase(std::find(objects_in_scene.begin(),
-		objects_in_scene.end(), go));
-
+	
+	
+	objects_in_scene.erase(obj);	
 	go->set_parent(nullptr);
 
 	// destroy all posterity of object
@@ -167,6 +169,7 @@ void Scene::remove_gameobject(GameObject* go)
 		}
 	}
 
+	// for some reason causing issue with rendering
 	delete go;
 	
 

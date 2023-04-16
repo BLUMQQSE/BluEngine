@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "Component.h"
 #include "Delay.h"
 namespace bm98
@@ -38,7 +38,12 @@ public:
 protected:
 
     std::string interaction_prompt;
-    std::string failed_interaction_prompt;
+    std::string failed_interaction_prompt; 
+
+    std::string debug_instant_message = " INITIATING INSTANT INTERACTION WITH ";
+    std::string debug_initiate_message = " INITIATING INTERACTION WITH ";
+
+    std::string debug_exit_message = " EXITING INTERACTION WITH ";
     
     bool busy = false;
     Interaction::Type interaction_type = Interaction::Type::INSTANT;

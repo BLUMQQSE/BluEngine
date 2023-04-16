@@ -19,7 +19,7 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 	init_fonts();
 	init_text();
 	init_gui();
-	Debug::init();
+	//Debug::init();
 	Renderer::Instance()->add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
 	Renderer::Instance()->add(Renderer::RenderObject(&circle, _render, options_layer, z_order));
 	Renderer::Instance()->add(Renderer::RenderObject(&square, _render, options_layer, z_order));
@@ -55,6 +55,11 @@ SettingsState::~SettingsState()
 
 }
 
+void SettingsState::init_state()
+{
+	Debug::Instance()->core_log("ENTERING SettingsState", Debug::LogLevel::INFO);
+}
+
 void SettingsState::init_variables()
 {
 	modes = sf::VideoMode::getFullscreenModes();
@@ -88,14 +93,14 @@ void SettingsState::update_input()
 
 void SettingsState::on_end_state()
 {
-	Debug::Log("Will now clean up settings state on exit");
+	Debug::Instance()->core_log("EXITING SettingsState", Debug::LogLevel::INFO);
 }
 
 void SettingsState::update()
 {
 	State::update();
 	update_input();
-	Debug::mouse_position_display(font);
+	Debug::Instance()->mouse_position_display(font);
 	
 	inp->update();
 

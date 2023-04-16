@@ -12,6 +12,8 @@ namespace bm98
 
 void Chest::init()
 {
+	debug_initiate_message = " OPENED CHEST ";
+	debug_exit_message = " CLOSED CHEST ";
 }
 
 void Chest::initiate_interaction(Interactor* interactor)

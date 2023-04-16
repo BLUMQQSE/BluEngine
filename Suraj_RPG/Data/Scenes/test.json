@@ -1672,6 +1672,109 @@
 				},
 				"rotation" : 0.0
 			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::SpriteComponent",
+					"value" : 
+					{
+						"class bm98::IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "BACKGROUND",
+							"z-order" : 0
+						},
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
+						"sprite-file-path" : "sword.png"
+					}
+				},
+				{
+					"name" : "class bm98::BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 10.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 10.0,
+									"y" : 10.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 10.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 200.0,
+								"y" : 0.0
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 0.0,
+						"hitbox-offsetX" : 10.0,
+						"hitbox-offsetY" : 20.0,
+						"hitbox-width" : 0.0,
+						"trigger" : true
+					}
+				},
+				{
+					"name" : "class bm98::WeaponController",
+					"value" : 
+					{
+						"class bm98::IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INSTANT",
+							"require-player-input" : false
+						},
+						"item-data" : "SwordData.json",
+						"item-state" : "DROPPED"
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Sword2",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 200.0,
+					"y" : 0.0
+				},
+				"rotation" : 0.0
+			}
 		}
 	],
 

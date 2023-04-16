@@ -47,13 +47,4 @@ Json::Value FileManager::load_from_file(std::string file_path)
 	return obj;
 }
 
-Json::Value FileManager::serialize_json()
-{
-	return Json::Value();
-}
-
-void FileManager::unserialize_json(Json::Value obj)
-{
-
-}
 }

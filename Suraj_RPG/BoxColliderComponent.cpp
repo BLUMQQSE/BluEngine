@@ -42,7 +42,6 @@ BoxColliderComponent::BoxColliderComponent(float offset_x,
 
 BoxColliderComponent::~BoxColliderComponent()
 {
-	Renderer::Instance()->remove(&collider_bounds);
 }
 
 void BoxColliderComponent::init()
