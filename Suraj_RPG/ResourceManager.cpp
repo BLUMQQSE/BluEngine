@@ -5,6 +5,7 @@
 #include "DataAsset.h"
 #include "ItemData.h"
 #include "WeaponData.h"
+#include "TilemapComponent.h"
 namespace bm98::core 
 {
 
@@ -16,6 +17,7 @@ void ResourceManager::load_resources()
 	iterate_prefab_directory("Data/Prefabs/");
 	iterate_data_asset_directory("Data/DataAssets/");
 	
+	TilemapComponent::LoadTileSheets();
 }
 
 void ResourceManager::reload()

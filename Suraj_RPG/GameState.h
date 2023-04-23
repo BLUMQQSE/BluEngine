@@ -1,7 +1,6 @@
 #pragma once
 #include "State.h"
 #include "IData.h"
-
 namespace bm98
 {
 class Player;
@@ -40,6 +39,7 @@ public:
 protected:
 
     void init_view();
+    void init_singletons();
 
 
 private:
@@ -50,6 +50,7 @@ private:
 
     PauseMenu* pmenu;
     GameEditorView* editor_view;
+
 };
 
 }

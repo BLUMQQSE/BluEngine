@@ -10,14 +10,20 @@
 #include "ResourceManager.h"
 namespace bm98
 {
+
+std::map<std::string, sf::Texture> TilemapComponent::tile_sheets;
+std::vector<std::string> TilemapComponent::tileset_keys;
+
 using namespace core;
 TilemapComponent::TilemapComponent()
 {
 	grid_size_u = UNIT_SIZE;
-	position = Vector2i(0, 0);
-	load_tile_sheets();
-	//clear_map();
-	//create_empty_map();
+
+	grid_size_f = static_cast<float>(grid_size_u);
+	this->max_size = Vector2i::Zero();
+
+	this->layers = static_cast<int>(Sorting::Layer::UI);
+	create_empty_map();
 }
 
 TilemapComponent::TilemapComponent(Vector2i position, float grid_size,
@@ -28,6 +34,10 @@ TilemapComponent::TilemapComponent(Vector2i position, float grid_size,
 	this->grid_size_u = static_cast<unsigned>(this->grid_size_f);
 	this->max_size.x = width + 1;
 	this->max_size.y = height + 1;
+
+	this->layers = static_cast<int>(Sorting::Layer::UI);
+	create_empty_map();
+
 }
 
 TilemapComponent::~TilemapComponent()
@@ -39,40 +49,44 @@ TilemapComponent::~TilemapComponent()
 void TilemapComponent::init()
 {
 	EventSystem::Instance()->subscribe(EventID::ANIMATION_FRAME_CHANGE, this);
+	
+	current_tileset_key = tile_sheets.begin()->first;
 
-	this->layers = static_cast<int>(Sorting::Layer::UI);
+	if (position.x == INFINITY)
+	{
+		position = sf::Vector2i(
+			game_object->get_world_position().x, 
+			game_object->get_world_position().y
+		);
+	}
+	
 
 	// Setting physical layers for each sorting layer to default
 	for (int i = 0; i < static_cast<int>(Sorting::Layer::UI); i++)
 	{
 		physical_layers[i] = PhysicsNS::Layer::DEFAULT;
 	}
-
 	this->map_updateables.reserve(this->max_size.x * this->max_size.y * this->layers);
 
-	grid_size_f = static_cast<float>(grid_size_u);
-	
-	resize_map(max_size.x, max_size.y);
+
 
 	update_tilemap_changes();
 
-	this->outline = FloatConvex::Polygon(
+	this->outline = FloatConvex::Rectangle(
 		Vector2f(position.x, position.y),
-		{ Vector2f(0,0), Vector2f(0, (max_size.y-1) * grid_size()),
-		Vector2f((max_size.x-1) * grid_size(), (max_size.y-1) * grid_size()),
-		Vector2f((max_size.x-1) * grid_size(), 0)}
+		Vector2f(max_size.x * UNIT_SIZE, max_size.y * UNIT_SIZE)
 	);
 
 	this->outline.setOutlineThickness(2.f);
 	this->outline.setFillColor(sf::Color::Transparent);
 	this->outline.setOutlineColor(sf::Color::White);
 
-
 }
 
 void TilemapComponent::awake()
 {
 	// Set rendering layer and z order of the outline
+
 	set_sorting_layer(Sorting::Layer::UI);
 	set_z_order(0);
 	Renderer::Instance()->add(Renderer::RenderObject(&outline, this));
@@ -126,7 +140,7 @@ sf::Texture* TilemapComponent::tile_sheet(std::string key)
 	return &tile_sheets.at(key);
 }
 
-void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer, const sf::IntRect texture_rect, 
+void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer, const sf::IntRect texture_rect,
 	TileNS::Type tile_type, bool collision, bool animated_sprite, float animation_timer)
 {
 	if (animated_sprite)
@@ -138,7 +152,7 @@ void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer,
 			delete map[x][y][static_cast<int>(layer)];
 
 		map[x][y][static_cast<int>(layer)] = new Tile(position.x, position.y, x, y, grid_size_f, layer, physical_layers[static_cast<int>(layer)]);
-		
+
 		map[x][y][static_cast<int>(layer)]->add_animated_sprite_component(current_tileset_key, &tile_sheets.at(current_tileset_key), texture_rect, animation_timer);
 		map[x][y][static_cast<int>(layer)]->set_collision(collision);
 		map[x][y][static_cast<int>(layer)]->set_type(tile_type);
@@ -154,13 +168,13 @@ void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer,
 	sf::IntRect sub_rect;
 	sub_rect.width = grid_size_u;
 	sub_rect.height = grid_size_u;
-	
+
 	int xx = x;
 	int yy = y;
 	for (int w = 0; w < texture_rect.width; w += grid_size_u)
 	{
 		sub_rect.left = w + texture_rect.left;
-		
+
 		if (xx < 0 || yy < 0 || xx >= max_size.x || yy >= max_size.y)
 		{
 			xx++;
@@ -173,12 +187,12 @@ void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer,
 		for (int h = 0; h < texture_rect.height; h += grid_size_u)
 		{
 			sub_rect.top = h + texture_rect.top;
-			
+
 			if (map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)])
 				delete map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)];
 
 			map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)] =
-				new Tile(position.x, position.y, x + static_cast<int>(w) / 32.f, y + static_cast<int>(h) / 32.f, grid_size_f, layer, 
+				new Tile(position.x, position.y, x + static_cast<int>(w) / 32.f, y + static_cast<int>(h) / 32.f, grid_size_f, layer,
 					physical_layers[static_cast<int>(layer)]);
 
 			map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)]->set_texture(
@@ -198,7 +212,7 @@ void TilemapComponent::remove_tiles(const int x, const int y, const Sorting::Lay
 		if (x >= max_size.x || y >= max_size.y)
 			return;
 
-		if(map[x][y][static_cast<int>(layer)])
+		if (map[x][y][static_cast<int>(layer)])
 			delete map[x][y][static_cast<int>(layer)];
 
 		update_tilemap_changes();
@@ -233,11 +247,6 @@ PhysicsNS::Layer TilemapComponent::get_layer(Sorting::Layer layer)
 	return physical_layers.at(static_cast<int>(layer));
 }
 
-std::vector<std::string> TilemapComponent::get_tileset_keys()
-{
-	return tileset_keys;
-}
-
 sf::Texture* TilemapComponent::get_texture()
 {
 	return &tile_sheets.at(current_tileset_key);
@@ -255,26 +264,19 @@ void TilemapComponent::save_to_json(std::string file_path)
 
 void TilemapComponent::load_from_json(std::string file_path)
 {
-	load_tile_sheets();
 	Json::Value obj = FileManager::Instance()->load_from_file(file_path);
 	unserialize_json(obj);
-
 }
 
-void TilemapComponent::set_position(Vector2i pos)
+void TilemapComponent::set_world_position(Vector2f pos)
 {
-	if (position.equals(pos))
-		return;
+	this->position = sf::Vector2i(std::floor(pos.x), std::floor(pos.y));
+	outline.set_position(pos);
 
-	this->position = pos;
-	outline.set_position(Vector2f(pos.x, pos.y));
-
-	for (auto& x : this->map)
-		for (auto& y : x)
-			for (auto& z : y)
-				if(z)
-					z->set_position(pos);
-		
+	for (auto& r_s : render_sprites)
+	{
+		r_s.setPosition(position.x, position.y);
+	}
 }
 
 std::vector<std::vector<std::vector<Tile*>>> TilemapComponent::get_tiles()
@@ -285,7 +287,7 @@ std::vector<std::vector<std::vector<Tile*>>> TilemapComponent::get_tiles()
 std::vector<Tile*> TilemapComponent::get_collidable_tiles()
 {
 	std::vector<Tile*> col_tiles;
-	
+
 	for (auto& c : map_collidables)
 	{
 		col_tiles.push_back(c);
@@ -299,36 +301,35 @@ void TilemapComponent::update_tilemap_changes()
 	for (int i = 0; i < render_sprites.size(); i++)
 	{
 		Renderer::Instance()->remove(&render_sprites[i]);
-		if(render_textures[i])
+		if (render_textures[i])
 			delete render_textures[i];
 	}
 	render_textures.clear();
 	render_sprites.clear();
 	render_layers.clear();
-	
+
 	for (int i = 0; i < this->layers; i++)
 	{
 		render_layers.push_back(static_cast<Sorting::Layer>(i));
 		render_textures.push_back(new sf::RenderTexture());
 
 		render_textures[i]->create(grid_size_u * max_size.x, grid_size_u * max_size.y);
-		
+
 		for (size_t x = 0; x < this->max_size.x; x++)
 		{
 			for (size_t y = 0; y < this->max_size.y; y++)
 			{
-	
+
 				if (this->map[x][y][i])
 				{
-					render_textures[i]->draw(this->map[x][y][i]->get_sprite());	
+					render_textures[i]->draw(this->map[x][y][i]->get_sprite());
 				}
 			}
 		}
-		
+
 		render_textures[i]->display();
 		sf::Sprite sprite(render_textures[i]->getTexture());
 		sprite.setPosition(position.x, position.y);
-
 		render_sprites.push_back(sprite);
 
 	}
@@ -375,8 +376,8 @@ Json::Value TilemapComponent::serialize_json()
 	//	obj["tiles"].append(r->serialize_json());
 	//}
 
-	for(int x = 0; x < map.size(); x++)
-		for(int y = 0; y < map[x].size(); y++)
+	for (int x = 0; x < map.size(); x++)
+		for (int y = 0; y < map[x].size(); y++)
 			for (int z = 0; z < map[x][y].size(); z++)
 			{
 				if (map[x][y][z])
@@ -390,7 +391,7 @@ Json::Value TilemapComponent::serialize_json()
 
 void TilemapComponent::unserialize_json(Json::Value obj)
 {
-	load_tile_sheets();
+	//load_tile_sheets();
 	layers = ((int)Sorting::Layer::UI);
 	position = sf::Vector2i(obj["position.x"].asInt64(), obj["position.y"].asInt64());
 
@@ -453,33 +454,56 @@ void TilemapComponent::unserialize_json(Json::Value obj)
 
 std::vector<Editor::SerializedVar> TilemapComponent::get_editor_values()
 {
+	std::vector<Editor::SerializedVar> values;
+	values.push_back(Editor::SerializedVar("tilemap_size", &max_size, Var::Type::Vector2i));
+
+	return values;
+}
+
+void TilemapComponent::editor_update()
+{
+
 	//======Safety Check For Editor==========================
 	if (max_size.x == 0)
 		max_size.x = 1;
 	if (max_size.y == 0)
 		max_size.y = 1;
 	//======================================================
+	std::cout << "map: " << map.size() << ", map[0]: " << map[0].size()<<"\n";
+	if (max_size.x == map.size() && max_size.y == map[0].size())
+	{
+		return update_tilemap_changes();
+	}
+	if (position.x == INFINITY)
+	{
+		position = sf::Vector2i
+		(
+			game_object->get_world_position().x,
+			game_object->get_world_position().y
+		);
+	}
 
-	std::vector<Editor::SerializedVar> values;
+	resize_map(max_size.x, max_size.y);
 
-	values.push_back(Editor::SerializedVar("grid_size", &grid_size_u, Var::Type::Int));
-	values.push_back(Editor::SerializedVar("tilemap_size_X", &max_size, Var::Type::Vector2i));
 
-	return values;
+	update_tilemap_changes();
+
+	
 }
 
-void TilemapComponent::load_tile_sheets()
+void TilemapComponent::LoadTileSheets()
 {
-	tile_sheets.clear();
-	tileset_keys.clear();
+	//tile_sheets.clear();
+	
+	//tileset_keys.clear();
 
-	int n = 0;
+	//int n = 0;
 	for (const auto& entry : std::filesystem::directory_iterator(tiles_file_path))
 	{
 		std::string file_name = entry.path().string().substr(tiles_file_path.size(), entry.path().string().size() - 1);
-		if (n == 0)
-			current_tileset_key = file_name;
-		n++;
+		//if (n == 0)
+			//current_tileset_key = file_name;
+		//n++;
 
 		if (!entry.is_directory())
 		{
@@ -505,7 +529,7 @@ void TilemapComponent::clear_map()
 		{
 			for (size_t z = 0; z < this->layers; z++)
 			{
-				if(map[x][y][z])
+				if (map[x][y][z])
 					delete map[x][y][z];
 				map[x][y][z] = nullptr;
 			}
@@ -519,18 +543,19 @@ void TilemapComponent::clear_map()
 }
 void TilemapComponent::create_empty_map()
 {
-	this->map.reserve(this->max_size.x);
+	this->map.resize(this->max_size.x);
 	for (size_t x = 0; x < this->max_size.x; x++)
 	{
-		this->map.push_back(std::vector< std::vector<Tile*> >());
+		this->map[x] = std::vector< std::vector<Tile*>>();
+
+		this->map[x].resize(this->max_size.y);
 		for (size_t y = 0; y < this->max_size.y; y++)
 		{
-			this->map[x].reserve(this->max_size.y);
-			this->map[x].push_back(std::vector<Tile*>());
+			this->map[x][y] = std::vector<Tile*>();
+			this->map[x][y].resize(this->layers);
 			for (size_t z = 0; z < this->layers; z++)
 			{
-				this->map[x][y].reserve(this->layers);
-				this->map[x][y].push_back(nullptr);
+				this->map[x][y][z] = nullptr;
 			}
 		}
 	}
@@ -538,41 +563,121 @@ void TilemapComponent::create_empty_map()
 
 void TilemapComponent::resize_map(unsigned width, unsigned height)
 {
+	std::cout << "width: " << width << ", height: " << height << "\n";
 	//empty array being initializes, so dont bother
-	if (max_size.x == 0 || max_size.y == 0)
-		return;
-	if (this->map.size() == width && this->map[0].size() == height)
+	if (width == 0 || height == 0)
 	{
+		core::Debug::Instance()->log("Trying to set Tilemap to have a map of size zero", core::Debug::LogLevel::WARNING);
 		return;
 	}
-	for (std::size_t x = 0; x < map.size(); x++)
+	int x_last = this->map.size();
+	int y_last = this->map[0].size();
+
+	if (width > x_last)
 	{
-		for (std::size_t y = 0; y < map[x].size(); y++)
+		this->map.resize(width);
+		for (int x = x_last; x < this->map.size(); x++)
 		{
-			for (size_t z = 0; z < this->layers; z++)
+			this->map[x] = std::vector< std::vector<Tile*>>();
+			this->map[x].resize(this->map[0].size());
+			
+			for (int y = 0; y < this->map[x].size(); y++)
 			{
-				if (map[x][y][z])
+				this->map[x][y] = std::vector<Tile*>();
+				this->map[x][y].resize(this->layers);
+
+				for (size_t z = 0; z < this->layers; z++)
 				{
-					if (x >= width || y >= height)
-					{
-						delete map[x][y][z];
-					}
+					this->map[x][y][z] = nullptr;
 				}
 			}
 		}
-		map[x].resize(height);
 	}
-	map.resize(width);
+	else
+	{
+		for (int x = x_last-1; x >= width; x--)
+		{
+			for (int y = 0; y < map[x].size(); y++)
+			{
+				for (int z = 0; z < map[x][y].size(); z++)
+				{
+					if (map[x][y][z])
+					{
+						map_updateables.erase(std::remove(map_updateables.begin(), map_updateables.end(), map[x][y][z]), end(map_updateables));
+						map_collidables.erase(std::remove(map_collidables.begin(), map_collidables.end(), map[x][y][z]), end(map_collidables));
+						delete map[x][y][z];
+					}
+				}
+				map[x][y].clear();
+			}
+			map[x].clear();
+		}
+
+		map.resize(width);
+
+	}
+
+	if (height > y_last)
+	{
+		for (int x = 0; x < this->map.size(); x++)
+		{
+			//this->map[x] = std::vector< std::vector<Tile*>>();
+			this->map[x].resize(height);
+
+			for (int y = y_last; y < height; y++)
+			{
+				this->map[x][y] = std::vector<Tile*>();
+				this->map[x][y].resize(this->layers);
+
+				for (size_t z = 0; z < this->layers; z++)
+				{
+					this->map[x][y][z] = nullptr;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = y_last-1; y >= height; y--)
+			{
+				for (int z = 0; z < map[x][y].size(); z++)
+				{
+					if (map[x][y][z])
+					{
+						map_updateables.erase(std::remove(map_updateables.begin(), map_updateables.end(), map[x][y][z]), end(map_updateables));
+						map_collidables.erase(std::remove(map_collidables.begin(), map_collidables.end(), map[x][y][z]), end(map_collidables));
+						delete map[x][y][z];
+					}
+				}
+				map[x][y].clear();
+			}
+			map[x].resize(height);
+		}
+
+
+	}
+
 
 	max_size = Vector2i(width, height);
 
-	// Remove all map_updatables which are nullptr
-	map_updateables.erase(std::remove_if(map_updateables.begin(), map_updateables.end(),
-		[](Tile* x) { return x == nullptr; }));
+	this->outline = FloatConvex::Rectangle(
+		Vector2f(position.x, position.y),
+		{ Vector2f(max_size.x * UNIT_SIZE, max_size.y * UNIT_SIZE) }
+	);	
+	this->outline.setOutlineThickness(2.f);
+	this->outline.setFillColor(sf::Color::Transparent);
+	this->outline.setOutlineColor(sf::Color::White);
 
+
+	// Remove all map_updatables which are nullptr
+	//map_updateables.erase(std::remove_if(map_updateables.begin(), map_updateables.end(),
+	//	[](Tile* x) { return x == nullptr; }));
+	
 	// Remove all map_collidables which are nullptr
-	map_collidables.erase(std::remove_if(map_collidables.begin(), map_collidables.end(),
-		[](Tile* x) { return x == nullptr; }));
+	//map_collidables.erase(std::remove_if(map_collidables.begin(), map_collidables.end(),
+	//	[](Tile* x) { return x == nullptr; }));
 
 }
 
@@ -580,7 +685,7 @@ void TilemapComponent::handle_event(Event* event)
 {
 	// Only want to update once every frame MAX
 	if (updated_this_frame == true)
-		return; 
+		return;
 
 	switch (event->get_event_id())
 	{
@@ -588,13 +693,13 @@ void TilemapComponent::handle_event(Event* event)
 
 		if (event->get_caller().name == Caller::Name::ANIMATED_SPRITE_COMPONENT)
 		{
-			update_tilemap_changes();	
+			update_tilemap_changes();
 		}
 		break;
 	default:
 		break;
 	}
-	
+
 }
 
 }

@@ -36,6 +36,7 @@ sf::Vector2i Input::mouse_position_grid(float& grid_size, sf::View* view)
         window->setView(*view);
         sf::Vector2f temp = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 
+
         sf::Vector2i grid_view = sf::Vector2i(
             static_cast<int>(temp.x) / static_cast<int>(grid_size),
             static_cast<int>(temp.y) / static_cast<int>(grid_size)
@@ -83,15 +84,16 @@ bool Input::get_mouse(Mouse mouse_button, float* duration)
         switch ((int)mouse_button)
         {
         case 0:
-            *duration = mouse_left_delta;
+            *duration = 
+            *duration = mouse_left_timer.get_elapsed_time().asMilliseconds();
             return mouse_left == PressedState::PRESSED;
             break;
         case 1:
-            *duration = mouse_right_delta;
+            *duration = mouse_right_timer.get_elapsed_time().asMilliseconds();
             return mouse_right == PressedState::PRESSED;
             break;
         case 2:
-            *duration = mouse_middle_delta;
+            *duration = mouse_middle_timer.get_elapsed_time().asMilliseconds();
             return mouse_middle == PressedState::PRESSED;
             break;
         default:
@@ -121,12 +123,15 @@ bool Input::get_mouse_down(Mouse mouse_button)
     switch ((int)mouse_button)
     {
     case 0:
+        mouse_left_timer.restart();
         return mouse_left == PressedState::PRESSED_FRAME;
         break;
     case 1:
+        mouse_right_timer.restart();
         return mouse_right == PressedState::PRESSED_FRAME;
         break;
     case 2:
+        mouse_middle_timer.restart();
         return mouse_middle == PressedState::PRESSED_FRAME;
         break;
     default:
@@ -140,40 +145,47 @@ bool Input::get_mouse_up(Mouse mouse_button, float* duration)
     {
         switch ((int)mouse_button)
         {
-        case 0:
-            *duration = mouse_left_delta;
-            return mouse_left == PressedState::RELEASED_FRAME;
-            break;
-        case 1:
-            *duration = mouse_right_delta;
-            return mouse_right == PressedState::RELEASED_FRAME;
-            break;
-        case 2:
-            *duration = mouse_middle_delta;
-            return mouse_middle == PressedState::RELEASED_FRAME;
-            break;
-        default:
-            *duration = -1;
-            return false;
+            case 0:
+                *duration = mouse_left_timer.get_elapsed_time().asMilliseconds();
+                return mouse_left == PressedState::RELEASED_FRAME;
+                break;
+            case 1:
+                *duration = mouse_right_timer.get_elapsed_time().asMilliseconds();
+                return mouse_right == PressedState::RELEASED_FRAME;
+                break;
+            case 2:
+                *duration = mouse_middle_timer.get_elapsed_time().asMilliseconds();
+                return mouse_middle == PressedState::RELEASED_FRAME;
+                break;
+            default:
+                *duration = -1;
+                return false;
         }
     }
     switch ((int)mouse_button)
     {
-    case 0:
-        return mouse_left == PressedState::RELEASED_FRAME;
-        break;
-    case 1:
-        return mouse_right == PressedState::RELEASED_FRAME;
-        break;
-    case 2:
-        return mouse_middle == PressedState::RELEASED_FRAME;
-        break;
-    default:
-
-
-
-        return false;
+        case 0:
+            return mouse_left == PressedState::RELEASED_FRAME;
+            break;
+        case 1:
+            return mouse_right == PressedState::RELEASED_FRAME;
+            break;
+        case 2:
+            return mouse_middle == PressedState::RELEASED_FRAME;
+            break;
+        default:
+            return false;
     }
+}
+
+bool Input::get_double_click()
+{
+    if (get_mouse_up())
+    {
+        if (time_since_left_clicked.restart().asSeconds() < .5f)
+            return true;
+    }
+    return false;
 }
 
 float Input::get_mouse_scroll_delta()
@@ -254,7 +266,7 @@ Input::Input()
 {
     EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_INITIALIZE_, this);
     EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_UPDATE_, this);
-    EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_LATE_UPDATE_, this);
+    EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_RESET_UPDATE_, this);
     EventSystem::Instance()->subscribe(EventID::_SYSTEM_INPUT_UPDATE_SCROLL_, this);
 
 }
@@ -343,71 +355,67 @@ void Input::update_key_input()
 
 void Input::update_mouse_states()
 {
-    if (mouse_left == PressedState::PRESSED_FRAME)
-        mouse_left = PressedState::PRESSED;
-    if (mouse_left == PressedState::RELEASED_FRAME)
-        mouse_left = PressedState::UNPRESSED;
-
-    if (mouse_right == PressedState::PRESSED_FRAME)
-        mouse_right = PressedState::PRESSED;
-    if (mouse_right == PressedState::RELEASED_FRAME)
-        mouse_right = PressedState::UNPRESSED;
-
-    if (mouse_middle == PressedState::PRESSED_FRAME)
-        mouse_middle = PressedState::PRESSED;
-    if (mouse_middle == PressedState::RELEASED_FRAME)
-        mouse_middle = PressedState::UNPRESSED;
-
+    switch (mouse_left)
+    {
+        case bm98::core::Input::PressedState::PRESSED_FRAME:
+            mouse_left = PressedState::PRESSED;
+            break;
+        case bm98::core::Input::PressedState::RELEASED_FRAME:
+            mouse_left = PressedState::UNPRESSED;
+            break;
+    }
+    switch (mouse_right)
+    {
+        case bm98::core::Input::PressedState::PRESSED_FRAME:
+            mouse_right = PressedState::PRESSED;
+            break;
+        case bm98::core::Input::PressedState::RELEASED_FRAME:
+            mouse_right = PressedState::UNPRESSED;
+            break;
+    }
+    switch (mouse_middle)
+    {
+        case bm98::core::Input::PressedState::PRESSED_FRAME:
+            mouse_middle = PressedState::PRESSED;
+            break;
+        case bm98::core::Input::PressedState::RELEASED_FRAME:
+            mouse_middle = PressedState::UNPRESSED;
+            break;
+    }
 }
 
 void Input::update_key_states()
 {
-    for (auto it : key_states)
+    for (auto& it : key_states)
     {
-        //check if frame needs to change
-        if (it.second == PressedState::PRESSED_FRAME)
-            it.second = PressedState::PRESSED;
-        if (it.second == PressedState::RELEASED_FRAME)
-            it.second = PressedState::UNPRESSED;
+        switch (it.second)
+        {
+            case PressedState::PRESSED_FRAME:
+                it.second = PressedState::PRESSED;
+                break;
+            case PressedState::RELEASED_FRAME:
+                it.second = PressedState::UNPRESSED;
+                break;
+        }
     }
 }
 
-void Input::update_mouse_deltas()
-{
-    float delta = Time::Instance()->delta_time();
-    if (mouse_left == PressedState::PRESSED_FRAME || mouse_left == PressedState::PRESSED)
-        mouse_left_delta += delta;
-    else
-    {
-        mouse_left_delta = 0.f;
-    }
-    if (mouse_right == PressedState::PRESSED_FRAME || mouse_left == PressedState::PRESSED)
-        mouse_right_delta += delta;
-    else
-        mouse_right_delta = 0.f;
-
-    if (mouse_middle == PressedState::PRESSED_FRAME || mouse_left == PressedState::PRESSED)
-        mouse_middle_delta += delta;
-    else
-        mouse_middle_delta = 0.f;
-
-}
 void Input::handle_event(Event* event)
 {
     switch (event->get_event_id())
     {
-    case EventID::_SYSTEM_INPUT_INITIALIZE_:
-        init(static_cast<sf::RenderWindow*>(event->get_parameter()));
-        break;
-    case EventID::_SYSTEM_INPUT_UPDATE_:
-        update();
-        break;
-    case EventID::_SYSTEM_INPUT_LATE_UPDATE_:
-        late_update();
-        break;
-    case EventID::_SYSTEM_INPUT_UPDATE_SCROLL_:
-        update_mouse_scroll(*static_cast<int*>(event->get_parameter()));
-        break;
+        case EventID::_SYSTEM_INPUT_INITIALIZE_:
+            init(static_cast<sf::RenderWindow*>(event->get_parameter()));
+            break;
+        case EventID::_SYSTEM_INPUT_UPDATE_:
+            update();
+            break;
+        case EventID::_SYSTEM_INPUT_RESET_UPDATE_:
+            reset_update();
+            break;
+        case EventID::_SYSTEM_INPUT_UPDATE_SCROLL_:
+            update_mouse_scroll(*static_cast<int*>(event->get_parameter()));
+            break;
     }
 }
 
@@ -433,12 +441,9 @@ void Input::update_mouse_scroll(int scroll_delta)
     mouse_scroll_delta = scroll_delta;
 }
 
-void Input::late_update()
+void Input::reset_update()
 {
-    update_mouse_deltas();
-
     update_mouse_states();
-
     update_key_states();
 
     mouse_scroll_delta = 0.f;

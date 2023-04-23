@@ -64,8 +64,11 @@ public:
 	virtual void unserialize_json(Json::Value obj) override;
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
+	virtual void editor_update() override;
 
 	virtual void set_active(bool active) override;
+
+	virtual void set_world_position(Vector2f pos);
 
 	FloatConvex get_collider_bounds();
 	const bool is_trigger() const;
@@ -75,7 +78,7 @@ protected:
 	FloatConvex collider_bounds;
 
 	bool trigger;
-	float offsetX, offsetY;
+	Vector2f offset;
 
 	CollisionDetection collision_check_type;
 	RigidbodyComponent* rb;

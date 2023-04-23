@@ -28,6 +28,8 @@ private:
 	sf::RectangleShape background;
 	sf::RectangleShape container;
 
+	float previous_time_scale;
+
 	std::map<std::string, GUI::Button*> buttons;
 
 };

@@ -13,8 +13,6 @@ public:
 
 	void reset();
 
-	void egg() {};
-
 	/// <returns>Number of frames since last reset.</returns>
 	int get_count() { return frame_count; }
 	/// <returns>Duration in seconds since last reset.</returns>

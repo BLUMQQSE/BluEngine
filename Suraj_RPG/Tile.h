@@ -37,7 +37,6 @@ public:
 	void set_texture(std::string source_key, const sf::Texture* texture, const sf::IntRect rect);
 	void set_collision(bool collision);
 	void set_type(TileNS::Type tile_type);
-	void set_position(Vector2i pos);
 
 	void add_animated_sprite_component(std::string source_key, sf::Texture* texture,
 		sf::IntRect animation_rect,

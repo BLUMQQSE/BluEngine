@@ -32,10 +32,12 @@ public:
 	void toggle_editor(EditorPanel panel_to_toggle);
 	void update();
 	virtual void update_sfml(sf::Event sfEvent);
+	virtual void add_to_buffer(sf::View* view);
 
 	// Inherited via Listener
 	virtual void handle_event(core::Event* event) override;
 
+	GameObject* get_selected_gameobject() { return selected_gameobject; }
 
 private:
 	GUI::Panel* heir_panel;
@@ -69,9 +71,12 @@ private:
 		std::vector<Editor::SerializedVar>>> variables_in_components;
 
 	GameObject* selected_gameobject;
+	GUI::TransformMover* transform_mover;
 
 	//GUI::TextureSelector* texture_selector;
 	std::unique_ptr<GUI::TextureSelector> texture_selector;
+
+	void set_selected_gameobject(GameObject* object);
 
 	void create_heir_panel();
 	void update_heir_panel();

@@ -16,18 +16,18 @@ BoxColliderComponent::BoxColliderComponent()
 BoxColliderComponent::BoxColliderComponent(float offset_x,
 	float offset_y, float width, float height, bool trigger,
 	CollisionDetection collision_check_type)
-	: width(width), height(height)
 {
-	this->offsetX = offset_x;
-	this->offsetY = offset_y;
+	this->offset.x = offset_x;
+	this->offset.y = offset_y;
+	offset = Vector2f(width, height);
 	this->trigger = trigger;
 	this->active = true;
 	this->collision_check_type = collision_check_type;
 
 	collider_bounds = FloatConvex::Polygon
 	(
-		Vector2f(game_object->get_world_position().x + offsetX,
-			game_object->get_world_position().y + offsetY),
+		Vector2f(game_object->get_world_position().x + offset.x,
+			game_object->get_world_position().y + offset.y),
 		{ {Vector2f(0, 0), Vector2f(0, height), Vector2f(width, height), Vector2f(width, 0)} }
 	);
 
@@ -53,7 +53,7 @@ void BoxColliderComponent::init()
 	else
 		collider_bounds.setOutlineColor(sf::Color(255, 20, 20, 200));
 
-	collider_bounds.set_position(game_object->get_world_position());
+	//collider_bounds.set_position(game_object->get_world_position());
 }
 
 void BoxColliderComponent::awake()
@@ -67,8 +67,8 @@ void BoxColliderComponent::update()
 
 void BoxColliderComponent::fixed_update()
 {
-	collider_bounds.set_position(Vector2f(game_object->get_world_position().x + offsetX,
-		game_object->get_world_position().y + offsetY));
+	collider_bounds.set_position(Vector2f(game_object->get_world_position().x + offset.x,
+		game_object->get_world_position().y + offset.y));
 }
 
 void BoxColliderComponent::add_to_buffer(sf::View* view)
@@ -85,8 +85,8 @@ Json::Value BoxColliderComponent::serialize_json()
 
 	obj = ColliderComponent::serialize_json();
 
-	obj["hitbox-width"] = width;
-	obj["hitbox-height"] = height;
+	obj["hitbox-width"] = size.x;
+	obj["hitbox-height"] = size.y;
 
 	return obj;
 }
@@ -94,8 +94,8 @@ void BoxColliderComponent:: unserialize_json(Json::Value obj)
 {
 	ColliderComponent::unserialize_json(obj);
 
-	width = obj["hitbox-width"].asFloat();
-	height = obj["hitbox-height"].asFloat();
+	size.x = obj["hitbox-width"].asFloat();
+	size.y = obj["hitbox-height"].asFloat();
 
 }
 
@@ -107,11 +107,29 @@ std::vector<Editor::SerializedVar> BoxColliderComponent::get_editor_values()
 
 	variables = ColliderComponent::get_editor_values();
 
-	variables.push_back(Editor::SerializedVar("width", & width, Var::Type::Float));
-	variables.push_back(Editor::SerializedVar("height", &height, Var::Type::Float));
-
+	variables.push_back(Editor::SerializedVar("size", (void*)&size, Var::Type::Vector2f));
 
 	return variables;
+}
+
+void BoxColliderComponent::editor_update()
+{
+	collider_bounds.setFillColor(sf::Color::Transparent);
+	collider_bounds.setOutlineThickness(-1.f);
+	if (trigger)
+		collider_bounds.setOutlineColor(sf::Color(135, 235, 162, 200));
+	else
+		collider_bounds.setOutlineColor(sf::Color(255, 20, 20, 200));
+
+	collider_bounds = FloatConvex::Rectangle(game_object->get_world_position() + offset, size);
+	
+	collider_bounds.setFillColor(sf::Color::Transparent);
+	collider_bounds.setOutlineThickness(-1.f);
+	if (trigger)
+		collider_bounds.setOutlineColor(sf::Color(135, 235, 162, 150));
+	else
+		collider_bounds.setOutlineColor(sf::Color(255, 20, 20, 150));
+	//collider_bounds.set_position(game_object->get_world_position());
 }
 
 bool BoxColliderComponent::check_intersect(const sf::FloatRect& frect)
@@ -138,14 +156,14 @@ void BoxColliderComponent::set_hitbox(float width, float height,
 	float offset_x, float offset_y)
 {
 	active = true;
-	this->offsetX = offset_x;
-	this->offsetY = offset_y;
-	this->width = width;
-	this->height = height;
+	this->offset.x = offset_x;
+	this->offset.y = offset_y;
+	this->size.x = width;
+	this->size.y = height;
 	collider_bounds = FloatConvex::Polygon
 	(
-		Vector2f(game_object->get_world_position().x + offsetX,
-			game_object->get_world_position().y + offsetY),
+		Vector2f(game_object->get_world_position().x + offset.x,
+			game_object->get_world_position().y + offset.y),
 		{ {Vector2f(0, 0), Vector2f(width, 0), Vector2f(width, height), Vector2f(0, height)} }
 	);
 
@@ -166,7 +184,7 @@ void BoxColliderComponent::set_trigger(bool trig)
 
 Vector2f BoxColliderComponent::get_offset()
 {
-	return Vector2f(offsetX, offsetY);
+	return offset;
 }
 
 }

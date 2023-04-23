@@ -149,9 +149,15 @@ int Physics::OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask
 	GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions)
 {
 	FloatConvex circle = FloatConvex::Circle(pos, radius, 30);
-	circle.setFillColor(sf::Color::Transparent);
-	circle.setOutlineColor(sf::Color::Cyan);
-	circle.setOutlineThickness(1);
+
+	return OverlapConvex(circle, mask, object_to_ignore, collisions);
+}
+
+int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions)
+{
+	shape.setFillColor(sf::Color::Transparent);
+	shape.setOutlineColor(sf::Color::Cyan);
+	shape.setOutlineThickness(1);
 
 	std::vector<GameObject*> rel = object_to_ignore->get_all_relatives();
 
@@ -159,36 +165,36 @@ int Physics::OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask
 	{
 		if (!mask.layers[static_cast<int>(objects[i][0].first->get_info().layer)])
 			continue;
-			
+
 		if (objects[i][0].first == object_to_ignore)
 			continue;
 
 		ColliderComponent* c = objects[i][0].first->get_component_of_type<ColliderComponent>();
-		
+
 		if (!c)
 			continue;
 
 		if (rel.size() != 0)
 			if (std::find(rel.begin(), rel.end(), objects[i][0].first) != rel.end())
 				continue;
-		
+
 		if (dynamic_cast<TilemapColliderComponent*>(c))
 		{
-			if (dynamic_cast<TilemapColliderComponent*>(c)->intersects(circle, mask))
+			if (dynamic_cast<TilemapColliderComponent*>(c)->intersects(shape, mask))
 			{
 				collisions.push_back(c);
 			}
 		}
 		else
 		{
-			if (FloatConvex::Intersection(circle, c->get_collider_bounds()) != Vector2f::Infinity())
+			if (FloatConvex::Intersection(shape, c->get_collider_bounds()) != Vector2f::Infinity())
 			{
 				collisions.push_back(c);
 			}
 		}
 
 	}
-	Renderer::Instance()->add_gizmo(circle);
+	Renderer::Instance()->add_gizmo(shape);
 	return collisions.size();
 }
 

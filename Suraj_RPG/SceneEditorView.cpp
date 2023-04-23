@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "TextureSelector.h"
+#include "TilemapComponent.h"
 namespace bm98
 {
 SceneEditorView::SceneEditorView()
@@ -15,11 +16,13 @@ SceneEditorView::SceneEditorView()
 	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED, this);
-	
+
 	init();
 	create_scene_editor_panel();
 
 	texture_selector = std::make_unique<GUI::TextureSelector>();
+	transform_mover = new GUI::TransformMover(Vector2f(0,0), Vector2f(80, 20));
+	transform_mover->set_render(true);
 }
 
 SceneEditorView::~SceneEditorView()
@@ -27,17 +30,18 @@ SceneEditorView::~SceneEditorView()
 	delete heir_panel;
 	delete inspec_panel;
 	delete scene_editor_panel;
+	delete transform_mover;
 }
 
 void SceneEditorView::init()
 {
 	heir_panel = new GUI::Panel(0, 0, Renderer::Instance()->get_window_size().x / 6,
 		Renderer::Instance()->get_window_size().y);
-	inspec_panel = new GUI::Panel(Renderer::Instance()->get_window_size().x - 
+	inspec_panel = new GUI::Panel(Renderer::Instance()->get_window_size().x -
 		Renderer::Instance()->get_window_size().x / 6, 0,
 		Renderer::Instance()->get_window_size().x / 6, Renderer::Instance()->get_window_size().y);
 
-	scene_editor_panel = new GUI::Panel(heir_panel->get_width(), Renderer::Instance()->get_window_size().y - 200.f, 
+	scene_editor_panel = new GUI::Panel(heir_panel->get_width(), Renderer::Instance()->get_window_size().y - 200.f,
 		inspec_panel->get_position().x - (heir_panel->get_position().x + heir_panel->get_width()), 200.f);
 
 	heir_panel->set_render(heir_active);
@@ -72,13 +76,16 @@ void SceneEditorView::toggle_editor(EditorPanel panel_to_toggle)
 	switch (panel_to_toggle)
 	{
 	case EditorPanel::ALL:
-		if (heir_active || inspec_active)
+		if (heir_active || inspec_active || scene_editor_active)
 		{
 			heir_active = false;
 			heir_panel->set_render(false);
 
 			inspec_active = false;
 			inspec_panel->set_render(false);
+
+			scene_editor_active = false;
+			scene_editor_panel->set_render(false);
 		}
 		else
 		{
@@ -87,6 +94,9 @@ void SceneEditorView::toggle_editor(EditorPanel panel_to_toggle)
 
 			inspec_active = true;
 			inspec_panel->set_render(true);
+
+			scene_editor_active = true;
+			scene_editor_panel->set_render(true);
 		}
 		break;
 	case EditorPanel::HEIRARCHY:
@@ -102,6 +112,22 @@ void SceneEditorView::toggle_editor(EditorPanel panel_to_toggle)
 
 void SceneEditorView::update()
 {
+	for (auto& go : objects_in_scene_map)
+	{
+		if (go.second->has_component<TilemapComponent>())
+		{
+			go.second->get_component<TilemapComponent>().update();
+		}
+	}
+	if (selected_gameobject)
+	{
+		transform_mover->update();
+		if (transform_mover->is_held())
+		{
+			selected_gameobject->set_world_position(transform_mover->get_position());
+			create_inspec_panel();
+		}
+	}
 	if (heir_active)
 	{
 		heir_panel->update();
@@ -110,18 +136,22 @@ void SceneEditorView::update()
 	if (inspec_active)
 	{
 		inspec_panel->update();
-		update_inspec_panel();
+		//update_inspec_panel();
 
 		if (selected_gameobject
 			&&
 			(
 				Input::Instance()->get_action_down("ENTER") ||
 				Input::Instance()->get_action_down("SPACE")) ||
-				Input::Instance()->get_mouse_down(Input::Mouse::LEFT)
+				Input::Instance()->get_mouse_down() ||
+				Input::Instance()->get_mouse_up()
 			)
 		{
 			// Reinitialize gameobject to update any changes which may have occured
+			update_inspec_panel();
 			selected_gameobject->editor_update();
+			transform_mover->set_position(selected_gameobject->get_world_position().x, selected_gameobject->get_world_position().y);
+			
 		}
 	}
 	if (scene_editor_active)
@@ -139,6 +169,11 @@ void SceneEditorView::update_sfml(sf::Event sfEvent)
 		inspec_panel->update_sfml(sfEvent);
 	if (scene_editor_active)
 		scene_editor_panel->update_sfml(sfEvent);
+}
+
+void SceneEditorView::add_to_buffer(sf::View* view)
+{
+	transform_mover->set_view(view);
 }
 
 void SceneEditorView::handle_event(Event* event)
@@ -161,13 +196,25 @@ void SceneEditorView::handle_event(Event* event)
 		create_heir_panel();
 		break;
 	case EventID::GAMEOBJECT_COMPONENT_ADDED:
-		if(selected_gameobject)
+		if (selected_gameobject)
 			create_inspec_panel();
 		break;
 	case EventID::GAMEOBJECT_COMPONENT_REMOVED:
-		if(selected_gameobject)
+		if (selected_gameobject)
 			create_inspec_panel();
 		break;
+	}
+}
+
+void SceneEditorView::set_selected_gameobject(GameObject* object)
+{
+	if (!object)
+	{
+		selected_gameobject = nullptr;
+	}
+	else
+	{
+		selected_gameobject = object;
 	}
 }
 
@@ -205,9 +252,13 @@ void SceneEditorView::create_heir_panel()
 
 	heir_panel->set_render(heir_active);
 
-	if (!selected_gameobject)
-		selected_gameobject = objs[0];
-
+	if (!selected_gameobject && objs.size() > 0)
+	{
+		set_selected_gameobject(objs[0]);
+		transform_mover->set_position(selected_gameobject->get_world_position().x, 
+					selected_gameobject->get_world_position().y);
+		transform_mover->set_render(true);
+	}
 }
 
 void SceneEditorView::update_heir_panel()
@@ -215,10 +266,10 @@ void SceneEditorView::update_heir_panel()
 	// nothing to update
 	if (objects_in_scene_map.size() == 0)
 	{
-		selected_gameobject = nullptr;
+		set_selected_gameobject(nullptr);
 		return;
 	}
-	if (gameobject_held == true && core::Input::Instance()->get_mouse_up(core::Input::Mouse::LEFT))
+	if (gameobject_held == true && core::Input::Instance()->get_mouse_up())
 	{
 		if (heir_panel->mouse_in_bounds())
 		{
@@ -251,20 +302,24 @@ void SceneEditorView::update_heir_panel()
 		}
 	}
 
-	if (gameobject_held == true && !Input::Instance()->get_mouse(core::Input::Mouse::LEFT))
+	if (gameobject_held == true && !Input::Instance()->get_mouse())
 	{
 		gameobject_held = false;
 		return;
 	}
 
-	if (Input::Instance()->get_mouse_down(core::Input::Mouse::LEFT))
+	if (Input::Instance()->get_mouse_down())
 	{
 		for (auto& ois : objects_in_scene_map)
 		{
 			if (ois.first->mouse_in_bounds())
 			{
 				// TODO: need to reset or clear texture selector
-				selected_gameobject = ois.second;
+				set_selected_gameobject(ois.second);
+				transform_mover->set_position(selected_gameobject->get_world_position().x, 
+					selected_gameobject->get_world_position().y);
+				transform_mover->set_render(true);
+				
 				gameobject_held = true;
 				create_inspec_panel();
 			}
@@ -291,7 +346,7 @@ void SceneEditorView::create_inspec_panel()
 	{
 		if (components[i]->get_editor_values().size() > 0)
 			selected_gameobject_components.push_back(std::make_pair(components[i], components[i]->get_editor_values()));
-	
+
 	}
 
 	int component_panel_height = 0;
@@ -380,19 +435,27 @@ void SceneEditorView::update_scene_editor_panel()
 			return;
 
 		SceneManager::Instance()->load_scene_prefab(input);
+		set_selected_gameobject(nullptr);
+		create_heir_panel();
 
 	}
 	else if (scene_editor_panel->get_button("save_file")->is_pressed())
 	{
-		SceneManager::Instance()->save_scene_prefab();	
+		SceneManager::Instance()->save_scene_prefab();
 	}
 	else if (scene_editor_panel->get_button("add_component")->is_pressed())
 	{
 		if (!selected_gameobject)
 			return;
 		input = scene_editor_panel->get_inputbox("component_name")->get_text();
-		
-		selected_gameobject->editor_add_component(input);
+
+		//Component* c = 
+			selected_gameobject->editor_add_component(input);
+		selected_gameobject->init();
+		//c->init();
+		//c->awake();
+		//c->start();
+		selected_gameobject->editor_update();
 	}
 	else if (scene_editor_panel->get_button("remove_component")->is_pressed())
 	{
@@ -402,6 +465,7 @@ void SceneEditorView::update_scene_editor_panel()
 		input = scene_editor_panel->get_inputbox("component_name")->get_text();
 
 		selected_gameobject->editor_remove_component(input);
+		create_inspec_panel();
 	}
 	else if (scene_editor_panel->get_button("add_gameobject")->is_pressed())
 	{
@@ -415,7 +479,7 @@ void SceneEditorView::update_scene_editor_panel()
 			return;
 		SceneManager::Instance()->destroy_gameobject(selected_gameobject);
 		clear_inspec_panel();
-		selected_gameobject = nullptr;
+		set_selected_gameobject(nullptr);
 	}
 
 	//scene_editor_panel->set_render(scene_editor_active);
@@ -455,7 +519,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Float:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 
 			GUI::InputBox* input_box = new GUI::InputBox(150, height, 40, 12, 12,
@@ -473,7 +537,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Bool:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 
 			GUI::Checkbox* check_box = new GUI::Checkbox(150, height, 12);
@@ -488,7 +552,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Dropdown:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 
 			GUI::DropDownList* drop_down = new GUI::DropDownList(150, height, 80, 15,
@@ -505,7 +569,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Vector2f:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 
 			GUI::InputBox* x = new GUI::InputBox(110, height, 40, 12, 12,
@@ -588,7 +652,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Header:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 16, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 16,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 
 			height += 20;
@@ -596,7 +660,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::String:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12, 
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
 
 			GUI::InputBox* input_box = new GUI::InputBox(70, height, 140, 12, 12,
@@ -633,7 +697,7 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 		// here handle updating for all objects in scene
 
 		if (vars.second[i].variable == nullptr)
-				continue;
+			continue;
 
 		switch (vars.second[i].type)
 		{
@@ -646,7 +710,7 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 		}
 		case Var::Type::Float:
 		{
-			float value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text_value();			
+			float value = dynamic_cast<GUI::InputBox*>(vars.first->get_element(vars.second[i].name))->get_text_value();
 			*static_cast<float*>(vars.second[i].variable) = value;
 
 			break;
@@ -669,9 +733,9 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 		case Var::Type::Vector2f:
 		{
 
-			float x_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("x_"+vars.second[i].name))->get_text_value();
-			float y_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("y_"+vars.second[i].name))->get_text_value();
-			
+			float x_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("x_" + vars.second[i].name))->get_text_value();
+			float y_value = dynamic_cast<GUI::InputBox*>(vars.first->get_element("y_" + vars.second[i].name))->get_text_value();
+
 			*static_cast<Vector2f*>(vars.second[i].variable) = Vector2f(x_value, y_value);
 			break;
 		}

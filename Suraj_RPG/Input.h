@@ -1,5 +1,6 @@
 #pragma once
 #include "EventSystem.h"
+#include "Timer.h"
 namespace bm98::core
 {
 class Input : public Listener
@@ -60,14 +61,14 @@ public:
 	/// <param name="duration">: Duration the key has been pressed thus
 	/// far. If not provided, no duration is set.</param>
 	/// <returns>True if mouse is held down this frame.</returns>
-	bool get_mouse(Mouse mouse_button, float* duration = nullptr);
+	bool get_mouse(Mouse mouse_button = Mouse::LEFT, float* duration = nullptr);
 	/// <summary>
 	/// Returns true if the specified mouse button is first pressed down 
 	/// this frame. The provided button corrisponds to sfml::Mouse button.
 	/// </summary>
 	/// <param name="mouse_button">: Mouse button being pressed.</param>
 	/// <returns>True if mouse is first pressed this frame.</returns>
-	bool get_mouse_down(Mouse mouse_button);
+	bool get_mouse_down(Mouse mouse_button = Mouse::LEFT);
 	/// <summary>
 	/// Returns true if the specified mouse button is first released 
 	/// this frame. The provided button corrisponds to sfml::Mouse button.
@@ -76,7 +77,10 @@ public:
 	/// <param name="duration">: Duration the key has been pressed thus
 	/// far. If not provided, no duration is set.</param>
 	/// <returns>True if mouse button is released this frame.</returns>
-	bool get_mouse_up(Mouse mouse_button, float* duration = nullptr);
+	bool get_mouse_up(Mouse mouse_button = Mouse::LEFT, float* duration = nullptr);
+	
+	bool get_double_click();
+
 	float get_mouse_scroll_delta();
 
 	void load_keybinds_from_file(std::string keybind_state_name,
@@ -142,10 +146,17 @@ private:
 	PressedState mouse_right;
 	PressedState mouse_middle;
 
-	float mouse_left_delta;
-	float mouse_right_delta;
-	float mouse_middle_delta;
+	//float mouse_left_delta;
+	//float mouse_right_delta;
+	//float mouse_middle_delta;
+
+	Timer mouse_left_timer;
+	Timer mouse_right_timer;
+	Timer mouse_middle_timer;
+
 	float mouse_scroll_delta;
+
+	Timer time_since_left_clicked;
 
 	bool in_input_box;
 
@@ -161,8 +172,6 @@ private:
 	void update_mouse_states();
 	void update_key_states();
 
-	void update_mouse_deltas();
-
 
 	// Inherited via Listener
 	virtual void handle_event(Event* event) override;
@@ -171,7 +180,10 @@ private:
 	void init(sf::RenderWindow* window_ptr);
 	void update();
 	void update_mouse_scroll(int scroll_delta);
-	void late_update();
+	/// <summary>
+	/// Progresses any Input states which were altered last frame.
+	/// </summary>
+	void reset_update();
 
 };
 

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Delay.h"
-
+#include "Time.h"
 namespace bm98
 {
 
@@ -17,9 +17,9 @@ void bm98::Delay::reset()
 
 void bm98::Delay::handle_event(Event* event)
 {
-	float delta = *static_cast<float*>(event->get_parameter());
+	//sf::Time time = *static_cast<sf::Time*>(event->get_parameter());
 
-	duration += delta;
+	duration += Time::Instance()->delta_time();
 	frame_count++;
 }
 

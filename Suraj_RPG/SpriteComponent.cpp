@@ -81,13 +81,18 @@ std::vector<Editor::SerializedVar> SpriteComponent::get_editor_values()
 {
 	std::vector<Editor::SerializedVar> values;
 	
-	values.push_back(Editor::SerializedVar("size", static_cast<void*>(&size), Var::Type::Vector2i));
-	values.push_back(Editor::SerializedVar("sorting_layer", static_cast<void*>(&get_sorting_layer()), Var::Type::Dropdown,
+	values.push_back(Editor::SerializedVar("size", (void*)&size, Var::Type::Vector2i));
+	values.push_back(Editor::SerializedVar("sorting_layer", (void*)&get_sorting_layer(), Var::Type::Dropdown,
 		Sorting::ToVector()));
-	values.push_back(Editor::SerializedVar("z_order", static_cast<void*>(&get_z_order()), Var::Type::Int));
-	values.push_back(Editor::SerializedVar("file_name", static_cast<void*>(&file_path), Var::Type::String));
+	values.push_back(Editor::SerializedVar("z_order", (void*)&get_z_order(), Var::Type::Int));
+	values.push_back(Editor::SerializedVar("file_name", (void*)&file_path, Var::Type::String));
 	
 	return values;
+}
+
+void SpriteComponent::editor_update()
+{
+	set_sprite(file_path);
 }
 
 sf::Sprite& SpriteComponent::get_sprite()

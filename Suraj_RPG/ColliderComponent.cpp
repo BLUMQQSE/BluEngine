@@ -35,8 +35,8 @@ Json::Value ColliderComponent::serialize_json()
 
 	obj["trigger"] = trigger;
 
-	obj["hitbox-offsetX"] = offsetX;
-	obj["hitbox-offsetY"] = offsetY;
+	obj["hitbox-offsetX"] = offset.x;
+	obj["hitbox-offsetY"] = offset.y;
 
 	obj["collider-bounds"] = collider_bounds.serialize_json();
 
@@ -50,8 +50,8 @@ void ColliderComponent::unserialize_json(Json::Value obj)
 	trigger = obj["trigger"].asBool();
 	active = obj["active"].asBool();
 
-	offsetX = obj["hitbox-offsetX"].asFloat();
-	offsetY = obj["hitbox-offsetY"].asFloat();
+	offset.x = obj["hitbox-offsetX"].asFloat();
+	offset.y = obj["hitbox-offsetY"].asFloat();
 
 	collider_bounds.unserialize_json(obj["collider-bounds"]);
 
@@ -63,11 +63,10 @@ std::vector<Editor::SerializedVar> ColliderComponent::get_editor_values()
 {
 	std::vector<Editor::SerializedVar> variables;
 
-	variables.push_back(Editor::SerializedVar("trigger", static_cast<void*>(&trigger), Var::Type::Bool));
-	variables.push_back(Editor::SerializedVar("X offset", static_cast<void*>(&offsetX), 
-		Var::Type::Float));
-	variables.push_back(Editor::SerializedVar("Y offset", static_cast<void*>(&offsetY),
-		Var::Type::Float));
+	variables.push_back(Editor::SerializedVar("trigger", static_cast<void*>(&trigger), 
+						Var::Type::Bool));
+	variables.push_back(Editor::SerializedVar("offset", (void*)&offset, 
+						Var::Type::Vector2f));
 	variables.push_back(Editor::SerializedVar("collision_check_type", &collision_check_type,
 		Var::Type::Dropdown, collisiondetection_to_vector()));
 
@@ -75,10 +74,20 @@ std::vector<Editor::SerializedVar> ColliderComponent::get_editor_values()
 	return variables;
 }
 
+void ColliderComponent::editor_update()
+{
+	collider_bounds.init();
+}
+
 void ColliderComponent::set_active(bool active)
 {
 	Component::set_active(active);
 	set_render(active);
+}
+
+void ColliderComponent::set_world_position(Vector2f pos)
+{
+	collider_bounds.set_position(pos + offset);
 }
 
 FloatConvex ColliderComponent::get_collider_bounds()

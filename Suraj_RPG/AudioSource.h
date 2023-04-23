@@ -25,6 +25,7 @@ public:
     virtual void on_destroy() override;
 
     virtual std::vector<Editor::SerializedVar> get_editor_values() override;
+    virtual void editor_update() override;
 
     void play();
     void pause();

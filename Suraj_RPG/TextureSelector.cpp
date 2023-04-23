@@ -9,10 +9,43 @@
 namespace bm98::GUI
 {
 using namespace core;
-TextureSelector::TextureSelector(float x, float y, float width, float height, float grid_size,
-	const sf::Texture* texture_sheet, std::vector<std::string> tile_sets)
+TextureSelector::TextureSelector(float x, float y, float width, float height,
+	std::vector<std::string> tile_sets)
 {
-	init(x, y, width, height, grid_size, texture_sheet, tile_sets);	
+	this->font = &ResourceManager::Instance()->get_font("calibri-regular.ttf");
+	this->position = sf::Vector2f(x, y);
+
+
+	texture_selector_panel = new GUI::Panel(x, y, width + 20, height + 20);
+	sheet_panel = new GUI::Panel(x + 20, y + 60, width - 20, height - 60);
+
+	sheet_default_pos = Vector2f(x + 20, y + 60);
+	this->sheet.setPosition(sheet_default_pos);
+
+	set_sorting_layer(Sorting::Layer::UI, false);
+	set_z_order(0, false);
+	set_render(false);
+
+	init_view();
+
+	float left = this->sheet_panel->get_position().x / Renderer::Instance()->get_window_size().x;
+	float top = this->sheet_panel->get_position().y / Renderer::Instance()->get_window_size().y;
+	float w = this->sheet_panel->get_width() / Renderer::Instance()->get_window_size().x;
+	float h = this->sheet_panel->get_height() / Renderer::Instance()->get_window_size().y;
+
+	this->texture_view->setViewport(sf::FloatRect(left, top, w, h));
+
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&sheet, this));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&selector, this));
+
+	init_dropdowns(tile_sets);
+	init_checkboxes(20);
+
+
+	texture_selector_panel->set_render(get_render());
+	sheet_panel->set_render(get_render());
+
+	//init(x, y, width, height, grid_size, texture_sheet, tile_sets);	
 }
 
 TextureSelector::TextureSelector()
@@ -30,34 +63,14 @@ TextureSelector::~TextureSelector()
 	delete texture_view;
 }
 
-void TextureSelector::init(float x, float y, float width, float height, float grid_size, const sf::Texture* texture_sheet, std::vector<std::string> tile_sets)
+void TextureSelector::init(float grid_size, const sf::Texture* texture_sheet)
 {
-	this->font = &ResourceManager::Instance()->get_font("calibri-regular.ttf");
-	this->position = sf::Vector2f(x, y);
-	set_render(false);
-
-	texture_selector_panel = new GUI::Panel(x, y, width + 20, height + 20);
-	sheet_panel = new GUI::Panel(x + 20, y + 60, width - 20, height - 60);
-
+	active = true;
 	this->grid_size = grid_size;
 
 	this->sheet.setTexture(*texture_sheet);
 
-	this->sheet.setPosition(x + 20, y + 60);
-
-
-	if (this->sheet.getGlobalBounds().width > this->sheet_panel->get_width())
-	{
-		this->sheet.setTextureRect(sf::IntRect(0, 0, this->sheet_panel->get_width(),
-			this->sheet_panel->get_height()));
-	}
-	if (this->sheet.getGlobalBounds().height > this->sheet_panel->get_height())
-	{
-		this->sheet.setTextureRect(sf::IntRect(0, 0, this->sheet_panel->get_width(),
-			this->sheet_panel->get_height()));
-	}
-
-	this->selector.setPosition(x, y);
+	this->selector.setPosition(get_position());
 	this->selector.setSize(sf::Vector2f(grid_size, grid_size));
 	this->selector.setFillColor(sf::Color::Transparent);
 	this->selector.setOutlineThickness(1.f);
@@ -67,35 +80,14 @@ void TextureSelector::init(float x, float y, float width, float height, float gr
 	this->texture_rect.width = static_cast<int>(grid_size);
 	this->texture_rect.height = static_cast<int>(grid_size);
 
-	//this->texture_view = texture_view;
+}
 
-
-	//set_view(new sf::View());
-
-	set_sorting_layer(Sorting::Layer::UI, false);
-	set_z_order(0, false);
-
-	init_view();
-
-	float left = this->sheet_panel->get_position().x / Renderer::Instance()->get_window_size().x;
-	float top = this->sheet_panel->get_position().y / Renderer::Instance()->get_window_size().y;
-	float w = this->sheet_panel->get_width() / Renderer::Instance()->get_window_size().x;
-	float h = this->sheet_panel->get_height() / Renderer::Instance()->get_window_size().y;
-
-	this->texture_view->setViewport(sf::FloatRect(left, top, w, h));
-
-	//this->texture_view = texture_view;
-
-	// following two need reset to use text_view
-	Renderer::Instance()->add_ui(Renderer::RenderObject(&sheet, this));
-	Renderer::Instance()->add_ui(Renderer::RenderObject(&selector, this));
-
-	init_dropdowns(tile_sets);
-	init_checkboxes(20);
-
-
-	texture_selector_panel->set_render(get_render());
-	sheet_panel->set_render(get_render());
+void TextureSelector::set_inactive()
+{
+	active = false;
+	set_render(false);
+	texture_selector_panel->set_render(false);
+	sheet_panel->set_render(false);
 }
 
 const bool& TextureSelector::mouse_in_bounds()
@@ -133,6 +125,8 @@ const Sorting::Layer TextureSelector::get_layer() const
 
 void TextureSelector::toggle_hidden()
 {
+	if (!active)
+		return;
 	set_render(!get_render());
 	texture_selector_panel->set_render(get_render());
 	sheet_panel->set_render(get_render());
@@ -147,13 +141,9 @@ void TextureSelector::init_view()
 		500.f, 500.f
 	);
 
-	texture_view->setCenter(
-		Vector2f
-		(
-			1170, 270
-		)
-	);
-	
+	texture_view->setCenter(sheet_default_view_pos);
+
+	set_view(texture_view);
 }
 
 void TextureSelector::init_dropdowns(std::vector<std::string> tilesets_names)
@@ -183,18 +173,9 @@ void TextureSelector::set_texture_sheet(sf::Texture* texture)
 {
 	sf::Sprite sheet;
 	sheet.setTexture(*texture);
-	sheet.setPosition(this->sheet.getPosition());
-
-	if (sheet.getGlobalBounds().width > this->sheet_panel->get_width())
-	{
-		sheet.setTextureRect(sf::IntRect(0, 0, this->sheet_panel->get_width(),
-			sheet.getGlobalBounds().height));
-	}
-	if (sheet.getGlobalBounds().height > this->sheet_panel->get_height())
-	{
-		sheet.setTextureRect(sf::IntRect(0, 0, this->sheet_panel->get_width(),
-			sheet.getGlobalBounds().height));
-	}
+	sheet.setPosition(sheet_default_pos);
+	this->texture_view->setCenter(sheet_default_view_pos);
+	
 	this->sheet = sheet;
 }
 
@@ -299,19 +280,19 @@ void TextureSelector::update()
 
 	if (Input::Instance()->get_action("SHIFT") && Input::Instance()->get_mouse_scroll_delta() < 0)
 	{
-		texture_view->move(2000 * delta, 0);
+		texture_view->move(20000 * delta, 0);
 	}
 	else if (Input::Instance()->get_action("SHIFT") && Input::Instance()->get_mouse_scroll_delta() > 0)
 	{
-		texture_view->move(-2000 * delta, 0);
+		texture_view->move(-20000 * delta, 0);
 	}
 	else if (Input::Instance()->get_mouse_scroll_delta() < 0)
 	{
-		texture_view->move(0, 2000 * delta);
+		texture_view->move(0, 20000 * delta);
 	}
 	else if (Input::Instance()->get_mouse_scroll_delta() > 0)
 	{
-		texture_view->move(0, -2000 * delta);
+		texture_view->move(0, -20000 * delta);
 	}
 	/*
 	*  here need to change how this works entirely

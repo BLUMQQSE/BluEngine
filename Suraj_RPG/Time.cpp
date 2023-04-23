@@ -20,46 +20,41 @@ void Time::handle_event(Event* event)
 	case EventID::_SYSTEM_TIME_INITIALIZE_:
 		Instance()->init(*static_cast<float*>(event->get_parameter()));
 		break;
-	case EventID::_SYSTEM_TIME_APPLY_SCALE_:
-		Instance()->apply_time_scale();
-		break;
+	//case EventID::_SYSTEM_TIME_APPLY_SCALE_:
+	//	Instance()->apply_time_scale();
+	//	break;
 	case EventID::_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_:
 		Instance()->reset_time_since_state_change();
 		break;
 	case EventID::_SYSTEM_TIME_UPDATE_:
-		Instance()->update_delta(*static_cast<float*>(event->get_parameter()));
+		Instance()->update_delta(game_timer.restart().asSeconds());
 		break;
 	case EventID::_SYSTEM_TIME_RESET_FIXED_:
 		Instance()->reset_fixed_delta();
 		break;
-
+	case EventID::_SYSTEM_TIME_FIXED_UPDATE:
+		update_fixed_delta();
+		break;
 	}
 }
 
 void Time::init(float total_time)
 {
 	set_real_time(total_time);
-	
-	
 }
 
 void Time::update_delta(const float dt)
 {
-	delta = dt;
 	total_real_delta += dt;
-	fixed_delta += dt;
 	time += delta;
 	time_since_state_change_var += dt;
+
+	delta = dt * time_scale;
 }
 
 void Time::reset_fixed_delta()
 {
-	fixed_delta -= .02f;
-}
-
-void Time::apply_time_scale()
-{
-	delta *= time_scale;
+	fixed_delta -= .01f;
 }
 
 void Time::set_time_scale(const float& scale)
@@ -74,37 +69,46 @@ void Time::reset_time_since_state_change()
 
 const float Time::delta_time()
 {
-	return Instance()->delta;
+	return delta;
 }
 
 const float Time::fixed_delta_time()
 {
-	return Instance()->fixed_delta;
+	return fixed_delta;
 }
 
 const float Time::get_time_scale()
 {
-	return Instance()->time_scale;
+	return time_scale;
 }
 
 const float Time::time_since_state_change()
 {
-	return Instance()->time_since_state_change_var;
+	return time_since_state_change_var;
 }
 
 const float Time::time_since_startup()
 {
-	return Instance()->time;
+	return time;
 }
 
 const float Time::total_real_time()
 {
-	return Instance()->total_real_delta;
+	return total_real_delta;
+}
+
+void Time::update_fixed_delta()
+{
+	if (game_fixed_timer.get_elapsed_time().asSeconds() >= .01f)
+	{
+		fixed_delta = game_fixed_timer.restart().asSeconds();
+	}
 }
 
 Time::Time()
 {
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_UPDATE_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_FIXED_UPDATE, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_APPLY_SCALE_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_RESET_FIXED_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_, this);
@@ -112,7 +116,7 @@ Time::Time()
 
 void Time::set_real_time(const float d)
 {
-	Instance()->total_real_delta = d;
+	total_real_delta = d;
 }
 
 }

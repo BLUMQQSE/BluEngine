@@ -270,7 +270,7 @@ void Scene::unserialize_json(Json::Value obj)
 	}
 
 	for (auto& go : objects_in_scene)
-		if(!go->is_initialized())
+		if (!go->is_initialized())
 			go->init();
 	for (auto& go : objects_in_scene)
 		if (!go->is_initialized())

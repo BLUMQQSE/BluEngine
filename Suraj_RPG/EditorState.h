@@ -35,6 +35,10 @@ protected:
     void init_views();
     //void init_fonts();
     void init_gui();
+
+    void init_tilemap_stuff(GameObject* selected_gameobject);
+    void remove_tilemap_stuff();
+
     void update_gui();
     void render_gui();
 
@@ -46,7 +50,7 @@ private:
     sf::View* prefab_view;
     sf::View* inspector_view;
 
-    GameObject* selected_gameobject = nullptr;
+    //GameObject* selected_gameobject = nullptr;
 
     float camera_move_speed;
     bool outline_render = true;
@@ -61,17 +65,12 @@ private:
     sf::RectangleShape selector_rect;
     sf::IntRect texture_rect;
 
-    sf::RectangleShape sidebar;
-
     std::map<std::string, GUI::Button*> buttons;
     PauseMenu* pmenu;
 
     GUI::TextureSelector* texture_selector;
 
-    //TilemapComponent* tilemap;
-    //GameObject* tilemap_go;
-
-    SceneEditorView* editor_view;
+    SceneEditorView* scene_editor;
     Scene* active_scene;
     sf::View* scene_view;
 

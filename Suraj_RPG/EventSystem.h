@@ -16,6 +16,7 @@ struct Caller
 #pragma region ENUM
 	enum class Name
 	{
+		GAMECLOCK,
 		GAMEOBJECT,
 		BOX_COLLIDER_COMPONENT,
 		CAPSULE_COLLIDER_COMPONENT,
@@ -188,6 +189,7 @@ enum class EventID
 
 	_SYSTEM_TIME_INITIALIZE_,
 	_SYSTEM_TIME_UPDATE_,
+	_SYSTEM_TIME_FIXED_UPDATE,
 	_SYSTEM_TIME_RESET_FIXED_,
 	_SYSTEM_TIME_APPLY_SCALE_,
 	_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_,
@@ -198,7 +200,7 @@ enum class EventID
 
 	_SYSTEM_INPUT_INITIALIZE_,
 	_SYSTEM_INPUT_UPDATE_,
-	_SYSTEM_INPUT_LATE_UPDATE_,
+	_SYSTEM_INPUT_RESET_UPDATE_,
 	_SYSTEM_INPUT_UPDATE_SCROLL_,
 
 #pragma endregion
@@ -210,6 +212,7 @@ enum class EventID
 	_SYSTEM_RENDERER_RENDER_,
 	_SYSTEM_RENDERER_CLEAR_,
 	_SYSTEM_RENDERER_CLEAR_GIZMOS_,
+	_SYSTEM_RENDERER_UPDATE_TOP_UI_,
 	_SYSTEM_RENDERER_FIXED_UPDATE_,
 #pragma endregion
 
@@ -268,7 +271,7 @@ enum class EventID
 	/// <summary>Scene has changed.</summary>
 	SCENE_CHANGE,
 	SCENE_GAMEOBJECT_ORDER_CHANGE,
-
+		
 #pragma endregion
 
 #pragma region Gameobject
@@ -296,6 +299,15 @@ enum class EventID
 	/// Returns animation name as a parameter, or nullptr if AnimatedSprite, and a Component as caller.
 	/// </summary>
 	ANIMATION_COMPLETE,
+
+#pragma endregion
+
+#pragma region GameClock
+
+	GAMECLOCK_MIN_CHANGE,
+	GAMECLOCK_HOUR_CHANGE,
+	GAMECLOCK_DAY_CHANGE,
+	GAMECLOCK_DAYPART_CHANGE,
 
 #pragma endregion
 
@@ -449,8 +461,6 @@ public:
 	/// frame.
 	/// </summary>
 	void push_event(EventID event_id, void* data = nullptr, Caller caller = Caller());
-
-	
 
 
 private:

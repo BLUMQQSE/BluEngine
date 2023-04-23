@@ -72,6 +72,12 @@ std::vector<Editor::SerializedVar> AudioSource::get_editor_values()
 	return values;
 }
 
+void AudioSource::editor_update()
+{
+	if (ResourceManager::Instance()->has_sound_buffer(current_audio_clip))
+		sound.setBuffer(ResourceManager::Instance()->get_sound_buffer(current_audio_clip));
+}
+
 void AudioSource::play()
 {
 	if (sound.getStatus() == sf::Sound::Status::Playing)

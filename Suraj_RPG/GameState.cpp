@@ -43,6 +43,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 	init_fonts();
 	init_view();
+	init_singletons();
 
 	//active_scene->set_view(view);
 
@@ -50,6 +51,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	pmenu->add_button("QUIT", 500.f, 500.f, "Quit Game");
 
 	editor_view = new GameEditorView();
+	//Time::Instance()->set_time_scale(5000.f);
 }
 
 GameState::~GameState()
@@ -85,16 +87,12 @@ void GameState::update_input()
 
 	if (Input::Instance()->get_action_down("ESCAPE"))
 	{
-		isRequestingQuit = true;
+		if (!paused) 
+			pause_state();
+		else
+			unpause_state();
+		pmenu->set_render(paused);
 	}
-	//if (Input::Instance()->get_action_down("MENU"))
-	//{
-	//	if (!paused) 
-	//		pause_state();
-	//	else
-	//		unpause_state();
-	//	pmenu->set_render(paused);
-	//}
 }
 
 void GameState::pause_state()
@@ -111,10 +109,13 @@ void GameState::unpause_state()
 
 void GameState::update()
 {
+	if (Input::Instance()->get_double_click())
+		Time::Instance()->set_time_scale(1);
 	//update editor first in case event occured last frame
 	editor_view->update();
 
-	GameClock::update();
+	GameClock::Instance()->update();
+
 	update_input();
 	if (!paused)
 	{
@@ -180,6 +181,12 @@ void GameState::init_view()
 	view->setSize(graphics_settings->resolution.width, graphics_settings->resolution.height);
 	view->setCenter(graphics_settings->resolution.width / 2.f, graphics_settings->resolution.height / 2.f);
 	view->zoom(1.f);
+}
+
+void GameState::init_singletons()
+{
+	GameClock::Instance()->init();
+	GUI::GameClockDisplay::Instance()->init();
 }
 
 }

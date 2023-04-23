@@ -271,6 +271,13 @@ FloatConvex FloatConvex::Polygon(sf::Vector2f position, std::vector<Vector2f> mo
 	return convex;
 }
 
+FloatConvex FloatConvex::Rectangle(sf::Vector2f position, sf::Vector2f size)
+{
+	return FloatConvex::Polygon(position, 
+								{Vector2f(0,0), Vector2f(size.x, 0), 
+								Vector2f(size.x, size.y), Vector2f(0, size.y)});
+}
+
 FloatConvex FloatConvex::Line(sf::Vector2f start, sf::Vector2f end, float thickness)
 {
 	FloatConvex convex;
@@ -329,6 +336,12 @@ void FloatConvex::init()
 	set_position(position);
 }
 
+bool FloatConvex::contains_point(Vector2f position)
+{
+	FloatConvex point = FloatConvex::Polygon(position, {Vector2f(0,0), Vector2f(1, 0), Vector2f(0.5f, 1)});
+	return FloatConvex::Intersection(*this, point) != Vector2f::Infinity();
+}
+
 void FloatConvex::move(float x, float y)
 {
 	set_position(Vector2f(position.x + x, position.y + y));
@@ -336,7 +349,6 @@ void FloatConvex::move(float x, float y)
 
 void FloatConvex::set_position(sf::Vector2f position)
 {
-	// TODO: Set position of model to positionwwwwwwww
 	this->position = position;
 	for (std::size_t i = 0; i != model.size(); i++)
 	{
@@ -358,9 +370,24 @@ void FloatConvex::rotate(float rot_offset)
 		float dif = rotation + rot_offset - 360;
 		rotation = dif;
 	}
+	else if (rotation + rot_offset < 0)
+	{
+		float dif = rotation + rot_offset;
+		rotation = 360 - std::abs(rotation + rot_offset);
+	}
 	else
 		rotation += rot_offset;
 	
+	for (int i = 0; i < getPointCount(); i++)
+	{
+		Vector2f new_point;
+
+		new_point.x = (std::cos(rot_offset) * getPoint(i).x) - (std::sin(rot_offset) + getPoint(i).y);
+		new_point.y = (std::sin(rot_offset) * getPoint(i).x) + (std::cos(rot_offset) * getPoint(i).y);
+
+		setPoint(i, new_point);
+	}
+
 	// TODO: implement rotation
 
 }
@@ -399,8 +426,6 @@ Vector2f FloatConvex::Intersection(FloatConvex a, FloatConvex b)
 		if(PreliminaryCircleCheck(a, b) == false)
 		return Vector2f::Infinity();
 	}
-	else if (PreliminaryRectCheck(a, b) == false)
-		return Vector2f::Infinity();
 	Vector2f normal = Vector2f::Infinity();
 	float depth = INFINITY;
 
@@ -511,11 +536,6 @@ void FloatConvex::unserialize_json(Json::Value obj)
 
 	set_position(position);
 
-}
-
-bool FloatConvex::PreliminaryRectCheck(FloatConvex a, FloatConvex b)
-{
-	return a.getGlobalBounds().intersects(b.getGlobalBounds());
 }
 
 bool FloatConvex::PreliminaryCircleCheck(FloatConvex a, FloatConvex b)

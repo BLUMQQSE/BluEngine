@@ -48,7 +48,6 @@ public:
 	/// <summary> Returns physical layer for layer. </summary>
 	PhysicsNS::Layer get_layer(Sorting::Layer layer);
 
-	std::vector<std::string> get_tileset_keys();
 	sf::Texture* get_texture();
 	void set_texture(std::string key);
 
@@ -57,7 +56,7 @@ public:
 	/// <summary>
 	/// Sets origin of tilemap.
 	/// </summary>
-	void set_position(Vector2i pos);
+	virtual void set_world_position(Vector2f pos) override;
 
 	/// <summary> Returns all Tiles in the map. </summary>
 	std::vector<std::vector<std::vector<Tile*> > > get_tiles();
@@ -69,6 +68,14 @@ public:
 	virtual void unserialize_json(Json::Value obj) override;
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
+	virtual void editor_update() override;
+
+	/// <summary>
+	/// Loads tile sheets used by the tilemap from tiles_file_path and loads them into
+	/// the tile_sheets map.
+	/// </summary>
+	static void LoadTileSheets();
+	static std::vector<std::string> GetTilesetKeys() { return tileset_keys; }
 
 private:
 	Vector2i position;
@@ -93,10 +100,10 @@ private:
 
 	std::string file_path = "";
 	
-	std::map<std::string, sf::Texture> tile_sheets;
-	std::string current_tileset_key;
-	std::vector<std::string> tileset_keys;
+	static std::map<std::string, sf::Texture> tile_sheets;
+	static std::vector<std::string> tileset_keys;
 
+	std::string current_tileset_key;
 
 	Sorting::Layer editor_active_layer;
 
@@ -104,11 +111,7 @@ private:
 	/// Updates textures of tilemap. Called after any alterations occur to the tilemap.
 	/// </summary>
 	void update_tilemap_changes();
-	/// <summary>
-	/// Loads tile sheets used by the tilemap from tiles_file_path and loads them into
-	/// the tile_sheets map.
-	/// </summary>
-	void load_tile_sheets();
+	
 	
 	/// <summary> Removes all Tiles from tilemap. </summary>
 	void clear_map();

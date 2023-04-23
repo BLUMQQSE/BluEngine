@@ -9,14 +9,13 @@ class TextureSelector :
 {
 public:
 	TextureSelector(float x, float y, float width, float height,
-		float grid_size, const sf::Texture* texture_sheet,
 		std::vector<std::string> tile_sets);
 	TextureSelector();
 	virtual ~TextureSelector();
 
-	void init(float x, float y, float width, float height,
-		float grid_size, const sf::Texture* texture_sheet, 
-		std::vector<std::string> tile_sets);
+	void init(float grid_size, const sf::Texture* texture_sheet);
+	void set_inactive();
+	bool get_active() { return active; }
 
 	const bool& mouse_in_bounds();
 	const bool& mouse_in_container();
@@ -52,9 +51,14 @@ public:
 protected:
 
 private:
+	// true if a the selector has been initialized, indicating a tilemap
+	// is involved
+	bool active = false;
 	sf::View* texture_view;
 	bool texture_view_render = false;
 
+	Vector2f sheet_default_view_pos = Vector2f(1170, 270);
+	Vector2f sheet_default_pos;
 	sf::Sprite sheet;
 	sf::Font* font;
 

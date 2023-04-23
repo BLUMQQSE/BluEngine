@@ -1,13 +1,14 @@
 #pragma once
 #include "globals.h"
 #include "EventSystem.h"
+#include "gui.h"
 namespace bm98
 {
 class GameState;
 class GameObject;
 class Scene;
-}
 
+}
 namespace bm98::core
 {
 class SceneManager : public Listener
@@ -66,9 +67,10 @@ private:
 	}
 	SceneManager& operator=(const SceneManager& rhs) {}
 
-
-
 	std::string scenes_file_path = "Data/Scenes/";
+	Scene* active_scene;
+
+	GUI::Label* label;
 
 	void destroy();
 	/// <summary>
@@ -82,7 +84,11 @@ private:
 
 	void init(Scene* active_scene);
 
-	Scene* active_scene;
+	bool load_finished = false;
+	Json::Value loaded_scene_data;
+
+	static void LoadSceneInBackground(std::string scene_name);
+
 
 };
 

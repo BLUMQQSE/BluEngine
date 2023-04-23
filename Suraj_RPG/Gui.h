@@ -21,7 +21,7 @@ public:
 	GUIObject() {}
 	virtual ~GUIObject() {}
 	virtual void update() {}
-	virtual void add_to_buffer(sf::View* = nullptr) {}
+	virtual void add_to_buffer(sf::View* view = nullptr) { set_view(view); }
 	virtual void set_position(float x, float y)
 	{
 		position.x = x;
@@ -49,7 +49,6 @@ public:
 	virtual ~Button();
 
 	virtual void update() override;
-	virtual void add_to_buffer(sf::View* view = nullptr) override;
 	virtual void set_position(float x, float y) override;
 
 	const bool is_pressed();
@@ -57,7 +56,7 @@ public:
 	const std::string get_text() const;
 	const short unsigned& get_id() const;
 	const float get_height() const;
-	const sf::Vector2f get_position() const;
+	sf::Vector2f get_position();
 
 	void set_pressed();
 	void set_text(const std::string text);
@@ -68,6 +67,7 @@ private:
 	short unsigned id;
 
 	sf::RectangleShape shape;
+	//FloatConvex shape;
 	sf::Font* font;
 	sf::Text text;
 
@@ -226,6 +226,8 @@ public:
 	virtual void add_to_buffer(sf::View* = nullptr) override;
 	virtual void set_position(float x, float y) override;
 	void set_text(std::string new_text);
+	std::string get_text() { return text_content.getString(); }
+	sf::Drawable* get_drawable() { return &text_content; }
 
 private:
 	sf::Text text_content;
@@ -316,5 +318,49 @@ private:
 	
 };
 
+class TransformMover : public GUIObject
+{
+public:
+	TransformMover(Vector2f position, Vector2f size);
+	virtual ~TransformMover();
+
+	virtual void update() override;
+	virtual void set_position(float x, float y) override;
+
+	inline bool is_held() { return horizontal_held || vertical_held; }
+	bool mouse_in_bounds();
+	virtual sf::Vector2f get_position() override;
+
+private:
+	std::array<FloatConvex, 2> horizontal_arrow;
+	std::array<FloatConvex, 2> vertical_arrow;
+	FloatConvex full_movement;
+
+	Vector2f offset = Vector2f::Zero();
+	bool horizontal_held;
+	bool vertical_held;
+	Vector2f size;
+
+};
+
+class ProgressBar : public GUIObject
+{
+public:
+	ProgressBar();
+	virtual ~ProgressBar();
+
+	void set_position(Vector2f position);
+	void set_size(Vector2f size);
+	void set_color(sf::Color color);
+	void set_percentage(float percentage);
+
+private:
+	FloatConvex progress_shape;
+	FloatConvex full_state_shape;
+
+	float percentage = 100;
+	Vector2f size = Vector2f::Zero();
+	Vector2f position = Vector2f::Zero();
+};
 
 }

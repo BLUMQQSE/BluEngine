@@ -191,6 +191,8 @@ public:
 	///  Will contain the least optimized collision detection, and should be avoided when possible.
 	/// </summary>
 	static FloatConvex Polygon(sf::Vector2f position, std::vector<Vector2f> model);
+	
+	static FloatConvex Rectangle(sf::Vector2f position, sf::Vector2f size);
 	/// <summary>
 	/// Creates a line. Line starts at start and ends at end.
 	/// </summary>
@@ -208,6 +210,8 @@ public:
 	static FloatConvex CombineShapes(FloatConvex a, FloatConvex b);
 
 	void init();
+
+	bool contains_point(Vector2f position);
 
 	void move(float x, float y);
 	void set_position(sf::Vector2f position);
@@ -243,7 +247,6 @@ private:
 	using ConvexShape::getPosition;
 	using ConvexShape::setPosition;
 
-	static bool PreliminaryRectCheck(FloatConvex a, FloatConvex b);
 	static bool PreliminaryCircleCheck(FloatConvex a, FloatConvex b);
 
 	static void SortPolyModel(FloatConvex& poly);

@@ -19,6 +19,8 @@ void Renderer::init(RenderTarget* render_target)
 	window = render_target;
 }
 
+
+
 void Renderer::add(RenderObject render_object)
 {
 	std::list<RenderObject>::iterator it;
@@ -127,6 +129,31 @@ void Renderer::remove_ui(sf::Drawable* drawable)
 
 }
 
+void Renderer::draw(sf::Drawable* drawable, sf::View* view, sf::Shader* shader)
+{
+	window->setView(window->getDefaultView());
+
+	if (view)
+		window->setView(*view);
+
+	if (shader)
+	{
+		window->draw(*drawable, shader);
+		return;
+	}
+	window->draw(*drawable);
+}
+
+void Renderer::clear_screen()
+{
+	window->clear();
+}
+
+void Renderer::display()
+{
+	static_cast<sf::RenderWindow*>(window)->display();
+}
+
 //Work in progress
 /*
 bool Renderer::top_ui_under_mouse(sf::Drawable* drawable, sf::View* view)
@@ -159,7 +186,7 @@ bool Renderer::top_ui_under_mouse(sf::Drawable* drawable, sf::View* view)
 
 void Renderer::refresh()
 {
-	Debug::Instance()->core_log("RENDERER REFRESHING: " + std::to_string(renderables.size()) + " objects");
+	//Debug::Instance()->core_log("RENDERER REFRESHING: " + std::to_string(renderables.size()) + " objects");
 	std::vector<RenderObject> objects;
 	for (auto& f : renderables)
 		objects.push_back(f);
@@ -170,37 +197,15 @@ void Renderer::refresh()
 
 void Renderer::render()
 {
-	std::list<RenderObject>::iterator it;
-	for (it = renderables.begin(); it != renderables.end(); ++it)
-	{
-		if (!it->render)
-			continue;
-
-		// reset view to default in case was changed in last loop
-		window->setView(window->getDefaultView());
-
-		if (it->view)
-			if (*it->view)
-				window->setView(**it->view);
-
-		if (it->shader)
-		{
-			window->draw(*it->drawable, *it->shader);
-			continue;
-		}
-		window->draw(*it->drawable);
-	}
-
+	render_list(renderables);
 	render_gizmos();
-	render_ui();
-	
-	
+	render_list(ui_renderables);
 }
 
-void Renderer::render_ui()
+void Renderer::render_list(std::list<RenderObject>& list)
 {
-	std::list<RenderObject>::iterator it;
-	for (it = ui_renderables.begin(); it != ui_renderables.end(); ++it)
+	std::list<Renderer::RenderObject>::iterator it;
+	for (it = list.begin(); it != list.end(); ++it)
 	{
 		if (!it->render)
 			continue;
@@ -242,6 +247,36 @@ void Renderer::clear_gizmos()
 
 void Renderer::fixed_update()
 {
+
+}
+
+void Renderer::update_top_ui()
+{
+	if (Input::Instance()->get_mouse_up(Input::Mouse::LEFT))
+	{
+		top_ui = nullptr;
+		return;
+	}
+	std::list<RenderObject>::reverse_iterator it;
+	for (it = ui_renderables.rbegin(); it != ui_renderables.rend(); ++it)
+	{
+		if (!it->render)
+			continue;
+
+		if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
+		{
+			if (it->has_global_bounds)
+			{
+				sf::Shape* shape = static_cast<sf::Shape*>(it->drawable);
+				if (shape->getGlobalBounds().contains(Input::Instance()->mouse_position(*it->view)))
+				{
+					top_ui = it->drawable;
+					return;
+				}
+			}
+		}
+	}
+
 }
 
 void Renderer::sort()
@@ -266,6 +301,7 @@ Renderer::Renderer()
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_, this);
 }
 
 void Renderer::handle_event(Event* event)
@@ -292,6 +328,9 @@ void Renderer::handle_event(Event* event)
 		break;
 	case EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_:
 		clear_gizmos();
+		break;
+	case EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_:
+		update_top_ui();
 		break;
 	}
 }

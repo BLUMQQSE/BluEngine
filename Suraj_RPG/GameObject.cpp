@@ -236,7 +236,8 @@ std::vector<Editor::SerializedVar> GameObject::get_editor_values()
 void GameObject::editor_update()
 {
 	Renderer::Instance()->refresh();
-	init_components();
+	for (std::size_t i = 0; i < components.size(); i++)
+		components[i]->editor_update();
 	set_world_position(position);
 }
 
@@ -609,107 +610,106 @@ void GameObject::start_components()
 		c->start();
 }
 
-void GameObject::editor_add_component(std::string component_name)
+Component* GameObject::editor_add_component(std::string component_name)
 {
 	if (component_name == "TilemapComponent")
 	{
-		add_component<TilemapComponent>();
+		return &add_component<TilemapComponent>();
 	}
 	else if (component_name == "TilemapColliderComponent")
 	{
-		add_component<TilemapColliderComponent>();
+		return &add_component<TilemapColliderComponent>();
 	}
 	else if (component_name == "SpriteComponent")
 	{
-		add_component<SpriteComponent>();
+		return &add_component<SpriteComponent>();
 	}
 	else if (component_name == "AnimatedSpriteComponent")
 	{
-		add_component<AnimatedSpriteComponent>();
+		return &add_component<AnimatedSpriteComponent>();
 	}
 	else if (component_name == "AnimationComponent")
 	{
-		add_component<AnimationComponent>();
+		return &add_component<AnimationComponent>();
 	}
 	else if (component_name == "BoxColliderComponent")
 	{
-		add_component<BoxColliderComponent>();
+		return &add_component<BoxColliderComponent>();
 	}
 	else if (component_name == "CapsuleColliderComponent")
 	{
-		add_component<CapsuleColliderComponent>();
+		return &add_component<CapsuleColliderComponent>();
 	}
 	else if (component_name == "ChildAnimationComponent")
 	{
-		add_component<ChildAnimationComponent>();
+		return &add_component<ChildAnimationComponent>();
 	}
 	else if (component_name == "RigidbodyComponent")
 	{
-		add_component<RigidbodyComponent>();
+		return &add_component<RigidbodyComponent>();
 	}
 	else if (component_name == "PlayerController")
 	{
-		add_component<PlayerController>();
+		return &add_component<PlayerController>();
 	}
 	else if (component_name == "ButtonComponent")
 	{
-		add_component<ButtonComponent>();
+		return &add_component<ButtonComponent>();
 	}
 	else if (component_name == "DontDestroyOnLoad")
 	{
-		add_component<DontDestroyOnLoad>();
+		return &add_component<DontDestroyOnLoad>();
 	}
 	else if (component_name == "SceneChange")
 	{
-		add_component<SceneChange>();
+		return &add_component<SceneChange>();
 	}
 	else if (component_name == "CameraComponent")
 	{
-		add_component<CameraComponent>();
+		return &add_component<CameraComponent>();
 	}
 	else if (component_name == "AudioSource")
 	{
-		add_component<AudioSource>();
+		return &add_component<AudioSource>();
 	}
 	else if (component_name == "Inventory")
 	{
-		add_component<Inventory>();
+		return &add_component<Inventory>();
 	}
 	else if (component_name == "CombatInventory")
 	{
-		add_component<CombatInventory>();
+		return &add_component<CombatInventory>();
 	}
 	else if (component_name == "InventoryWindow")
 	{
-		add_component<InventoryWindow>();
+		return &add_component<InventoryWindow>();
 	}
 	else if (component_name == "InventoryGUIController")
 	{
-		add_component<InventoryGUIController>();
+		return &add_component<InventoryGUIController>();
 	}
 	else if (component_name == "Interactor")
 	{
-		add_component<Interactor>();
+		return &add_component<Interactor>();
 	}
 	else if (component_name == "IInteractable")
 	{
-		add_component<IInteractable>();
+		return &add_component<IInteractable>();
 	}
 	else if (component_name == "ItemController")
 	{
-		add_component<ItemController>();
+		return &add_component<ItemController>();
 	}
 	else if (component_name == "WeaponController")
 	{
-		add_component<WeaponController>();
+		return &add_component<WeaponController>();
 	}
 	else if (component_name == "Chest")
 	{
-		add_component<Chest>();
+		return &add_component<Chest>();
 	}
 
-
-	handle_removed_components();
+	return nullptr;
 }
 
 void GameObject::editor_remove_component(std::string component_name)

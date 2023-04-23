@@ -34,10 +34,15 @@ public:
 
 //    FloatConvex circle2 = FloatConvex::circle(Vector2f(300, 600), 40);
 
+    GUI::ProgressBar* pb;
+
     FloatConvex square = FloatConvex::Polygon(Vector2f(300, 600),
-        {Vector2f(0,0), Vector2f(100, 0), Vector2f(100, 100), Vector2f(0, 100)});
+        { Vector2f(0,0), Vector2f(100, 0), Vector2f(100, 100), Vector2f(0, 100) });;
     
-    FloatConvex concave = FloatConvex::Polygon(Vector2f(600, 600),
+    bool holding = false;
+    Vector2f offset = Vector2f::Zero();
+
+    FloatConvex concave = FloatConvex::Polygon(Vector2f(0, 0),
         {Vector2f(0,0), Vector2f(200, 0), 
         Vector2f(200, 200), Vector2f(0, 200)});
 
@@ -64,7 +69,6 @@ private:
 
     std::vector<sf::VideoMode> modes;
 
-    GUI::InputBox* inp;
     void init_gui();
     void init_text();
     void init_drop_downs();

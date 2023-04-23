@@ -16,14 +16,14 @@ Timer::~Timer()
 
 }
 
-float Timer::restart()
+sf::Time Timer::restart()
 {
-	return delta_clock.restart().asSeconds() * 1000;
+	return delta_clock.restart();
 }
 
-float Timer::get_elapsed_time()
+sf::Time Timer::get_elapsed_time()
 {
-	return delta_clock.getElapsedTime().asSeconds() * 1000;
+	return delta_clock.getElapsedTime();
 }
 
 

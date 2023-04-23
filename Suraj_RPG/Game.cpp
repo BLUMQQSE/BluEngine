@@ -74,7 +74,10 @@ void Game::run()
     while (window->isOpen())
     {
         update_delta_time();
-        check_fixed_update();
+        if (Time::Instance()->fixed_delta_time() >= .01f)
+        {
+            fixed_update();
+        }
         update();
         render();
     }
@@ -117,16 +120,13 @@ void Game::update_sfml_events()
 
 void Game::update_delta_time()
 {
-    float dt = deltaClock.restart().asSeconds();
-    // Update delta time in Time class
-    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_, static_cast<void*>(&dt));
-    
-    // Apply time scale in Time class
-    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_APPLY_SCALE_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_FIXED_UPDATE);
+
     if (fps_averager == 1500)
     {
-        fps_averager = 0; 
-        fps = fps_col /1500;
+        fps_averager = 0;
+        fps = fps_col / 1500;
         fps_col = 0;
 
 
@@ -145,9 +145,13 @@ void Game::update_delta_time()
 
 void Game::update()
 {
+    // Progress states of Input which were changed last frame
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_RESET_UPDATE_);
+
     update_sfml_events();
 
     EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_);
 
     EventSystem::Instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
     if (!states.empty())
@@ -158,7 +162,6 @@ void Game::update()
         current_state->update();
         current_state->late_update();
 
-        EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_LATE_UPDATE_);
 
         if (states.top()->get_quit())
         {
@@ -184,25 +187,22 @@ void Game::update()
 
 }
 
-void Game::check_fixed_update()
+void Game::fixed_update()
 {
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_);
     if (!states.empty())
     {
-
-        if (Time::Instance()->fixed_delta_time() >= .01f)
-        {
-            EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_);
-            states.top()->fixed_update();
-            EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
-            EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);
-            EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_RESET_FIXED_);
-        }
+        states.top()->fixed_update();
     }
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_RESET_FIXED_);
+        
 }
 
 void Game::render()
 {
-    window->clear();
+    Renderer::Instance()->clear_screen();
 
     if (!states.empty())
         states.top()->render();

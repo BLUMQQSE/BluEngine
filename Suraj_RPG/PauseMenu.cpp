@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PauseMenu.h"
 #include "Renderer.h"
+#include "Time.h"
 namespace bm98
 {
 using namespace core;
@@ -40,6 +41,10 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font)
 
 PauseMenu::~PauseMenu()
 {
+	//if (get_render())
+	//{
+		//Time::Instance()->set_time_scale(previous_time_scale);
+	//}
 	Renderer::Instance()->remove(&background);
 	Renderer::Instance()->remove(&container);
 	Renderer::Instance()->remove(&menu_text);
@@ -90,12 +95,15 @@ void PauseMenu::add_to_buffer()
 }
 void PauseMenu::close()
 {
+	//Time::Instance()->set_time_scale(previous_time_scale);
 	set_render(false);
 	for (auto& i : buttons)
 		i.second->set_render(false);
 }
 void PauseMenu::open()
 {
+	//previous_time_scale = Time::Instance()->get_time_scale();
+	//Time::Instance()->set_time_scale(0.f);
 	set_render(true);
 	for (auto& i : buttons)
 		i.second->set_render(true);

@@ -23,6 +23,7 @@ public:
 	virtual void unserialize_json(Json::Value obj) override;
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
+	virtual void editor_update() override;
 
 	bool check_intersect(const sf::FloatRect& frect);
 	bool check_outer_intersect(const sf::FloatRect& frect);
@@ -46,7 +47,7 @@ private:
 	sf::View* view = nullptr;
 
 	//sf::CircleShape circle;
-	float width, height;
+	Vector2f size;
 
 };
 }

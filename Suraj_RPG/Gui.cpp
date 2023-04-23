@@ -24,6 +24,9 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 	short unsigned id)
 {
 	this->position = sf::Vector2f(x, y);
+	//shape = FloatConvex::Polygon(position,
+	//	{Vector2f(0, 0), Vector2f(width, 0), Vector2f(width, height), Vector2f(0, height)}
+	//);
 	this->id = id;
 	this->button_state = ButtonState::BTN_IDLE;
 	this->shape.setPosition(sf::Vector2f(x, y));
@@ -40,7 +43,7 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 		shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
 		shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height /*/ 2.f*/
 	);
-
+	
 	this->text_idle = text_idle;
 	this->text_hover = text_hover;
 	this->text_active = text_active;
@@ -57,10 +60,16 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(id+10, false);
-	Renderer::Instance()->add_ui(Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
-		get_z_order(), get_view_pointer()));
+
+	Renderer::RenderObject shape_renderable = Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	shape_renderable.has_global_bounds = true;
+
+	Renderer::Instance()->add_ui(shape_renderable);
+
 	Renderer::Instance()->add_ui(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
+
 }
 
 Button::~Button()
@@ -72,7 +81,7 @@ Button::~Button()
 void Button::update()
 {
 	if (shape.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())) &&
-		Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
+		Input::Instance()->get_mouse_down() && Renderer::Instance()->is_top_ui(&shape))
 	{
 		button_state = ButtonState::BTN_PRESSED;
 	}
@@ -109,13 +118,6 @@ void Button::update()
 
 }
 
-void Button::add_to_buffer(sf::View* view)
-{
-	set_view(view);
-	//Renderer::add(Renderer::RenderObject(&shape, SortingLayer::UI, id + 10, view));
-	//Renderer::add(Renderer::RenderObject(&text, SortingLayer::UI, id + 10, view));
-}
-
 void Button::set_position(float x, float y)
 {
 	GUIObject::set_position(x, y);
@@ -136,7 +138,7 @@ const bool Button::is_pressed()
 bool Button::mouse_in_bounds() 
 {
 	return shape.getGlobalBounds().contains(static_cast<sf::Vector2f>(
-		Input::Instance()->mouse_position( get_view() )));
+		Input::Instance()->mouse_position( get_view())));
 }
 
 const std::string Button::get_text() const
@@ -154,7 +156,7 @@ const float Button::get_height() const
 	return shape.getGlobalBounds().height;
 }
 
-const sf::Vector2f Button::get_position() const
+sf::Vector2f Button::get_position()
 {
 	return shape.getPosition();
 }
@@ -247,7 +249,7 @@ void DropDownList::update()
 				return;
 			}
 		}
-		if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT) && !active_selection->is_pressed())
+		if (Input::Instance()->get_mouse_down() && !active_selection->is_pressed())
 			toggle_list(false);
 		
 	}
@@ -358,8 +360,12 @@ Checkbox::Checkbox(float x, float y, float size)
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(1, false);
-	Renderer::Instance()->add_ui(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
-		get_z_order(), get_view_pointer()));
+
+	Renderer::RenderObject shape_renderable = Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	shape_renderable.has_global_bounds = true;
+
+	Renderer::Instance()->add_ui(shape_renderable);
 	Renderer::Instance()->add_ui(Renderer::RenderObject(&check, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
@@ -373,7 +379,7 @@ Checkbox::~Checkbox()
 void Checkbox::update()
 {
 	if (box.getGlobalBounds().contains(Input::Instance()->mouse_position( get_view() )) &&
-		Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
+		Input::Instance()->get_mouse_down() && Renderer::Instance()->is_top_ui(&box))
 	{
 		//std::cout << "check\n";
 		checked = !checked;
@@ -422,7 +428,7 @@ void Checkbox::set_checked(bool checked)
 #pragma endregion
 
 
-#pragma region ScrollView
+#pragma region SCROLL_VIEW
 
 ScrollView::ScrollView(float x, float y, float width, float height, bool vertical, bool horizontal)
 {
@@ -570,7 +576,7 @@ void ScrollView::set_position(float x, float y)
 #pragma endregion
 
 
-#pragma region InputBox
+#pragma region INPUT_BOX
 
 InputBox::InputBox(float x, float y, float width, float height, float character_size, 
 	sf::Font& font, sf::Color color, bool selected)
@@ -608,8 +614,12 @@ InputBox::InputBox(float x, float y, float width, float height, float character_
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(3, false);
-	Renderer::Instance()->add_ui(Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
-		get_z_order(), get_view_pointer()));
+
+	Renderer::RenderObject shape_renderable = Renderer::RenderObject(&box, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	shape_renderable.has_global_bounds = true;
+
+	Renderer::Instance()->add_ui(shape_renderable);
 	Renderer::Instance()->add_ui(Renderer::RenderObject(&text, get_render(), get_sorting_layer(),
 		get_z_order(), get_view_pointer()));
 }
@@ -638,12 +648,15 @@ void InputBox::update_sfml(sf::Event sfEvent)
 
 void InputBox::update()
 {
-	if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
+	if (Input::Instance()->get_mouse_down())
 	{
-		if (box.getGlobalBounds().contains(Input::Instance()->mouse_position( get_view() )) && !selected)
-			set_selected(true);
-		else if(!box.getGlobalBounds().contains(Input::Instance()->mouse_position( get_view() )) && selected)
-			set_selected(false);
+		if (Renderer::Instance()->is_top_ui(&box))
+		{
+			if (box.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())) && !selected)
+				set_selected(true);
+			else if (!box.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())) && selected)
+				set_selected(false);
+		}
 	}
 
 	if (selected)
@@ -852,8 +865,12 @@ Panel::Panel(float x, float y, float width, float height, sf::Color color)
 
 	set_sorting_layer(Sorting::Layer::UI, false);
 	set_z_order(0, false);
-	Renderer::Instance()->add_ui(Renderer::RenderObject(&panel_shape, get_render(), get_sorting_layer(),
-		get_z_order(), get_view_pointer()));
+
+	Renderer::RenderObject shape_renderable = Renderer::RenderObject(&panel_shape, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	shape_renderable.has_global_bounds = true;
+
+	Renderer::Instance()->add_ui(shape_renderable);
 	
 }
 
@@ -885,7 +902,6 @@ void Panel::update()
 			panel_shape.getGlobalBounds().contains(Input::Instance()->mouse_position()))
 			get_view()->move(0, -5000 * Time::Instance()->delta_time());
 	}
-
 	for (auto& c : content)
 		c.second->update();
 }
@@ -1074,9 +1090,9 @@ void Slider::update()
 	if (!mouse_in_bounds())
 		return;
 
-	if (mouse_on_slider() && Input::Instance()->get_mouse(Input::Mouse::LEFT))
+	if (mouse_on_slider() && Input::Instance()->get_mouse())
 		held = true;
-	if (Input::Instance()->get_mouse_up(Input::Mouse::LEFT))
+	if (Input::Instance()->get_mouse_up())
 		held = false;
 
 	if (held)
@@ -1100,7 +1116,7 @@ void Slider::update()
 		return;
 	}
 	
-	if (mouse_in_bounds() && Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
+	if (mouse_in_bounds() && Input::Instance()->get_mouse_down())
 	{
 		float x = std::max(Input::Instance()->mouse_position(get_view()).x, position.x);
 		x = std::min(x, position.x + width);
@@ -1141,6 +1157,256 @@ const float Slider::get_width() const
 	return width;
 }
 
+
+#pragma endregion
+
+
+#pragma region TRANSFORM_MOVER
+
+TransformMover::TransformMover(Vector2f position, Vector2f size)
+{
+	this->position = position;
+	this->size = size;
+	
+	horizontal_arrow.at(0) = FloatConvex::Polygon
+	(
+		position + Vector2f(1.f / 2.f * size.y, 0),
+		{ 
+			Vector2f(0,0), Vector2f(2.f / 3.f * size.x , 0),
+			Vector2f(2.f / 3.f * size.x, 1.f / 2.f * size.y), Vector2f(0, 1.f / 2.f * size.y)
+		}
+	);
+	
+	horizontal_arrow.at(1) = FloatConvex::Polygon
+	(
+		position + Vector2f(1.f / 2.f * size.y, 0) + Vector2f(2.f / 3.f * size.x, -1.f / 4.f * size.y),
+		{
+			Vector2f(0, 0), Vector2f(1.f / 3.f * size.x, 1.f / 2.f * size.y), Vector2f(0, size.y)
+		}
+	);
+
+	//horizontal_arrow = FloatConvex::Polygon(position, {Vector2f(0,0), Vector2f(size.x, 0), Vector2f(0, size.y)});
+	
+	vertical_arrow.at(0) = FloatConvex::Polygon
+	(
+		position,
+		{
+			Vector2f(0, 0), Vector2f(0, -2.f / 3.f * size.x), 
+			Vector2f(1.f / 2.f * size.y, - 2.f / 3.f * size.x), Vector2f(1.f / 2.f * size.y, 0)
+		}
+	);
+	vertical_arrow.at(1) = FloatConvex::Polygon
+	(
+		position + Vector2f(-1.f / 4.f * size.y, -2.f / 3.f * size.x),
+		{
+			Vector2f(0, 0), Vector2f(1.f / 2.f * size.y, -1.f / 3.f * size.x), Vector2f(size.y, 0)
+		}
+	);
+
+	full_movement = FloatConvex::Polygon
+	(
+		position + Vector2f(1.f / 2.f * size.y, 0),
+		{ 
+			Vector2f(0, 0), Vector2f(0, -30),
+			Vector2f(30, -30), Vector2f(30, 0) 
+		}
+	);
+
+	horizontal_arrow.at(0).setFillColor(sf::Color::Green);
+	horizontal_arrow.at(1).setFillColor(sf::Color::Green);
+	vertical_arrow.at(0).setFillColor(sf::Color::Red);
+	vertical_arrow.at(1).setFillColor(sf::Color::Red);
+	full_movement.setFillColor(sf::Color(255, 255, 255, 50));
+	full_movement.setOutlineThickness(2.f);
+
+	set_render(true);
+	set_sorting_layer(Sorting::Layer::UI, false);
+	set_z_order(5, false);
+
+	Renderer::RenderObject vertical_renderable = Renderer::RenderObject(&vertical_arrow.at(0), get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	Renderer::RenderObject vertical_renderable2 = Renderer::RenderObject(&vertical_arrow.at(1), get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	vertical_renderable2.has_global_bounds = true;
+
+	Renderer::RenderObject horizontal_renderable = Renderer::RenderObject(&horizontal_arrow.at(0), get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	Renderer::RenderObject horizontal_renderable2 = Renderer::RenderObject(&horizontal_arrow.at(1), get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	horizontal_renderable2.has_global_bounds = true;
+
+	Renderer::RenderObject full_movement_renderable = Renderer::RenderObject(&full_movement, get_render(), get_sorting_layer(),
+		get_z_order(), get_view_pointer());
+	full_movement_renderable.has_global_bounds = true;
+
+	Renderer::Instance()->add_ui(vertical_renderable);
+	Renderer::Instance()->add_ui(vertical_renderable2);
+	Renderer::Instance()->add_ui(horizontal_renderable);
+	Renderer::Instance()->add_ui(horizontal_renderable2);
+	Renderer::Instance()->add_ui(full_movement_renderable);
+}
+
+TransformMover::~TransformMover()
+{
+	Renderer::Instance()->remove_ui(&vertical_arrow.at(0));
+	Renderer::Instance()->remove_ui(&vertical_arrow.at(1));
+	Renderer::Instance()->remove_ui(&horizontal_arrow.at(0));
+	Renderer::Instance()->remove_ui(&horizontal_arrow.at(1));
+	Renderer::Instance()->remove_ui(&full_movement);
+}
+
+void TransformMover::update()
+{
+	if (Input::Instance()->get_mouse_down())
+	{
+		if (horizontal_arrow.at(0).contains_point(Input::Instance()->mouse_position(get_view())))
+		{
+			horizontal_held = true;
+			offset = horizontal_arrow.at(0).get_position() - Vector2f(1.f / 2.f * size.y, 0) - Input::Instance()->mouse_position(get_view());
+		}
+		else if (horizontal_arrow.at(1).contains_point(Input::Instance()->mouse_position(get_view()))) 
+		{
+			horizontal_held = true;
+			offset = horizontal_arrow.at(0).get_position() - Vector2f(1.f / 2.f * size.y, 0) - Input::Instance()->mouse_position(get_view());
+		}
+		
+		if (vertical_arrow.at(0).contains_point(Input::Instance()->mouse_position(get_view())))
+		{
+			vertical_held = true;
+			offset = vertical_arrow.at(0).get_position() - Input::Instance()->mouse_position(get_view());
+		}
+		else if (vertical_arrow.at(1).contains_point(Input::Instance()->mouse_position(get_view())))
+		{
+			vertical_held = true;
+			offset = vertical_arrow.at(0).get_position() - Input::Instance()->mouse_position(get_view());
+		}
+
+		if (full_movement.contains_point(Input::Instance()->mouse_position(get_view())))
+		{
+			vertical_held = true;
+			horizontal_held = true;
+			offset = full_movement.get_position() - Vector2f(1.f / 2.f * size.y, 0) - Input::Instance()->mouse_position(get_view());
+			
+		}
+	}
+	if (Input::Instance()->get_mouse_up())
+	{
+		horizontal_held = false;
+		vertical_held = false;
+		offset = Vector2f::Zero();
+	}
+
+	if (horizontal_held)
+	{
+		position.x = Input::Instance()->mouse_position(get_view()).x + offset.x;
+	}
+	if (vertical_held)
+	{
+		position.y = Input::Instance()->mouse_position(get_view()).y + offset.y;
+	}
+	if (vertical_held || horizontal_held)
+	{
+		vertical_arrow.at(0).set_position(position);
+		vertical_arrow.at(1).set_position(position + Vector2f(-1.f / 4.f * size.y, -2.f / 3.f * size.x));
+		
+		horizontal_arrow.at(0).set_position(position + Vector2f(1.f / 2.f * size.y, 0));
+		horizontal_arrow.at(1).set_position(position + Vector2f(1.f / 2.f * size.y, 0) + Vector2f(2.f / 3.f * size.x, -1.f / 4.f * size.y));
+
+		full_movement.set_position(position + Vector2f(1.f / 2.f * size.y, 0));
+	}
+	
+
+}
+
+void TransformMover::set_position(float x, float y)
+{
+	position = Vector2f(x, y);
+
+	vertical_arrow.at(0).set_position(position);
+	vertical_arrow.at(1).set_position(position + Vector2f(-1.f / 4.f * size.y, -2.f / 3.f * size.x));
+	horizontal_arrow.at(0).set_position(position + Vector2f(1.f / 2.f * size.y, 0));
+	horizontal_arrow.at(1).set_position(position + Vector2f(1.f / 2.f * size.y, 0) + Vector2f(2.f / 3.f * size.x, -1.f / 4.f * size.y));
+	full_movement.set_position(position + Vector2f(1.f / 2.f * size.y, 0));
+}
+
+bool TransformMover::mouse_in_bounds()
+{
+	Vector2f pos = Input::Instance()->mouse_position(get_view());
+	return 
+		horizontal_arrow.at(0).getGlobalBounds().contains(pos) ||
+		horizontal_arrow.at(1).getGlobalBounds().contains(pos) || 
+		vertical_arrow.at(0).getGlobalBounds().contains(pos) ||
+		vertical_arrow.at(1).getGlobalBounds().contains(pos) ||
+		full_movement.getGlobalBounds().contains(pos);
+}
+
+sf::Vector2f TransformMover::get_position()
+{
+	return position;
+}
+
+
+#pragma endregion
+
+#pragma region PROGRESS_BAR
+
+ProgressBar::ProgressBar()
+{
+	set_sorting_layer(Sorting::Layer::UI);
+	set_z_order(0);
+	set_render(true);
+
+	full_state_shape.setFillColor(sf::Color::Transparent);
+
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&progress_shape, this));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&full_state_shape, this));
+}
+
+ProgressBar::~ProgressBar()
+{
+	Renderer::Instance()->remove_ui(&progress_shape);
+	Renderer::Instance()->remove_ui(&full_state_shape);
+}
+
+void ProgressBar::set_position(Vector2f position)
+{
+	if (this->position != position)
+	{
+		this->position = position;
+		progress_shape.set_position(position);
+		full_state_shape.set_position(position);
+	}
+}
+
+void ProgressBar::set_size(Vector2f size)
+{
+	if (this->size == size)
+	{
+		this->size = size;
+		progress_shape = FloatConvex::Polygon(
+			position,
+			{ Vector2f(0,0), Vector2f(size.x * percentage, 0), Vector2f(size.x * percentage, size.y), Vector2f(0, size.y) }
+		);
+		full_state_shape = FloatConvex::Polygon(
+			position,
+			{ Vector2f(0,0), Vector2f(size.x, 0), Vector2f(size.x, size.y), Vector2f(0, size.y) }
+		);
+	}
+}
+
+void ProgressBar::set_color(sf::Color color)
+{
+	progress_shape.setFillColor(color);
+}
+
+void ProgressBar::set_percentage(float percentage)
+{
+	if (this->percentage != percentage)
+	{
+		this->percentage = percentage;
+		set_size(size);
+	}
+}
 
 #pragma endregion
 

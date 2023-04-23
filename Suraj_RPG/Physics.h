@@ -68,6 +68,8 @@ public:
 	/// All colliders within the circle not related to the object calling the functions.</returns>
 	int OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
 		GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions);
+	int OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask,
+		GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions);
 
 private:
 

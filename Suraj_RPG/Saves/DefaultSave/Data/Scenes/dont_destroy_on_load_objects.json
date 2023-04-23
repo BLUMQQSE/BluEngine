@@ -2,6 +2,39 @@
 	"gameobjects" : 
 	[
 		{
+			"components" : 
+			[
+				{
+					"name" : "class bm98::CameraComponent",
+					"value" : null
+				},
+				{
+					"name" : "class bm98::DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "MainCamera",
+				"physics-layer" : "PHYSICS_IGNORE",
+				"tag" : "CAMERA"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 187.43276977539062,
+					"y" : 319.69070434570312
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
 			"children" : 
 			[
 				{
@@ -16,16 +49,6 @@
 									{
 										"current-capacity" : 1,
 										"index" : 0,
-										"item" : "SwordData.json"
-									},
-									{
-										"current-capacity" : 1,
-										"index" : 1,
-										"item" : "SwordData.json"
-									},
-									{
-										"current-capacity" : 1,
-										"index" : 2,
 										"item" : "SwordData.json"
 									}
 								],
@@ -48,24 +71,149 @@
 					{
 						"local-position" : 
 						{
-							"x" : 0.0,
-							"y" : 0.0
+							"x" : -999.9998779296875,
+							"y" : -999.9998779296875
 						},
 						"position" : 
 						{
-							"x" : 140.17356872558594,
-							"y" : 181.83381652832031
+							"x" : -844.56707763671875,
+							"y" : -712.3092041015625
 						},
 						"rotation" : 0.0
 					}
 				},
 				{
+					"children" : 
+					[
+						{
+							"components" : 
+							[
+								{
+									"name" : "class bm98::SpriteComponent",
+									"value" : 
+									{
+										"class bm98::IRenderable" : 
+										{
+											"render" : true,
+											"sorting-layer" : "BACKGROUND",
+											"z-order" : 0
+										},
+										"size" : 
+										{
+											"x" : 64,
+											"y" : 64
+										},
+										"sprite-file-path" : "sword.png"
+									}
+								},
+								{
+									"name" : "class bm98::BoxColliderComponent",
+									"value" : 
+									{
+										"active" : true,
+										"collider-bounds" : 
+										{
+											"model" : 
+											[
+												{
+													"x" : 0.0,
+													"y" : 0.0
+												},
+												{
+													"x" : 10.0,
+													"y" : 0.0
+												},
+												{
+													"x" : 10.0,
+													"y" : 10.0
+												},
+												{
+													"x" : 0.0,
+													"y" : 10.0
+												}
+											],
+											"point-count" : 4,
+											"position" : 
+											{
+												"x" : -834.56707763671875,
+												"y" : -692.3092041015625
+											},
+											"rotation" : 0.0,
+											"shape-type" : "POLYGON"
+										},
+										"collision-check-type" : "DISCRETE",
+										"hitbox-height" : 0.0,
+										"hitbox-offsetX" : 10.0,
+										"hitbox-offsetY" : 20.0,
+										"hitbox-width" : 0.0,
+										"trigger" : true
+									}
+								},
+								{
+									"name" : "class bm98::RigidbodyComponent",
+									"value" : 
+									{
+										"acceleration" : 0.0,
+										"body-type" : "KINEMATIC",
+										"deceleration" : 0.0,
+										"max-velocity" : 0.0,
+										"orientation" : "DOWN"
+									}
+								},
+								{
+									"name" : "class bm98::ItemController",
+									"value" : 
+									{
+										"class bm98::IInteractable" : 
+										{
+											"failed-interaction-prompt" : "failed interactable prompt",
+											"interaction-duration" : 0.0,
+											"interaction-priority" : "MID",
+											"interaction-prompt" : "interaction prompt",
+											"interaction-type" : "INSTANT",
+											"require-player-input" : false
+										},
+										"item-data" : "SwordData.json",
+										"item-state" : "DROPPED"
+									}
+								}
+							],
+							"info" : 
+							{
+								"name" : "RIGHT",
+								"physics-layer" : "INTERACTABLE",
+								"tag" : "UNTAGGED"
+							},
+							"transform" : 
+							{
+								"local-position" : 
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								"position" : 
+								{
+									"x" : -844.56707763671875,
+									"y" : -712.3092041015625
+								},
+								"rotation" : 0.0
+							}
+						}
+					],
 					"components" : 
 					[
 						{
 							"name" : "class bm98::Inventory",
 							"value" : 
 							{
+								"content" : 
+								[
+									{
+										"current-capacity" : 1,
+										"index" : 6,
+										"item" : "SwordData.json"
+									}
+								],
 								"inventory-type" : "COMBAT",
 								"max-size" : 10
 							}
@@ -85,13 +233,13 @@
 					{
 						"local-position" : 
 						{
-							"x" : 0.0,
-							"y" : 0.0
+							"x" : -999.9998779296875,
+							"y" : -999.9998779296875
 						},
 						"position" : 
 						{
-							"x" : 140.17356872558594,
-							"y" : 181.83381652832031
+							"x" : -844.56707763671875,
+							"y" : -712.3092041015625
 						},
 						"rotation" : 0.0
 					}
@@ -168,8 +316,8 @@
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 155.17356872558594,
-								"y" : 181.83381652832031
+								"x" : 170.43276977539062,
+								"y" : 287.69070434570312
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
@@ -221,41 +369,8 @@
 				},
 				"position" : 
 				{
-					"x" : 140.17356872558594,
-					"y" : 181.83381652832031
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "class bm98::CameraComponent",
-					"value" : null
-				},
-				{
-					"name" : "class bm98::DontDestroyOnLoad",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "MainCamera",
-				"physics-layer" : "PHYSICS_IGNORE",
-				"tag" : "CAMERA"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 172.17356872558594,
-					"y" : 213.83381652832031
+					"x" : 155.43276977539062,
+					"y" : 287.69070434570312
 				},
 				"rotation" : 0.0
 			}

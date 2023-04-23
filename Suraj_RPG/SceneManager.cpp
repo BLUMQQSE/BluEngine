@@ -6,16 +6,14 @@
 #include "GameObject.h"
 #include "EventSystem.h"
 #include "SceneChange.h"
+#include "ResourceManager.h"
 namespace bm98::core
 {
-//std::string SceneManager::scenes_file_path = "Data/Scenes/";
-//Scene* SceneManager::active_scene = nullptr;
 
 std::string SceneManager::get_default_scene()
 {
 	return "default.json";
 }
-
 
 std::string SceneManager::get_active_scene_name()
 {
@@ -47,12 +45,44 @@ void SceneManager::load_scene(std::string scene_name)
 	}
 	active_scene->clear_scene();
 
+	load_finished = false;
+	std::thread worker(LoadSceneInBackground, scene_name);
+	
+	//=====================WHILE-THIS-RUNS-SECOND-THREAD-RUNS-LOADSCREEN==========================
+	//std::cout << "load scene\n";
+	//Json::Value obj = FileManager::Instance()->load_from_file(FileManager::Instance()->get_save_name() + scenes_file_path + scene_name);
+	//active_scene->set_name(scene_name);
+	//active_scene->unserialize_json(obj);
+	//=================================================================================================
+// DRAW A LOADING IMAGE TO SCREEN
+	// Renderer::Instance()->draw();
 
-	Json::Value obj = FileManager::Instance()->load_from_file(FileManager::Instance()->get_save_name() + scenes_file_path + scene_name);
+	GUI::Label loading_screen = GUI::Label(200, 200, 28, ResourceManager::Instance()->get_font("calibri-regular.ttf"), "Loading Scene.", sf::Color::White);
 
-	active_scene->set_name(scene_name);
+	using namespace std::chrono_literals;
 
-	active_scene->unserialize_json(obj);
+	while (!load_finished)
+	{
+		if (loading_screen.get_text() == "Loading Scene.")
+			loading_screen.set_text("Loading Scene..");
+		else if (loading_screen.get_text() == "Loading Scene..")
+			loading_screen.set_text("Loading Scene...");
+		else if (loading_screen.get_text() == "Loading Scene...")
+			loading_screen.set_text("Loading Scene.");
+		
+		Renderer::Instance()->clear_screen();
+		Renderer::Instance()->draw(loading_screen.get_drawable());
+		Renderer::Instance()->display();
+		std::this_thread::sleep_for(300ms);
+	}
+	worker.join();
+
+	load_finished = false;
+
+	active_scene->unserialize_json(loaded_scene_data);
+
+	Renderer::Instance()->clear_screen();
+	Renderer::Instance()->display();
 
 	Renderer::Instance()->refresh();
 
@@ -166,38 +196,39 @@ SceneManager::SceneManager()
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_DESTROY_, this);
 	EventSystem::Instance()->subscribe(EventID::SCRIPTS_LOAD_SCENE, this);
 	EventSystem::Instance()->subscribe(EventID::SCRIPTS_SAVE_SCENE, this);
+	
 }
 
 void SceneManager::handle_event(Event* event)
 {
 	switch (event->get_event_id())
 	{
-	case EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_ :
-		init(static_cast<Scene*>(event->get_parameter()));
-		break;
-	case EventID::_SYSTEM_SCENEMANAGER_DESTROY_:
-		destroy();
-		break;
-	case EventID::_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_:
-		clear_active_scene();
-	case EventID::SCRIPTS_SAVE_SCENE:
-		save_scene();
-	case EventID::SCRIPTS_LOAD_SCENE:
-	{
-		// Scene change calling to load scene
-		if (event->get_caller().name == Caller::Name::SCENE_CHANGE)
+		case EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_ :
+			init(static_cast<Scene*>(event->get_parameter()));
+			break;
+		case EventID::_SYSTEM_SCENEMANAGER_DESTROY_:
+			destroy();
+			break;
+		case EventID::_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_:
+			clear_active_scene();
+		case EventID::SCRIPTS_SAVE_SCENE:
+			save_scene();
+		case EventID::SCRIPTS_LOAD_SCENE:
 		{
-			SceneChange::Destination dest = *static_cast<SceneChange::Destination*>(event->get_parameter());
-			load_scene(dest.scene_name);
-			GameObject* player = find_with_tag(Tags::Tag::PLAYER, nullptr);
-			player->set_world_position(dest.position);
+			// Scene change calling to load scene
+			if (event->get_caller().name == Caller::Name::SCENE_CHANGE)
+			{
+				SceneChange::Destination dest = *static_cast<SceneChange::Destination*>(event->get_parameter());
+				load_scene(dest.scene_name);
+				GameObject* player = find_with_tag(Tags::Tag::PLAYER, nullptr);
+				player->set_world_position(dest.position);
+			}
+			else
+			{
+				load_scene(*static_cast<std::string*>(event->get_parameter()));
+			}
 		}
-		else
-		{
-			load_scene(*static_cast<std::string*>(event->get_parameter()));
-		}
-	}
-	break;
+		break;
 	}
 }
 
@@ -221,4 +252,17 @@ template <typename T> static std::vector<GameObject*> SceneManager::find_all_of_
 	);
 	return objects;
 }
+
+void SceneManager::LoadSceneInBackground(std::string scene_name)
+{
+	Instance()->loaded_scene_data.clear();
+	Instance()->loaded_scene_data = FileManager::Instance()->load_from_file(FileManager::Instance()->get_save_name() + Instance()->scenes_file_path + scene_name);
+	Instance()->active_scene->set_name(scene_name);
+	//Instance()->active_scene->unserialize_json(loaded_scene_data);
+	//=================================================================================================
+
+	Instance()->load_finished = true;
+
+}
+
 }

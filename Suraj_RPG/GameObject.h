@@ -273,11 +273,11 @@ public:
 		return false;
 	}
 
-	template <typename T, typename... TArgs> void add_component(TArgs&&...mArgs)
+	template <typename T, typename... TArgs> T& add_component(TArgs&&...mArgs)
 	{
 		//if allready has component, ignore adding it again
 		if (component_bitset[get_component_type_id<T>()] == true)
-			return;
+			return *dynamic_cast<T*>(component_array[get_component_type_id<T>()]);
 
 		T* c(new T(std::forward<TArgs>(mArgs)...));
 		c->set_game_object(this);
@@ -289,6 +289,7 @@ public:
 		EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED,
 			static_cast<void*>(c), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 
+		return *c;
 	}
 
 	template <typename T> void remove_component()
@@ -361,7 +362,7 @@ public:
 
 	}
 
-	void editor_add_component(std::string c);
+	Component* editor_add_component(std::string c);
 	void editor_remove_component(std::string c);
 	void handle_removed_components();
 

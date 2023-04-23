@@ -33,7 +33,7 @@ public:
 			this->view = view;
 			this->shader = shader;
 		}
-
+		
 		RenderObject(sf::Drawable* drawable, IRenderable* renderable)
 			:render(renderable->get_render()), sorting_layer(renderable->get_sorting_layer()),
 			z_order(renderable->get_z_order())
@@ -52,6 +52,9 @@ public:
 		sf::View** view;
 		sf::Shader** shader;
 
+		// Will be used by ui elements
+		bool has_global_bounds = false;
+
 	};
 
 	struct GizmoObject
@@ -67,6 +70,8 @@ public:
 	};
 	void init(RenderTarget* render_target);
 
+	inline bool is_top_ui(sf::Drawable* drawable) { return drawable == top_ui; }
+
 	void add(RenderObject render_object);
 	void add_ui(RenderObject ui_render_object);
 
@@ -74,6 +79,19 @@ public:
 
 	void remove(sf::Drawable* drawable);
 	void remove_ui(sf::Drawable* drawable);
+
+	/// <summary>
+	/// Immediate draw call to the window. Will be used for Loading Screens when running program
+	/// temporarily on seperate thread.
+	/// </summary>
+	void draw(sf::Drawable* drawable, sf::View* view = nullptr,
+		sf::Shader* shader = nullptr);
+	/// <summary>
+	/// Clears the screen.
+	/// </summary>
+	void clear_screen();
+
+	void display();
 
 	/// <summary>
 	/// Returns true if element is top ui element under the mouse.
@@ -119,7 +137,7 @@ private:
 	std::list<RenderObject> renderables;
 	std::list<RenderObject> ui_renderables;
 
-	//sf::Drawable* _top_ui;
+	sf::Drawable* top_ui;
 
 
 	// Inherited via RenderTarget
@@ -129,13 +147,14 @@ private:
 	virtual void handle_event(Event* event) override;
 
 	void render();
-
-	void render_ui();
+	void render_list(std::list<RenderObject>& list);
 
 	void render_gizmos();
 	void clear();
 	void clear_gizmos();
 	void fixed_update();
+
+	void update_top_ui();
 
 	void sort();
 

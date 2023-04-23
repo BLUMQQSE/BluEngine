@@ -104,15 +104,6 @@ void Tile::set_type(TileNS::Type tile_type)
 	type = tile_type;
 }
 
-void Tile::set_position(Vector2i pos)
-{
-	x_offset = pos.x;
-	y_offset = pos.y;
-
-	this->sprite.setPosition(std::floor(static_cast<float>(x_offset + (grid_x * UNIT_SIZE))), 
-		std::floor(static_cast<float>(y_offset + (grid_y * UNIT_SIZE))));
-}
-
 void Tile::add_animated_sprite_component(std::string source_key, sf::Texture* texture_sheet, sf::IntRect animation_rect, float animation_timer)
 {
 	remove_animated_sprite_component();

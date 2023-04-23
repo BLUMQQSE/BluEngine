@@ -133,12 +133,17 @@ std::vector<Editor::SerializedVar> IInteractable::get_editor_values()
 	vals.push_back(Editor::SerializedVar("prompt", static_cast<void*>(&interaction_prompt), Var::Type::String));
 	vals.push_back(Editor::SerializedVar("failed_prompt", static_cast<void*>(&failed_interaction_prompt), 
 		Var::Type::String));
+
+	vals.push_back(Editor::SerializedVar("priority", static_cast<void*>(&interaction_priority), Var::Type::Dropdown,
+				   Interaction::ToPriorityVector()));
+	vals.push_back(Editor::SerializedVar("type", static_cast<void*>(&interaction_type), Var::Type::Dropdown,
+				   Interaction::ToVector()));
+
 	vals.push_back(Editor::SerializedVar("busy", static_cast<void*>(&busy), Var::Type::Bool));
 	vals.push_back(Editor::SerializedVar("duration", static_cast<void*>(&interaction_duration), Var::Type::Float));
 	vals.push_back(Editor::SerializedVar("timer", static_cast<void*>(&timer_as_float), Var::Type::Float));
 	priority_as_string = Interaction::ToString(interaction_priority);
-	vals.push_back(Editor::SerializedVar("priority", static_cast<void*>(&interaction_priority), Var::Type::Dropdown,
-		Interaction::ToPriorityVector()));
+	
 
 	return vals;
 }

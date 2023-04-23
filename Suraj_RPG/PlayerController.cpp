@@ -177,7 +177,7 @@ void bm98::PlayerController::update_input()
 	if (Input::Instance()->get_action("DOWN"))
 		movement_input.y = 1;
 
-	if (Input::Instance()->get_mouse_up(Input::Mouse::LEFT))
+	if (Input::Instance()->get_mouse_up())
 	{
 		attack = true;
 	}

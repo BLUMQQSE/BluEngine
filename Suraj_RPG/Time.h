@@ -1,4 +1,5 @@
 #pragma once
+#include "Timer.h"
 #include "EventSystem.h"
 #include "IData.h"
 
@@ -24,6 +25,7 @@ public:
 	const float time_since_startup();
 
 	const float total_real_time();
+
 
 
 	// Inherited via IData
@@ -52,13 +54,16 @@ private:
 	void init(float total_time);
 	void set_real_time(const float d); 
 	void update_delta(const float dt);
+	void update_fixed_delta();
 	void reset_time_since_state_change();
 	void reset_fixed_delta();
-	void apply_time_scale();
 
 
 	// Inherited via Listener
 	virtual void handle_event(Event* event) override;
+
+	Timer game_timer;
+	Timer game_fixed_timer;
 
 };
 

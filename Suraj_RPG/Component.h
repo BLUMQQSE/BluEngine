@@ -89,6 +89,7 @@ public:
 	GameObject* get_game_object();
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values();
+	virtual void editor_update() {}
 
 protected:
 

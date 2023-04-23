@@ -43,6 +43,18 @@ void SceneChange::unserialize_json(Json::Value obj)
 	destination.scene_name = obj["destination-scene"].asString();
 }
 
+std::vector<Editor::SerializedVar> SceneChange::get_editor_values()
+{
+	std::vector<Editor::SerializedVar> values;
+
+	values = IInteractable::get_editor_values();
+
+	values.push_back(Editor::SerializedVar("destination_scene", (void*)&destination.scene_name, Var::Type::String));
+	values.push_back(Editor::SerializedVar("destination_position", (void*)&destination.position, Var::Type::Vector2f));
+
+	return values;
+}
+
 #pragma endregion
 
 }

@@ -19,6 +19,8 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 	init_fonts();
 	init_text();
 	init_gui();
+
+
 	//Debug::init();
 	Renderer::Instance()->add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
 	Renderer::Instance()->add(Renderer::RenderObject(&circle, _render, options_layer, z_order));
@@ -26,7 +28,12 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 
 	Renderer::Instance()->add(Renderer::RenderObject(&concave, _render, options_layer, z_order));
 
-	inp = new GUI::InputBox(0, 0, 100, 50, 16, ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+	pb = new GUI::ProgressBar();
+	pb->set_position(Vector2f(800, 300));
+	pb->set_size(Vector2f(300, 200));
+	pb->set_percentage(.75f);
+	pb->set_color(sf::Color::Magenta);
+
 }
 
 SettingsState::~SettingsState()
@@ -51,8 +58,7 @@ SettingsState::~SettingsState()
 		delete v.second.first;
 		delete v.second.second;
 	}
-	delete inp;
-
+	delete pb;
 }
 
 void SettingsState::init_state()
@@ -67,6 +73,9 @@ void SettingsState::init_variables()
 
 void SettingsState::update_input()
 {
+	if (Input::Instance()->get_action_down("L"))
+		pb->set_percentage(.5f);
+
 	float delta = Time::Instance()->delta_time();
 	if (Input::Instance()->get_action("W"))
 		square.move(0, -100 * delta);
@@ -78,7 +87,7 @@ void SettingsState::update_input()
 		square.move(0, 100 * delta);
 
 	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT))
-		concave.set_rotation(30);
+		concave.rotate(10);
 
 	if (buttons["BACK"]->is_pressed())
 	{
@@ -89,6 +98,20 @@ void SettingsState::update_input()
 		graphics_settings->resolution = modes[drop_downs["RESOLUTION"]->get_selected_index()];
 		window->create(graphics_settings->resolution, graphics_settings->game_title, sf::Style::Default);
 	}
+
+	if (Input::Instance()->get_mouse_down())
+	{
+		if(square.contains_point(Input::Instance()->mouse_position()))
+		{
+			holding = true;
+			offset = square.get_position()-Input::Instance()->mouse_position();
+		}
+	}
+	if (Input::Instance()->get_mouse_up())
+	{
+		holding = false;
+	}
+
 }
 
 void SettingsState::on_end_state()
@@ -101,8 +124,13 @@ void SettingsState::update()
 	State::update();
 	update_input();
 	Debug::Instance()->mouse_position_display(font);
-	
-	inp->update();
+
+
+	//if (holding)
+	//{
+	//	square.set_position(Input::Instance()->mouse_position() + offset);
+	//}
+
 
 	for (auto& it : buttons)
 	{
@@ -128,7 +156,6 @@ void SettingsState::update()
 
 void SettingsState::update_sfml(sf::Event sfEvent)
 {
-	inp->update_sfml(sfEvent);
 }
 
 void SettingsState::late_update()
@@ -144,8 +171,6 @@ void SettingsState::fixed_update()
 	if (dif != Vector2f::Infinity())
 	{
 		square.move(dif.x, dif.y);
-
-		std::cout << "collision\n";
 	}
 
 }
@@ -208,7 +233,7 @@ void SettingsState::init_drop_downs()
 	{
 		modes_str.push_back(std::to_string(i.width) + 'x' + std::to_string(i.height));
 	}
-	drop_downs["RESOLUTION"] = new GUI::DropDownList(900, 100, 150, 30, font,
+	drop_downs["RESOLUTION"] = new GUI::DropDownList(100, 100, 150, 30, font,
 		modes_str);
 
 	//drop_downs["FULLSCREEN"] = new GUI::DropDownList(800, 175, 150, 30, font, screen_list, 2);
