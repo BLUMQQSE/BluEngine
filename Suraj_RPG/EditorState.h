@@ -33,7 +33,6 @@ public:
 protected:
     void init_variables();
     void init_views();
-    //void init_fonts();
     void init_gui();
 
     void init_tilemap_stuff(GameObject* selected_gameobject);
@@ -42,7 +41,6 @@ protected:
     void update_gui();
     void render_gui();
 
-    void init_tilemap();
 
 private:
     sf::View* object_heir_view;

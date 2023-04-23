@@ -1,8 +1,5 @@
 
 {
-    "gameobjects" :
-    [
-        null
-    ],
+    "gameobjects" : null,
     "name" : "cave.json"
 }

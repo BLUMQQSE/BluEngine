@@ -449,12 +449,12 @@ void SceneEditorView::update_scene_editor_panel()
 			return;
 		input = scene_editor_panel->get_inputbox("component_name")->get_text();
 
-		//Component* c = 
+		Component* c = 
 			selected_gameobject->editor_add_component(input);
-		selected_gameobject->init();
-		//c->init();
-		//c->awake();
-		//c->start();
+		//selected_gameobject->init();
+		c->init();
+		c->awake();
+		c->start();
 		selected_gameobject->editor_update();
 	}
 	else if (scene_editor_panel->get_button("remove_component")->is_pressed())

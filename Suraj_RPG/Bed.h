@@ -1,19 +1,19 @@
 #pragma once
 #include "IInteractable.h"
+
 namespace bm98
 {
 
-class Chest :
+class Bed :
     public IInteractable
 {
 public:
-    Chest() {}
-    virtual ~Chest() {}
+    Bed() {}
+    virtual ~Bed() {}
 
     virtual void init() override;
 
-
-protected:
+private:
 
     virtual void initiate_interaction(Interactor* interactor) override;
     virtual void handle_interaction() override;
@@ -22,7 +22,8 @@ protected:
     virtual Json::Value serialize_json() override;
     virtual void unserialize_json(Json::Value obj) override;
 
-
+    GameObject* owner;
+    float original_time_scale = INFINITY;
 
 };
 

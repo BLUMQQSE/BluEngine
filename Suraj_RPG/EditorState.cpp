@@ -13,7 +13,6 @@
 #include "GameObject.h"
 #include "SceneEditorView.h"
 #include "PrefabEditor.h"
-#include "FileManager.h"
 #include "SceneManager.h"
 #include "Scene.h"
 #include "SpriteComponent.h"
@@ -45,7 +44,6 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	pmenu->add_button("SAVE", 500, 440, "Save");
 	pmenu->add_button("LOAD", 500, 380, "Load");
 	
-	init_tilemap();
 	init_gui();
 	
 	//texture_selector->toggle_hidden();
@@ -132,8 +130,9 @@ void EditorState::update()
 			it.second->update();
 		}
 		if (Input::Instance()->get_action_down("TS_MENU") && !Input::Instance()->using_input_box())
+		{
 			texture_selector->toggle_hidden();
-		
+		}
 		update_gui();
 	}
 	else
@@ -205,12 +204,6 @@ void EditorState::init_gui()
 	texture_selector = new GUI::TextureSelector(120.f + 800, 20.f, 500.f, 500.f,
 		TilemapComponent::GetTilesetKeys());
 	
-	//texture_selector->init(UNIT_SIZE,
-	//					   selected_gameobject->get_component<TilemapComponent>().get_texture());
-
-	//selector_rect.setSize(sf::Vector2f(selected_gameobject->get_component<TilemapComponent>().grid_size(), 
-	//	selected_gameobject->get_component<TilemapComponent>().grid_size()));
-
 	selector_rect.setFillColor(sf::Color(255, 255, 255, 150));
 	selector_rect.setOutlineThickness(2.f);
 	selector_rect.setOutlineColor(sf::Color::White);
@@ -334,60 +327,46 @@ void EditorState::update_gui()
 	selector_rect.setPosition(Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x * UNIT_SIZE,
 		Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y * UNIT_SIZE);
 
-	if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT) || 
-		Input::Instance()->get_mouse(Input::Mouse::LEFT))
+	if (texture_selector->get_render())
 	{
-		//int val = std::floorf(selected_gameobject->get_world_position().x / UNIT_SIZE);
-		//std::cout << "val: " << val << "\n";
-		selected_gameobject->get_component<TilemapComponent>().add_tiles(
-			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
-			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
-			texture_selector->get_layer(),
-			texture_rect,
-			(TileNS::Type)texture_selector->get_tiletype_selector()->get_selected_index(),
-			texture_selector->get_collision_checkbox()->is_checked(),
-			texture_selector->get_animation_checkbox()->is_checked()
-		);
-		
+		if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT) ||
+			Input::Instance()->get_mouse(Input::Mouse::LEFT))
+		{
+			selected_gameobject->get_component<TilemapComponent>().add_tiles(
+				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
+				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
+				texture_selector->get_layer(),
+				texture_rect,
+				(TileNS::Type)texture_selector->get_tiletype_selector()->get_selected_index(),
+				texture_selector->get_collision_checkbox()->is_checked(),
+				texture_selector->get_animation_checkbox()->is_checked()
+			);
+
+		}
+		if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT) ||
+			Input::Instance()->get_mouse(Input::Mouse::RIGHT))
+		{
+			selected_gameobject->get_component<TilemapComponent>().remove_tiles(
+				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
+				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
+				texture_selector->get_layer(),
+				texture_rect,
+				texture_selector->get_animation_checkbox()->is_checked()
+			);
+		}
 	}
-	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT) ||
-		Input::Instance()->get_mouse(Input::Mouse::RIGHT))
-	{
-		selected_gameobject->get_component<TilemapComponent>().remove_tiles(
-			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
-			Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
-			texture_selector->get_layer(),
-			texture_rect,
-			texture_selector->get_animation_checkbox()->is_checked()
-		);
-	}
-	
 
 }
 
 
 void EditorState::render_gui()
 {
-	if (!texture_selector->mouse_in_bounds())
+	if (!texture_selector->mouse_in_bounds() && texture_selector->get_render())
 		text_select_render = true;
 	else
 		text_select_render = false;
 
 	texture_selector->add_to_buffer();
-}
-
-void EditorState::init_tilemap()
-{
-	/*
-	selected_gameobject = new GameObject();
-	///////////selected_gameobject->unserialize_json(FileManager::Instance()->load_from_file("tilemap_test.json"));
-	selected_gameobject->set_world_position(Vector2f(0, 0));
-	selected_gameobject->add_component<TilemapComponent>(Vector2i(0, 0), UNIT_SIZE, 20, 20);
-	selected_gameobject->add_component<TilemapColliderComponent>();
-	selected_gameobject->init();
-	selected_gameobject->awake();
-	selected_gameobject->start();
-	*/
 }
 
 }

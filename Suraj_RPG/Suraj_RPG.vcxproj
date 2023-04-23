@@ -168,6 +168,7 @@
     <ClCompile Include="AnimatedSpriteComponent.cpp" />
     <ClCompile Include="AnimationComponent.cpp" />
     <ClCompile Include="AudioSource.cpp" />
+    <ClCompile Include="Bed.cpp" />
     <ClCompile Include="ButtonComponent.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CapsuleColliderComponent.cpp" />
@@ -264,6 +265,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationComponent.h" />
     <ClInclude Include="AudioSource.h" />
+    <ClInclude Include="Bed.h" />
     <ClInclude Include="ButtonComponent.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="CapsuleColliderComponent.h" />

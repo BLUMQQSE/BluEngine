@@ -1,28 +1,4 @@
 {
-	"gameobjects" : 
-	[
-		{
-			"info" : 
-			{
-				"name" : "",
-				"physics-layer" : "DEFAULT",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"rotation" : 0.0
-			}
-		}
-	],
+	"gameobjects" : null,
 	"name" : "cave.json"
 }

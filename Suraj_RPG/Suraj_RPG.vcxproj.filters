@@ -291,6 +291,9 @@
     <ClCompile Include="CombatInventory.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="Bed.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -559,6 +562,9 @@
     </ClInclude>
     <ClInclude Include="CombatInventory.h">
       <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Bed.h">
+      <Filter>Scripts\Interaction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
