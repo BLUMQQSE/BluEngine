@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Interactor.h"
-#include "Physics.h"
+#include "core/Physics.h"
 #include "GameObject.h"
 #include "IInteractable.h"
 namespace bm98

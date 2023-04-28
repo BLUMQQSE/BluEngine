@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Tile.h"
 #include "AnimatedSpriteComponent.h"
-#include "Renderer.h"
+#include "core/Renderer.h"
 namespace bm98
 {
 Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f, 

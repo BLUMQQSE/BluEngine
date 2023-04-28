@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "EditorState.h"
-#include "Input.h"
-#include "GraphicsSettings.h"
-#include "Input.h"
-#include "Debug.h"
+
+#include "core/Input.h"
+#include "core/Input.h"
+#include "core/Debug.h"
+#include "core/Physics.h"
+#include "core/SceneManager.h"
+
 #include "Gui.h"
-#include "Physics.h"
 #include "PauseMenu.h"
 #include "TilemapComponent.h"
 #include "TilemapColliderComponent.h"
@@ -13,9 +15,9 @@
 #include "GameObject.h"
 #include "SceneEditorView.h"
 #include "PrefabEditor.h"
-#include "SceneManager.h"
 #include "Scene.h"
 #include "SpriteComponent.h"
+#include "GraphicsSettings.h"
 namespace bm98
 {
 using namespace core;
@@ -77,12 +79,12 @@ EditorState::~EditorState()
 
 void EditorState::init_state()
 {
-	Debug::Instance()->core_log("ENTERING EditorState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[EditorState] Initialized", Debug::LogLevel::INFO);
 }
 
 void EditorState::on_end_state()
 {
-	Debug::Instance()->core_log("EXITING EditorState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[EditorState] Shutdown", Debug::LogLevel::INFO);
 
 	//FileManager::Instance()->save_to_file_styled(selected_gameobject->serialize_json(), "tilemap_test.json");
 

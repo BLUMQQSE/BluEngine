@@ -1,7 +1,7 @@
 #pragma once
-#include "IData.h"
-#include "GraphicsSettings.h"
-#include "Math.h"
+#include "../IData.h"
+#include "../GraphicsSettings.h"
+#include "../Math.h"
 namespace bm98
 {
 	class State;

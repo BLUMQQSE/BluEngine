@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "../pch.h"
 #include "Physics.h"
-#include "Collisions.h"
-#include "GameObject.h"
-#include "Tile.h"
-#include "TilemapColliderComponent.h"
+#include "../Collisions.h"
+#include "../GameObject.h"
+#include "../Tile.h"
+#include "../TilemapColliderComponent.h"
 namespace bm98::core
 {
 void Physics::init()

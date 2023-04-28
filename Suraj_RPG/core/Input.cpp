@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "../pch.h"
 #include "Input.h"
 #include "Time.h"
 #include "Game.h"

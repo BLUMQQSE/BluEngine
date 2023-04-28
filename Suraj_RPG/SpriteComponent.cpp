@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "SpriteComponent.h"
 #include "GameObject.h"
-#include "Debug.h"
-#include "ResourceManager.h"
+#include "core/Debug.h"
+#include "core/ResourceManager.h"
+#include "core/Renderer.h"
+
 namespace bm98
 {
 
@@ -19,7 +21,7 @@ SpriteComponent::SpriteComponent(std::string file_path)
 
 SpriteComponent::~SpriteComponent()
 {
-	Renderer::Instance()->remove(&sprite);
+	core::Renderer::Instance()->remove(&sprite);
 }
 
 void SpriteComponent::init()
@@ -29,7 +31,7 @@ void SpriteComponent::init()
 
 void SpriteComponent::awake()
 {
-	Renderer::Instance()->add(Renderer::RenderObject(&sprite, this));
+	core::Renderer::Instance()->add(core::Renderer::RenderObject(&sprite, this));
 }
 
 void SpriteComponent::update()
@@ -122,11 +124,11 @@ const sf::Vector2i SpriteComponent::get_size() const
 
 void SpriteComponent::set_sprite(std::string file_path)
 {
-	if (!ResourceManager::Instance()->has_texture(file_path))
+	if (!core::ResourceManager::Instance()->has_texture(file_path))
 	{
 		return;
 	}
-	this->texture_sheet = &ResourceManager::Instance()->get_texture(file_path);
+	this->texture_sheet = &core::ResourceManager::Instance()->get_texture(file_path);
 
 	this->file_path = file_path;
 	sprite.setTexture(*texture_sheet);

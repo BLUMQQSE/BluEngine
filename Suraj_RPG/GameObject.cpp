@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "GameObject.h"
-#include "Time.h"
-#include "Renderer.h"
-#include "Debug.h"
+#include "core/Time.h"
+#include "core/Renderer.h"
+#include "core/Debug.h"
 #include "Collisions.h"
-#include "SceneManager.h"
+#include "core/SceneManager.h"
 
 #pragma region GUI
 

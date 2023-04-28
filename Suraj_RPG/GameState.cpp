@@ -1,15 +1,17 @@
 #include "pch.h"
 #include "GameState.h"
+
+#include "core/Input.h"
+#include "core/Debug.h"
+#include "core/SceneManager.h"
+#include "core/FileManager.h"
+
 #include "GraphicsSettings.h"
-#include "Input.h"
-#include "Debug.h"
 #include "Gui.h"
 #include "Scene.h"
 #include "GameClock.h"
 #include "PauseMenu.h"
 #include "ParticleSystem.h"
-#include "SceneManager.h"
-#include "FileManager.h"
 #include "GameEditorView.h"
 
 namespace bm98
@@ -66,12 +68,12 @@ GameState::~GameState()
 
 void GameState::init_state()
 {
-	Debug::Instance()->core_log("ENTERING GameState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[GameState] Initialized", Debug::LogLevel::INFO);
 }
 
 void GameState::on_end_state()
 {
-	Debug::Instance()->core_log("EXITING GameState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[GameState] Shutdown", Debug::LogLevel::INFO);
 	SceneManager::Instance()->save_scene(true);
 	FileManager::Instance()->save_to_file_styled(serialize_json(),
 		FileManager::Instance()->get_save_name()+"gamestate.json");

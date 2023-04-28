@@ -4,8 +4,8 @@
 #include "GameObject.h"
 #include "Inventory.h"
 #include "ItemData.h"
-#include "ResourceManager.h"
-#include "SceneManager.h"
+#include "core/ResourceManager.h"
+#include "core/SceneManager.h"
 namespace bm98
 {
 

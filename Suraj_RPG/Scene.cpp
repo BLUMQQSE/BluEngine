@@ -1,13 +1,13 @@
 #include "pch.h"
-#include "Debug.h"
+#include "core/Debug.h"
 #include "Scene.h"
-#include "Physics.h"
+#include "core/Physics.h"
 #include "GameObject.h"
-#include "SceneManager.h"
-#include "FileManager.h"
+#include "core/SceneManager.h"
+#include "core/FileManager.h"
 #include "DontDestroyOnLoad.h"
 #include "CameraComponent.h"
-#include "EventSystem.h"
+#include "core/EventSystem.h"
 namespace bm98
 {
 Scene::Scene()

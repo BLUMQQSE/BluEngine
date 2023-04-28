@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "TextureSelector.h"
-#include "ResourceManager.h"
-#include "Renderer.h"
-#include "Input.h"
-#include "Time.h" 
+#include "core/ResourceManager.h"
+#include "core/Renderer.h"
+#include "core/Input.h"
+#include "core/Time.h" 
 #include "Gui.h"
 
 namespace bm98::GUI

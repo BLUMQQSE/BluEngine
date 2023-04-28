@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ItemData.h"
-#include "FileManager.h"
-#include "ResourceManager.h"
+#include "core/FileManager.h"
+#include "core/ResourceManager.h"
 namespace bm98
 {
 using namespace core;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Gui.h"
-#include "EventSystem.h"
+#include "core/EventSystem.h"
 #include "Timer.h"
 
 namespace bm98

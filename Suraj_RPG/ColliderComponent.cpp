@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ColliderComponent.h"
 #include "GameObject.h"
+#include "core/Renderer.h"
 namespace bm98
 {
 ColliderComponent::ColliderComponent()
@@ -9,7 +10,7 @@ ColliderComponent::ColliderComponent()
 
 ColliderComponent::~ColliderComponent()
 {
-	Renderer::Instance()->remove(&collider_bounds);
+	core::Renderer::Instance()->remove(&collider_bounds);
 }
 
 void ColliderComponent::init()

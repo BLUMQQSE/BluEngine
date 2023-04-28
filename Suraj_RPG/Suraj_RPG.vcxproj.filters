@@ -81,26 +81,14 @@
     <ClCompile Include="MainMenuState.cpp">
       <Filter>States</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="EditorState.cpp">
       <Filter>States</Filter>
     </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Tile.cpp">
       <Filter>Tiles</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
@@ -117,12 +105,6 @@
     <ClCompile Include="GraphicsSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Collisions.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -132,14 +114,8 @@
     <ClCompile Include="globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileManager.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\External\JSON\dist\jsoncpp.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="DataAsset.cpp">
       <Filter>DataAssets</Filter>
@@ -182,9 +158,6 @@
     </ClCompile>
     <ClCompile Include="SceneChange.cpp">
       <Filter>Scripts\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="DropDownComponent.cpp">
       <Filter>Components\GUI</Filter>
@@ -243,13 +216,7 @@
     <ClCompile Include="TilemapColliderComponent.cpp">
       <Filter>Components\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="EventSystem.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConsoleManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InventoryWindow.cpp">
@@ -273,9 +240,6 @@
     <ClCompile Include="Dialogue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DialogueSystem.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="ItemController.cpp">
       <Filter>Scripts\Items</Filter>
     </ClCompile>
@@ -294,6 +258,48 @@
     <ClCompile Include="Bed.cpp">
       <Filter>Scripts\Interaction</Filter>
     </ClCompile>
+    <ClCompile Include="core\FileManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Game.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ResourceManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\UITagSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\DialogueSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\EventSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Physics.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Renderer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Time.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ConsoleManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Input.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Debug.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\SceneManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h">
@@ -308,26 +314,14 @@
     <ClInclude Include="MainMenuState.h">
       <Filter>States</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="EditorState.h">
       <Filter>States</Filter>
     </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Tile.h">
       <Filter>Tiles</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Debug.h">
-      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
@@ -344,12 +338,6 @@
     <ClInclude Include="GraphicsSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Collisions.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -361,9 +349,6 @@
     </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FileManager.h">
-      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="IData.h">
       <Filter>Header Files</Filter>
@@ -403,9 +388,6 @@
     </ClInclude>
     <ClInclude Include="..\External\JSON\include\json\version.h">
       <Filter>Header Files\JSON</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="DataAsset.h">
       <Filter>DataAssets</Filter>
@@ -451,9 +433,6 @@
     </ClInclude>
     <ClInclude Include="SceneChange.h">
       <Filter>Scripts\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="DropDownComponent.h">
       <Filter>Components\GUI</Filter>
@@ -515,13 +494,7 @@
     <ClInclude Include="TilemapColliderComponent.h">
       <Filter>Components\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="InventoryWindow.h">
@@ -545,9 +518,6 @@
     <ClInclude Include="Dialogue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DialogueSystem.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="ItemController.h">
       <Filter>Scripts\Items</Filter>
     </ClInclude>
@@ -565,6 +535,48 @@
     </ClInclude>
     <ClInclude Include="Bed.h">
       <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="core\FileManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Game.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ResourceManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\UITagSystem.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\DialogueSystem.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\EventSystem.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Physics.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Renderer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Time.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ConsoleManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Input.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Debug.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\SceneManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Test.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

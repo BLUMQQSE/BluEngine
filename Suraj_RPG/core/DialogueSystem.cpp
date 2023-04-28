@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "../pch.h"
 #include "DialogueSystem.h"
 
 namespace bm98::core

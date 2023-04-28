@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "TilemapComponent.h"
 #include <filesystem>
-#include "Debug.h"
-#include "Renderer.h"
+#include "core/Debug.h"
+#include "core/Renderer.h"
 #include "AnimatedSpriteComponent.h"
 #include "Tile.h"
-#include "FileManager.h"
+#include "core/FileManager.h"
 #include "GameObject.h"
-#include "ResourceManager.h"
+#include "core/ResourceManager.h"
 namespace bm98
 {
 

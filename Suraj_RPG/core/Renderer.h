@@ -1,7 +1,6 @@
 #pragma once
-#include "globals.h"
-#include "IRenderable.h"
-#include <limits>
+#include "../globals.h"
+#include "../IRenderable.h"
 #include "Math.h"
 #include "EventSystem.h"
 

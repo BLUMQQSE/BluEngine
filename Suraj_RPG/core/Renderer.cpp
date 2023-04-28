@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "globals.h"
+#include "../pch.h"
+#include "../globals.h"
 #include "Renderer.h"
 #include "Debug.h"
 

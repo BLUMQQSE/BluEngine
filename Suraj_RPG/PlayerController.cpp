@@ -1,24 +1,26 @@
 #include "pch.h"
 #include "PlayerController.h"
 #include "GameObject.h"
-#include "Input.h"
-#include "SceneManager.h"
 #include "Collisions.h"
 #include "SpriteComponent.h"
 #include "ButtonComponent.h"
-#include "Physics.h"
 #include "CameraComponent.h"
 #include "AudioSource.h"
-#include "ResourceManager.h"
 #include "DropDownComponent.h"
 #include "ItemData.h"
 #include "DataAsset.h"
 #include "Inventory.h"
 #include "CapsuleColliderComponent.h"
-#include "EventSystem.h"
 #include "Interactor.h"
 #include "IInteractable.h"
 #include "InventoryGUIController.h"
+
+#include "core/EventSystem.h"
+#include "core/UITagSystem.h"
+#include "core/Physics.h"
+#include "core/ResourceManager.h"
+#include "core/Input.h"
+#include "core/SceneManager.h"
 namespace bm98
 {
 using namespace core;
@@ -144,6 +146,11 @@ void bm98::PlayerController::update_input()
 
 	if (Input::Instance()->get_action_down("INTERACT"))
 	{
+		//TextUITag* tag = new TextUITag(game_object->get_world_position(), "Hello world", 24, 5);
+		
+		//ImageUITag* tag2 = new ImageUITag(game_object->get_world_position() + Vector2f(100, 100), Vector2f(300,200), 
+		//								  &ResourceManager::Instance()->get_texture("mainmenu_bg.png"), 10, 5);
+
 		/*
 		if (game_object->check_for_child("pants"))
 		{

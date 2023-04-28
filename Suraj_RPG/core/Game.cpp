@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "../pch.h"
 #include "Game.h"
 #include "FileManager.h"
 #include "ResourceManager.h"
 #include "ConsoleManager.h"
-#include "GameState.h"
-#include "MainMenuState.h"
+#include "../GameState.h"
+#include "../MainMenuState.h"
 #include "Time.h"
 #include "Input.h"
 #include "Physics.h"
@@ -12,6 +12,7 @@
 //#include <windows.h>
 #include "EventSystem.h"
 #include "SceneManager.h"
+#include "UITagSystem.h"
 namespace bm98::core
 {
 
@@ -21,7 +22,7 @@ GameSettings Game::game_settings;
 
 Game::Game()
 { 
-    Debug::Instance()->core_log("LAUNCHING APPLICATION", Debug::LogLevel::INFO);
+    Debug::Instance()->core_log("[Game] Launching", Debug::LogLevel::INFO);
 
     init_singletons();
 
@@ -36,7 +37,7 @@ Game::Game()
     Renderer::Instance()->init(window);
 
     EventSystem::Instance()->push_event(EventID::_SYSTEM_RESOURCEMANAGER_LOAD_RESOURCES_);
-    Debug::Instance()->core_log("RESOURCES LOADED", Debug::LogLevel::INFO);
+    Debug::Instance()->core_log("[Game] Resources Loaded", Debug::LogLevel::INFO);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_INITIALIZE_, static_cast<void*>(window));
     EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_INITIALIZE_);
 
@@ -61,7 +62,7 @@ Game::~Game()
 {
     if (!successful_shutdown)
     {
-        Debug::Instance()->core_log("APPLICATION FAILED TO SUCCESSFULLY SHUTDOWN", Debug::LogLevel::FAILURE);
+        Debug::Instance()->core_log("[Game] Failed shutdown", Debug::LogLevel::FAILURE);
         end_application();
     }
 
@@ -154,6 +155,9 @@ void Game::update()
     EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_);
 
     EventSystem::Instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
+
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_UITAG_UPDATE_);
+
     if (!states.empty())
     {
         // Create a pointer to current state to ensure even if a new state is pushed,
@@ -223,7 +227,9 @@ void Game::init_singletons()
     Time::Instance();
     ResourceManager::Instance();
     Physics::Instance();
+    UITagSystem::Instance();
     ConsoleManager::Instance();
+    
 }
 
 void Game::init_variables()
@@ -263,8 +269,8 @@ void Game::init_window()
 void Game::init_states()
 {
     state_count = 1;
-
     states.push(new MainMenuState(window, &states, &graphics_settings));
+    states.top()->init_state();
 }
 
 void Game::end_application()
@@ -276,7 +282,7 @@ void Game::end_application()
         states.pop();
     }
     successful_shutdown = true;
-    Debug::Instance()->core_log("SUCCESSFULLY SHUTDOWN", Debug::LogLevel::INFO);
+    Debug::Instance()->core_log("[Game] Successful Shutdown", Debug::LogLevel::INFO);
 }
 
 #pragma region IDATA

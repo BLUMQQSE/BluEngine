@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Gui.h"
-#include "Time.h"
-#include "Input.h"
-#include "Renderer.h"
-#include "Debug.h"
+#include "core/Time.h"
+#include "core/Input.h"
+#include "core/Renderer.h"
+#include "core/Debug.h"
 
 namespace bm98::GUI
 {
@@ -34,14 +34,15 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 	this->shape.setOutlineThickness(1.f);
 	this->shape.setOutlineColor(outline_idle_color);
 	this->font = font;
+
 	this->text.setString(text);
 	this->text.setFont(*font);
 	this->text.setFillColor(text_idle);
 	this->text.setCharacterSize(character_size);
 
 	this->text.setPosition(
-		shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height /*/ 2.f*/
+		(int)(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
+		(int)(shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height) /*/ 2.f*/
 	);
 	
 	this->text_idle = text_idle;
@@ -124,8 +125,8 @@ void Button::set_position(float x, float y)
 	this->shape.setPosition(sf::Vector2f(x, y));
 
 	this->text.setPosition(
-		shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height /*/ 2.f*/
+		(int)(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
+		(int)(shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height) /*/ 2.f*/
 	);
 	
 }
@@ -170,8 +171,8 @@ void Button::set_text(const std::string text)
 {
 	this->text.setString(text);
 	this->text.setPosition(
-		shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height /*/ 2.f*/
+		(int)(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
+		(int)(shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height) /*/ 2.f*/
 	);
 }
 
@@ -597,8 +598,8 @@ InputBox::InputBox(float x, float y, float width, float height, float character_
 	
 	box.setPosition(sf::Vector2f(x, y));
 	text.setPosition(
-		box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		box.getPosition().y
+		(int)(box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
+		(int)(box.getPosition().y)
 	);
 	
 	if (selected)
@@ -662,8 +663,8 @@ void InputBox::update()
 	if (selected)
 	{
 		text.setPosition(
-			box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-			text.getPosition().y
+			(int)(box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
+			(int)(text.getPosition().y)
 		);
 		if (tick_delta >= tick_timer)
 		{
@@ -699,8 +700,8 @@ void InputBox::set_position(float x, float y)
 	//GUIObject::set_position(x, y);
 	box.setPosition(sf::Vector2f(x, y));
 	text.setPosition(
-		box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		box.getPosition().y
+		(int)(box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
+		(int)(box.getPosition().y)
 	);
 }
 
@@ -756,8 +757,8 @@ void InputBox::set_text(std::string value)
 	text.setString(text_string.str());
 
 	text.setPosition(
-		box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		text.getPosition().y
+		(int)(box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
+		(int)(text.getPosition().y)
 	);
 }
 

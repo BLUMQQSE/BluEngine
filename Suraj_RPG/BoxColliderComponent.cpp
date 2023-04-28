@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "BoxColliderComponent.h"
-#include "Renderer.h"
+#include "core/Renderer.h"
 #include "RigidbodyComponent.h"
 #include "GameObject.h"
 #include "SpriteComponent.h"

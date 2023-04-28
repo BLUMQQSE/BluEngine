@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Renderer.h"
-#include "Input.h"
+#include "core/Renderer.h"
+#include "core/Input.h"
 #include "ButtonComponent.h"
 #include "GameObject.h"
-#include "ResourceManager.h"
+#include "core/ResourceManager.h"
 namespace bm98
 {
 using namespace core;

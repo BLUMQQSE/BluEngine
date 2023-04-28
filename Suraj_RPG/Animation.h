@@ -1,7 +1,7 @@
 #pragma once
 #include "IData.h"
-#include "Renderer.h"
-#include "Time.h"
+#include "core/Renderer.h"
+#include "core/Time.h"
 namespace bm98
 {
 using namespace core;

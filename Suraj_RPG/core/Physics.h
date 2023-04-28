@@ -1,6 +1,6 @@
 #pragma once
-#include "globals.h"
-#include "Math.h"
+#include "../globals.h"
+#include "../Math.h"
 #include "EventSystem.h"
 namespace bm98
 {

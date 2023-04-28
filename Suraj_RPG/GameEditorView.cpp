@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Input.h"
+#include "core/Input.h"
 #include "GameEditorView.h"
-#include "SceneManager.h"
+#include "core/SceneManager.h"
 #include "GameObject.h"
-#include "ResourceManager.h"
+#include "core/ResourceManager.h"
 namespace bm98
 {
 GameEditorView::GameEditorView()

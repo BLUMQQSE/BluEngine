@@ -2,7 +2,7 @@
 #include "Component.h"
 #include "Gui.h"
 #include "TextureSelector.h"
-#include "EventSystem.h"
+#include "core/EventSystem.h"
 #include "Timer.h"
 
 namespace bm98

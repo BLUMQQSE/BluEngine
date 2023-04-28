@@ -1,7 +1,7 @@
 #pragma once
-#include "globals.h"
+#include "../globals.h"
 #include "EventSystem.h"
-#include "gui.h"
+#include "../gui.h"
 namespace bm98
 {
 class GameState;
@@ -23,6 +23,7 @@ public:
 
 	std::string get_default_scene();
 	std::string get_active_scene_name();
+	sf::View* get_active_scene_view();
 
 	void load_scene(std::string scene_name);
 	/// <summary>

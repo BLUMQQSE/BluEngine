@@ -2,7 +2,7 @@
 #include "SceneChange.h"
 #include "Collisions.h"
 #include "GameObject.h"
-#include "SceneManager.h"
+#include "core/SceneManager.h"
 #include "DontDestroyOnLoad.h"
 #include "Interactor.h"
 namespace bm98

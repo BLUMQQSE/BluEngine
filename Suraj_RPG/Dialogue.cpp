@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Dialogue.h"
-#include "FileManager.h"
+#include "core/FileManager.h"
 
 namespace bm98
 {

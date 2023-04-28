@@ -1,6 +1,6 @@
 #pragma once
 #include "EventSystem.h"
-#include "Timer.h"
+#include "../Timer.h"
 namespace bm98::core
 {
 class Input : public Listener

@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "InventoryGUIController.h"
 #include "InventoryWindow.h"
-#include "Input.h"
+#include "core/Input.h"
 #include "SpriteComponent.h"
 
 namespace bm98

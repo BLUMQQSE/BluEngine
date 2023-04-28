@@ -2,7 +2,7 @@
 #include "InventoryWindow.h"
 #include "Inventory.h"
 #include "GameObject.h"
-#include "ResourceManager.h"
+#include "core/ResourceManager.h"
 
 namespace bm98
 {

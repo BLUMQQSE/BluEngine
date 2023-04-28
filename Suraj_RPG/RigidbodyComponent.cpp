@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "RigidbodyComponent.h"
-#include "Time.h"
+#include "core/Time.h"
+#include "core/Renderer.h"
 #include "GameObject.h"
 #include "SpriteComponent.h"
 namespace bm98

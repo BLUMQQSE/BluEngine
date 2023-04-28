@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h"
-#include "EventSystem.h"
+#include "core/EventSystem.h"
 #include "Gui.h"
 
 namespace bm98

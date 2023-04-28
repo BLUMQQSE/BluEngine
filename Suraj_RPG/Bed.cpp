@@ -3,6 +3,7 @@
 #include "Interactor.h"
 #include "RigidbodyComponent.h"
 #include "GameObject.h"
+#include "core/Time.h"
 
 namespace bm98
 {

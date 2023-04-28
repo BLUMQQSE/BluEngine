@@ -92,6 +92,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,6 +113,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,6 +134,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +155,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,32 +181,38 @@
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="CombatInventory.cpp" />
-    <ClCompile Include="ConsoleManager.cpp" />
+    <ClCompile Include="core\ConsoleManager.cpp" />
+    <ClCompile Include="core\Debug.cpp" />
+    <ClCompile Include="core\DialogueSystem.cpp" />
+    <ClCompile Include="core\EventSystem.cpp" />
+    <ClCompile Include="core\FileManager.cpp" />
+    <ClCompile Include="core\Game.cpp" />
+    <ClCompile Include="core\Input.cpp" />
+    <ClCompile Include="core\Physics.cpp" />
+    <ClCompile Include="core\Renderer.cpp" />
+    <ClCompile Include="core\ResourceManager.cpp" />
+    <ClCompile Include="core\SceneManager.cpp" />
+    <ClCompile Include="core\Time.cpp" />
+    <ClCompile Include="core\UITagSystem.cpp" />
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="Delay.cpp" />
     <ClCompile Include="Destructor.cpp" />
     <ClCompile Include="Dialogue.cpp" />
-    <ClCompile Include="DialogueSystem.cpp" />
     <ClCompile Include="DontDestroyOnLoad.cpp" />
     <ClCompile Include="DropDownComponent.cpp" />
-    <ClCompile Include="EventSystem.cpp" />
-    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameEditorView.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="GraphicsSettings.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="Component.cpp" />
-    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="EditorState.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="HearingComponent.cpp" />
     <ClCompile Include="IDestructable.cpp" />
     <ClCompile Include="IInteractable.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Interactor.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="InventoryGUIController.cpp" />
@@ -216,7 +226,6 @@
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PrefabEditor.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="pch.cpp">
@@ -227,21 +236,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="Physics.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneEditorView.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SensoryComponent.cpp" />
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="Test.cpp" />
     <ClCompile Include="TextureSelector.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TilemapColliderComponent.cpp" />
     <ClCompile Include="TilemapComponent.cpp" />
-    <ClCompile Include="Time.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VisualComponent.cpp" />
     <ClCompile Include="WeaponController.cpp" />
@@ -274,33 +280,39 @@
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Collisions.h" />
     <ClInclude Include="CombatInventory.h" />
-    <ClInclude Include="ConsoleManager.h" />
+    <ClInclude Include="core\ConsoleManager.h" />
+    <ClInclude Include="core\Debug.h" />
+    <ClInclude Include="core\DialogueSystem.h" />
+    <ClInclude Include="core\EventSystem.h" />
+    <ClInclude Include="core\FileManager.h" />
+    <ClInclude Include="core\Game.h" />
+    <ClInclude Include="core\Input.h" />
+    <ClInclude Include="core\Physics.h" />
+    <ClInclude Include="core\Renderer.h" />
+    <ClInclude Include="core\ResourceManager.h" />
+    <ClInclude Include="core\SceneManager.h" />
+    <ClInclude Include="core\Time.h" />
+    <ClInclude Include="core\UITagSystem.h" />
     <ClInclude Include="DataAsset.h" />
     <ClInclude Include="Delay.h" />
     <ClInclude Include="Destructor.h" />
     <ClInclude Include="Dialogue.h" />
-    <ClInclude Include="DialogueSystem.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />
     <ClInclude Include="DropDownComponent.h" />
-    <ClInclude Include="EventSystem.h" />
-    <ClInclude Include="FileManager.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameEditorView.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="GraphicsSettings.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="Debug.h" />
     <ClInclude Include="EditorState.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="HearingComponent.h" />
     <ClInclude Include="IData.h" />
     <ClInclude Include="IDestructable.h" />
     <ClInclude Include="IInteractable.h" />
-    <ClInclude Include="Input.h" />
     <ClInclude Include="Interactor.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="InventoryGUIController.h" />
@@ -315,25 +327,21 @@
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PrefabEditor.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Physics.h" />
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneEditorView.h" />
-    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SensoryComponent.h" />
     <ClInclude Include="SettingsState.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="Test.h" />
     <ClInclude Include="TextureSelector.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TilemapColliderComponent.h" />
     <ClInclude Include="TilemapComponent.h" />
-    <ClInclude Include="Time.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="VisualComponent.h" />
     <ClInclude Include="WeaponController.h" />

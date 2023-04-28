@@ -2,7 +2,7 @@
 #include "CameraComponent.h"
 #include "GameObject.h"
 #include "DontDestroyOnLoad.h"
-#include "Renderer.h"
+#include "core/Renderer.h"
 #include "CameraComponent.h"
 namespace bm98
 {
@@ -18,7 +18,7 @@ CameraComponent::~CameraComponent()
 void CameraComponent::init()
 {
 	camera_view.setCenter(game_object->get_world_position());
-	camera_view.setSize(sf::Vector2f(Renderer::Instance()->get_window_size()));
+	camera_view.setSize(sf::Vector2f(core::Renderer::Instance()->get_window_size()));
 	//camera_view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
 	sf::Listener::setPosition(sf::Vector3f(game_object->get_center().x, game_object->get_center().y, 0));
 }

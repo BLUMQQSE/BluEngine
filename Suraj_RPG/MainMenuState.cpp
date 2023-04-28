@@ -1,16 +1,18 @@
 #include "pch.h"
 #include "MainMenuState.h"
+
+#include "core/Input.h"
+#include "core/Debug.h"
+#include "core/FileManager.h"
+#include "core/ResourceManager.h"
+#include "core/Game.h"
+#include "core/Physics.h"
+
 #include "GraphicsSettings.h"
-#include "Input.h"
-#include "Debug.h"
 #include "Gui.h"
-#include "Physics.h"
 #include "GameState.h"
 #include "EditorState.h"
 #include "SettingsState.h"
-#include "FileManager.h"
-#include "ResourceManager.h"
-#include "Game.h"
 namespace bm98
 {
 using namespace core;
@@ -47,7 +49,7 @@ MainMenuState::~MainMenuState()
 
 void MainMenuState::init_state()
 {
-	Debug::Instance()->core_log("ENTERING MainMenuState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[MainMenuState] Initialized", Debug::LogLevel::INFO);
 	init_background();
 	init_buttons();
 
@@ -58,7 +60,7 @@ void MainMenuState::on_end_state()
 {
 	music.stop();
 	Renderer::Instance()->remove_ui(&background);
-	Debug::Instance()->core_log("EXITING MainMenuState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[MainMenuState] Shutdown", Debug::LogLevel::INFO);
 	delete_buttons();
 }
 

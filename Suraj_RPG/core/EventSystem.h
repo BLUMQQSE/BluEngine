@@ -1,5 +1,5 @@
 #pragma once
-#include "globals.h"
+#include "../globals.h"
 namespace bm98
 {
 
@@ -234,8 +234,17 @@ enum class EventID
 	_SYSTEM_SCENEMANAGER_INITIALIZE_,
 	_SYSTEM_SCENEMANAGER_DESTROY_,
 	_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_,
+	_SYSTEM_SCENEMANAGER_PRE_SCENE_CHANGE_,
+	_SYSTEM_SCENEMANAGER_POST_SCENE_CHANGE_,
 
 #pragma endregion
+
+#pragma region UITagSystem
+
+	_SYSTEM_UITAG_UPDATE_,
+
+#pragma endregion
+
 
 
 	_SYSTEM_SETTINGS_WINDOW_SIZE_CHANGE_,

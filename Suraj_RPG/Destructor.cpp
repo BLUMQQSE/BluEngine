@@ -3,7 +3,7 @@
 #include "IDestructable.h"
 #include "ColliderComponent.h"
 #include "GameObject.h"
-#include "Physics.h"
+#include "core/Physics.h"
 
 namespace bm98
 {

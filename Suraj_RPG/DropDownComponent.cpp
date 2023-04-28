@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "DropDownComponent.h"
-#include "ResourceManager.h"
+#include "core/ResourceManager.h"
 #include "GameObject.h"
-#include "SceneManager.h"
-#include "Input.h"
+#include "core/SceneManager.h"
+#include "core/Input.h"
 namespace bm98
 {
 

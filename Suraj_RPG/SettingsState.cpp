@@ -1,13 +1,15 @@
 #include "pch.h"
 #include "SettingsState.h"
+
+#include "core/Input.h"
+#include "core/Time.h"
+#include "core/Debug.h"
+#include "core/Physics.h"
+#include "core/Game.h"
+#include "core/ResourceManager.h"
+
 #include "GraphicsSettings.h"
-#include "Input.h"
-#include "Time.h"
-#include "Debug.h"
 #include "Gui.h"
-#include "Physics.h"
-#include "Game.h"
-#include "ResourceManager.h"
 namespace bm98
 {
 using namespace core;
@@ -63,7 +65,7 @@ SettingsState::~SettingsState()
 
 void SettingsState::init_state()
 {
-	Debug::Instance()->core_log("ENTERING SettingsState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[SettingsState] Initialized", Debug::LogLevel::INFO);
 }
 
 void SettingsState::init_variables()
@@ -116,7 +118,7 @@ void SettingsState::update_input()
 
 void SettingsState::on_end_state()
 {
-	Debug::Instance()->core_log("EXITING SettingsState", Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[SettingsState] Shutdown", Debug::LogLevel::INFO);
 }
 
 void SettingsState::update()

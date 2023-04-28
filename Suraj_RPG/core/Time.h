@@ -1,7 +1,7 @@
 #pragma once
-#include "Timer.h"
+#include "../Timer.h"
 #include "EventSystem.h"
-#include "IData.h"
+#include "../IData.h"
 
 namespace bm98::core
 {

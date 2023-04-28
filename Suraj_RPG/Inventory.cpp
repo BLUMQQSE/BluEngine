@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Inventory.h"
-#include "ResourceManager.h"
-#include "SceneManager.h"
+#include "core/ResourceManager.h"
+#include "core/SceneManager.h"
 #include "GameObject.h"
-#include "EventSystem.h"
+#include "core/EventSystem.h"
 #include "ItemController.h"
 #include "WeaponController.h"
 

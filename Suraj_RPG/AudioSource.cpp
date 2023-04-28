@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "AudioSource.h"
-#include "ResourceManager.h"
+#include "core/ResourceManager.h"
 #include "GameObject.h"
-#include "Input.h"
-#include "Game.h"
+#include "core/Input.h"
+#include "core/Game.h"
 namespace bm98
 {
 AudioSource::AudioSource()

@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "Debug.h"
+#include "core/Debug.h"
 #include "IRenderable.h"
-#include "Renderer.h"
+#include "core/Renderer.h"
 
 namespace bm98
 {

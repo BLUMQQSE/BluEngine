@@ -1,6 +1,6 @@
 #pragma once
 #include "IData.h"
-#include "EventSystem.h"
+#include "core/EventSystem.h"
 namespace bm98
 {
 class GameObject;
@@ -20,8 +20,9 @@ public:
 	void update();
 	void late_update();
 	void fixed_update();
-	void render(sf::View* view = nullptr);
+	void render(sf::View * view = nullptr);
 
+	sf::View* get_view() { return scene_view; }
 	void set_view(sf::View* view);
 
 	std::string get_name();

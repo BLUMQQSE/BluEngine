@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "State.h"
-//#include "Game.h"
+
+#include "core/ResourceManager.h"
+#include "core/Input.h"
+#include "core/Debug.h"
+#include "core/Physics.h"
+
 #include "GraphicsSettings.h"
-#include "ResourceManager.h"
-#include "Input.h"
-#include "Debug.h"
 #include "Gui.h"
-#include "Physics.h"
 
 namespace bm98
 {

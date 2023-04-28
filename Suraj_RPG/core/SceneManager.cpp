@@ -1,12 +1,15 @@
-#include "pch.h"
-#include "Debug.h"
+#include "../pch.h"
 #include "SceneManager.h"
-#include "Scene.h"
-#include "FileManager.h"
-#include "GameObject.h"
-#include "EventSystem.h"
-#include "SceneChange.h"
+
+#include "Debug.h"
 #include "ResourceManager.h"
+#include "FileManager.h"
+#include "EventSystem.h"
+#include "UITagSystem.h"
+
+#include "../Scene.h"
+#include "../GameObject.h"
+#include "../SceneChange.h"
 namespace bm98::core
 {
 
@@ -25,6 +28,14 @@ std::string SceneManager::get_active_scene_name()
 	return get_default_scene();
 }
 
+sf::View* SceneManager::get_active_scene_view()
+{
+	if (active_scene)
+		return active_scene->get_view();
+
+	return nullptr;
+}
+
 void SceneManager::init(Scene* scene)
 {
 	//game_state = g_s;
@@ -34,11 +45,13 @@ void SceneManager::init(Scene* scene)
 void SceneManager::destroy()
 {
 	active_scene = nullptr;
+	
 }
 
 void SceneManager::load_scene(std::string scene_name)
 {
-	Debug::Instance()->core_log("LOADING SCENE: " + scene_name, Debug::LogLevel::INFO);
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_PRE_SCENE_CHANGE_);
+	Debug::Instance()->core_log("[SceneManager] Loading Scene: " + scene_name, Debug::LogLevel::INFO);
 	if (active_scene->get_name() != scene_name)
 	{
 		save_scene();
@@ -86,7 +99,10 @@ void SceneManager::load_scene(std::string scene_name)
 
 	Renderer::Instance()->refresh();
 
+	TextUITag* tag = new TextUITag(Vector2f(600, 100), scene_name, 28, 5, nullptr);
+
 	EventSystem::Instance()->push_event(EventID::SCENE_CHANGE);
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_POST_SCENE_CHANGE_);
 
 }
 
@@ -107,7 +123,7 @@ void SceneManager::load_scene_prefab(std::string scene_name)
 
 void SceneManager::save_scene(bool save_everything)
 {
-	Debug::Instance()->core_log("SAVING SCENE: " + active_scene->get_name(), Debug::LogLevel::INFO);
+	Debug::Instance()->core_log("[SceneManager] Saving Scene: " + active_scene->get_name(), Debug::LogLevel::INFO);
 
 	FileManager::Instance()->save_to_file_styled(active_scene->serialize_undestroyed_objects(), 
 		FileManager::Instance()->get_save_name() + scenes_file_path + "dont_destroy_on_load_objects.json");

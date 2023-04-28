@@ -1,6 +1,6 @@
 #pragma once
 #include "globals.h"
-#include "Debug.h"
+#include "core/Debug.h"
 namespace bm98
 {
 
