@@ -8,10 +8,13 @@ class IRenderable : public IData
 public:
 
 	IRenderable();
+	IRenderable(Sorting::Layer layer, char z_order, bool render, 
+				sf::View* view = nullptr, sf::Shader* shader = nullptr);
 	virtual ~IRenderable();
 
-	void set_view(sf::View* view);
+	virtual void set_view(sf::View* view);
 	void set_shader(std::pair<std::string, std::string> shader_files, sf::Vector2f light_pos);
+	void set_shader(sf::Shader* shader);
 	void set_uniforms(sf::Vector2f light_pos);
 	virtual void set_render(bool render);
 	void set_z_order(char order, bool refresh_renderer = true);

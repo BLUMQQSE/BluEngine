@@ -32,7 +32,7 @@ void ItemController::handle_instant_interaction()
 Json::Value ItemController::serialize_json()
 {
 	Json::Value obj;
-	obj[typeid(IInteractable).name()] = IInteractable::serialize_json();
+	obj[RemoveNamespace(typeid(IInteractable).name())] = IInteractable::serialize_json();
 
 	obj["item-state"] = ItemNS::ToString(item_state);
 	obj["item-data"] = item_data->get_file_name();
@@ -42,7 +42,7 @@ Json::Value ItemController::serialize_json()
 
 void ItemController::unserialize_json(Json::Value obj)
 {
-	IInteractable::unserialize_json(obj[typeid(IInteractable).name()]);
+	IInteractable::unserialize_json(obj[RemoveNamespace(typeid(IInteractable).name())]);
 	item_state = ItemNS::ToState(obj["item-state"].asString());
 	item_data = dynamic_cast<ItemData*>(ResourceManager::Instance()->get_data_asset(obj["item-data"].asString()));
 	

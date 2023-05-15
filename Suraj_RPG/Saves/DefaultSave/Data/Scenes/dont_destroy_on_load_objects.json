@@ -1,39 +1,7 @@
 {
+	"file-name" : "dont_destroy_on_load_objects.json",
 	"gameobjects" : 
 	[
-		{
-			"components" : 
-			[
-				{
-					"name" : "class bm98::CameraComponent",
-					"value" : null
-				},
-				{
-					"name" : "class bm98::DontDestroyOnLoad",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "MainCamera",
-				"physics-layer" : "PHYSICS_IGNORE",
-				"tag" : "CAMERA"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 1134.2197265625,
-					"y" : 962.64239501953125
-				},
-				"rotation" : 0.0
-			}
-		},
 		{
 			"children" : 
 			[
@@ -41,7 +9,7 @@
 					"components" : 
 					[
 						{
-							"name" : "class bm98::Inventory",
+							"name" : "Inventory",
 							"value" : 
 							{
 								"inventory-type" : "GENERAL",
@@ -49,7 +17,7 @@
 							}
 						},
 						{
-							"name" : "class bm98::InventoryWindow",
+							"name" : "InventoryWindow",
 							"value" : null
 						}
 					],
@@ -68,8 +36,8 @@
 						},
 						"position" : 
 						{
-							"x" : 102.2197265625,
-							"y" : -69.35760498046875
+							"x" : -46.77520751953125,
+							"y" : 0.54486083984375
 						},
 						"rotation" : 0.0
 					}
@@ -78,7 +46,7 @@
 					"components" : 
 					[
 						{
-							"name" : "class bm98::Inventory",
+							"name" : "Inventory",
 							"value" : 
 							{
 								"inventory-type" : "COMBAT",
@@ -86,7 +54,7 @@
 							}
 						},
 						{
-							"name" : "class bm98::InventoryWindow",
+							"name" : "InventoryWindow",
 							"value" : null
 						}
 					],
@@ -105,8 +73,8 @@
 						},
 						"position" : 
 						{
-							"x" : 102.2197265625,
-							"y" : -69.35760498046875
+							"x" : -46.77520751953125,
+							"y" : 0.54486083984375
 						},
 						"rotation" : 0.0
 					}
@@ -115,21 +83,21 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::PlayerController",
+					"name" : "PlayerController",
 					"value" : null
 				},
 				{
-					"name" : "class bm98::AudioSource",
+					"name" : "AudioSource",
 					"value" : 
 					{
 						"current-audio-clip" : "footsteps.wav"
 					}
 				},
 				{
-					"name" : "class bm98::SpriteComponent",
+					"name" : "SpriteComponent",
 					"value" : 
 					{
-						"class bm98::IRenderable" : 
+						"IRenderable" : 
 						{
 							"render" : true,
 							"sorting-layer" : "ACTOR",
@@ -144,18 +112,18 @@
 					}
 				},
 				{
-					"name" : "class bm98::RigidbodyComponent",
+					"name" : "RigidbodyComponent",
 					"value" : 
 					{
 						"acceleration" : 0.5,
 						"body-type" : "KINEMATIC",
 						"deceleration" : 2.0,
 						"max-velocity" : 7.0,
-						"orientation" : "DOWN"
+						"orientation" : "LEFT"
 					}
 				},
 				{
-					"name" : "class bm98::BoxColliderComponent",
+					"name" : "BoxColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -183,8 +151,8 @@
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 1117.2197265625,
-								"y" : 930.64239501953125
+								"x" : 968.22479248046875,
+								"y" : 1000.5448608398438
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
@@ -198,15 +166,15 @@
 					}
 				},
 				{
-					"name" : "class bm98::AnimationComponent",
+					"name" : "AnimationComponent",
 					"value" : null
 				},
 				{
-					"name" : "class bm98::DontDestroyOnLoad",
+					"name" : "DontDestroyOnLoad",
 					"value" : null
 				},
 				{
-					"name" : "class bm98::Interactor",
+					"name" : "Interactor",
 					"value" : 
 					{
 						"interactable-mask" : 
@@ -217,7 +185,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::InventoryGUIController",
+					"name" : "InventoryGUIController",
 					"value" : null
 				}
 			],
@@ -236,12 +204,44 @@
 				},
 				"position" : 
 				{
-					"x" : 1102.2197265625,
-					"y" : 930.64239501953125
+					"x" : 953.22479248046875,
+					"y" : 1000.5448608398438
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "CameraComponent",
+					"value" : null
+				},
+				{
+					"name" : "DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "MainCamera",
+				"physics-layer" : "PHYSICS_IGNORE",
+				"tag" : "CAMERA"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 985.22479248046875,
+					"y" : 1032.544921875
 				},
 				"rotation" : 0.0
 			}
 		}
-	],
-	"name" : "dont_destroy_on_load_objects.json"
+	]
 }

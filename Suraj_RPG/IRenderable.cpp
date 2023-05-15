@@ -9,9 +9,19 @@ IRenderable::IRenderable()
 {
 	shader = new sf::Shader();
 }
+IRenderable::IRenderable(Sorting::Layer layer, char z_order, bool render,
+						 sf::View* view, sf::Shader* shader)
+{
+	set_sorting_layer(layer);
+	set_z_order(z_order);
+	set_render(render);
+	set_view(view);
+	set_shader(shader);
+}
 IRenderable::~IRenderable()
 {
-	delete shader;
+	//if(shader)
+	//	delete shader;
 }
 void IRenderable::set_view(sf::View* view)
 {
@@ -25,6 +35,10 @@ void IRenderable::set_shader(std::pair<std::string, std::string> shader_files, s
 	this->shader->setUniform("lightPos", light_pos);
 
 
+}
+void IRenderable::set_shader(sf::Shader* shader)
+{
+	this->shader = shader;
 }
 void IRenderable::set_uniforms(sf::Vector2f light_pos)
 {

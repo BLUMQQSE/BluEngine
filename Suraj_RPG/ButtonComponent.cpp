@@ -153,7 +153,7 @@ Json::Value ButtonComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj[typeid(IRenderable).name()] = IRenderable::serialize_json();
+	obj[RemoveNamespace(typeid(IRenderable).name())] = IRenderable::serialize_json();
 
 	obj["width"] = get_width();
 	obj["height"] = get_height();
@@ -166,7 +166,7 @@ Json::Value ButtonComponent::serialize_json()
 
 void ButtonComponent::unserialize_json(Json::Value obj)
 {
-	IRenderable::unserialize_json(obj[typeid(IRenderable).name()]);
+	IRenderable::unserialize_json(obj[RemoveNamespace(typeid(IRenderable).name())]);
 	shape.setSize(sf::Vector2f(obj["width"].asFloat(), obj["height"].asFloat()));
 	id = static_cast<short>(obj["id"].asInt64());
 	text.setString(obj["text"].asString());

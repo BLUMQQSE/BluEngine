@@ -48,7 +48,9 @@ void ChildAnimationComponent::awake()
 			return;
 		}
 	}
-	std::cout << "\nERROR::ChildAnimationComponent::ISSUE WITH PARENT AnimationComponent\n";
+	std::stringstream s;
+	s << "[ChildAnimationComponent]" << game_object->get_info().name << "["<<game_object->get_unique_runtime_id() << "]" << "Failed to find parent animation component";
+	core::Debug::Instance()->log(s.str(), core::Debug::LogLevel::WARNING);
 }
 
 void ChildAnimationComponent::update()

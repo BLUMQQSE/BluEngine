@@ -109,9 +109,7 @@ GameObject* Component::get_game_object()
 
 std::vector<Editor::SerializedVar> Component::get_editor_values()
 {
-	std::vector<Editor::SerializedVar> variables;
-
-	return variables;
+	return std::vector<Editor::SerializedVar>();
 }
 
 

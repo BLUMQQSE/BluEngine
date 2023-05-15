@@ -13,15 +13,15 @@ namespace bm98
 Scene::Scene()
 {
 }
-Scene::Scene(std::string name)
-	:name(name)
+Scene::Scene(std::string file_name)
+	:file_name(file_name)
 {
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_PARENT_CHANGE, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_INSTANTIATE, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_DESTROY, this);
 
-	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED, this);
-	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED, this);
+	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG, this);
 }
 
 Scene::~Scene()
@@ -37,8 +37,17 @@ Scene::~Scene()
 void Scene::init()
 {
 	for (auto& o : objects_in_scene)
+	{
 		if (o->has_component<CameraComponent>())
-			scene_view = &o->get_component<CameraComponent>().get_camera_view();	
+		{
+			scene_view = &o->get_component<CameraComponent>().get_camera_view();
+		}
+	}
+
+	for (std::size_t i = 0; i != objects_in_scene.size(); i++)
+	{
+		objects_in_scene[i]->add_to_buffer(scene_view);
+	}
 }
 
 void Scene::update()
@@ -69,21 +78,6 @@ void Scene::render(sf::View* view)
 	}
 }
 
-void Scene::set_view(sf::View* view)
-{
-	scene_view = view;
-}
-
-std::string Scene::get_name()
-{
-	return name;
-}
-
-std::vector<GameObject*> Scene::get_objects()
-{
-	return objects_in_scene;
-}
-
 std::vector<GameObject*> Scene::get_dont_destroy_objects()
 {
 	std::vector<GameObject*> objs;
@@ -95,11 +89,6 @@ std::vector<GameObject*> Scene::get_dont_destroy_objects()
 				objs.push_back(c);
 		}
 	return objs;
-}
-
-void Scene::set_name(std::string name)
-{
-	this->name = name;
 }
 
 void Scene::insert_gameobject(GameObject* go, bool initialize)
@@ -162,7 +151,7 @@ void Scene::remove_gameobject(GameObject* go)
 			objects_in_scene.erase(std::find(objects_in_scene.begin(),
 				objects_in_scene.end(), posterity[0]));
 
-			EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT, posterity[0]);
+			EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG, posterity[0]);
 
 			delete posterity[0];
 			posterity.erase(posterity.begin());
@@ -212,7 +201,8 @@ Json::Value Scene::serialize_json()
 {
 	Json::Value obj;
 
-	obj["name"] = name;
+	obj["file-name"] = file_name;
+	obj["scene-name"] = scene_name;
 	for (auto& o : objects_in_scene)
 	{
 		//only save parent, parent will save children
@@ -227,7 +217,8 @@ Json::Value Scene::serialize_destroyed_objects()
 {
 	Json::Value obj;
 	
-	obj["name"] = name;
+	obj["file-name"] = file_name;
+	obj["scene-name"] = scene_name;
 	for (auto& o : objects_in_scene)
 	{
 		//only save parent, parent will save children
@@ -246,7 +237,8 @@ Json::Value Scene::serialize_undestroyed_objects()
 {
 	Json::Value obj;
 
-	obj["name"] = "dont_destroy_on_load_objects.json";
+	obj["file-name"] = "dont_destroy_on_load_objects.json";
+
 	for (auto& o : objects_in_scene)
 	{
 		//only save parent, parent will save children
@@ -259,7 +251,8 @@ Json::Value Scene::serialize_undestroyed_objects()
 
 void Scene::unserialize_json(Json::Value obj)
 {
-	name = obj["name"].asString();
+	file_name = obj["file-name"].asString();
+	scene_name = obj["scene-name"].asString();
 
 	for (Json::Value game_object : obj["gameobjects"])
 	{
@@ -268,6 +261,8 @@ void Scene::unserialize_json(Json::Value obj)
 
 		insert_gameobject(go, false);
 	}
+
+	init();
 
 	for (auto& go : objects_in_scene)
 		if (!go->is_initialized())
@@ -289,7 +284,7 @@ void Scene::handle_event(Event* event)
 	{
 	case EventID::GAMEOBJECT_PARENT_CHANGE:
 		insert_sort();
-		EventSystem::Instance()->push_event(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE);
+		EventSystem::Instance()->push_event(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG);
 		break;
 	case EventID::GAMEOBJECT_INSTANTIATE:
 	{
@@ -303,7 +298,7 @@ void Scene::handle_event(Event* event)
 		insert_sort();
 
 		EventSystem::Instance()->push_event(
-			EventID::SCENE_ADDED_GAMEOBJECT, static_cast<void*>(new_object));
+			EventID::SCENE_ADDED_GAMEOBJECT_FLAG, static_cast<void*>(new_object));
 
 		break;
 	}
@@ -315,11 +310,11 @@ void Scene::handle_event(Event* event)
 
 		remove_gameobject(remove_object);
 
-		EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT);
+		EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG);
 
 		break;
 	}
-	case EventID::GAMEOBJECT_COMPONENT_ADDED:
+	case EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG:
 	{
 		GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
 		Component* c = static_cast<Component*>(event->get_parameter());
@@ -330,7 +325,7 @@ void Scene::handle_event(Event* event)
 		Physics::Instance()->add_to_physics(obj);
 		break;
 	}
-	case EventID::GAMEOBJECT_COMPONENT_REMOVED:
+	case EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG:
 	{
 		GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
 		Component* c = static_cast<Component*>(event->get_parameter());

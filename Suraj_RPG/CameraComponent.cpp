@@ -8,6 +8,7 @@ namespace bm98
 {
 CameraComponent::CameraComponent()
 {	
+
 }
 
 CameraComponent::~CameraComponent()

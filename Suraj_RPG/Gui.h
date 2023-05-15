@@ -2,6 +2,7 @@
 #include "IRenderable.h"
 #include "globals.h"
 #include "Math.h"
+
 enum class ButtonState
 {
 	BTN_IDLE = 0,
@@ -15,6 +16,7 @@ class IRenderable;
 }
 namespace bm98::GUI
 {
+
 class GUIObject : public IRenderable
 {
 public:
@@ -34,6 +36,76 @@ protected:
 	sf::Vector2f position;
 };
 
+
+/// <summary>
+/// Enhanced sf::Text replacement which allows alterability of any character within the string.
+/// Should be used only when necessary as the draw calls for each letter is time consuming : Big hit on performance.
+/// </summary>
+class RichText : public GUI::GUIObject
+	//: public sf::Drawable
+{
+public:
+	RichText();
+	RichText(Vector2f pos, std::string text, unsigned character_size,
+			 int wrap_length = 100000, sf::Color fill_color = sf::Color::Black,
+			 sf::Color outline_color = sf::Color::Transparent);
+	virtual ~RichText();
+
+	/// <summary>
+	/// Acts as a constructor, resetting all values in the rich text.
+	/// </summary>
+	void reinit(Vector2f pos, std::string text, unsigned character_size,
+				int wrap_length = 100000, sf::Color fill_color = sf::Color::Black,
+				sf::Color outline_color = sf::Color::Transparent);
+
+	void set_string(std::string text, int index = -1);
+	std::string get_string(int index = -1)
+	{
+		std::string result;
+		for (auto s : string)
+			result.append(s.first.getString());
+		return result;
+	}
+
+	virtual void set_view(sf::View* view = nullptr) override { set_view(view, -1); }
+	void set_view(sf::View* view, int index);
+	virtual void set_render(bool render) override { set_render(render, -1); }
+	void set_render(bool render, int index);
+	void set_font(const sf::Font& font, int index = -1);
+	void set_character_size(unsigned size, int index = -1);
+	void set_style(sf::Text::Style style, int index = -1, int end_index = -1);
+	void set_fill_color(sf::Color color, int index = -1);
+	void set_outline_color(sf::Color color, int index = -1);
+	void set_outline_thickness(float thickness, int index = -1);
+	virtual void set_position(float x, float y) override { set_position(Vector2f(x, y), -1); }
+	void set_position(Vector2f pos, int index);
+
+	virtual sf::Vector2f get_position() override { return get_position(-1); }
+	Vector2f get_position(int index);
+	sf::Color get_fill_color(int index = -1);
+	sf::Color get_outline_color(int index = -1);
+	Vector2f get_center(int index = -1);
+
+	void move(Vector2f offset, int index = -1);
+	void rotate(float angle, int index = -1);
+
+
+	/*
+	Default Behaviors:
+		move_and_fade
+		raindbow
+		explode (all letters fly from where start)
+		grow
+	*/
+
+private:
+
+	std::vector<std::pair<sf::Text, IRenderable>> string;
+
+	bool valid_index(int index) { return index > 0 && index < string.size(); }
+
+};
+
 class Button : public GUIObject
 {
 
@@ -47,6 +119,14 @@ public:
 		sf::Color outline_hover_color = sf::Color::Transparent,
 		sf::Color outline_active_color = sf::Color::Transparent, short unsigned id = 0);
 	virtual ~Button();
+
+	void reinit(float x, float y, float width, float height, sf::Font* font,
+				std::string text, unsigned character_size, sf::Color text_idle, sf::Color text_hover,
+				sf::Color text_active, sf::Color idle_color, sf::Color hover_color,
+				sf::Color active_color,
+				sf::Color outline_idle_color = sf::Color::Transparent,
+				sf::Color outline_hover_color = sf::Color::Transparent,
+				sf::Color outline_active_color = sf::Color::Transparent, short unsigned id = 0);
 
 	virtual void update() override;
 	virtual void set_position(float x, float y) override;

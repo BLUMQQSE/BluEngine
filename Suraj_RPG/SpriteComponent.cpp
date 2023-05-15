@@ -48,7 +48,7 @@ Json::Value SpriteComponent::serialize_json()
 {
 	Json::Value obj;
 
-	obj[typeid(IRenderable).name()] = IRenderable::serialize_json();
+	obj[RemoveNamespace(typeid(IRenderable).name())] = IRenderable::serialize_json();
 
 	obj["sprite-file-path"] = file_path;
 	obj["size"] = size.serialize_json();
@@ -59,7 +59,7 @@ Json::Value SpriteComponent::serialize_json()
 void SpriteComponent::unserialize_json(Json::Value obj)
 {
 	size = Vector2i::Zero();
-	IRenderable::unserialize_json(obj[typeid(IRenderable).name()]);
+	IRenderable::unserialize_json(obj[RemoveNamespace(typeid(IRenderable).name())]);
 
 	file_path = obj["sprite-file-path"].asString();
 	size.unserialize_json(obj["size"]);

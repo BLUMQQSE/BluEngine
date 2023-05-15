@@ -125,7 +125,7 @@ void Renderer::remove_ui(sf::Drawable* drawable)
 		}
 	}
 
-	Debug::Instance()->core_log("RENDERER ATTEMPTED TO REMOVE NON-EXISTENT UI RENDERABLE", Debug::LogLevel::WARNING);
+	//Debug::Instance()->core_log("RENDERER ATTEMPTED TO REMOVE NON-EXISTENT UI RENDERABLE", Debug::LogLevel::WARNING);
 
 }
 
@@ -153,36 +153,6 @@ void Renderer::display()
 {
 	static_cast<sf::RenderWindow*>(window)->display();
 }
-
-//Work in progress
-/*
-bool Renderer::top_ui_under_mouse(sf::Drawable* drawable, sf::View* view)
-{
-	
-	// need to find RenderObject matchign drawable
-	// need to check for any elements which contains mouse position and is higher
-	std::set<Renderer::RenderObject>::iterator iter;
-	for (iter = renderables.begin(); iter != renderables.end(); ++iter)
-	{
-		if (iter->drawable == drawable)
-		{
-			std::set<Renderer::RenderObject>::iterator iter2;
-			bool top = false;
-			for (iter2 = std::next(iter, 1); iter2 != renderables.end(); ++iter2)
-			{
-				if (dynamic_cast<sf::RectangleShape*>(iter2->drawable))
-				{
-					// this is issue, because with drop down will always register on top of other elements event when closed
-					if(dynamic_cast<sf::RectangleShape*>(iter2->drawable)->getGlobalBounds().contains(Input::mouse_position(view)) && iter2->render)
-						return false;
-				}
-			}
-			return true;
-		}
-	}
-	return true;
-}
-*/
 
 void Renderer::refresh()
 {
@@ -263,18 +233,20 @@ void Renderer::update_top_ui()
 		if (!it->render)
 			continue;
 
-		if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
-		{
+		//if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT))
+		//{
 			if (it->has_global_bounds)
 			{
+				//std::cout << "found something with global bounds\n";
 				sf::Shape* shape = static_cast<sf::Shape*>(it->drawable);
 				if (shape->getGlobalBounds().contains(Input::Instance()->mouse_position(*it->view)))
 				{
+					//std::cout << "found a top ui\n";
 					top_ui = it->drawable;
 					return;
 				}
 			}
-		}
+		//}
 	}
 
 }

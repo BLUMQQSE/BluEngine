@@ -5,7 +5,7 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::TilemapComponent",
+					"name" : "TilemapComponent",
 					"value" : 
 					{
 						"file-path" : "",
@@ -1630,7 +1630,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::TilemapColliderComponent",
+					"name" : "TilemapColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -1677,10 +1677,10 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SpriteComponent",
+					"name" : "SpriteComponent",
 					"value" : 
 					{
-						"class bm98::IRenderable" : 
+						"IRenderable" : 
 						{
 							"render" : true,
 							"sorting-layer" : "BACKGROUND",
@@ -1695,7 +1695,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::BoxColliderComponent",
+					"name" : "BoxColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -1738,10 +1738,10 @@
 					}
 				},
 				{
-					"name" : "class bm98::WeaponController",
+					"name" : "WeaponController",
 					"value" : 
 					{
-						"class bm98::IInteractable" : 
+						"IInteractable" : 
 						{
 							"failed-interaction-prompt" : "failed interactable prompt",
 							"interaction-duration" : 0.0,
@@ -1778,5 +1778,6 @@
 		}
 	],
 
-	"name" : "test.json"
+	"file-name" : "test.json",
+	"scene-name" : "Test"
 }

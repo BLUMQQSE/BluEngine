@@ -23,13 +23,15 @@ public:
 	void render(sf::View * view = nullptr);
 
 	sf::View* get_view() { return scene_view; }
-	void set_view(sf::View* view);
+	void set_view(sf::View* view) { this->scene_view = view; }
 
-	std::string get_name();
-	std::vector<GameObject*> get_objects();
+	std::string get_file_name() { return file_name; }
+	std::string get_scene_name() { return scene_name; }
+	std::vector<GameObject*> get_objects() { return objects_in_scene; }
 	std::vector<GameObject*> get_dont_destroy_objects();
 
-	void set_name(std::string name);
+	void set_file_name(std::string name) { this->file_name = name; }
+	void set_scene_name(std::string name) { this->scene_name = name; }
 
 	void insert_gameobject(GameObject* go, bool initialize = true);
 	void remove_gameobject(GameObject* go);
@@ -54,7 +56,8 @@ public:
 	virtual void handle_event(core::Event* event) override;
 
 private:
-	std::string name;
+	std::string file_name;
+	std::string scene_name;
 
 	std::vector<GameObject*> objects_in_scene;
 	std::vector<GameObject*> objects_to_add;

@@ -78,14 +78,14 @@ Json::Value Chest::serialize_json()
 {
 	Json::Value obj;
 
-	obj[typeid(IInteractable).name()] = IInteractable::serialize_json();
+	obj[RemoveNamespace(typeid(IInteractable).name())] = IInteractable::serialize_json();
 
 	return obj;
 }
 
 void Chest::unserialize_json(Json::Value obj)
 {
-	IInteractable::unserialize_json(obj[typeid(IInteractable).name()]);
+	IInteractable::unserialize_json(obj[RemoveNamespace(typeid(IInteractable).name())]);
 }
 
 

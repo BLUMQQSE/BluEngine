@@ -78,11 +78,11 @@ public:
 #pragma region Position
 
 	/// <returns>Position of gameobject relative to the game world.</returns>
-	const Vector2f get_world_position() const { return position; }
+	const Vector2f& get_world_position() const { return position; }
 
 	/// <returns>Position of gameobject relative to its parent. If no parent
 	///exists, the local position is 0.</returns>
-	const Vector2f get_local_position() const { return local_position; }
+	const Vector2f& get_local_position() const { return local_position; }
 	
 	/*
 	void set_world_position(const Vector2f pos)
@@ -286,7 +286,7 @@ public:
 		component_array[get_component_type_id<T>()] = c;
 		component_bitset[get_component_type_id<T>()] = true;
 		
-		EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED,
+		EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG,
 			static_cast<void*>(c), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 
 		return *c;
@@ -304,7 +304,7 @@ public:
 				component_array[get_component_type_id<T>()] = nullptr;
 				component_bitset[get_component_type_id<T>()] = false;
 
-				EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED,
+				EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG,
 					static_cast<void*>(&get_component<T>()), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 			}
 		}
@@ -325,12 +325,11 @@ public:
 					component_array[get_component_type_id<T>()] = nullptr;
 					component_bitset[get_component_type_id<T>()] = false;
 
-					EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED,
+					EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG,
 						static_cast<void*>(g), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 				}
 			}
 		}
-		//return nullptr;
 	}
 
 	template <typename T> T& get_component() const
@@ -361,9 +360,21 @@ public:
 		return components_of_type;
 
 	}
+	/// <summary>
+	/// Adds component of type "name" to the gameobject.
+	/// </summary>
+	/// <returns></returns>
+	Component* add_component_by_name(std::string name, Json::Value data = Json::Value(),
+									 std::unordered_map<std::string, Json::Value>* data_map = nullptr);
 
-	Component* editor_add_component(std::string c);
-	void editor_remove_component(std::string c);
+	/// <summary>
+	/// Adds component of type "name" to the component_to_remove vector.
+	/// </summary>
+	void remove_component_by_name(std::string name);
+	/// <summary>
+	/// Removes all components from the gameobject which are in the component_to_remove vector.
+	/// NOTE: Should only be used by Editor.
+	/// </summary>
 	void handle_removed_components();
 
 protected:
@@ -382,7 +393,6 @@ private:
 	ComponentArray component_array;
 	ComponentBitSet component_bitset;
 
-	virtual void init_variables();
 	void init_components();
 	void awake_components();
 	void start_components();

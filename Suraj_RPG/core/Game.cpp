@@ -1,18 +1,23 @@
 #include "../pch.h"
 #include "Game.h"
-#include "FileManager.h"
-#include "ResourceManager.h"
-#include "ConsoleManager.h"
-#include "../GameState.h"
-#include "../MainMenuState.h"
+
 #include "Time.h"
 #include "Input.h"
 #include "Physics.h"
 #include "Debug.h"
-//#include <windows.h>
 #include "EventSystem.h"
 #include "SceneManager.h"
 #include "UITagSystem.h"
+#include "DialogueSystem.h"
+#include "FileManager.h"
+#include "ResourceManager.h"
+#include "ConsoleManager.h"
+
+#include "../GameState.h"
+#include "../MainMenuState.h"
+
+
+//#include <windows.h>
 namespace bm98::core
 {
 
@@ -50,8 +55,6 @@ Game::Game()
     Input::Instance()->load_keybinds_from_file("Game_State", "Config/gamestate_keybinds.ini");
     Input::Instance()->load_keybinds_from_file("Settings_State", "Config/settingsstate_keybinds.ini");
     
-    Input::Instance()->load_keybinds_from_file("Dev_Keybinds", "Config/dev_keybinds.ini");
-
     Input::Instance()->change_keybinds_state("Main_Menu_State");
 
     init_states();
@@ -122,7 +125,7 @@ void Game::update_sfml_events()
 void Game::update_delta_time()
 {
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_);
-    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_FIXED_UPDATE);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_FIXED_UPDATE_);
 
     if (fps_averager == 1500)
     {
@@ -154,6 +157,7 @@ void Game::update()
     EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_);
 
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_DIALOGUESYSTEM_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
 
     EventSystem::Instance()->push_event(EventID::_SYSTEM_UITAG_UPDATE_);
@@ -161,7 +165,7 @@ void Game::update()
     if (!states.empty())
     {
         // Create a pointer to current state to ensure even if a new state is pushed,
-        //  the current states will be updated AND late updated
+        //  the current states will be updated AND late updated this cycle
         State* current_state = states.top();
         current_state->update();
         current_state->late_update();
@@ -175,11 +179,13 @@ void Game::update()
         }
         if (states.size() != state_count && !states.empty())
         {
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_GAME_PRE_STATE_CHANGE_FLAG_, (void*)current_state);
             state_count = (int)states.size();
             Input::Instance()->change_keybinds_state(states.top()->get_state_name());
             states.top()->init_state();
             // Reset time since state has changed in game
             EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_);
+            EventSystem::Instance()->push_event(EventID::_SYSTEM_GAME_POST_STATE_CHANGE_FLAG_, (void*)states.top());
         }
 
     }
@@ -228,8 +234,8 @@ void Game::init_singletons()
     ResourceManager::Instance();
     Physics::Instance();
     UITagSystem::Instance();
+    DialogueSystem::Instance();
     ConsoleManager::Instance();
-    
 }
 
 void Game::init_variables()

@@ -28,7 +28,7 @@ void SceneChange::handle_instant_interaction()
 Json::Value SceneChange::serialize_json()
 {
 	Json::Value obj;
-	obj[typeid(IInteractable).name()] = IInteractable::serialize_json();
+	obj[RemoveNamespace(typeid(IInteractable).name())] = IInteractable::serialize_json();
 
 	obj["destination-position"] = destination.position.serialize_json();
 	obj["destination-scene"] = destination.scene_name;
@@ -38,7 +38,7 @@ Json::Value SceneChange::serialize_json()
 
 void SceneChange::unserialize_json(Json::Value obj)
 {
-	IInteractable::unserialize_json(obj[typeid(IInteractable).name()]);
+	IInteractable::unserialize_json(obj[RemoveNamespace(typeid(IInteractable).name())]);
 	destination.position.unserialize_json(obj["destination-position"]);
 	destination.scene_name = obj["destination-scene"].asString();
 }

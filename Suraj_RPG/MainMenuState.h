@@ -1,7 +1,9 @@
 #pragma once
 #include "State.h"
+
 namespace bm98
 {
+
 class MainMenuState :
     public State
 {
@@ -25,17 +27,16 @@ protected:
     void init_buttons();
     void delete_buttons();
 
-private:
-    bool _render = true;
-    Sorting::Layer background_layer = Sorting::Layer::BACKGROUND;
-    char z_order = 0;
+private: 
+    IRenderable background_renderable{ Sorting::Layer::BACKGROUND, 0, true };
+
     sf::Texture background_texture;
     sf::RectangleShape background;
     std::map<std::string, GUI::Button*> buttons;
 
-
     sf::Shader shader;
     sf::Music music;
+
 
 };
 

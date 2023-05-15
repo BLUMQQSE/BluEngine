@@ -104,7 +104,6 @@ void EditorState::update_input()
 
 	if (Input::Instance()->get_action_down("MENU"))
 	{
-		std::cout << "MENU\n";
 		if (!paused)
 			pause_state();
 		else

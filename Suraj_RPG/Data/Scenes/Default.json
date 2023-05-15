@@ -5,10 +5,10 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SpriteComponent",
+					"name" : "SpriteComponent",
 					"value" : 
 					{
-						"class bm98::IRenderable" : 
+						"IRenderable" : 
 						{
 							"render" : true,
 							"sorting-layer" : "BACKGROUND",
@@ -23,7 +23,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::BoxColliderComponent",
+					"name" : "BoxColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -66,10 +66,10 @@
 					}
 				},
 				{
-					"name" : "class bm98::WeaponController",
+					"name" : "WeaponController",
 					"value" : 
 					{
-						"class bm98::IInteractable" : 
+						"IInteractable" : 
 						{
 							"failed-interaction-prompt" : "failed interactable prompt",
 							"interaction-duration" : 0.0,
@@ -108,10 +108,10 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SpriteComponent",
+					"name" : "SpriteComponent",
 					"value" : 
 					{
-						"class bm98::IRenderable" : 
+						"IRenderable" : 
 						{
 							"render" : true,
 							"sorting-layer" : "ACTOR",
@@ -124,6 +124,10 @@
 						},
 						"sprite-file-path" : "player.png"
 					}
+				},
+				{
+					"name" : "DummyAI",
+					"value" : null
 				}
 			],
 			"info" : 
@@ -151,10 +155,10 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SceneChange",
+					"name" : "SceneChange",
 					"value" : 
 					{
-						"class bm98::IInteractable" : 
+						"IInteractable" : 
 						{
 							"failed-interaction-prompt" : "failed interactable prompt",
 							"interaction-duration" : 0.0,
@@ -172,7 +176,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::BoxColliderComponent",
+					"name" : "BoxColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -240,10 +244,10 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SpriteComponent",
+					"name" : "SpriteComponent",
 					"value" : 
 					{
-						"class bm98::IRenderable" : 
+						"IRenderable" : 
 						{
 							"render" : true,
 							"sorting-layer" : "BACKGROUND",
@@ -258,7 +262,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::BoxColliderComponent",
+					"name" : "BoxColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -301,10 +305,10 @@
 					}
 				},
 				{
-					"name" : "class bm98::WeaponController",
+					"name" : "WeaponController",
 					"value" : 
 					{
-						"class bm98::IInteractable" : 
+						"IInteractable" : 
 						{
 							"failed-interaction-prompt" : "failed interactable prompt",
 							"interaction-duration" : 0.0,
@@ -343,10 +347,10 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SpriteComponent",
+					"name" : "SpriteComponent",
 					"value" : 
 					{
-						"class bm98::IRenderable" : 
+						"IRenderable" : 
 						{
 							"render" : true,
 							"sorting-layer" : "ITEM",
@@ -361,7 +365,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::BoxColliderComponent",
+					"name" : "BoxColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -404,7 +408,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::RigidbodyComponent",
+					"name" : "RigidbodyComponent",
 					"value" : 
 					{
 						"acceleration" : 0.0,
@@ -415,10 +419,10 @@
 					}
 				},
 				{
-					"name" : "class bm98::Chest",
+					"name" : "Chest",
 					"value" : 
 					{
-						"class bm98::IInteractable" : 
+						"IInteractable" : 
 						{
 							"failed-interaction-prompt" : "failed interactable prompt",
 							"interaction-duration" : 0.0,
@@ -430,7 +434,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::Inventory",
+					"name" : "Inventory",
 					"value" : 
 					{
 						"content" : 
@@ -446,7 +450,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::InventoryWindow",
+					"name" : "InventoryWindow",
 					"value" : null
 				}
 			],
@@ -475,10 +479,10 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::SpriteComponent",
+					"name" : "SpriteComponent",
 					"value" : 
 					{
-						"class bm98::IRenderable" : 
+						"IRenderable" : 
 						{
 							"render" : true,
 							"sorting-layer" : "ITEM",
@@ -493,7 +497,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::BoxColliderComponent",
+					"name" : "BoxColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -536,10 +540,10 @@
 					}
 				},
 				{
-					"name" : "class bm98::WeaponController",
+					"name" : "WeaponController",
 					"value" : 
 					{
-						"class bm98::IInteractable" : 
+						"IInteractable" : 
 						{
 							"failed-interaction-prompt" : "failed interactable prompt",
 							"interaction-duration" : 0.0,
@@ -578,7 +582,7 @@
 			"components" : 
 			[
 				{
-					"name" : "class bm98::TilemapComponent",
+					"name" : "TilemapComponent",
 					"value" : 
 					{
 						"file-path" : "",
@@ -33003,7 +33007,7 @@
 					}
 				},
 				{
-					"name" : "class bm98::TilemapColliderComponent",
+					"name" : "TilemapColliderComponent",
 					"value" : 
 					{
 						"active" : true,
@@ -33027,7 +33031,7 @@
 			],
 			"info" : 
 			{
-				"name" : "",
+				"name" : "Tilemap",
 				"physics-layer" : "DEFAULT",
 				"tag" : "UNTAGGED"
 			},
@@ -33047,5 +33051,6 @@
 			}
 		}
 	],
-	"name" : "default.json"
+	"file-name" : "default.json",
+	"scene-name" : "Town"
 }

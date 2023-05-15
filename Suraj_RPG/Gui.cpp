@@ -4,10 +4,381 @@
 #include "core/Input.h"
 #include "core/Renderer.h"
 #include "core/Debug.h"
+#include "core/ResourceManager.h"
 
 namespace bm98::GUI
 {
 using namespace core;
+
+#pragma region RICHTEXT
+
+RichText::RichText()
+{
+	string.resize(1);
+	set_render(false);
+}
+
+RichText::RichText(Vector2f pos, std::string text, unsigned character_size, int wrap_length, sf::Color fill_color,
+				   sf::Color outline_color)
+{
+	reinit(pos, text, character_size, wrap_length, fill_color, outline_color);
+}
+
+RichText::~RichText()
+{
+	for (auto& s : string)
+	{
+		Renderer::Instance()->remove_ui(&s.first);
+	}
+}
+
+void RichText::reinit(Vector2f pos, std::string text, unsigned character_size,
+					  int wrap_length, sf::Color fill_color,
+					  sf::Color outline_color)
+{
+	set_render(true);
+
+	for (auto& s : string)
+	{
+		Renderer::Instance()->remove_ui(&s.first);
+	}
+
+	string.clear();
+	string.resize(text.size());
+
+	float width = 0;
+	float height = 0;
+
+	for (int i = 0; i < text.size(); i++)
+	{
+		if (text[i] == '\n')
+		{
+			if (i > 0)
+			{
+				height += string[i - 1].first.getCharacterSize();
+				width = 0;
+			}
+			continue;
+		}
+		else if (i != 0)
+		{
+			if (i % wrap_length == 0)
+			{
+				height += string[i - 1].first.getCharacterSize();
+				width = 0;
+			}
+		}
+		string[i].second = IRenderable(Sorting::Layer::UI, 2, true);
+
+		string[i].first.setString(text[i]);
+		string[i].first.setFillColor(fill_color);
+		string[i].first.setOutlineColor(outline_color);
+		string[i].first.setOutlineThickness(1.f);
+
+		string[i].first.setPosition((int)(pos.x + width), (int)(pos.y +height));
+
+		string[i].first.setFont(ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+		string[i].first.setCharacterSize(character_size);
+
+		width += string[i].first.findCharacterPos(string[i].first.getString().getSize()).x - string[i].first.findCharacterPos(0).x;
+		
+	}
+
+	for (auto& s : string)
+	{
+		Renderer::Instance()->add_ui(Renderer::RenderObject(&s.first, &s.second));
+	}
+}
+
+void RichText::set_string(std::string text, int index)
+{
+	sf::Color fill = string[0].first.getFillColor();
+	sf::Color out = string[0].first.getOutlineColor();
+	float thicc = string[0].first.getOutlineThickness();
+	int size = string[0].first.getCharacterSize();
+
+	Vector2f pos = string[0].first.getPosition();
+
+	string.resize(text.length());
+
+	float width = 0;
+
+	for (int i = 0; i < text.length(); i++)
+	{
+		string[i].first.setString(text[i]);
+		string[i].first.setFillColor(fill);
+		string[i].first.setOutlineColor(out);
+		string[i].first.setOutlineThickness(thicc);
+
+		string[i].first.setPosition((int)(pos.x + width), (int)pos.y);
+
+		string[i].first.setFont(ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+		string[i].first.setCharacterSize(size);
+
+		width += string[i].first.findCharacterPos(string[i].first.getString().getSize()).x - string[i].first.findCharacterPos(0).x;
+
+	}
+}
+
+void RichText::set_view(sf::View* view, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.second.set_view(view);
+		return;
+	}
+	if (!valid_index(index))
+		return;
+	string[index].second.set_view(view);
+
+}
+
+void RichText::set_render(bool render, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+		{
+			s.second.set_render(render);
+		}
+		return;
+	}
+	if (!valid_index(index))
+		return;
+	string[index].second.set_render(render);
+}
+
+void RichText::set_font(const sf::Font& font, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.first.setFont(font);
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	string[index].first.setFont(font);
+
+}
+
+void RichText::set_character_size(unsigned size, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.first.setCharacterSize(size);
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	string[index].first.setCharacterSize(size);
+}
+
+void RichText::set_style(sf::Text::Style style, int index, int end_index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.first.setStyle(style);
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	if (end_index != -1)
+	{
+		if (end_index > 0)
+		{
+			end_index = std::min(end_index, (int)(string.size() - 1));
+
+			for (int i = index; i <= end_index; i++)
+				string[i].first.setStyle(style);
+			return;
+		}
+	}
+
+	string[index].first.setStyle(style);
+}
+
+void RichText::set_fill_color(sf::Color color, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.first.setFillColor(color);
+		return;
+	}
+	
+	if (!valid_index(index))
+		return;
+
+	string[index].first.setFillColor(color);
+}
+
+void RichText::set_outline_color(sf::Color color, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.first.setOutlineColor(color);
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	string[index].first.setOutlineColor(color);
+}
+
+void RichText::set_outline_thickness(float thickness, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.first.setOutlineThickness(thickness);
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	string[index].first.setOutlineThickness(thickness);
+}
+
+void RichText::set_position(Vector2f pos, int index)
+{
+	if (index == -1)
+	{
+		std::string temp_string = get_string();
+		int width = 0;
+		for (int i = 0; i < temp_string.length(); i++)
+		{
+			string[i].first.setPosition((int)(pos.x + width), (int)pos.y);
+			width += string[i].first.findCharacterPos(string[i].first.getString().getSize()).x - string[i].first.findCharacterPos(0).x;
+		}
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	string[index].first.setPosition(pos);
+}
+
+Vector2f RichText::get_position(int index)
+{
+
+	if (index == -1)
+		return string[0].first.getPosition();
+	
+	if (!valid_index(index))
+		return Vector2f(INFINITY, INFINITY);
+	else
+		return string[index].first.getPosition();
+
+}
+
+sf::Color RichText::get_fill_color(int index)
+{
+	if (index == -1)
+		return string[0].first.getFillColor();
+
+	if (!valid_index(index))
+		return sf::Color::White;
+
+	else
+		return string[index].first.getFillColor();
+}
+
+sf::Color RichText::get_outline_color(int index)
+{
+	if (index == -1)
+		return string[0].first.getOutlineColor();
+
+	if (!valid_index(index))
+		return sf::Color::White;
+
+	else
+		return string[index].first.getOutlineColor();
+}
+
+Vector2f RichText::get_center(int index)
+{
+	if (index == -1)
+	{
+		Vector2f result;
+
+		for (int i = 0; i < string.size(); i++)
+		{
+			result += Vector2f
+			(
+				string[i].first.getPosition().x + string[i].first.findCharacterPos(string[i].first.getString().getSize()).x - string[i].first.findCharacterPos(0).x / 2,
+				string[i].first.getPosition().y + string[i].first.getCharacterSize() / 2
+			);
+		}
+		return result;
+	}
+	
+	return Vector2f
+	(
+		string[index].first.getPosition().x + string[index].first.findCharacterPos(string[index].first.getString().getSize()).x - string[index].first.findCharacterPos(0).x / 2,
+		string[index].first.getPosition().y + string[index].first.getCharacterSize() / 2
+	);
+
+}
+
+void RichText::move(Vector2f offset, int index)
+{
+	if (index == -1)
+	{
+		std::string temp_string = get_string();
+		for (int i = 0; i < temp_string.length(); i++)
+		{
+			string[i].first.setPosition(string[i].first.getPosition().x + offset.x, string[i].first.getPosition().y + offset.y);
+		}
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	string[index].first.setPosition(string[index].first.getPosition() + offset);
+}
+
+void RichText::rotate(float angle, int index)
+{
+	if (index == -1)
+	{
+		for (auto& s : string)
+			s.first.rotate(angle);
+		return;
+	}
+
+	if (!valid_index(index))
+		return;
+
+	string[index].first.rotate(angle);
+}
+
+
+/*
+void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	for (auto& s : string)
+	{
+		target.draw(s, states);
+	}
+}
+*/
+
+#pragma endregion
 
 #pragma region BUTTON
 
@@ -23,10 +394,28 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 	sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_active_color,
 	short unsigned id)
 {
+	reinit(x, y, width, height, font, text, character_size, text_idle, text_hover, text_active,
+		   idle_color, hover_color, active_color, outline_idle_color, outline_hover_color, 
+		   outline_active_color, id);
+}
+
+Button::~Button()
+{
+	Renderer::Instance()->remove_ui(&shape);
+	Renderer::Instance()->remove_ui(&text);
+}
+
+void Button::reinit(float x, float y, float width, float height, sf::Font* font, 
+					std::string text, unsigned character_size, sf::Color text_idle, sf::Color text_hover,
+					sf::Color text_active, 
+					sf::Color idle_color, sf::Color hover_color, sf::Color active_color,
+					sf::Color outline_idle_color, sf::Color outline_hover_color, sf::Color outline_active_color, 
+					short unsigned id)
+{
+	Renderer::Instance()->remove_ui(&shape);
+	Renderer::Instance()->remove_ui(&this->text);
+
 	this->position = sf::Vector2f(x, y);
-	//shape = FloatConvex::Polygon(position,
-	//	{Vector2f(0, 0), Vector2f(width, 0), Vector2f(width, height), Vector2f(0, height)}
-	//);
 	this->id = id;
 	this->button_state = ButtonState::BTN_IDLE;
 	this->shape.setPosition(sf::Vector2f(x, y));
@@ -44,7 +433,7 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 		(int)(shape.getPosition().x + (shape.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
 		(int)(shape.getPosition().y + (shape.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height) /*/ 2.f*/
 	);
-	
+
 	this->text_idle = text_idle;
 	this->text_hover = text_hover;
 	this->text_active = text_active;
@@ -60,33 +449,29 @@ Button::Button(float x, float y, float width, float height, sf::Font* font,
 	shape.setFillColor(idle_color);
 
 	set_sorting_layer(Sorting::Layer::UI, false);
-	set_z_order(id+10, false);
+	set_z_order(id + 10, false);
 
 	Renderer::RenderObject shape_renderable = Renderer::RenderObject(&shape, get_render(), get_sorting_layer(),
-		get_z_order(), get_view_pointer());
+																	 get_z_order(), get_view_pointer());
 	shape_renderable.has_global_bounds = true;
 
 	Renderer::Instance()->add_ui(shape_renderable);
 
 	Renderer::Instance()->add_ui(Renderer::RenderObject(&this->text, get_render(), get_sorting_layer(),
-		get_z_order(), get_view_pointer()));
-
-}
-
-Button::~Button()
-{
-	Renderer::Instance()->remove_ui(&shape);
-	Renderer::Instance()->remove_ui(&text);
+								 get_z_order(), get_view_pointer()));
 }
 
 void Button::update()
 {
+	
+	//std::cout << std::boolalpha << Renderer::Instance()->is_top_ui(&shape) << "\n";
+
 	if (shape.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())) &&
 		Input::Instance()->get_mouse_down() && Renderer::Instance()->is_top_ui(&shape))
 	{
 		button_state = ButtonState::BTN_PRESSED;
 	}
-	else if (shape.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())))
+	else if (shape.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())) && Renderer::Instance()->is_top_ui(&shape))
 	{
 		button_state = ButtonState::BTN_HOVERED;
 	}
@@ -182,7 +567,6 @@ void Button::set_id(const short unsigned id)
 }
 
 #pragma endregion
-
 
 #pragma region DROP_DOWN_LIST
 
@@ -340,7 +724,6 @@ const Button* DropDownList::get_selected_button() const
 
 #pragma endregion
 
-
 #pragma region CHECK_BOX
 
 Checkbox::Checkbox(float x, float y, float size)
@@ -427,7 +810,6 @@ void Checkbox::set_checked(bool checked)
 }
 
 #pragma endregion
-
 
 #pragma region SCROLL_VIEW
 
@@ -575,7 +957,6 @@ void ScrollView::set_position(float x, float y)
 }
 
 #pragma endregion
-
 
 #pragma region INPUT_BOX
 
@@ -807,7 +1188,6 @@ void InputBox::delete_last_char()
 
 #pragma endregion
 
-
 #pragma region LABEL
 
 Label::Label(float x, float y, float character_size,
@@ -849,7 +1229,6 @@ void Label::set_text(std::string new_text)
 }
 
 #pragma endregion
-
 
 #pragma region PANEL
 
@@ -1038,7 +1417,6 @@ void Panel::clear()
 
 #pragma endregion
 
-
 #pragma region SLIDER
 
 Slider::Slider()
@@ -1160,7 +1538,6 @@ const float Slider::get_width() const
 
 
 #pragma endregion
-
 
 #pragma region TRANSFORM_MOVER
 
@@ -1410,6 +1787,7 @@ void ProgressBar::set_percentage(float percentage)
 }
 
 #pragma endregion
+
 
 
 }

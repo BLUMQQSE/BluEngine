@@ -5,6 +5,19 @@ namespace bm98
 
 #define PRECISION std::fixed << std::setprecision(1)
 
+static std::string RemoveNamespace(std::string string)
+{
+	int start_index = 0;
+
+	while (string.find(":") != std::string::npos)
+	{
+		start_index = string.find(":");
+		string = string.substr(start_index + 1);
+	}
+
+	return string;
+}
+
 namespace Var
 {
 enum class Type
@@ -800,6 +813,8 @@ enum class WindowToggle
 	OPEN_ALL,
 	_LAST_DONT_REMOVE
 };
+
+
 
 }
 

@@ -1,5 +1,8 @@
 #pragma once
 #include "pch.h"
+
+#include "core/Debug.h"
+
 #include "Component.h"
 #include "IRenderable.h"
 #include "Math.h"
@@ -23,7 +26,7 @@ static CollisionDetection string_to_collisiondetection(std::string col)
 	if (col == "CONTINUOUS")
 		return CollisionDetection::CONTINUOUS;
 
-	std::cout << "ERROR::Collider::string_to_collisiondetection\n";
+	core::Debug::Instance()->log("[ColliderComponent] Failed to convert string to CollistionDetection", core::Debug::LogLevel::WARNING);
 	return CollisionDetection::DISCRETE;
 }
 
@@ -36,7 +39,7 @@ static std::string collisiondetection_to_string(CollisionDetection col)
 	case bm98::CollisionDetection::CONTINUOUS:
 		return "CONINUOUS";
 	default:
-		std::cout << "ERROR::Collider::collisiondetection_to_string\n";
+		core::Debug::Instance()->log("[ColliderComponent] Failed to convert CollisionDetection to string", core::Debug::LogLevel::WARNING);
 		return "Discrete";
 	}
 }

@@ -9,6 +9,9 @@ class Scene;
 class ParticleSystem; 
 class PauseMenu;
 class GameEditorView;
+
+class Dialogue;
+
 class GameState :
     public State, public IData
 {
@@ -40,8 +43,6 @@ protected:
 
     void init_view();
     void init_singletons();
-
-
 private:
     std::string active_scene_name;
 
@@ -50,6 +51,8 @@ private:
 
     PauseMenu* pmenu;
     GameEditorView* editor_view;
+
+    Dialogue* test_dialogue;
 
 };
 

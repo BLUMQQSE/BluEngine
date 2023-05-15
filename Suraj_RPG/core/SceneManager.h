@@ -90,6 +90,8 @@ private:
 
 	static void LoadSceneInBackground(std::string scene_name);
 
+	//std::pair<Vector2f, float> name_tag_var = std::make_pair(Vector2f(0, -5), 1);
+	float fade_speed = 1;
 
 };
 

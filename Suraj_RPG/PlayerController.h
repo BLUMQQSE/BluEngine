@@ -60,6 +60,8 @@ private:
     // Inherited via Listener
     virtual void handle_event(Event* event) override;
 
+    Vector2f dialog_tag_pos;
+
 };
 
 }

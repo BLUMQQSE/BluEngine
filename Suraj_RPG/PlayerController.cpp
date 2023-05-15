@@ -32,7 +32,6 @@ bm98::PlayerController::PlayerController()
 
 bm98::PlayerController::~PlayerController()
 {
-	//delete inv;
 }
 
 void bm98::PlayerController::init()
@@ -41,14 +40,12 @@ void bm98::PlayerController::init()
 	rigid = &game_object->get_component<RigidbodyComponent>();
 	interactor = &game_object->get_component<Interactor>();
 	inventory = &game_object->get_component<InventoryGUIController>();
-
 }
 
 void PlayerController::awake()
 {
 	init_animations();
 	camera = &SceneManager::Instance()->find_with_tag(Tags::Tag::CAMERA, this->game_object)->get_component<CameraComponent>();
-
 }
 
 void bm98::PlayerController::update()
@@ -68,6 +65,7 @@ void bm98::PlayerController::update()
 
 void bm98::PlayerController::late_update()
 {
+	dialog_tag_pos = game_object->get_center() + Vector2f(-35, -60);
 }
 
 void bm98::PlayerController::fixed_update()
@@ -110,8 +108,6 @@ void PlayerController::on_trigger_enter(Collider info)
 Json::Value PlayerController::serialize_json()
 {
 	Json::Value obj;
-
-
 	return obj;
 }
 
@@ -126,10 +122,10 @@ void PlayerController::init_animations()
 	anim->add_animation("IDLE_DOWN", 30.f, 0, 2, 1, 0, 64, 64, true);
 	anim->add_animation("IDLE_RIGHT", 30.f, 0, 3, 1, 0, 64, 64, true);
 
-	anim->add_animation("WALK_UP", 30.f, 0, 4, 3, 0, 64, 64, true);
-	anim->add_animation("WALK_LEFT", 30.f, 0, 5, 3, 0, 64, 64, true);
-	anim->add_animation("WALK_DOWN", 30.f, 0, 6, 3, 0, 64, 64, true);
-	anim->add_animation("WALK_RIGHT", 30.f, 0, 7, 3, 0, 64, 64, true);
+	anim->add_animation("WALK_UP", 20.f, 0, 4, 3, 0, 64, 64, true);
+	anim->add_animation("WALK_LEFT", 20.f, 0, 5, 3, 0, 64, 64, true);
+	anim->add_animation("WALK_DOWN", 20.f, 0, 6, 3, 0, 64, 64, true);
+	anim->add_animation("WALK_RIGHT", 20.f, 0, 7, 3, 0, 64, 64, true);
 
 	anim->add_animation("ATTACK_UP",  15.f, 0, 16, 5, 0, 64, 64, false, true);
 	anim->add_animation("ATTACK_LEFT", 15.f, 0, 17, 5, 0, 64, 64, false, true);
@@ -146,10 +142,11 @@ void bm98::PlayerController::update_input()
 
 	if (Input::Instance()->get_action_down("INTERACT"))
 	{
-		//TextUITag* tag = new TextUITag(game_object->get_world_position(), "Hello world", 24, 5);
+		TextUITag* tag = UITagSystem::Instance()->create_text_tag(game_object->get_world_position(), "Boy I could use a snack!", 16, 5);
+		tag->add_action(UITag::Action::FOLLOW, 0, (void*) &dialog_tag_pos);
 		
 		//ImageUITag* tag2 = new ImageUITag(game_object->get_world_position() + Vector2f(100, 100), Vector2f(300,200), 
-		//								  &ResourceManager::Instance()->get_texture("mainmenu_bg.png"), 10, 5);
+			//							  &ResourceManager::Instance()->get_texture("player.png"), 5);
 
 		/*
 		if (game_object->check_for_child("pants"))

@@ -2,21 +2,23 @@
     "statements" :
     [
         {
+            "entry" : true,
             "name" : "Shop-Morning-Intro",
-            "text" : 
+            "texts" : 
             [
-                "Good morning, can I interest you in any purchases?"
+                "Good morning, can I interest you in any purchases?",
+                "Should be this string"
             ],
             "choices" :
             [
                 {
                     "index" : 0,
-                    "text" : "Lets see what you got.",
+                    "text" : "Sure.",
                     "statement-link" : "Shop-Exchange"
                 }, 
                 {
                     "index" : 1,
-                    "text" : "What can you tell me about the town?",
+                    "text" : "Town Info?",
                     "statement-link" : "Shop-Town-Information"
                 }, 
                 {
@@ -27,15 +29,53 @@
                         "INTERACTION_EXIT_INTERACTION"
                     ]
                 }
+            ],
+            "tags" :
+            [
+                { "name" : "Shop Owner" },
+                { "emotion" : "happy" } 
             ]
-        }
-    ],
-    "global-variables" :
-    [
+        },
         {
-            "type" : "BOOL",
-            "name" : "told-player-town-info",
-            "value" : false
+            "name" : "Shop-Exchange",
+            "texts" : 
+            [
+                "Take a look!"
+            ],
+            "choices" :
+            [
+                {
+                    "index" : 0,
+                    "text" : "Nevermind",
+                    "statement-link" : "Shop-Morning-Intro"
+                }
+            ],
+            "tags" :
+            [
+                { "name" : "Shop Owner" },
+                { "emotion" : "sad" } 
+            ]
+        },
+        {
+            "name" : "Shop-Town-Information",
+            "texts" : 
+            [
+                "This town is rich in history! From the origins of John Cena to the old reliable statue of Babe Ruth! We sure have plenty to offer in this old town."
+            ],
+            "statement-link" : "Shop-Morning-Intro",
+            "tags" :
+            [
+                { "name" : "Shop Owner" }
+            ]
+        },
+        {
+            "name" : "Shop-First-Greeting",
+            "texts" : 
+            [
+                "Good morning, you're the new fellow arn't you?\nMe and my wife have been dying to meet you!",
+                "You'll find plenty to buy here, have a look!"
+            ],
+            "choice-branch" : "Shop-Morning-Intro"
         }
     ]
 }

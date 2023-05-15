@@ -17,8 +17,6 @@ void bm98::Delay::reset()
 
 void bm98::Delay::handle_event(Event* event)
 {
-	//sf::Time time = *static_cast<sf::Time*>(event->get_parameter());
-
 	duration += Time::Instance()->delta_time();
 	frame_count++;
 }

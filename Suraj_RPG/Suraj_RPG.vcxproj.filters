@@ -64,6 +64,9 @@
     <Filter Include="Scripts\Items">
       <UniqueIdentifier>{cc651e0b-64a6-4bd1-aeaa-dd88acdfc0fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts\Damager">
+      <UniqueIdentifier>{e37241b0-8e00-423c-b254-4ec97dbe0a6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -299,6 +302,15 @@
     </ClCompile>
     <ClCompile Include="Test.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyAI.cpp">
+      <Filter>Components\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Damager.cpp">
+      <Filter>Scripts\Damager</Filter>
+    </ClCompile>
+    <ClCompile Include="IDamageable.cpp">
+      <Filter>Interfaces</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -577,6 +589,15 @@
     </ClInclude>
     <ClInclude Include="Test.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyAI.h">
+      <Filter>Components\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Damager.h">
+      <Filter>Scripts\Damager</Filter>
+    </ClInclude>
+    <ClInclude Include="IDamageable.h">
+      <Filter>Interfaces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

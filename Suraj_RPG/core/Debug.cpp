@@ -26,7 +26,6 @@ void Debug::LogError(std::string message)
 
 */
 
-
 void Debug::core_log(std::string message, LogLevel level)
 {
 	switch (level)

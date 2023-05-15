@@ -25,4 +25,5 @@ private:
     sf::View camera_view;
 
 };
+
 }

@@ -10,12 +10,12 @@ namespace bm98
 {
 SceneEditorView::SceneEditorView()
 {
-	EventSystem::Instance()->subscribe(EventID::SCENE_ADDED_GAMEOBJECT, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_REMOVED_GAMEOBJECT, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_CHANGE, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE, this);
-	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED, this);
-	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_ADDED_GAMEOBJECT_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_CHANGE_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG, this);
 
 	init();
 	create_scene_editor_panel();
@@ -183,23 +183,23 @@ void SceneEditorView::handle_event(Event* event)
 
 	switch (event->get_event_id())
 	{
-	case EventID::SCENE_ADDED_GAMEOBJECT:
+	case EventID::SCENE_ADDED_GAMEOBJECT_FLAG:
 		create_heir_panel();
 		break;
-	case EventID::SCENE_REMOVED_GAMEOBJECT:
+	case EventID::SCENE_REMOVED_GAMEOBJECT_FLAG:
 		create_heir_panel();
 		break;
-	case EventID::SCENE_CHANGE:
+	case EventID::SCENE_CHANGE_FLAG:
 		create_heir_panel();
 		break;
-	case EventID::SCENE_GAMEOBJECT_ORDER_CHANGE:
+	case EventID::SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG:
 		create_heir_panel();
 		break;
-	case EventID::GAMEOBJECT_COMPONENT_ADDED:
+	case EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG:
 		if (selected_gameobject)
 			create_inspec_panel();
 		break;
-	case EventID::GAMEOBJECT_COMPONENT_REMOVED:
+	case EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG:
 		if (selected_gameobject)
 			create_inspec_panel();
 		break;
@@ -239,7 +239,7 @@ void SceneEditorView::create_heir_panel()
 		}
 
 		GUI::Button* new_button = new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
-			objs[i]->get_info().name + " " + std::to_string(objs[i]->get_unique_runtime_id()), 12,
+			objs[i]->get_info().name + " [" + std::to_string(objs[i]->get_unique_runtime_id()) + "]", 12,
 			sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
 			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
 
@@ -450,7 +450,7 @@ void SceneEditorView::update_scene_editor_panel()
 		input = scene_editor_panel->get_inputbox("component_name")->get_text();
 
 		Component* c = 
-			selected_gameobject->editor_add_component(input);
+			selected_gameobject->add_component_by_name(input);
 		//selected_gameobject->init();
 		c->init();
 		c->awake();
@@ -464,7 +464,8 @@ void SceneEditorView::update_scene_editor_panel()
 
 		input = scene_editor_panel->get_inputbox("component_name")->get_text();
 
-		selected_gameobject->editor_remove_component(input);
+		selected_gameobject->remove_component_by_name(input);
+		selected_gameobject->handle_removed_components();
 		create_inspec_panel();
 	}
 	else if (scene_editor_panel->get_button("add_gameobject")->is_pressed())

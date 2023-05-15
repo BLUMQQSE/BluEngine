@@ -189,7 +189,7 @@ enum class EventID
 
 	_SYSTEM_TIME_INITIALIZE_,
 	_SYSTEM_TIME_UPDATE_,
-	_SYSTEM_TIME_FIXED_UPDATE,
+	_SYSTEM_TIME_FIXED_UPDATE_,
 	_SYSTEM_TIME_RESET_FIXED_,
 	_SYSTEM_TIME_APPLY_SCALE_,
 	_SYSTEM_TIME_RESET_SINCE_STATE_CHANGE_,
@@ -234,8 +234,8 @@ enum class EventID
 	_SYSTEM_SCENEMANAGER_INITIALIZE_,
 	_SYSTEM_SCENEMANAGER_DESTROY_,
 	_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_,
-	_SYSTEM_SCENEMANAGER_PRE_SCENE_CHANGE_,
-	_SYSTEM_SCENEMANAGER_POST_SCENE_CHANGE_,
+	_SYSTEM_SCENEMANAGER_PRE_SCENE_CHANGE_FLAG_,
+	_SYSTEM_SCENEMANAGER_POST_SCENE_CHANGE_FLAG_,
 
 #pragma endregion
 
@@ -245,6 +245,18 @@ enum class EventID
 
 #pragma endregion
 
+#pragma region DialogueSystem
+
+	_SYSTEM_DIALOGUESYSTEM_UPDATE_,
+
+#pragma endregion
+
+#pragma region STATE
+
+	_SYSTEM_GAME_PRE_STATE_CHANGE_FLAG_, // State* parameter
+	_SYSTEM_GAME_POST_STATE_CHANGE_FLAG_, // State* parameter
+
+#pragma endregion
 
 
 	_SYSTEM_SETTINGS_WINDOW_SIZE_CHANGE_,
@@ -273,28 +285,21 @@ enum class EventID
 
 #pragma region Scene
 
-	/// <summary>Scene has added a new object.</summary>
-	SCENE_ADDED_GAMEOBJECT,	
-	/// <summary>Scene has removed an object.</summary>
-	SCENE_REMOVED_GAMEOBJECT,
-	/// <summary>Scene has changed.</summary>
-	SCENE_CHANGE,
-	SCENE_GAMEOBJECT_ORDER_CHANGE,
+	SCENE_ADDED_GAMEOBJECT_FLAG, // Scene has added a new object
+	SCENE_REMOVED_GAMEOBJECT_FLAG, // Scene has removed an object
+	SCENE_CHANGE_FLAG, // Scene has changed
+	SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG, // Order of objects in scene have changed
 		
 #pragma endregion
 
 #pragma region Gameobject
 
-	/// <summary>GameObject has been instantiated through SceneManager.</summary>
 	GAMEOBJECT_INSTANTIATE,
-	/// <summary>GameObject has been destroyed through SceneManager.</summary>
 	GAMEOBJECT_DESTROY,
-	/// <summary>GameObject has changed its parent object.</summary>
 	GAMEOBJECT_PARENT_CHANGE,
-	/// <summary>GameObject has had a component added.</summary>
-	GAMEOBJECT_COMPONENT_ADDED,
-	/// <summary>GameObject has had a component removed.</summary>
-	GAMEOBJECT_COMPONENT_REMOVED,
+
+	GAMEOBJECT_COMPONENT_ADDED_FLAG,
+	GAMEOBJECT_COMPONENT_REMOVED_FLAG,
 
 
 #pragma endregion
@@ -322,77 +327,6 @@ enum class EventID
 
 
 };
-
-/// <summary>
-/// Excludes SYSTEM events.
-/// </summary>
-static EventID ToEventID(std::string eventID)
-{
-	if(eventID == "SCRIPTS_LOAD_SCENE")
-		return EventID::SCRIPTS_LOAD_SCENE;
-	if (eventID == "SCRIPTS_SAVE_SCENE")
-		return EventID::SCRIPTS_SAVE_SCENE;
-	if (eventID == "INTERACTION_INVENTORY_UPDATED")
-		return EventID::INTERACTION_INVENTORY_UPDATED;
-	if (eventID == "INTERACTION_EXIT_INTERACTION")
-		return EventID::INTERACTION_EXIT_INTERACTION;
-	if (eventID == "SCENE_ADDED_GAMEOBJECT")
-		return EventID::SCENE_ADDED_GAMEOBJECT;
-	if (eventID == "SCENE_REMOVED_GAMEOBJECT")
-		return EventID::SCENE_REMOVED_GAMEOBJECT;
-	if (eventID == "SCENE_CHANGE")
-		return EventID::SCENE_CHANGE;
-	if (eventID == "SCENE_GAMEOBJECT_ORDER_CHANGE")
-		return EventID::SCENE_GAMEOBJECT_ORDER_CHANGE;
-	if (eventID == "GAMEOBJECT_INSTANTIATE")
-		return EventID::GAMEOBJECT_INSTANTIATE;
-	if (eventID == "GAMEOBJECT_DESTROY")
-		return EventID::GAMEOBJECT_DESTROY;
-	if (eventID == "GAMEOBJECT_PARENT_CHANGE")
-		return EventID::GAMEOBJECT_PARENT_CHANGE;
-	if (eventID == "GAMEOBJECT_COMPONENT_ADDED")
-		return EventID::GAMEOBJECT_COMPONENT_ADDED;
-	if (eventID == "GAMEOBJECT_COMPONENT_REMOVED")
-		return EventID::GAMEOBJECT_COMPONENT_REMOVED;
-}
-/// <summary>
-/// Exclude SYSTEM events.
-/// </summary>
-static std::string ToString(EventID eventID)
-{
-	switch (eventID)
-	{
-	case bm98::core::EventID::SCRIPTS_LOAD_SCENE:
-		return "SCRIPTS_LOAD_SCENE";
-	case bm98::core::EventID::SCRIPTS_SAVE_SCENE:
-		return "SCRIPTS_SAVE_SCENE";
-	case bm98::core::EventID::INTERACTION_INVENTORY_UPDATED:
-		return "INTERACTION_INVENTORY_UPDATED";
-	case bm98::core::EventID::INTERACTION_EXIT_INTERACTION:
-		return "INTERACTION_EXIT_INTERACTION";
-	case bm98::core::EventID::SCENE_ADDED_GAMEOBJECT:
-		return "SCENE_ADDED_GAMEOBJECT";
-	case bm98::core::EventID::SCENE_REMOVED_GAMEOBJECT:
-		return "SCENE_REMOVED_GAMEOBJECT";
-	case bm98::core::EventID::SCENE_CHANGE:
-		return "SCENE_CHANGE";
-	case bm98::core::EventID::SCENE_GAMEOBJECT_ORDER_CHANGE:
-		return "SCENE_GAMEOBJECT_ORDER_CHANGE";
-	case bm98::core::EventID::GAMEOBJECT_INSTANTIATE:
-		return "GAMEOBJECT_INSTANTIATE";
-	case bm98::core::EventID::GAMEOBJECT_DESTROY:
-		return "GAMEOBJECT_DESTROY";
-	case bm98::core::EventID::GAMEOBJECT_PARENT_CHANGE:
-		return "GAMEOBJECT_PARENT_CHANGE";
-	case bm98::core::EventID::GAMEOBJECT_COMPONENT_ADDED:
-		return "GAMEOBJECT_COMPONENT_ADDED";
-	case bm98::core::EventID::GAMEOBJECT_COMPONENT_REMOVED:
-		return "GAMEOBJECT_COMPONENT_REMOVED";
-	default:
-		return "";
-	}
-}
-
 
 class Event
 {

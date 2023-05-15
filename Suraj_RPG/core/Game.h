@@ -11,8 +11,8 @@ namespace bm98::core
 
 struct AudioSettings
 {
-	float master_volume = 1.f;
-	float music_volume = 1.f;
+	float master_volume = 0.f;
+	float music_volume = 0.f;
 	float sound_volume = 1.f;
 	float ambient_volume = 1.f;
 };

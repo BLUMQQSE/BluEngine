@@ -23,13 +23,10 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 {
 	state_name = "Main_Menu_State";
 
-	// do sahder work here
-
 	init_variables();
 	init_background();
 	init_fonts();
 	init_buttons();
-
 
 	if (!music.openFromFile("Resources/Audio/Music/mainmenu.wav"))
 		std::cout << "failure\n";
@@ -38,7 +35,6 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 	music.setVolume(0.0);
 	music.setLoop(true);
 	music.play();
-
 }
 
 MainMenuState::~MainMenuState()
@@ -62,11 +58,12 @@ void MainMenuState::on_end_state()
 	Renderer::Instance()->remove_ui(&background);
 	Debug::Instance()->core_log("[MainMenuState] Shutdown", Debug::LogLevel::INFO);
 	delete_buttons();
+
 }
 
 void MainMenuState::update_input()
 {
-	
+
 	if (buttons["NEW_GAME"]->is_pressed())
 	{
 		//TODO: Add a new game state which options for creating a new game
@@ -149,7 +146,7 @@ void MainMenuState::init_variables()
 
 void MainMenuState::init_background()
 {
-	Renderer::Instance()->add_ui(Renderer::RenderObject(&background, _render, background_layer, z_order));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&background, &background_renderable));
 }
 
 void MainMenuState::init_buttons()

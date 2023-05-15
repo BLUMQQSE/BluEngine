@@ -6,6 +6,8 @@
 #include "core/SceneManager.h"
 #include "core/FileManager.h"
 
+#include "core/DialogueSystem.h"
+
 #include "GraphicsSettings.h"
 #include "Gui.h"
 #include "Scene.h"
@@ -13,6 +15,7 @@
 #include "PauseMenu.h"
 #include "ParticleSystem.h"
 #include "GameEditorView.h"
+#include "Dialogue.h"
 
 namespace bm98
 {
@@ -33,15 +36,16 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 	//SceneManager::Instance()->init(active_scene);
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, active_scene);
-	SceneManager::Instance()->load_scene(active_scene_name);
+	
 	//load in dont destroy objects on load
 	// 
-	std::string n = active_scene->get_name();
+	std::string n = active_scene->get_file_name();
 	active_scene->unserialize_json(FileManager::Instance()->load_from_file(FileManager::Instance()->get_save_name()
 		+ "Data/Scenes/dont_destroy_on_load_objects.json"));
-	active_scene->set_name(n);
+	SceneManager::Instance()->load_scene(active_scene_name);
+	active_scene->set_file_name(n);
 
-	active_scene->init();
+	//active_scene->init();
 
 	init_fonts();
 	init_view();
@@ -54,6 +58,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 	editor_view = new GameEditorView();
 	//Time::Instance()->set_time_scale(5000.f);
+	test_dialogue = new Dialogue("Sample_Dialogue.json");
 }
 
 GameState::~GameState()
@@ -64,6 +69,7 @@ GameState::~GameState()
 	delete editor_view;
 
 	active_scene = nullptr;
+	delete test_dialogue;
 }
 
 void GameState::init_state()
@@ -111,8 +117,13 @@ void GameState::unpause_state()
 
 void GameState::update()
 {
-	if (Input::Instance()->get_double_click())
-		Time::Instance()->set_time_scale(1);
+	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT))
+	{
+		if (!DialogueSystem::Instance()->is_open())
+			DialogueSystem::Instance()->open_dialogue(*test_dialogue);
+		else
+			DialogueSystem::Instance()->close_dialogue();
+	}
 	//update editor first in case event occured last frame
 	editor_view->update();
 

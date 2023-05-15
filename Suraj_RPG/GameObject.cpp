@@ -44,13 +44,15 @@
 #include "WeaponController.h";
 #include "Chest.h"
 
+#include "DummyAI.h"
+
 namespace bm98
 {
 using namespace core;
 GameObject::GameObject()
 {
 	unique_runtime_id = get_unique_id();
-	init_variables();
+	active = true;
 }
 
 GameObject::~GameObject()
@@ -70,9 +72,7 @@ void GameObject::init()
 void GameObject::awake()
 {
 	set_world_position(position);
-
 	awake_components();
-
 }
 
 void GameObject::start()
@@ -99,16 +99,6 @@ void GameObject::update()
 		return;
 	for(std::size_t i = 0; i != components.size(); i++)
 		components[i]->update();
-	
-
-	//if(!parent)
-		//transform.position = sprite.getPosition();
-	
-	//if (parent)
-	//	transform.position = parent->transform.position + transform.local_position;
-	
-	//sprite.setPosition(transform.position);
-	
 }
 
 void GameObject::late_update()
@@ -149,7 +139,6 @@ void GameObject::on_collision_stay(Collision info)
 	}
 	if (parent)
 		parent->on_collision_stay(info);
-	
 }
 
 void GameObject::on_collision_exit(Collision info)
@@ -162,7 +151,6 @@ void GameObject::on_collision_exit(Collision info)
 	}
 	if (parent)
 		parent->on_collision_exit(info);
-	
 }
 
 void GameObject::on_trigger_enter(Collider info)
@@ -175,7 +163,6 @@ void GameObject::on_trigger_enter(Collider info)
 	}
 	if (parent)
 		parent->on_trigger_enter(info);
-	
 }
 
 void GameObject::on_trigger_stay(Collider info)
@@ -188,7 +175,6 @@ void GameObject::on_trigger_stay(Collider info)
 	}
 	if (parent)
 		parent->on_trigger_stay(info);
-
 }
 
 void GameObject::on_trigger_exit(Collider info)
@@ -201,7 +187,6 @@ void GameObject::on_trigger_exit(Collider info)
 	}
 	if (parent)
 		parent->on_trigger_exit(info);
-	
 }
 
 void GameObject::add_to_buffer(sf::View* view)
@@ -215,12 +200,10 @@ void GameObject::add_to_buffer(sf::View* view)
 
 	for (auto& ch : children)
 		ch->add_to_buffer(view);
-	
 }
 
 std::vector<Editor::SerializedVar> GameObject::get_editor_values()
 {
-
 	std::vector<Editor::SerializedVar> variables;
 
 	variables.push_back(Editor::SerializedVar("name", static_cast<void*>(&info.name), Var::Type::String));
@@ -284,8 +267,6 @@ void GameObject::set_parent(GameObject* parent)
 		this->parent->add_child(this);
 	}
 }
-
-
 
 void GameObject::remove_child(GameObject* child)
 {
@@ -422,7 +403,7 @@ Json::Value GameObject::serialize_json()
 	for (auto& c : components)
 	{
 		Json::Value obj2;
-		obj2["name"] = typeid(*c).name();
+		obj2["name"] = RemoveNamespace(typeid(*c).name());
 		
 		obj2["value"] = c->serialize_json();
 		obj["components"].append(obj2);
@@ -444,136 +425,15 @@ void GameObject::unserialize_json(Json::Value obj)
 	rotation = obj["transform"]["rotation"].asFloat();
 
 	std::unordered_map<std::string, Json::Value> comps_data;
+
 	for (Json::Value component : obj["components"])
 	{
-		std::string component_name = component["name"].asString();
-		Json::Value component_value = component["value"];
-		if (component_name == typeid(TilemapComponent).name())
-		{
-			comps_data[typeid(TilemapComponent).name()] = component_value;
-			add_component<TilemapComponent>();
-		}
-		else if (component_name == typeid(TilemapColliderComponent).name())
-		{
-			comps_data[typeid(TilemapColliderComponent).name()] = component_value;
-			add_component<TilemapColliderComponent>();
-		}
-		else if (component_name == typeid(SpriteComponent).name())
-		{
-			comps_data[typeid(SpriteComponent).name()] = component_value;
-			add_component<SpriteComponent>();
-		}
-		else if (component_name == typeid(AnimatedSpriteComponent).name())
-		{
-			comps_data[typeid(AnimatedSpriteComponent).name()] = component_value;
-			add_component<AnimatedSpriteComponent>();
-		}
-		else if (component_name == typeid(AnimationComponent).name())
-		{
-			comps_data[typeid(AnimationComponent).name()] = component_value;
-			add_component<AnimationComponent>();
-		}
-		else if (component_name == typeid(BoxColliderComponent).name())
-		{
-			comps_data[typeid(BoxColliderComponent).name()] = component_value;
-			add_component<BoxColliderComponent>();
-		}
-		else if (component_name == typeid(CapsuleColliderComponent).name())
-		{
-			comps_data[typeid(CapsuleColliderComponent).name()] = component_value;
-			add_component<CapsuleColliderComponent>();
-		}
-		else if (component_name == typeid(ChildAnimationComponent).name())
-		{
-			comps_data[typeid(ChildAnimationComponent).name()] = component_value;
-			add_component<ChildAnimationComponent>();
-		}
-		else if (component_name == typeid(RigidbodyComponent).name())
-		{
-			comps_data[typeid(RigidbodyComponent).name()] = component_value;
-			add_component<RigidbodyComponent>();
-		}
-		else if (component_name == typeid(PlayerController).name())
-		{
-			comps_data[typeid(PlayerController).name()] = component_value;
-			add_component<PlayerController>();
-		}
-		else if (component_name == typeid(ButtonComponent).name())
-		{
-			comps_data[typeid(ButtonComponent).name()] = component_value;
-			add_component<ButtonComponent>();
-		}
-		else if (component_name == typeid(DontDestroyOnLoad).name())
-		{
-			comps_data[typeid(DontDestroyOnLoad).name()] = component_value;
-			add_component<DontDestroyOnLoad>();
-		}
-		else if (component_name == typeid(SceneChange).name())
-		{
-			comps_data[typeid(SceneChange).name()] = component_value;
-			add_component<SceneChange>();
-		}
-		else if (component_name == typeid(CameraComponent).name())
-		{
-			comps_data[typeid(CameraComponent).name()] = component_value;
-			add_component<CameraComponent>();
-		}
-		else if (component_name == typeid(AudioSource).name())
-		{
-			comps_data[typeid(AudioSource).name()] = component_value;
-			add_component<AudioSource>();
-		}
-		else if (component_name == typeid(Inventory).name())
-		{
-			comps_data[typeid(Inventory).name()] = component_value;
-			add_component<Inventory>();
-		}
-		else if (component_name == typeid(CombatInventory).name())
-		{
-			comps_data[typeid(CombatInventory).name()] = component_value;
-			add_component<CombatInventory>();
-		}
-		else if (component_name == typeid(InventoryWindow).name())
-		{
-			comps_data[typeid(InventoryWindow).name()] = component_value;
-			add_component<InventoryWindow>();
-		}
-		else if (component_name == typeid(InventoryGUIController).name())
-		{
-			comps_data[typeid(InventoryGUIController).name()] = component_value;
-			add_component<InventoryGUIController>();
-		}
-		else if (component_name == typeid(Interactor).name())
-		{
-			comps_data[typeid(Interactor).name()] = component_value;
-			add_component<Interactor>();
-		}
-		else if (component_name == typeid(IInteractable).name())
-		{
-			comps_data[typeid(IInteractable).name()] = component_value;
-			add_component<IInteractable>();
-		}
-		else if (component_name == typeid(ItemController).name())
-		{
-			comps_data[typeid(ItemController).name()] = component_value;
-			add_component<ItemController>();
-		}
-		else if (component_name == typeid(WeaponController).name())
-		{
-			comps_data[typeid(WeaponController).name()] = component_value;
-			add_component<WeaponController>();
-		}
-		else if (component_name == typeid(Chest).name())
-		{
-			comps_data[typeid(Chest).name()] = component_value;
-			add_component<Chest>();
-		}
+		add_component_by_name(component["name"].asString(), component["value"], &comps_data);
 	}
 
 	for (auto& c : components)
-	{
-		c->unserialize_json(comps_data.at(typeid(*c).name()));
-	}
+		c->unserialize_json(comps_data.at(RemoveNamespace(typeid(*c).name())));
+	
 
 	for (Json::Value child : obj["children"])
 	{
@@ -610,208 +470,158 @@ void GameObject::start_components()
 		c->start();
 }
 
-Component* GameObject::editor_add_component(std::string component_name)
+Component* GameObject::add_component_by_name(std::string component_name, Json::Value component_data,
+											 std::unordered_map<std::string, Json::Value>* data_map)
 {
-	if (component_name == "TilemapComponent")
-	{
-		return &add_component<TilemapComponent>();
-	}
-	else if (component_name == "TilemapColliderComponent")
-	{
-		return &add_component<TilemapColliderComponent>();
-	}
-	else if (component_name == "SpriteComponent")
-	{
-		return &add_component<SpriteComponent>();
-	}
-	else if (component_name == "AnimatedSpriteComponent")
-	{
+	if (data_map)
+		data_map->insert(std::make_pair(component_name, component_data));
+	
+#pragma region A
+	if (component_name == "AnimatedSpriteComponent")
 		return &add_component<AnimatedSpriteComponent>();
-	}
-	else if (component_name == "AnimationComponent")
-	{
+	if (component_name == "AnimationComponent")
 		return &add_component<AnimationComponent>();
-	}
-	else if (component_name == "BoxColliderComponent")
-	{
-		return &add_component<BoxColliderComponent>();
-	}
-	else if (component_name == "CapsuleColliderComponent")
-	{
-		return &add_component<CapsuleColliderComponent>();
-	}
-	else if (component_name == "ChildAnimationComponent")
-	{
-		return &add_component<ChildAnimationComponent>();
-	}
-	else if (component_name == "RigidbodyComponent")
-	{
-		return &add_component<RigidbodyComponent>();
-	}
-	else if (component_name == "PlayerController")
-	{
-		return &add_component<PlayerController>();
-	}
-	else if (component_name == "ButtonComponent")
-	{
-		return &add_component<ButtonComponent>();
-	}
-	else if (component_name == "DontDestroyOnLoad")
-	{
-		return &add_component<DontDestroyOnLoad>();
-	}
-	else if (component_name == "SceneChange")
-	{
-		return &add_component<SceneChange>();
-	}
-	else if (component_name == "CameraComponent")
-	{
-		return &add_component<CameraComponent>();
-	}
-	else if (component_name == "AudioSource")
-	{
+	if (component_name == "AudioSource")
 		return &add_component<AudioSource>();
-	}
-	else if (component_name == "Inventory")
-	{
-		return &add_component<Inventory>();
-	}
-	else if (component_name == "CombatInventory")
-	{
-		return &add_component<CombatInventory>();
-	}
-	else if (component_name == "InventoryWindow")
-	{
-		return &add_component<InventoryWindow>();
-	}
-	else if (component_name == "InventoryGUIController")
-	{
-		return &add_component<InventoryGUIController>();
-	}
-	else if (component_name == "Interactor")
-	{
-		return &add_component<Interactor>();
-	}
-	else if (component_name == "IInteractable")
-	{
-		return &add_component<IInteractable>();
-	}
-	else if (component_name == "ItemController")
-	{
-		return &add_component<ItemController>();
-	}
-	else if (component_name == "WeaponController")
-	{
-		return &add_component<WeaponController>();
-	}
-	else if (component_name == "Chest")
-	{
+#pragma endregion
+#pragma region B
+	if (component_name == "BoxColliderComponent")
+		return &add_component<BoxColliderComponent>();
+	if (component_name == "ButtonComponent")
+		return &add_component<ButtonComponent>();
+#pragma endregion
+#pragma region C
+	if (component_name == "CameraComponent")
+	return &add_component<CameraComponent>();
+	if (component_name == "CapsuleColliderComponent")
+		return &add_component<CapsuleColliderComponent>();
+	if (component_name == "Chest")
 		return &add_component<Chest>();
-	}
+	if (component_name == "ChildAnimationComponent")
+		return &add_component<ChildAnimationComponent>();
+	if (component_name == "CombatInventory")
+		return &add_component<CombatInventory>();
+#pragma endregion
+#pragma region D
+	if (component_name == "DontDestroyOnLoad")
+		return &add_component<DontDestroyOnLoad>();
+	if (component_name == "DummyAI")
+		return &add_component<DummyAI>();
+#pragma endregion
+#pragma region I
+	if (component_name == "IInteractable")
+		return &add_component<IInteractable>();
+	if (component_name == "Inventory")
+		return &add_component<Inventory>();
+	if (component_name == "InventoryGUIController")
+		return &add_component<InventoryGUIController>();
+	if (component_name == "InventoryWindow")
+		return &add_component<InventoryWindow>();
+	if (component_name == "Interactor")
+		return &add_component<Interactor>();
+	if (component_name == "ItemController")
+		return &add_component<ItemController>();
+#pragma endregion
+#pragma region P
+	if (component_name == "PlayerController")
+		return &add_component<PlayerController>();
+#pragma endregion
+#pragma region R
+	if (component_name == "RigidbodyComponent")
+		return &add_component<RigidbodyComponent>();
+#pragma endregion
+#pragma region S
+	if (component_name == "SceneChange")
+		return &add_component<SceneChange>();
+	if (component_name == "SpriteComponent")
+		return &add_component<SpriteComponent>();
+#pragma endregion
+#pragma region T
+	if (component_name == "TilemapColliderComponent")
+		return &add_component<TilemapColliderComponent>();
+	if (component_name == "TilemapComponent")
+		return &add_component<TilemapComponent>();
+#pragma endregion
+#pragma region W
+	if (component_name == "WeaponController")
+		return &add_component<WeaponController>();
+#pragma endregion
 
 	return nullptr;
 }
 
-void GameObject::editor_remove_component(std::string component_name)
+void GameObject::remove_component_by_name(std::string component_name)
 {
+#pragma region A
+	if (component_name == "AnimatedSpriteComponent")
+		return remove_component<AnimatedSpriteComponent>();
+	if (component_name == "AnimationComponent")
+		return remove_component<AnimationComponent>();
+	if (component_name == "AudioSource")
+		return remove_component<AudioSource>();
+#pragma endregion
+#pragma region B
+	if (component_name == "BoxColliderComponent")
+		return remove_component<BoxColliderComponent>();
+	if (component_name == "ButtonComponent")
+		return remove_component<ButtonComponent>();
+#pragma endregion
+#pragma region C
+	if (component_name == "CameraComponent")
+		return remove_component<CameraComponent>();
+	if (component_name == "CapsuleColliderComponent")
+		return remove_component<CapsuleColliderComponent>();
+	if (component_name == "Chest")
+		return remove_component<Chest>();
+	if (component_name == "ChildAnimationComponent")
+		return remove_component<ChildAnimationComponent>();
+	if (component_name == "CombatInventory")
+		return remove_component<CombatInventory>();
+#pragma endregion
+#pragma region D
+	if (component_name == "DontDestroyOnLoad")
+		return remove_component<DontDestroyOnLoad>();
+	if (component_name == "DummyAI")
+		return remove_component<DummyAI>();
+#pragma endregion
+#pragma region I
+	if (component_name == "IInteractable")
+		return remove_component<IInteractable>();
+	if (component_name == "Inventory")
+		return remove_component<Inventory>();
+	if (component_name == "InventoryGUIController")
+		return remove_component<InventoryGUIController>();
+	if (component_name == "InventoryWindow")
+		return remove_component<InventoryWindow>();
+	if (component_name == "Interactor")
+		return remove_component<Interactor>();
+	if (component_name == "ItemController")
+		return remove_component<ItemController>();
+#pragma endregion
+#pragma region P
+	if (component_name == "PlayerController")
+		return remove_component<PlayerController>();
+#pragma endregion
+#pragma region R
+	if (component_name == "RigidbodyComponent")
+		return remove_component<RigidbodyComponent>();
+#pragma endregion
+#pragma region S
+	if (component_name == "SceneChange")
+		return remove_component<SceneChange>();
+	if (component_name == "SpriteComponent")
+		return remove_component<SpriteComponent>();
+#pragma endregion
+#pragma region T
+	if (component_name == "TilemapColliderComponent")
+		return remove_component<TilemapColliderComponent>();
 	if (component_name == "TilemapComponent")
-	{
-		remove_component<TilemapComponent>();
-	}
-	else if (component_name == "TilemapColliderComponent")
-	{
-		remove_component<TilemapColliderComponent>();
-	}
-	else if (component_name == "SpriteComponent")
-	{
-		remove_component<SpriteComponent>();
-	}
-	else if (component_name == "AnimatedSpriteComponent")
-	{
-		remove_component<AnimatedSpriteComponent>();
-	}
-	else if (component_name == "AnimationComponent")
-	{
-		remove_component<AnimationComponent>();
-	}
-	else if (component_name == "BoxColliderComponent")
-	{
-		remove_component<BoxColliderComponent>();
-	}
-	else if (component_name == "CapsuleColliderComponent")
-	{
-		remove_component<CapsuleColliderComponent>();
-	}
-	else if (component_name == "ChildAnimationComponent")
-	{
-		remove_component<ChildAnimationComponent>();
-	}
-	else if (component_name == "RigidbodyComponent")
-	{
-		remove_component<RigidbodyComponent>();
-	}
-	else if (component_name == "PlayerController")
-	{
-		remove_component<PlayerController>();
-	}
-	else if (component_name == "ButtonComponent")
-	{
-		remove_component<ButtonComponent>();
-	}
-	else if (component_name == "DontDestroyOnLoad")
-	{
-		remove_component<DontDestroyOnLoad>();
-	}
-	else if (component_name == "SceneChange")
-	{
-		remove_component<SceneChange>();
-	}
-	else if (component_name == "CameraComponent")
-	{
-		remove_component<CameraComponent>();
-	}
-	else if (component_name == "AudioSource")
-	{
-		remove_component<AudioSource>();
-	}
-	else if (component_name == "Inventory")
-	{
-		remove_component<Inventory>();
-	}
-	else if (component_name == "CombatInventory")
-	{
-		remove_component<CombatInventory>();
-	}
-	else if (component_name == "InventoryWindow")
-	{
-		remove_component<InventoryWindow>();
-	}
-	else if (component_name == "InventoryGUIController")
-	{
-		remove_component<InventoryGUIController>();
-	}
-	else if (component_name == "Interactor")
-	{
-		remove_component<Interactor>();
-	}
-	else if (component_name == "IInteractable")
-	{
-		remove_component<IInteractable>();
-	}
-	else if (component_name == "ItemController")
-	{
-		remove_component<ItemController>();
-	}
-	else if (component_name == "WeaponController")
-	{
-		remove_component<WeaponController>();
-	}
-	else if (component_name == "Chest")
-	{
-		remove_component<Chest>();
-	}
-	
-	handle_removed_components();
+		return remove_component<TilemapComponent>();
+#pragma endregion
+#pragma region W
+	if (component_name == "WeaponController")
+		return remove_component<WeaponController>();
+#pragma endregion
 		
 }
 
@@ -823,11 +633,6 @@ void GameObject::handle_removed_components()
 		delete c_t_r;
 	}
 	components_to_remove.clear();
-}
-
-void GameObject::init_variables()
-{
-	active = true;
 }
 
 }

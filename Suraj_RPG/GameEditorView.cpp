@@ -8,10 +8,10 @@ namespace bm98
 {
 GameEditorView::GameEditorView()
 {
-	EventSystem::Instance()->subscribe(EventID::SCENE_ADDED_GAMEOBJECT, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_REMOVED_GAMEOBJECT, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_CHANGE, this);
-	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_ADDED_GAMEOBJECT_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_CHANGE_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG, this);
 
 
 	init();
@@ -94,17 +94,17 @@ void GameEditorView::handle_event(Event* event)
 
 	switch (event->get_event_id())
 	{
-	case EventID::SCENE_ADDED_GAMEOBJECT:
+	case EventID::SCENE_ADDED_GAMEOBJECT_FLAG:
 		create_heir_panel();
 
 		break;
-	case EventID::SCENE_REMOVED_GAMEOBJECT:
+	case EventID::SCENE_REMOVED_GAMEOBJECT_FLAG:
 		create_heir_panel();
 		break;
-	case EventID::SCENE_CHANGE:
+	case EventID::SCENE_CHANGE_FLAG:
 		create_heir_panel();
 		break;
-	case EventID::SCENE_GAMEOBJECT_ORDER_CHANGE:
+	case EventID::SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG:
 		create_heir_panel();
 		break;
 	}
@@ -131,7 +131,7 @@ void GameEditorView::create_heir_panel()
 		}
 
 		heir_panel->add_element(std::to_string(objs[i]->get_unique_runtime_id()), new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
-			objs[i]->get_info().name + " " + std::to_string(objs[i]->get_unique_runtime_id()), 12,
+			objs[i]->get_info().name + " [" + std::to_string(objs[i]->get_unique_runtime_id()) + "]", 12,
 			sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
 			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255)));
 

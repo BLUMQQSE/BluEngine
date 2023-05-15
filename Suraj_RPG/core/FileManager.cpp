@@ -30,20 +30,7 @@ Json::Value FileManager::load_from_file(std::string file_path)
 	reader.parse(ifs, obj);
 	ifs.close();
 
-	//not sure about functionality of this if statement...
-	/*
-	if (obj.empty())
-	{
-		FileManager::save_to_file_styled(serialize_json(), file_path);
-		std::ifstream ifs(file_path);
-		Json::Reader reader;
-		Json::Value obj;
-		reader.parse(ifs, obj);
-		ifs.close();
 
-		return obj;
-	}
-	*/
 	return obj;
 }
 

@@ -194,12 +194,14 @@
     <ClCompile Include="core\SceneManager.cpp" />
     <ClCompile Include="core\Time.cpp" />
     <ClCompile Include="core\UITagSystem.cpp" />
+    <ClCompile Include="Damager.cpp" />
     <ClCompile Include="DataAsset.cpp" />
     <ClCompile Include="Delay.cpp" />
     <ClCompile Include="Destructor.cpp" />
     <ClCompile Include="Dialogue.cpp" />
     <ClCompile Include="DontDestroyOnLoad.cpp" />
     <ClCompile Include="DropDownComponent.cpp" />
+    <ClCompile Include="DummyAI.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameEditorView.cpp" />
     <ClCompile Include="globals.cpp" />
@@ -211,6 +213,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="BoxColliderComponent.cpp" />
     <ClCompile Include="HearingComponent.cpp" />
+    <ClCompile Include="IDamageable.cpp" />
     <ClCompile Include="IDestructable.cpp" />
     <ClCompile Include="IInteractable.cpp" />
     <ClCompile Include="Interactor.cpp" />
@@ -293,12 +296,14 @@
     <ClInclude Include="core\SceneManager.h" />
     <ClInclude Include="core\Time.h" />
     <ClInclude Include="core\UITagSystem.h" />
+    <ClInclude Include="Damager.h" />
     <ClInclude Include="DataAsset.h" />
     <ClInclude Include="Delay.h" />
     <ClInclude Include="Destructor.h" />
     <ClInclude Include="Dialogue.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />
     <ClInclude Include="DropDownComponent.h" />
+    <ClInclude Include="DummyAI.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameEditorView.h" />
     <ClInclude Include="globals.h" />
@@ -310,6 +315,7 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="BoxColliderComponent.h" />
     <ClInclude Include="HearingComponent.h" />
+    <ClInclude Include="IDamageable.h" />
     <ClInclude Include="IData.h" />
     <ClInclude Include="IDestructable.h" />
     <ClInclude Include="IInteractable.h" />
