@@ -29,10 +29,16 @@ constexpr std::size_t max_components = 150;
 using ComponentBitSet = std::bitset<max_components>;
 using ComponentArray = std::array<Component*, max_components>;
 
-class GameObject : public IData, public IObject
+class GameObject : public IData, public IObject, public std::enable_shared_from_this<GameObject>
 {
 
 public:
+
+	
+	std::shared_ptr<GameObject> self()
+	{
+		return shared_from_this();
+	}
 
 	struct Info
 	{
@@ -64,7 +70,6 @@ public:
 	GameObject();
 	virtual ~GameObject();
 
-	
 	Info info;
 	
 #pragma region Transform
@@ -112,8 +117,8 @@ public:
 
 	void set_world_position(const Vector2f pos)
 	{
-		if (parent)
-			local_position = pos - parent->get_world_position();
+		if (parent.lock())
+			local_position = pos - parent.lock()->get_world_position();
 
 		Vector2f change = pos - position;
 		position = pos;
@@ -122,14 +127,14 @@ public:
 			components[i]->set_world_position(pos);
 
 		for (std::size_t i = 0; i < children.size(); i++)
-			children[i]->set_world_position(children[i]->get_world_position()
+			children[i].lock()->set_world_position(children[i].lock()->get_world_position()
 				+ change);
 
 	}
 
 	void set_local_position(const Vector2f pos)
 	{
-		if (!parent)
+		if (!parent.lock())
 		{
 			local_position = position;
 			return;
@@ -144,7 +149,7 @@ public:
 			components[i]->set_world_position(pos);
 
 		for (std::size_t i = 0; i < children.size(); i++)
-			children[i]->set_world_position(children[i]->get_world_position()
+			children[i].lock()->set_world_position(children[i].lock()->get_world_position()
 				+ change);
 
 	}
@@ -169,12 +174,12 @@ public:
 	void set_world_rotation(const float rot)
 	{
 		rotation = rot;
-		if (parent)
-			local_rotation = parent->rotation - rotation;
+		if (parent.lock())
+			local_rotation = parent.lock()->rotation - rotation;
 		else
 			local_position = Vector2f::Zero();
 		for (std::size_t i = 0; i < children.size(); i++)
-			children[i]->set_world_rotation(children[i]->get_local_rotation() + rot);
+			children[i].lock()->set_world_rotation(children[i].lock()->get_local_rotation() + rot);
 		for (std::size_t i = 0; i < components.size(); i++)
 			components[i]->set_world_rotation(rot);
 	}
@@ -224,32 +229,32 @@ public:
 	/// Sets the parent of this gameobject to parent. Additionally removes from children of prior parent if one
 	/// existed.
 	/// </summary>
-	void set_parent(GameObject* parent);
-	void remove_child(GameObject* child);
+	void set_parent(std::shared_ptr<GameObject> parent);
+	void remove_child(std::shared_ptr<GameObject> child);
 
 	const size_t get_unique_runtime_id() const;
 	Info& get_info();
 	Vector2f get_center();
-	GameObject* get_parent();
+	std::weak_ptr<GameObject> get_parent();
 	/// <summary>
 	/// Returns all parents to root ancestor, as well as all children.
 	/// </summary>
 	/// <returns></returns>
-	std::vector<GameObject*> get_all_relatives();
+	std::vector<std::weak_ptr<GameObject>> get_all_relatives();
 	/// <summary>
 	/// Returns the highest parent of a game object.
 	/// </summary>
-	GameObject* get_greatest_ancestor();
+	std::weak_ptr<GameObject> get_greatest_ancestor();
 	std::vector<Component*> get_components();
-	std::vector<GameObject*> get_children();
+	std::vector<std::weak_ptr<GameObject>> get_children();
 	/// <summary>
 	/// Returns all children, grandchildren, great-grandchildren...
 	/// </summary>
 	/// <returns></returns>
-	std::vector<GameObject*> get_all_posterity();
-	const bool check_for_child(GameObject* game_object) const;
+	std::vector<std::weak_ptr<GameObject>> get_all_posterity();
+	const bool check_for_child(std::shared_ptr<GameObject> game_object) const;
 	const bool check_for_child(std::string name) const;
-	GameObject* get_child(std::string name);
+	std::weak_ptr<GameObject> get_child(std::string name);
 	const bool is_initialized() const;
 
 	// Inherited via IData
@@ -280,7 +285,7 @@ public:
 			return *dynamic_cast<T*>(component_array[get_component_type_id<T>()]);
 
 		T* c(new T(std::forward<TArgs>(mArgs)...));
-		c->set_game_object(this);
+		c->set_game_object(self());
 		components.push_back(c);
 
 		component_array[get_component_type_id<T>()] = c;
@@ -379,8 +384,8 @@ public:
 
 protected:
 	bool active = true;
-	GameObject* parent;
-	std::vector<GameObject*> children;
+	std::weak_ptr<GameObject> parent;
+	std::vector<std::weak_ptr<GameObject>> children;
 
 	//std::vector<std::unique_ptr<Component>> components;
 	std::vector<Component*> components;
@@ -397,7 +402,7 @@ private:
 	void awake_components();
 	void start_components();
 
-	void add_child(GameObject* child);
+	void add_child(std::shared_ptr<GameObject> child);
 
 	static size_t get_unique_id()
 	{

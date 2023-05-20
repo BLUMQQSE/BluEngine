@@ -35,7 +35,7 @@ void DropDownComponent::init()
 
 	GameObject* new_child = new GameObject();
 	//game_object->add_child(new_child);
-	new_child->set_parent(game_object);
+	new_child->set_parent(game_object.get()->self());
 
 	new_child->add_component<ButtonComponent>(width, height, text_list[0], char_size);
 	active_selection = &new_child->get_component<ButtonComponent>();
@@ -44,7 +44,7 @@ void DropDownComponent::init()
 	{
 		GameObject* new_child = new GameObject();
 		//game_object->add_child(new_child);
-		new_child->set_parent(game_object);
+		new_child->set_parent(game_object.get()->self());
 
 		new_child->set_local_position(Vector2f(0, (i + 1) * height));
 		new_child->add_component<ButtonComponent>(width, height, text_list[i], char_size, i);
@@ -53,7 +53,7 @@ void DropDownComponent::init()
 		this->list.push_back(&new_child->get_component<ButtonComponent>());
 		this->list[i]->set_render(false);
 
-		SceneManager::Instance()->instantiate_gameobject(new_child);
+		SceneManager::Instance()->instantiate_gameobject(std::shared_ptr<GameObject>(new_child).get());
 	}
 
 	active_selection->set_id(default_index);

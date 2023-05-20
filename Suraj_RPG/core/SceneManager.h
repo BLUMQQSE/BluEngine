@@ -47,16 +47,18 @@ public:
 	/// Instantiates game objects into the active scene.
 	/// </summary>
 	void instantiate_gameobject(GameObject* game_object);
-	void instantiate_gameobject_on_load(GameObject* game_object);
-	void destroy_gameobject(GameObject* game_object);
+	void instantiate_gameobject_on_load(std::shared_ptr<GameObject> game_object);
+	void destroy_gameobject(std::shared_ptr<GameObject> game_object);
 
-	std::vector<GameObject*> get_objects_in_scene();
+	std::vector<std::weak_ptr<GameObject>> get_objects_in_scene();
 
-	GameObject* find(std::string name, GameObject* object_to_ignore);
-	GameObject* find_with_tag(Tags::Tag tag, GameObject* object_to_ignore);
-	std::vector<GameObject*> find_all_with_tag(Tags::Tag tag, GameObject* object_to_ignore);
-	template <typename T> static  GameObject* find_of_type(GameObject* object_to_ignore);
-	template <typename T> static std::vector<GameObject*> find_all_of_type(GameObject* object_to_ignore);
+	std::weak_ptr<GameObject> test(Tags::Tag tag, std::shared_ptr<GameObject> ignore);
+
+	std::weak_ptr<GameObject> find(std::string name, std::shared_ptr<GameObject> object_to_ignore);
+	std::weak_ptr<GameObject> find_with_tag(Tags::Tag tag, std::shared_ptr<GameObject> object_to_ignore);
+	std::vector<std::weak_ptr<GameObject>> find_all_with_tag(Tags::Tag tag, std::shared_ptr<GameObject> object_to_ignore);
+	template <typename T> static  std::weak_ptr<GameObject> find_of_type(std::shared_ptr<GameObject> object_to_ignore);
+	template <typename T> static std::vector<std::weak_ptr<GameObject>> find_all_of_type(std::shared_ptr<GameObject> object_to_ignore);
 	//static void set_active_scene(std::string scene_name);
 
 private:

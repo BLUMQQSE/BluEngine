@@ -167,6 +167,7 @@ void Renderer::refresh()
 
 void Renderer::render()
 {
+	//std::cout << renderables.size() << "\n";
 	render_list(renderables);
 	render_gizmos();
 	render_list(ui_renderables);

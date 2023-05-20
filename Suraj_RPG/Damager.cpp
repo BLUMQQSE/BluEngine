@@ -26,20 +26,36 @@ void Damager::fixed_update()
 		if (cols[i]->get_game_object()->has_component_of_type<IDamageable>())
 		{
 			IDamageable* col_i = cols[i]->get_game_object()->get_component_of_type<IDamageable>();
-			collisions.push_back(col_i);
+			collisions.push_back(col_i->get_game_object());
 		}
 	}
 
 }
 
-void Damager::apply_damage(float amount)
+void Damager::apply_damage(float amount, DamageNS::Type type, DamageNS::Target target)
 {
-	std::vector<IDamageable*>::iterator iter;
+	auto iter = collisions.begin();
 	while (iter != collisions.end())
 	{
-		(*iter)->take_damage(amount);
+		// check that iter still exists
+		if (iter->expired())
+		{
+			iter = collisions.erase(iter);
+		}
+		if((*iter).lock()->has_component<IDamageable>())
+			(*iter).lock()->get_component<IDamageable>().take_damage(amount, type, target);
 	}
 
+}
+
+void Damager::unserialize_json(Json::Value obj)
+{
+	hitbox.unserialize_json(obj);
+}
+
+Json::Value Damager::serialize_json()
+{
+	return hitbox.serialize_json();
 }
 
 }

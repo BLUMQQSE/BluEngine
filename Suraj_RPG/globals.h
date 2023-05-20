@@ -818,4 +818,96 @@ enum class WindowToggle
 
 }
 
+namespace DamageNS
+{
+
+#pragma region Type
+
+enum class Type
+{
+	DEFAULT,
+	FIRE
+};
+
+static std::string ToString(Type type)
+{
+	switch (type)
+	{
+		case Type::DEFAULT:
+			return "DEFAULT";
+		case Type::FIRE:
+			return "FIRE";
+	}
+	//core::Debug::Instance()->log("[Damager] ToString type undefined " + std::to_string((int)type),
+	//							 core::Debug::LogLevel::WARNING);
+	return "DEFAULT";
+}
+
+static Type ToType(std::string type)
+{
+	if (type == "DEFAULT")
+		return Type::DEFAULT;
+	if (type == "FIRE")
+		return Type::FIRE;
+
+	//core::Debug::Instance()->log("[Damager] ToString target undefined " + type,
+	//							 core::Debug::LogLevel::WARNING);
+	return Type::DEFAULT;
+}
+
+static std::vector<std::string> TypeVector()
+{
+	return { "DEFAULT", "FIRE" };
+}
+
+#pragma endregion
+
+
+
+#pragma region Target
+
+enum class Target
+{
+	PLAYER,
+	ENEMY,
+	ALL
+};
+
+static std::string ToString(Target target)
+{
+	switch (target)
+	{
+		case Target::PLAYER:
+			return "PLAYER";
+		case Target::ENEMY:
+			return "ENEMY";
+		case Target::ALL:
+			return "ALL";
+	}
+	//core::Debug::Instance()->log("[Damager] ToString target undefined " + std::to_string((int)target),
+	//							 core::Debug::LogLevel::WARNING);
+	return "ENEMY";
+}
+
+static Target ToTarget(std::string target)
+{
+	if (target == "PLAYER")
+		return Target::PLAYER;
+	if (target == "ENEMY")
+		return Target::ENEMY;
+	if (target == "ALL")
+		return Target::ALL;
+	//core::Debug::Instance()->log("[Damager] ToString target undefined " + target,
+	//							 core::Debug::LogLevel::WARNING);
+	return Target::ENEMY;
+}
+
+static std::vector<std::string> TargetVector()
+{
+	return { "PLAYER", "ENEMY", "ALL" };
+}
+
+#pragma endregion
+}
+
 }

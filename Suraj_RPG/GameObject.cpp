@@ -53,15 +53,11 @@ GameObject::GameObject()
 {
 	unique_runtime_id = get_unique_id();
 	active = true;
+	//parent = nullptr;
 }
 
 GameObject::~GameObject()
 {
-	for (auto& c : components)
-	{
-		delete c;
-	}
-	components.clear();
 }
 
 void GameObject::init()
@@ -89,6 +85,12 @@ void GameObject::on_destroy()
 	{
 		c->on_destroy();
 	}
+
+	for (auto& c : components)
+	{
+		delete c;
+	}
+	components.clear();
 }
 
 void GameObject::update()
@@ -125,8 +127,8 @@ void GameObject::on_collision_enter(Collision info)
 			components[i]->on_collision_enter(info);
 		return;
 	}
-	if (parent)
-		parent->on_collision_enter(info);
+	if (parent.lock())
+		parent.lock()->on_collision_enter(info);
 }
 
 void GameObject::on_collision_stay(Collision info)
@@ -137,8 +139,8 @@ void GameObject::on_collision_stay(Collision info)
 			components[i]->on_collision_stay(info);
 		return;
 	}
-	if (parent)
-		parent->on_collision_stay(info);
+	if (parent.lock())
+		parent.lock()->on_collision_stay(info);
 }
 
 void GameObject::on_collision_exit(Collision info)
@@ -149,8 +151,8 @@ void GameObject::on_collision_exit(Collision info)
 			components[i]->on_collision_exit(info);
 		return;
 	}
-	if (parent)
-		parent->on_collision_exit(info);
+	if (parent.lock())
+		parent.lock()->on_collision_exit(info);
 }
 
 void GameObject::on_trigger_enter(Collider info)
@@ -161,8 +163,8 @@ void GameObject::on_trigger_enter(Collider info)
 			components[i]->on_trigger_enter(info);
 		return;
 	}
-	if (parent)
-		parent->on_trigger_enter(info);
+	if (parent.lock())
+		parent.lock()->on_trigger_enter(info);
 }
 
 void GameObject::on_trigger_stay(Collider info)
@@ -173,8 +175,8 @@ void GameObject::on_trigger_stay(Collider info)
 			components[i]->on_trigger_stay(info);
 		return;
 	}
-	if (parent)
-		parent->on_trigger_stay(info);
+	if (parent.lock())
+		parent.lock()->on_trigger_stay(info);
 }
 
 void GameObject::on_trigger_exit(Collider info)
@@ -185,8 +187,8 @@ void GameObject::on_trigger_exit(Collider info)
 			components[i]->on_trigger_exit(info);
 		return;
 	}
-	if (parent)
-		parent->on_trigger_exit(info);
+	if (parent.lock())
+		parent.lock()->on_trigger_exit(info);
 }
 
 void GameObject::add_to_buffer(sf::View* view)
@@ -199,7 +201,7 @@ void GameObject::add_to_buffer(sf::View* view)
 		components[i]->add_to_buffer(view);
 
 	for (auto& ch : children)
-		ch->add_to_buffer(view);
+		ch.lock()->add_to_buffer(view);
 }
 
 std::vector<Editor::SerializedVar> GameObject::get_editor_values()
@@ -235,7 +237,7 @@ void GameObject::set_active(bool active)
 	for (std::size_t i = 0; i < components.size(); i++)
 		components[i]->set_active(active);
 	for (auto& ch : children)
-		ch->set_active(active);
+		ch.lock()->set_active(active);
 }
 
 void GameObject::set_render(bool render)
@@ -247,30 +249,34 @@ void GameObject::set_render(bool render)
 	}
 }
 
-void GameObject::set_parent(GameObject* parent)
+void GameObject::set_parent(std::shared_ptr<GameObject> parent)
 {
-	if (this->parent)
+	if (this->parent.lock())
 	{
+		std::cout << this->parent.lock()->get_info().name << "\n";
 		// remove as a child from previous parent if exists
-		this->parent->remove_child(this);
+		this->parent.lock()->remove_child(this->self());
 	}
 
 	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_PARENT_CHANGE);
 	this->parent = parent;
 
-	if (this->parent)
+	if (this->parent.lock())
 	{
 		// if I was a betting man... this statement is the true issue
 		set_local_position(parent->get_world_position() - get_world_position());
 		// 
 		//seems to be the posiotion issue
-		this->parent->add_child(this);
+		this->parent.lock()->add_child(this->self());
 	}
 }
 
-void GameObject::remove_child(GameObject* child)
+void GameObject::remove_child(std::shared_ptr<GameObject> child)
 {
-	children.erase(std::find(children.begin(), children.end(), child));
+	std::vector<std::weak_ptr<GameObject>>::iterator obj = std::find_if(children.begin(), children.end(),
+																		  [child](std::weak_ptr<GameObject> const& i) { return i.lock().get() == child.get(); });
+
+	children.erase(obj);
 }
 
 const size_t GameObject::get_unique_runtime_id() const
@@ -304,33 +310,33 @@ Vector2f GameObject::get_center()
 	return get_world_position();
 }
 
-GameObject* GameObject::get_parent()
+std::weak_ptr<GameObject> GameObject::get_parent()
 {
 	return parent;
 }
 
-std::vector<GameObject*> GameObject::get_all_relatives()
+std::vector<std::weak_ptr<GameObject>> GameObject::get_all_relatives()
 {
-	std::vector<GameObject*> relatives;
-	GameObject* p = get_parent();
+	std::vector<std::weak_ptr<GameObject>> relatives;
+	std::shared_ptr<GameObject> p = get_parent().lock();
 	while (p)
 	{
 		relatives.push_back(p);
-		p = p->get_parent();
+		p = p->get_parent().lock();
 	}
 
-	std::vector<GameObject*> posterity = get_all_posterity();
+	std::vector<std::weak_ptr<GameObject>> posterity = get_all_posterity();
 	relatives.insert(relatives.end(), posterity.begin(), posterity.end());
 
 	return relatives;
 }
 
-GameObject* GameObject::get_greatest_ancestor()
+std::weak_ptr<GameObject> GameObject::get_greatest_ancestor()
 {
-	GameObject* o = parent;
-	while (o->get_parent())
+	std::shared_ptr<GameObject> o = parent.lock();
+	while (o->get_parent().lock())
 	{
-		o = o->get_parent();
+		o = o->get_parent().lock();
 	}
 	return o;
 }
@@ -340,27 +346,27 @@ std::vector<Component*> GameObject::get_components()
 	return components;
 }
 
-std::vector<GameObject*> GameObject::get_children()
+std::vector<std::weak_ptr<GameObject>> GameObject::get_children()
 {
 	return children;
 }
 
-std::vector<GameObject*> GameObject::get_all_posterity()
+std::vector<std::weak_ptr<GameObject>> GameObject::get_all_posterity()
 {
-	std::vector<GameObject*> all_children = children;
+	std::vector<std::weak_ptr<GameObject>> all_children = children;
 	for (std::size_t i = 0; i != children.size(); i++)
 	{
-		std::vector<GameObject*> posterity = children[i]->get_all_posterity();
+		std::vector<std::weak_ptr<GameObject>> posterity = children[i].lock()->get_all_posterity();
 		all_children.insert(all_children.end(), posterity.begin(), posterity.end());
 		
 	}
 	return all_children;
 }
 
-const bool GameObject::check_for_child(GameObject* game_object) const
+const bool GameObject::check_for_child(std::shared_ptr<GameObject> game_object) const
 {
 	for (std::size_t i = 0; i != children.size(); i++)
-		if (children[i] == game_object)
+		if (children[i].lock() == game_object)
 			return true;
 
 	return false;
@@ -369,18 +375,19 @@ const bool GameObject::check_for_child(GameObject* game_object) const
 const bool GameObject::check_for_child(std::string name) const
 {
 	for (std::size_t i = 0; i != children.size(); i++)
-		if (children[i]->get_info().name == name)
+		if (children[i].lock()->get_info().name == name)
 			return true;
 
 	return false;
 }
 
-GameObject* GameObject::get_child(std::string name)
+std::weak_ptr<GameObject> GameObject::get_child(std::string name)
 {
 	for (std::size_t i = 0; i != children.size(); i++)
-		if (children[i]->get_info().name == name)
+		if (children[i].lock()->get_info().name == name)
 			return children[i];
-	return nullptr;
+	
+	return std::weak_ptr<GameObject>();
 }
 
 const bool GameObject::is_initialized() const
@@ -410,7 +417,7 @@ Json::Value GameObject::serialize_json()
 	}
 	for (auto& o : children)
 	{
-		obj["children"].append(o->serialize_json());
+		obj["children"].append(o.lock()->serialize_json());
 	}
 
 	return obj;
@@ -437,8 +444,9 @@ void GameObject::unserialize_json(Json::Value obj)
 
 	for (Json::Value child : obj["children"])
 	{
-		GameObject* go = new GameObject();
-		go->set_parent(this);
+		std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+
+		go->set_parent(this->self());
 		go->unserialize_json(child);
 		SceneManager::Instance()->instantiate_gameobject_on_load(go);
 	}
@@ -447,7 +455,7 @@ void GameObject::unserialize_json(Json::Value obj)
 
 #pragma endregion
 
-void GameObject::add_child(GameObject* child)
+void GameObject::add_child(std::shared_ptr<GameObject> child)
 {
 	children.push_back(child);
 }

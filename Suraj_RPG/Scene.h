@@ -27,14 +27,21 @@ public:
 
 	std::string get_file_name() { return file_name; }
 	std::string get_scene_name() { return scene_name; }
-	std::vector<GameObject*> get_objects() { return objects_in_scene; }
-	std::vector<GameObject*> get_dont_destroy_objects();
+
+	std::vector<std::weak_ptr<GameObject>> get_objects() 
+	{
+		std::vector<std::weak_ptr<GameObject>> result(objects_in_scene.size());
+		for (int i = 0; i < objects_in_scene.size(); i++)
+			result[i] = objects_in_scene[i];
+		return result; 
+	}
+	std::vector<std::weak_ptr<GameObject>> get_dont_destroy_objects();
 
 	void set_file_name(std::string name) { this->file_name = name; }
 	void set_scene_name(std::string name) { this->scene_name = name; }
 
-	void insert_gameobject(GameObject* go, bool initialize = true);
-	void remove_gameobject(GameObject* go);
+	void insert_gameobject(std::shared_ptr<GameObject> go, bool initialize = true);
+	void remove_gameobject(std::shared_ptr<GameObject> go);
 
 	void clear_scene(bool remove_everything = false);
 
@@ -59,9 +66,9 @@ private:
 	std::string file_name;
 	std::string scene_name;
 
-	std::vector<GameObject*> objects_in_scene;
-	std::vector<GameObject*> objects_to_add;
-	std::vector<GameObject*> objects_to_remove;
+	std::vector<std::shared_ptr<GameObject>> objects_in_scene;
+	std::vector<std::shared_ptr<GameObject>> objects_to_add;
+	std::vector<std::shared_ptr<GameObject>> objects_to_remove;
 
 	sf::View* scene_view;
 	void insert_sort();

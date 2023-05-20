@@ -69,7 +69,7 @@ private:
     GUI::TextureSelector* texture_selector;
 
     SceneEditorView* scene_editor;
-    Scene* active_scene;
+    std::unique_ptr<Scene> active_scene;
     sf::View* scene_view;
 
     std::string active_scene_name;

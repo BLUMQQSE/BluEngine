@@ -236,7 +236,8 @@ enum class EventID
 	_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_,
 	_SYSTEM_SCENEMANAGER_PRE_SCENE_CHANGE_FLAG_,
 	_SYSTEM_SCENEMANAGER_POST_SCENE_CHANGE_FLAG_,
-
+	// This is a system event out of necessity... so shared_ptr doesn't disappear
+	//_SYSTEM_GAMEOBJECT_INSTANTIATE_,
 #pragma endregion
 
 #pragma region UITagSystem
@@ -293,7 +294,6 @@ enum class EventID
 #pragma endregion
 
 #pragma region Gameobject
-
 	GAMEOBJECT_INSTANTIATE,
 	GAMEOBJECT_DESTROY,
 	GAMEOBJECT_PARENT_CHANGE,

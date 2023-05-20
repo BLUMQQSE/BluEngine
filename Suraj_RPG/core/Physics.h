@@ -41,11 +41,8 @@ public:
 		TRIGGER_EXIT
 	};
 
-	
-
-
-	void add_to_physics(GameObject* game_object);
-	void remove_from_physics(GameObject* game_object);
+	void add_to_physics(std::shared_ptr<GameObject> game_object);
+	void remove_from_physics(std::shared_ptr<GameObject> game_object);
 	void clear_objects();
 
 	/// <summary>
@@ -55,7 +52,7 @@ public:
 	/// </summary>
 	/// <returns>
 	/// The closest collider which is not on a gameobject related to the calling gameobject.</returns>
-	bool raycast(Vector2f origin, Vector2f direction, GameObject* ignore,
+	bool raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameObject> ignore,
 		float distance = INFINITY, PhysicsNS::LayerMask mask = PhysicsNS::LayerMask(),
 		RayHit* hit = nullptr);
 
@@ -67,9 +64,9 @@ public:
 	/// <returns>
 	/// All colliders within the circle not related to the object calling the functions.</returns>
 	int OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
-		GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions);
+		std::shared_ptr<GameObject> object_to_ignore, std::vector<ColliderComponent*>& collisions);
 	int OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask,
-		GameObject* object_to_ignore, std::vector<ColliderComponent*>& collisions);
+		std::shared_ptr<GameObject> object_to_ignore, std::vector<ColliderComponent*>& collisions);
 
 private:
 
@@ -81,7 +78,7 @@ private:
 	}
 	Physics& operator=(const Physics& rhs) {}
 
-	std::vector<std::vector<std::pair<GameObject*, CollisionState>>> objects;
+	std::vector<std::vector<std::pair<std::weak_ptr<GameObject>, CollisionState>>> objects;
 
 	bool collision_matrix[(int)(PhysicsNS::Layer::_LAST_DONT_REMOVE)][(int)
 		(PhysicsNS::Layer::_LAST_DONT_REMOVE)];
@@ -97,10 +94,10 @@ private:
 	/// Takes in two pairs of gameobjects and their collision states with each other. 
 	/// These objects are compared for intersection and collisions are handled.
 	/// </summary>
-	void handle_collision(std::pair<GameObject*, CollisionState>& a,
-		std::pair<GameObject*, CollisionState>& b);
-	void update_collision_state(std::pair<GameObject*, CollisionState>& a,
-		std::pair<GameObject*, CollisionState>& b);
+	void handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionState>& a,
+		std::pair<std::weak_ptr<GameObject>, CollisionState>& b);
+	void update_collision_state(std::pair<std::weak_ptr<GameObject>, CollisionState>& a,
+		std::pair<std::weak_ptr<GameObject>, CollisionState>& b);
 
 
 

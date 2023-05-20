@@ -42,7 +42,6 @@ TilemapComponent::TilemapComponent(Vector2i position, float grid_size,
 
 TilemapComponent::~TilemapComponent()
 {
-	Renderer::Instance()->remove(&outline);
 	clear_map();
 }
 
@@ -114,6 +113,7 @@ void TilemapComponent::add_to_buffer(sf::View* view)
 
 void TilemapComponent::on_destroy()
 {
+	Renderer::Instance()->remove(&outline);
 	for (int i = 0; i < render_sprites.size(); i++)
 	{
 		Renderer::Instance()->remove(&render_sprites[i]);

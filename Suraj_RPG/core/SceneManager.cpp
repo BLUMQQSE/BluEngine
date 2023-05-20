@@ -101,9 +101,9 @@ void SceneManager::load_scene(std::string scene_file_name)
 	EventSystem::Instance()->push_event(EventID::SCENE_CHANGE_FLAG);
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_POST_SCENE_CHANGE_FLAG_);
 
-	TextUITag* tag = UITagSystem::Instance()->create_text_tag(Vector2f(700, 100), active_scene->get_scene_name(), 36,
+	std::weak_ptr<TextUITag> tag = UITagSystem::Instance()->create_text_tag(Vector2f(700, 100), active_scene->get_scene_name(), 36,
 															  7, nullptr);
-	tag->add_action(UITag::Action::FADE, 4.f, (void*) &fade_speed);
+	tag.lock()->add_action(UITag::Action::FADE, 4.f, (void*)&fade_speed);
 
 
 }
@@ -156,57 +156,76 @@ void SceneManager::instantiate_gameobject(GameObject* game_object)
 {
 	if (!game_object)
 		return;
+	
 	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_INSTANTIATE, static_cast<void*>(game_object));
 }
 
-void SceneManager::instantiate_gameobject_on_load(GameObject* game_object)
+void SceneManager::instantiate_gameobject_on_load(std::shared_ptr<GameObject> game_object)
 {
 	active_scene->insert_gameobject(game_object, false);
 }
 
-void SceneManager::destroy_gameobject(GameObject* game_object)
+void SceneManager::destroy_gameobject(std::shared_ptr<GameObject> game_object)
 {
-	if (game_object == nullptr)
+	if (!game_object)
 		return;
 
-	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_DESTROY, static_cast<void*>(game_object));
+	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_DESTROY, static_cast<void*>(game_object.get()));
 
 }
 
-std::vector<GameObject*> SceneManager::get_objects_in_scene()
+std::vector<std::weak_ptr<GameObject>> SceneManager::get_objects_in_scene()
 {
 	return active_scene->get_objects();
 }
 
-GameObject* SceneManager::find(std::string name, GameObject* object_to_ignore)
+std::weak_ptr<GameObject> SceneManager::test(Tags::Tag tag, std::shared_ptr<GameObject> ignore)
 {
-	std::vector<GameObject*> objects = active_scene->get_objects();
+	std::vector<std::weak_ptr<GameObject>> objects = active_scene->get_objects();
 	for (auto& o : objects)
-		if (o->get_info().name == name)
+	{
+		if(o.lock()->get_info().tag == tag && o.lock() != ignore)
 			return o;
-
-	return nullptr;
+	}
+	return std::weak_ptr(std::shared_ptr<GameObject>(nullptr));
 }
 
-GameObject* SceneManager::find_with_tag(Tags::Tag tag, GameObject* object_to_ignore)
+std::weak_ptr<GameObject> SceneManager::find(std::string name, std::shared_ptr<GameObject> object_to_ignore)
 {
-	std::vector<GameObject*> objects = active_scene->get_objects();
+	std::vector<std::weak_ptr<GameObject>> objects = active_scene->get_objects();
 	for (auto& o : objects)
-		if (o->get_info().tag == tag)
+		if (o.lock()->get_info().name == name)
 			return o;
 
-	return nullptr;
+	return std::weak_ptr<GameObject>(std::shared_ptr<GameObject>(nullptr));
+
 }
 
-std::vector<GameObject*> SceneManager::find_all_with_tag(Tags::Tag tag, GameObject* object_to_ignore)
+std::weak_ptr<GameObject> SceneManager::find_with_tag(Tags::Tag tag, std::shared_ptr<GameObject> object_to_ignore)
 {
-	std::vector<GameObject*> objects;
+	std::vector<std::weak_ptr<GameObject>> objects = active_scene->get_objects();
+	for (auto& o : objects)
+	{
+		if (o.lock()->get_info().tag == tag)
+		{
+			return o;
+		}
+	}
+
+	return std::weak_ptr<GameObject>(std::shared_ptr<GameObject>(nullptr));
+}
+
+std::vector<std::weak_ptr<GameObject>> SceneManager::find_all_with_tag(Tags::Tag tag, std::shared_ptr<GameObject> object_to_ignore)
+{
+	std::vector<std::weak_ptr<GameObject>> objects;
+
 	for (auto& o : active_scene->get_objects())
-		if (o->get_info().tag == tag)
+		if (o.lock()->get_info().tag == tag)
 			objects.push_back(o);
 
 	return objects;
 }
+
 SceneManager::SceneManager()
 {
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENEMANAGER_CLEAR_ACTIVE_SCENE_, this);
@@ -237,8 +256,10 @@ void SceneManager::handle_event(Event* event)
 			{
 				SceneChange::Destination dest = *static_cast<SceneChange::Destination*>(event->get_parameter());
 				load_scene(dest.scene_name);
-				GameObject* player = find_with_tag(Tags::Tag::PLAYER, nullptr);
-				player->set_world_position(dest.position);
+
+				std::weak_ptr<GameObject> player = find_with_tag(Tags::Tag::PLAYER, std::shared_ptr<GameObject>(nullptr));
+				
+				player.lock()->set_world_position(dest.position);
 			}
 			else
 			{
@@ -249,14 +270,17 @@ void SceneManager::handle_event(Event* event)
 	}
 }
 
-template <typename T> static  GameObject* SceneManager::find_of_type(GameObject* object_to_ignore)
+template <typename T> static  std::weak_ptr<GameObject> SceneManager::find_of_type(std::shared_ptr<GameObject> object_to_ignore)
 {
-	std::vector<GameObject*> objects = active_scene->get_objects();
-	for (auto& o : objects)
-		if (o->has_component<T>())
-			return o;
+	//std::vector<std::weak_ptr<GameObject> objects = active_scene->get_objects();
+	//for (auto& o : objects)
+	//	if (o.lock()->has_component<T>())
+	//		return o;
+
+	return std::weak_ptr<GameObject>(object_to_ignore);
+
 }
-template <typename T> static std::vector<GameObject*> SceneManager::find_all_of_type(GameObject* object_to_ignore)
+template <typename T> static std::vector<std::weak_ptr<GameObject>> SceneManager::find_all_of_type(std::shared_ptr<GameObject> object_to_ignore)
 {
 	std::vector<GameObject*> objects = active_scene->get_objects();
 	objects.erase(

@@ -47,7 +47,7 @@ private:
     std::string active_scene_name;
 
     sf::View* view;
-    Scene* active_scene;
+    std::unique_ptr<Scene> active_scene;
 
     PauseMenu* pmenu;
     GameEditorView* editor_view;

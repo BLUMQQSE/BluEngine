@@ -158,7 +158,7 @@ int Inventory::add_item(int index, ItemData* item, int count)
 			}
 		}
 		go->get_info().name = ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index));
-		go->set_parent(this->game_object);
+		go->set_parent(this->game_object.get()->self());
 		SceneManager::Instance()->instantiate_gameobject(go);
 	}
 
@@ -184,8 +184,8 @@ ItemData* Inventory::remove_item(int index, int count)
 	if (item && inventory_type == InventoryNS::Type::COMBAT && item)
 	{
 		std::cout << "destroying " << ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index)) << "\n";
-		SceneManager::Instance()->destroy_gameobject(this->game_object->get_child(
-			ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index))));
+		SceneManager::Instance()->destroy_gameobject(std::shared_ptr<GameObject>(this->game_object->get_child(
+			ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index)))));
 	}
 
 	return item;

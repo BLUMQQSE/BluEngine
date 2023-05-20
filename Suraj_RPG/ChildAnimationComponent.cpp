@@ -33,12 +33,12 @@ void ChildAnimationComponent::init()
 
 void ChildAnimationComponent::awake()
 {
-	if (game_object->get_parent())
+	if (game_object->get_parent().lock())
 	{
-		GameObject* g = game_object->get_parent();
-		while (g->get_parent() && !g->has_component<AnimationComponent>())
+		std::shared_ptr<GameObject> g = game_object->get_parent().lock();
+		while (g->get_parent().lock() && !g->has_component<AnimationComponent>())
 		{
-			g = g->get_parent();
+			g = g->get_parent().lock();
 		}
 		if (&g->get_component<AnimationComponent>())
 		{

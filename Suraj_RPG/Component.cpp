@@ -92,7 +92,7 @@ void Component::unserialize_json(Json::Value obj)
 
 #pragma endregion
 
-void Component::set_game_object(GameObject* go)
+void Component::set_game_object(std::shared_ptr<GameObject> go)
 {
 	this->game_object = go;
 }
@@ -102,7 +102,8 @@ void Component::set_active(bool active)
 	this->active = active;
 }
 
-GameObject* Component::get_game_object()
+//make sure to change to weak
+std::shared_ptr<GameObject> Component::get_game_object()
 {
 	return game_object;
 }

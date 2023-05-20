@@ -19,7 +19,7 @@ public:
     virtual void update() override;
 
 private:
-    TextUITag* name_tag;
+    std::shared_ptr<TextUITag> name_tag;
     Vector2f name_tag_pos;
 };
 

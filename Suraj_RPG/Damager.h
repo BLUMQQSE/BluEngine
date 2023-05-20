@@ -1,6 +1,9 @@
 #pragma once
 #include "Component.h"
 
+#include "GameObject.h"
+#include "core/Debug.h"
+
 namespace bm98
 {
 
@@ -10,13 +13,15 @@ class Damager :
     public Component
 {
 public:
+
     Damager();
     virtual ~Damager();
 
     virtual void fixed_update() override;
 
     void set_hitbox(FloatConvex& hitbox) { this->hitbox = hitbox; }
-    void apply_damage(float amount);
+    void apply_damage(float amount, DamageNS::Type type,
+                      DamageNS::Target target);
 
 private:
 
@@ -25,7 +30,8 @@ private:
 
     FloatConvex& hitbox;
     PhysicsNS::LayerMask damageable_mask;
-    std::vector<IDamageable*> collisions;
+    //std::vector<IDamageable*> collisions;
+    std::vector<std::weak_ptr<GameObject>> collisions;
 
 };
 

@@ -116,26 +116,26 @@ void GameEditorView::create_heir_panel()
 	heir_panel->clear();
 	objects_in_scene_map.clear();
 
-	std::vector<GameObject*> objs = SceneManager::Instance()->get_objects_in_scene();
+	std::vector<std::weak_ptr<GameObject>> objs = SceneManager::Instance()->get_objects_in_scene();
 
 	float x = 0;
 
 	for (std::size_t i = 0; i < objs.size(); i++)
 	{
-		GameObject* temp = objs[i];
+		std::shared_ptr<GameObject> temp(objs[i].lock()->self());
 
-		while (temp->get_parent())
+		while (temp->get_parent().lock())
 		{
 			x += 30;
-			temp = temp->get_parent();
+			temp = temp->get_parent().lock()->self();
 		}
 
-		heir_panel->add_element(std::to_string(objs[i]->get_unique_runtime_id()), new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
-			objs[i]->get_info().name + " [" + std::to_string(objs[i]->get_unique_runtime_id()) + "]", 12,
+		heir_panel->add_element(std::to_string(objs[i].lock()->get_unique_runtime_id()), new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+			objs[i].lock()->get_info().name + " [" + std::to_string(objs[i].lock()->get_unique_runtime_id()) + "]", 12,
 			sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
 			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255)));
 
-		objects_in_scene_map[heir_panel->get_button(std::to_string(objs[i]->get_unique_runtime_id()))] = objs[i];
+		objects_in_scene_map[heir_panel->get_button(std::to_string(objs[i].lock()->get_unique_runtime_id()))] = objs[i].lock().get();
 
 		x = 0;
 	}
@@ -145,7 +145,7 @@ void GameEditorView::create_heir_panel()
 	if (!inspec_active)
 		inspec_panel->set_render(false);
 	if (!selected_gameobject)
-		selected_gameobject = objs[0];
+		selected_gameobject = objs[0].lock().get();
 
 }
 
@@ -168,7 +168,7 @@ void GameEditorView::update_heir_panel()
 
 					if (ois.second != selected_gameobject)
 					{
-						selected_gameobject->set_parent(ois.second);
+						selected_gameobject->set_parent(ois.second->self());
 						gameobject_held = false;
 						return;
 					}

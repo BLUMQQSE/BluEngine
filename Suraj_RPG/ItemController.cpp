@@ -15,7 +15,7 @@ void ItemController::handle_instant_interaction()
 		return;
 	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
-		Inventory* inv = &current_interactor->get_game_object()->get_child("GeneralInventory")->get_component<Inventory>();
+		Inventory* inv = &current_interactor->get_game_object()->get_child("GeneralInventory").lock()->get_component<Inventory>();
 
 		int index = inv->get_first_available_include_match(item_data);
 		if (index == -1)
@@ -25,7 +25,7 @@ void ItemController::handle_instant_interaction()
 		inv->add_item(index, item_data, 1);
 		item_state = ItemNS::State::IN_USE;
 		//if any remain place into next available position
-		SceneManager::Instance()->destroy_gameobject(this->game_object);
+		SceneManager::Instance()->destroy_gameobject(this->game_object->self());
 	}
 }
 

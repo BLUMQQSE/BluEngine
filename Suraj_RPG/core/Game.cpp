@@ -151,17 +151,14 @@ void Game::update()
 {
     // Progress states of Input which were changed last frame
     EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_RESET_UPDATE_);
-
     update_sfml_events();
-
     EventSystem::Instance()->push_event(EventID::_SYSTEM_INPUT_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_);
-
     EventSystem::Instance()->push_event(EventID::_SYSTEM_DIALOGUESYSTEM_UPDATE_);
+    
+    // Issue here
     EventSystem::Instance()->push_event(EventID::_SYSTEM_EVENTSYSTEM_PROCESS_EVENTS_);
-
     EventSystem::Instance()->push_event(EventID::_SYSTEM_UITAG_UPDATE_);
-
     if (!states.empty())
     {
         // Create a pointer to current state to ensure even if a new state is pushed,
@@ -207,7 +204,7 @@ void Game::fixed_update()
     EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_RESET_FIXED_);
-        
+   
 }
 
 void Game::render()

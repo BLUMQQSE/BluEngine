@@ -17,8 +17,8 @@ void Bed::initiate_interaction(Interactor * interactor)
 {
 	if (!IInteractable::check_can_initiate(interactor))
 		return;
-	if (owner)
-		if (owner != interactor->get_game_object())
+	if (owner->self())
+		if (owner->self() != interactor->get_game_object())
 			return;
 
 	IInteractable::initiate_interaction(interactor);

@@ -23,7 +23,8 @@ void Destructor::destruct()
 	{
 		if (cols[i]->get_game_object()->has_component_of_type<IDestructable>())
 		{
-			Vector2f distance = cols[i]->get_game_object()->get_world_position() - this->game_object->get_world_position();
+			Vector2f distance = cols[i]->get_game_object()->get_world_position() - 
+				this->game_object->get_world_position();
 
 			float true_damage;
 			if (distance.sqr_magnitude() < max_distance * max_distance)

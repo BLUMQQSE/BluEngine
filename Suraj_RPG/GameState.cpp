@@ -32,16 +32,19 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	unserialize_json(FileManager::Instance()->load_from_file(
 		FileManager::Instance()->get_save_name() + "gamestate.json"));
 
-	active_scene = new Scene(active_scene_name);
+	//active_scene = new Scene(active_scene_name);
+	active_scene = std::make_unique<Scene>(active_scene_name);
 
 	//SceneManager::Instance()->init(active_scene);
-	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, active_scene);
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, (void*)active_scene.get());
 	
 	//load in dont destroy objects on load
 	// 
 	std::string n = active_scene->get_file_name();
+
 	active_scene->unserialize_json(FileManager::Instance()->load_from_file(FileManager::Instance()->get_save_name()
 		+ "Data/Scenes/dont_destroy_on_load_objects.json"));
+	
 	SceneManager::Instance()->load_scene(active_scene_name);
 	active_scene->set_file_name(n);
 
@@ -59,13 +62,14 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 	editor_view = new GameEditorView();
 	//Time::Instance()->set_time_scale(5000.f);
 	test_dialogue = new Dialogue("Sample_Dialogue.json");
+
+
 }
 
 GameState::~GameState()
 {
 	delete pmenu;
 	delete view;
-	delete active_scene;
 	delete editor_view;
 
 	active_scene = nullptr;

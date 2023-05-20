@@ -224,28 +224,28 @@ void SceneEditorView::create_heir_panel()
 	heir_panel->clear();
 	objects_in_scene_map.clear();
 
-	std::vector<GameObject*> objs = SceneManager::Instance()->get_objects_in_scene();
+	std::vector<std::weak_ptr<GameObject>> objs = SceneManager::Instance()->get_objects_in_scene();
 
 	float x = 0;
 
 	for (std::size_t i = 0; i < objs.size(); i++)
 	{
-		GameObject* temp = objs[i];
+		std::shared_ptr<GameObject> temp(objs[i].lock()->self());
 
-		while (temp->get_parent())
+		while (temp->get_parent().lock())
 		{
 			x += 30;
-			temp = temp->get_parent();
+			temp = temp->get_parent().lock()->self();
 		}
 
 		GUI::Button* new_button = new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
-			objs[i]->get_info().name + " [" + std::to_string(objs[i]->get_unique_runtime_id()) + "]", 12,
+			objs[i].lock()->get_info().name + " [" + std::to_string(objs[i].lock()->get_unique_runtime_id()) + "]", 12,
 			sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
 			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255));
 
-		objects_in_scene_map[new_button] = objs[i];
+		objects_in_scene_map[new_button] = objs[i].lock().get();
 
-		heir_panel->add_element(std::to_string(objs[i]->get_unique_runtime_id()), new_button);
+		heir_panel->add_element(std::to_string(objs[i].lock()->get_unique_runtime_id()), new_button);
 
 		x = 0;
 	}
@@ -254,7 +254,7 @@ void SceneEditorView::create_heir_panel()
 
 	if (!selected_gameobject && objs.size() > 0)
 	{
-		set_selected_gameobject(objs[0]);
+		set_selected_gameobject(objs[0].lock().get());
 		transform_mover->set_position(selected_gameobject->get_world_position().x, 
 					selected_gameobject->get_world_position().y);
 		transform_mover->set_render(true);
@@ -280,7 +280,7 @@ void SceneEditorView::update_heir_panel()
 
 					if (ois.second != selected_gameobject)
 					{
-						selected_gameobject->set_parent(ois.second);
+						selected_gameobject->set_parent(ois.second->self());
 						gameobject_held = false;
 						return;
 					}
@@ -470,15 +470,18 @@ void SceneEditorView::update_scene_editor_panel()
 	}
 	else if (scene_editor_panel->get_button("add_gameobject")->is_pressed())
 	{
+		//std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
 		GameObject* go = new GameObject();
 		go->get_info().name = "Empty";
 		SceneManager::Instance()->instantiate_gameobject(go);
+	
+	
 	}
 	else if (scene_editor_panel->get_button("remove_gameobject")->is_pressed())
 	{
 		if (!selected_gameobject)
 			return;
-		SceneManager::Instance()->destroy_gameobject(selected_gameobject);
+		SceneManager::Instance()->destroy_gameobject(selected_gameobject->self());
 		clear_inspec_panel();
 		set_selected_gameobject(nullptr);
 	}

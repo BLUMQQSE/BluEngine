@@ -218,15 +218,13 @@ namespace core
 {
 void UITagSystem::update()
 {
-	std::list<UITag*>::iterator i = tags.begin();
+	auto i = tags.begin();
 
 	while (i != tags.end())
 	{
 		if((*i)->get_elapsed_time() > (*i)->get_duration())
 		{
-			UITag* to_delete = (*i);
 			i = tags.erase(i);
-			destroy(to_delete);
 		}
 		else
 		{
@@ -236,21 +234,21 @@ void UITagSystem::update()
 	}
 }
 
-TextUITag* UITagSystem::create_text_tag(Vector2f position, std::string text, unsigned font_size, float duration, sf::View* view)
+std::weak_ptr<TextUITag> UITagSystem::create_text_tag(Vector2f position, std::string text, unsigned font_size, float duration, sf::View* view)
 {
-	TextUITag* t = new TextUITag(position, text, font_size, duration, view);
+	std::shared_ptr<TextUITag> t = std::make_shared<TextUITag>(position, text, font_size, duration, view);
 	add(t);
 	return t;
 }
 
-ImageUITag* UITagSystem::create_image_tag(Vector2f position, Vector2f size, sf::Texture* texture, float duration, sf::View* view)
+std::weak_ptr<ImageUITag> UITagSystem::create_image_tag(Vector2f position, Vector2f size, sf::Texture* texture, float duration, sf::View* view)
 {
-	ImageUITag* i = new ImageUITag(position, size, texture, duration, view);
+	std::shared_ptr<ImageUITag> i = std::make_shared<ImageUITag>(position, size, texture, duration, view);
 	add(i);
 	return i;
 }
 
-void UITagSystem::add(UITag* tag)
+void UITagSystem::add(std::shared_ptr<UITag> tag)
 {
 	if (std::find(tags.begin(), tags.end(), tag) == tags.end())
 	{
@@ -263,9 +261,10 @@ void UITagSystem::add(UITag* tag)
 	}
 }
 
-void UITagSystem::destroy(UITag* tag)
+void UITagSystem::destroy(std::shared_ptr<UITag> tag)
 {
-	delete tag;
+	tags.erase(std::find_if(tags.begin(), tags.end(),
+			   [tag](std::shared_ptr<UITag> const& i) { return i.get() == tag.get(); }));
 }
 
 UITagSystem::UITagSystem()
@@ -276,26 +275,12 @@ UITagSystem::UITagSystem()
 
 void UITagSystem::clear()
 {
-	std::list<UITag*>::iterator i = tags.begin();
-
-	while (i != tags.end())
-	{
-		UITag* to_delete = (*i);
-		i = tags.erase(i);
-		destroy(to_delete);
-	}
+	tags.clear();
 }
 
 void UITagSystem::shutdown()
 {
-	std::list<UITag*>::iterator i = tags.begin();
-
-	while (i != tags.end())
-	{
-		UITag* to_delete = (*i);
-		i = tags.erase(i);
-		destroy(to_delete);
-	}
+	clear();
 }
 
 void UITagSystem::handle_event(Event* event)

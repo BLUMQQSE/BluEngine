@@ -33,9 +33,9 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	init_fonts();
 	init_buttons();
 
-	active_scene = new Scene("default.json");
+	active_scene = std::make_unique<Scene>("default.json");
 
-	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, static_cast<void*>(active_scene));
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, static_cast<void*>(active_scene.get()));
 	//SceneManager::Instance()->init(active_scene);
 	SceneManager::Instance()->load_scene_prefab("default.json");
 
@@ -64,7 +64,7 @@ EditorState::~EditorState()
 	Renderer::Instance()->remove(&selector_rect);
 
 	delete scene_view;
-	delete active_scene;
+	//delete active_scene;
 
 	//delete selected_gameobject;
 	

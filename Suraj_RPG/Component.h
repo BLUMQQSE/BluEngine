@@ -35,14 +35,16 @@ struct SerializedVar
 
 };
 }
-class Component : public IData
+class Component : public IData, public std::enable_shared_from_this<Component>
 {
 
-protected:
-
-	
-
 public:
+
+	std::shared_ptr<Component> self()
+	{
+		return shared_from_this();
+	}
+
 	Component();
 	virtual ~Component();
 
@@ -84,9 +86,9 @@ public:
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 
-	void set_game_object(GameObject* go);
+	void set_game_object(std::shared_ptr<GameObject> go);
 	virtual void set_active(bool active);
-	GameObject* get_game_object();
+	std::shared_ptr<GameObject> get_game_object();
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values();
 	virtual void editor_update() {}
@@ -94,7 +96,7 @@ public:
 protected:
 
 	bool active = true;
-	GameObject* game_object;
+	std::shared_ptr<GameObject> game_object;
 
 
 };

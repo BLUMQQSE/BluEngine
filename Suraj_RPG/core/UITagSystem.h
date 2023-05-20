@@ -159,22 +159,22 @@ public:
 		return &instance;
 	}
 
-	TextUITag* create_text_tag(Vector2f position, std::string text, unsigned font_size, float duration,
+	std::weak_ptr<TextUITag> create_text_tag(Vector2f position, std::string text, unsigned font_size, float duration,
 							   sf::View* view = core::SceneManager::Instance()->get_active_scene_view());
-	ImageUITag* create_image_tag(Vector2f position, Vector2f size, sf::Texture* texture, float duration,
+	std::weak_ptr<ImageUITag> create_image_tag(Vector2f position, Vector2f size, sf::Texture* texture, float duration,
 								 sf::View* view = core::SceneManager::Instance()->get_active_scene_view());
 
 	/// <summary>
 	/// Add a tag to the system. If creating a UITag independently, this will need called,
 	/// However using the system 'create_tag' functions will handle this automatically.
 	/// </summary>
-	void add(UITag* tag);
+	void add(std::shared_ptr<UITag> tag);
 	/// <summary>
 	/// Removes and destroys a tag object found within the system.
 	/// Destruction will automatically be handled by the system, but this function
 	/// can be called at any time.
 	/// </summary>
-	void destroy(UITag* tag);
+	void destroy(std::shared_ptr<UITag> tag);
 
 private:
 	UITagSystem();
@@ -196,7 +196,7 @@ private:
 	/// </summary>
 	void shutdown();
 
-	std::list<UITag*> tags;
+	std::list<std::shared_ptr<UITag>> tags;
 
 	Sorting::Layer layer = Sorting::Layer::UI;
 	char z = 3;

@@ -21,7 +21,7 @@ DummyAI::~DummyAI()
 
 void DummyAI::init()
 {
-	name_tag = core::UITagSystem::Instance()->create_text_tag(game_object->get_world_position(), "Dummy", 16, INFINITY);
+	name_tag = core::UITagSystem::Instance()->create_text_tag(game_object->get_world_position(), "Dummy", 16, INFINITY).lock();
 	name_tag->add_action(UITag::Action::FOLLOW, 0, &name_tag_pos);
 }
 

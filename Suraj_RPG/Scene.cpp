@@ -29,8 +29,9 @@ Scene::~Scene()
 	int size = objects_in_scene.size();
 	for (auto& o : objects_in_scene)
 	{
-		o->on_destroy();
-		delete o;
+		o.reset();
+		//o->on_destroy();
+		//delete o;
 	}
 }
 
@@ -78,31 +79,31 @@ void Scene::render(sf::View* view)
 	}
 }
 
-std::vector<GameObject*> Scene::get_dont_destroy_objects()
+std::vector<std::weak_ptr<GameObject>> Scene::get_dont_destroy_objects()
 {
-	std::vector<GameObject*> objs;
+	std::vector<std::weak_ptr<GameObject>> objs;
 	for (auto& o : objects_in_scene)
 		if (o->has_component<DontDestroyOnLoad>())
 		{
 			objs.push_back(o);
 			for (auto& c : o->get_children())
-				objs.push_back(c);
+				objs.push_back(std::shared_ptr<GameObject>(c));
 		}
 	return objs;
 }
 
-void Scene::insert_gameobject(GameObject* go, bool initialize)
+void Scene::insert_gameobject(std::shared_ptr<GameObject> go, bool initialize)
 {
 	go->add_to_buffer(scene_view);
 	if (initialize)
 	{
-		std::vector<GameObject*> objs;
+		std::vector<std::shared_ptr<GameObject>> objs;
 		
 
 		objs.push_back(go);
 		
 		
-		std::vector<GameObject*> posterity = go->get_all_posterity();
+		std::vector<std::weak_ptr<GameObject>> posterity = go->get_all_posterity();
 		objs.insert(objs.end(), posterity.begin(), posterity.end());
 		
 		for (std::size_t i = 0; i < objs.size(); i++)
@@ -113,6 +114,8 @@ void Scene::insert_gameobject(GameObject* go, bool initialize)
 			objs[i]->awake();
 		for (std::size_t i = 0; i < objs.size(); i++)
 			objs[i]->start();
+
+		insert_sort();
 	}
 	else
 	{
@@ -124,9 +127,12 @@ void Scene::insert_gameobject(GameObject* go, bool initialize)
 	}
 }
 
-void Scene::remove_gameobject(GameObject* go)
+void Scene::remove_gameobject(std::shared_ptr<GameObject> go)
 {
-	std::vector<GameObject*>::iterator obj = std::find(objects_in_scene.begin(), objects_in_scene.end(), go);
+	// ISSUE
+	//std::vector<std::shared_ptr<GameObject>>::iterator obj = std::find(objects_in_scene.begin(), objects_in_scene.end(), go.get());
+	std::vector<std::shared_ptr<GameObject>>::iterator obj = std::find_if(objects_in_scene.begin(), objects_in_scene.end(),
+																		  [go](std::shared_ptr<GameObject> const& i) { return i.get() == go.get(); });
 	if (obj == objects_in_scene.end())
 	{ 
 		Debug::Instance()->core_log("ATTEMPTED TO REMOVE GAMEOBJECT WHICH DOESN'T EXIST", Debug::LogLevel::WARNING);
@@ -143,52 +149,50 @@ void Scene::remove_gameobject(GameObject* go)
 	// destroy all posterity of object
 	if (go->get_children().size() > 0)
 	{
-		std::vector<GameObject*> posterity = go->get_all_posterity();
+		std::vector<std::weak_ptr<GameObject>> posterity = go->get_all_posterity();
 		while (posterity.size() > 0)
 		{
-			posterity[0]->on_destroy();
-			Physics::Instance()->remove_from_physics(posterity[0]);
-			objects_in_scene.erase(std::find(objects_in_scene.begin(),
-				objects_in_scene.end(), posterity[0]));
+			posterity[0].lock()->on_destroy();
+			Physics::Instance()->remove_from_physics(posterity[0].lock());
+			
+			// ISSUE
+			//objects_in_scene.erase(std::find(objects_in_scene.begin(),
+				//objects_in_scene.end(), posterity[0]));
 
-			EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG, posterity[0]);
+			std::shared_ptr<GameObject> s(posterity[0]);
 
-			delete posterity[0];
+			objects_in_scene.erase(std::find_if(objects_in_scene.begin(), objects_in_scene.end(),
+								   [s](std::shared_ptr<GameObject> const& i) { return i.get() == s.get(); }));
+
+			EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG, posterity[0].lock().get());
+
+			//delete posterity[0];
 			posterity.erase(posterity.begin());
 		}
 	}
 
-	// for some reason causing issue with rendering
-	delete go;
-	
-
-	//objects_to_remove.push_back(go);
 }
 
 void Scene::clear_scene(bool remove_everything)
 {
-
+	std::vector<std::shared_ptr<GameObject>> objects;
 	if (remove_everything)
 	{
-		for (auto& o : objects_in_scene)
-			delete o;
-		objects_in_scene.clear();
-		return;
+		objects = objects_in_scene;
 	}
-
-	std::vector<GameObject*> objects;
-	for (auto& o : objects_in_scene)
-	{	
-		//only need to get parents, there children will be removed later in update
-		if (o->get_parent())
-			continue;
-
-		if (!o->has_component<DontDestroyOnLoad>())
+	else
+	{
+		for (auto& o : objects_in_scene)
 		{
-			objects.push_back(o);
+			//only need to get parents
+			if (o->get_parent().lock())
+				continue;
+			if (!o->has_component<DontDestroyOnLoad>())
+			{
+				objects.push_back(o);
+			}
 		}
 	}
-
 	for (std::size_t i = 0; i != objects.size(); i++)
 		remove_gameobject(objects[i]);
 	
@@ -206,7 +210,7 @@ Json::Value Scene::serialize_json()
 	for (auto& o : objects_in_scene)
 	{
 		//only save parent, parent will save children
-		if(!o->get_parent())
+		if(!o->get_parent().lock())
 			obj["gameobjects"].append(o->serialize_json());
 	}
 
@@ -222,7 +226,7 @@ Json::Value Scene::serialize_destroyed_objects()
 	for (auto& o : objects_in_scene)
 	{
 		//only save parent, parent will save children
-		if (!o->get_parent() && !o->has_component<DontDestroyOnLoad>())
+		if (!o->get_parent().lock() && !o->has_component<DontDestroyOnLoad>())
 		{
 			obj["gameobjects"].append(o->serialize_json());
 	
@@ -242,7 +246,7 @@ Json::Value Scene::serialize_undestroyed_objects()
 	for (auto& o : objects_in_scene)
 	{
 		//only save parent, parent will save children
-		if (!o->get_parent() && o->has_component<DontDestroyOnLoad>())
+		if (!o->get_parent().lock() && o->has_component<DontDestroyOnLoad>())
 			obj["gameobjects"].append(o->serialize_json());
 	}
 
@@ -256,8 +260,10 @@ void Scene::unserialize_json(Json::Value obj)
 
 	for (Json::Value game_object : obj["gameobjects"])
 	{
-		GameObject* go = new GameObject();
+		std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+		
 		go->unserialize_json(game_object);
+
 
 		insert_gameobject(go, false);
 	}
@@ -267,6 +273,7 @@ void Scene::unserialize_json(Json::Value obj)
 	for (auto& go : objects_in_scene)
 		if (!go->is_initialized())
 			go->init();
+
 	for (auto& go : objects_in_scene)
 		if (!go->is_initialized())
 			go->awake();
@@ -288,23 +295,22 @@ void Scene::handle_event(Event* event)
 		break;
 	case EventID::GAMEOBJECT_INSTANTIATE:
 	{
-		GameObject* new_object = static_cast<GameObject*>(event->get_parameter());
+		// here is the issue, at this point the shared pointer does not exist
+		std::shared_ptr<GameObject> new_object(static_cast<GameObject*>(event->get_parameter()));	
 
 		if (!new_object)
 			return;
 
 		insert_gameobject(new_object);
 
-		insert_sort();
-
 		EventSystem::Instance()->push_event(
-			EventID::SCENE_ADDED_GAMEOBJECT_FLAG, static_cast<void*>(new_object));
+			EventID::SCENE_ADDED_GAMEOBJECT_FLAG, static_cast<void*>(new_object.get()));
 
 		break;
 	}
 	case EventID::GAMEOBJECT_DESTROY:
 	{
-		GameObject* remove_object = static_cast<GameObject*>(event->get_parameter());
+		std::shared_ptr<GameObject>remove_object(static_cast<GameObject*>(event->get_parameter())->self());
 		if (!remove_object)
 			return;
 
@@ -322,7 +328,7 @@ void Scene::handle_event(Event* event)
 		if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
 			return;
 
-		Physics::Instance()->add_to_physics(obj);
+		Physics::Instance()->add_to_physics(obj->self());
 		break;
 	}
 	case EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG:
@@ -336,7 +342,7 @@ void Scene::handle_event(Event* event)
 		if (!obj->has_component_of_type<ColliderComponent>() && !obj->has_component<RigidbodyComponent>())
 			return;
 
-		Physics::Instance()->remove_from_physics(obj);
+		Physics::Instance()->remove_from_physics(obj->self());
 		break;
 	}
 	}
@@ -346,9 +352,9 @@ void Scene::insert_sort()
 {
 	for (int k = 1; k < objects_in_scene.size(); k++)
 	{
-		GameObject* temp = objects_in_scene[k];
+		std::shared_ptr<GameObject> temp = objects_in_scene[k];
 		int j = k - 1;
-		while (j >= 0 && temp->get_parent() != objects_in_scene[j])
+		while (j >= 0 && temp->get_parent().lock().get() != objects_in_scene[j].get())
 		{
 			objects_in_scene[j + 1] = objects_in_scene[j];
 			j = j - 1;
