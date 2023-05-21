@@ -27,7 +27,7 @@ template <typename T> inline ComponentID get_component_type_id() noexcept
 }
 constexpr std::size_t max_components = 150;
 using ComponentBitSet = std::bitset<max_components>;
-using ComponentArray = std::array<Component*, max_components>;
+using ComponentArray = std::array<std::weak_ptr<Component>, max_components>;
 
 class GameObject : public IData, public IObject, public std::enable_shared_from_this<GameObject>
 {
@@ -245,7 +245,7 @@ public:
 	/// Returns the highest parent of a game object.
 	/// </summary>
 	std::weak_ptr<GameObject> get_greatest_ancestor();
-	std::vector<Component*> get_components();
+	std::vector<std::weak_ptr<Component>> get_components();
 	std::vector<std::weak_ptr<GameObject>> get_children();
 	/// <summary>
 	/// Returns all children, grandchildren, great-grandchildren...
@@ -272,19 +272,27 @@ public:
 	{
 		for (std::size_t i = 0; i < components.size(); i++)
 		{
-			if (dynamic_cast<T*>(components[i]))
+			if (dynamic_cast<T*>(components[i].get()))
 				return true;
 		}
 		return false;
 	}
 
-	template <typename T, typename... TArgs> T& add_component(TArgs&&...mArgs)
+#pragma region MODIFYING
+
+	template <typename T, typename... TArgs> std::weak_ptr<T> add_component(TArgs&&...mArgs)
 	{
 		//if allready has component, ignore adding it again
-		if (component_bitset[get_component_type_id<T>()] == true)
-			return *dynamic_cast<T*>(component_array[get_component_type_id<T>()]);
+		
+		if (has_component<T>())
+			return std::weak_ptr<T>();
+			
+			//return get_component<T>();
 
-		T* c(new T(std::forward<TArgs>(mArgs)...));
+		T* p(new T(std::forward<TArgs>(mArgs)...));
+		//std::shared_ptr<T> c = std::make_shared<T>(std::forward<TArgs>((mArgs)...));
+		std::shared_ptr<T>c(p);
+
 		c->set_game_object(self());
 		components.push_back(c);
 
@@ -292,84 +300,96 @@ public:
 		component_bitset[get_component_type_id<T>()] = true;
 		
 		EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG,
-			static_cast<void*>(c), Caller(Caller::Name::GAMEOBJECT, (void*)this));
+			static_cast<void*>(c.get()), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 
-		return *c;
+		return c;
 	}
 
 	template <typename T> void remove_component()
 	{
-		if (component_bitset[get_component_type_id<T>()])
+		if (has_component<T>())
 		{
-			std::vector<Component*>::iterator iter = std::find(components.begin(), components.end(), &get_component<T>());
-			if (iter != components.end())
-			{
-				components_to_remove.push_back(&get_component<T>());
+			std::shared_ptr<Component> component = get_component<T>().lock();
+			auto i = std::find_if(components.begin(), components.end(), 
+								  [component]
+									(std::shared_ptr<Component> const& i)
+										{ return i.get() == component.get(); }
+									);
 
-				component_array[get_component_type_id<T>()] = nullptr;
+			if (i != components.end())
+			{
+				components_to_remove.push_back(component);
 				component_bitset[get_component_type_id<T>()] = false;
 
+				// issue with this?
 				EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG,
-					static_cast<void*>(&get_component<T>()), Caller(Caller::Name::GAMEOBJECT, (void*)this));
+													static_cast<void*>(get_component<T>().lock().get()), Caller(Caller::Name::GAMEOBJECT, (void*)this));
 			}
 		}
 	}
 
 	template <typename T> void remove_component_of_type()
 	{
-		for (std::size_t i = 0; i < components.size(); i++)
+		for (auto it = components.begin(); it != components.end(); ++it)
 		{
-			if (dynamic_cast<T*>(components[i]))
+			if (static_cast<T*>(*it))
 			{
-				T* g = get_component_of_type<T>();
-				std::vector<Component*>::iterator iter = std::find(components.begin(), components.end(), g);
-				if (iter != components.end())
-				{
-					components_to_remove.push_back(g);
+				components_to_remove.push_back(*it);
 
-					component_array[get_component_type_id<T>()] = nullptr;
-					component_bitset[get_component_type_id<T>()] = false;
+				// Worth noting this is an issue... T will refer to the type rather than the specific component:
+				// Ex: will set ColliderComponent false rather than desired BoxColliderComponent false
+				// Possible fix, send all components their type when added
+				component_bitset[get_component_type_id<T>()] = false;
 
-					EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG,
-						static_cast<void*>(g), Caller(Caller::Name::GAMEOBJECT, (void*)this));
-				}
+				EventSystem::Instance()->push_event(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG,
+													static_cast<void*>(*it), Caller(Caller::Name::GAMEOBJECT, (void*)this));
+				
+				return;
 			}
 		}
 	}
 
-	template <typename T> T& get_component() const
+	template <typename T> std::weak_ptr<T> get_component() const
 	{
-		auto ptr(component_array[get_component_type_id<T>()]);
-		return *static_cast<T*>(ptr);
+		//auto ptr(component_array[get_component_type_id<T>()]);
+		//return static_cast<T*>(ptr);
+
+		//return std::weak_ptr<T>();
+		return std::static_pointer_cast<T>(component_array[get_component_type_id<T>()].lock());
+		
 	}
 
-	template <typename T> T* get_component_of_type() 
+	template <typename T> std::weak_ptr<T> get_component_of_type() 
 	{
 		for (std::size_t i = 0; i < components.size(); i++)
 		{
-			if (dynamic_cast<T*>(components[i]))
-				return dynamic_cast<T*>(components[i]);
+			if (dynamic_cast<T*>(components[i].get()))
+				return std::static_pointer_cast<T>(components[i]);
 		}
-		return nullptr;
+
+		return std::weak_ptr<T>();
 	}
 
-	template <typename T> std::vector<T*> get_components_of_type()
+	template <typename T> std::vector<std::weak_ptr<T>> get_components_of_type()
 	{
-		std::vector<T*> components_of_type;
+		std::vector<std::weak_ptr<T>> components_of_type;
 		for (std::size_t i = 0; i < components.size(); i++)
 		{
-			if (dynamic_cast<T*>(components[i]))
-				components_of_type.push_back(dynamic_cast<T*>(components[i]));
+			if (static_cast<T*>(components[i].get()))
+				components_of_type.push_back(std::static_pointer_cast<T>(components[i]));
 		}
 		
 		return components_of_type;
 
 	}
+
+#pragma endregion
+
 	/// <summary>
 	/// Adds component of type "name" to the gameobject.
 	/// </summary>
 	/// <returns></returns>
-	Component* add_component_by_name(std::string name, Json::Value data = Json::Value(),
+	std::weak_ptr<Component> add_component_by_name(std::string name, Json::Value data = Json::Value(),
 									 std::unordered_map<std::string, Json::Value>* data_map = nullptr);
 
 	/// <summary>
@@ -388,8 +408,8 @@ protected:
 	std::vector<std::weak_ptr<GameObject>> children;
 
 	//std::vector<std::unique_ptr<Component>> components;
-	std::vector<Component*> components;
-	std::vector<Component*> components_to_remove;
+	std::vector<std::shared_ptr<Component>> components;
+	std::vector<std::shared_ptr<Component>> components_to_remove;
 private:
 	size_t unique_runtime_id;
 

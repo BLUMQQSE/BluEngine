@@ -41,7 +41,7 @@ void Scene::init()
 	{
 		if (o->has_component<CameraComponent>())
 		{
-			scene_view = &o->get_component<CameraComponent>().get_camera_view();
+			scene_view = &o->get_component<CameraComponent>().lock()->get_camera_view();
 		}
 	}
 
@@ -333,6 +333,8 @@ void Scene::handle_event(Event* event)
 	}
 	case EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG:
 	{
+		if (in_editor)
+			break;
 		GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
 		Component* c = static_cast<Component*>(event->get_parameter());
 
@@ -343,6 +345,7 @@ void Scene::handle_event(Event* event)
 			return;
 
 		Physics::Instance()->remove_from_physics(obj->self());
+		
 		break;
 	}
 	}

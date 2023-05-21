@@ -53,7 +53,6 @@ GameObject::GameObject()
 {
 	unique_runtime_id = get_unique_id();
 	active = true;
-	//parent = nullptr;
 }
 
 GameObject::~GameObject()
@@ -86,10 +85,10 @@ void GameObject::on_destroy()
 		c->on_destroy();
 	}
 
-	for (auto& c : components)
-	{
-		delete c;
-	}
+	//for (auto& c : components)
+	//{
+	//	delete c;
+	//}
 	components.clear();
 }
 
@@ -244,8 +243,8 @@ void GameObject::set_render(bool render)
 {
 	for (auto& c : components)
 	{
-		if (dynamic_cast<IRenderable*>(c))
-			dynamic_cast<IRenderable*>(c)->set_render(render);
+		if (dynamic_cast<IRenderable*>(c.get()))
+			dynamic_cast<IRenderable*>(c.get())->set_render(render);
 	}
 }
 
@@ -293,7 +292,7 @@ Vector2f GameObject::get_center()
 {
 	if (has_component<SpriteComponent>())
 	{
-		sf::FloatRect sc = get_component<SpriteComponent>().get_sprite().getGlobalBounds();
+		sf::FloatRect sc = get_component<SpriteComponent>().lock()->get_sprite().getGlobalBounds();
 		return sf::Vector2f(
 			sc.left + sc.width / 2,
 			sc.top + sc.height / 2
@@ -301,7 +300,7 @@ Vector2f GameObject::get_center()
 	}
 	if (has_component<BoxColliderComponent>())
 	{
-		sf::FloatRect bc = get_component<BoxColliderComponent>().get_bounds();
+		sf::FloatRect bc = get_component<BoxColliderComponent>().lock()->get_bounds();
 		return sf::Vector2f(
 			bc.left + bc.width / 2,
 			bc.top + bc.height / 2
@@ -341,9 +340,12 @@ std::weak_ptr<GameObject> GameObject::get_greatest_ancestor()
 	return o;
 }
 
-std::vector<Component*> GameObject::get_components()
+std::vector<std::weak_ptr<Component>> GameObject::get_components()
 {
-	return components;
+	std::vector<std::weak_ptr<Component>> result;
+	for (int i = 0; i < components.size(); i++)
+		result.push_back(components[i]);
+	return result;
 }
 
 std::vector<std::weak_ptr<GameObject>> GameObject::get_children()
@@ -478,7 +480,7 @@ void GameObject::start_components()
 		c->start();
 }
 
-Component* GameObject::add_component_by_name(std::string component_name, Json::Value component_data,
+std::weak_ptr<Component> GameObject::add_component_by_name(std::string component_name, Json::Value component_data,
 											 std::unordered_map<std::string, Json::Value>* data_map)
 {
 	if (data_map)
@@ -486,76 +488,77 @@ Component* GameObject::add_component_by_name(std::string component_name, Json::V
 	
 #pragma region A
 	if (component_name == "AnimatedSpriteComponent")
-		return &add_component<AnimatedSpriteComponent>();
+		return add_component<AnimatedSpriteComponent>();
 	if (component_name == "AnimationComponent")
-		return &add_component<AnimationComponent>();
+		return add_component<AnimationComponent>();
 	if (component_name == "AudioSource")
-		return &add_component<AudioSource>();
+		return add_component<AudioSource>();
 #pragma endregion
 #pragma region B
 	if (component_name == "BoxColliderComponent")
-		return &add_component<BoxColliderComponent>();
+		return add_component<BoxColliderComponent>();
 	if (component_name == "ButtonComponent")
-		return &add_component<ButtonComponent>();
+		return add_component<ButtonComponent>();
 #pragma endregion
 #pragma region C
 	if (component_name == "CameraComponent")
-	return &add_component<CameraComponent>();
+	return add_component<CameraComponent>();
 	if (component_name == "CapsuleColliderComponent")
-		return &add_component<CapsuleColliderComponent>();
+		return add_component<CapsuleColliderComponent>();
 	if (component_name == "Chest")
-		return &add_component<Chest>();
+		return add_component<Chest>();
 	if (component_name == "ChildAnimationComponent")
-		return &add_component<ChildAnimationComponent>();
+		return add_component<ChildAnimationComponent>();
 	if (component_name == "CombatInventory")
-		return &add_component<CombatInventory>();
+		return add_component<CombatInventory>();
 #pragma endregion
 #pragma region D
 	if (component_name == "DontDestroyOnLoad")
-		return &add_component<DontDestroyOnLoad>();
+		return add_component<DontDestroyOnLoad>();
 	if (component_name == "DummyAI")
-		return &add_component<DummyAI>();
+		return add_component<DummyAI>();
 #pragma endregion
 #pragma region I
 	if (component_name == "IInteractable")
-		return &add_component<IInteractable>();
+		return add_component<IInteractable>();
 	if (component_name == "Inventory")
-		return &add_component<Inventory>();
+		return add_component<Inventory>();
 	if (component_name == "InventoryGUIController")
-		return &add_component<InventoryGUIController>();
+		return add_component<InventoryGUIController>();
 	if (component_name == "InventoryWindow")
-		return &add_component<InventoryWindow>();
+		return add_component<InventoryWindow>();
 	if (component_name == "Interactor")
-		return &add_component<Interactor>();
+		return add_component<Interactor>();
 	if (component_name == "ItemController")
-		return &add_component<ItemController>();
+		return add_component<ItemController>();
 #pragma endregion
 #pragma region P
 	if (component_name == "PlayerController")
-		return &add_component<PlayerController>();
+		return add_component<PlayerController>();
 #pragma endregion
 #pragma region R
 	if (component_name == "RigidbodyComponent")
-		return &add_component<RigidbodyComponent>();
+		return add_component<RigidbodyComponent>();
 #pragma endregion
 #pragma region S
 	if (component_name == "SceneChange")
-		return &add_component<SceneChange>();
+		return add_component<SceneChange>();
 	if (component_name == "SpriteComponent")
-		return &add_component<SpriteComponent>();
+		return add_component<SpriteComponent>();
 #pragma endregion
 #pragma region T
 	if (component_name == "TilemapColliderComponent")
-		return &add_component<TilemapColliderComponent>();
+		return add_component<TilemapColliderComponent>();
 	if (component_name == "TilemapComponent")
-		return &add_component<TilemapComponent>();
+		return add_component<TilemapComponent>();
 #pragma endregion
 #pragma region W
 	if (component_name == "WeaponController")
-		return &add_component<WeaponController>();
+		return add_component<WeaponController>();
 #pragma endregion
 
-	return nullptr;
+
+	return std::weak_ptr<Component>();
 }
 
 void GameObject::remove_component_by_name(std::string component_name)
@@ -631,15 +634,31 @@ void GameObject::remove_component_by_name(std::string component_name)
 		return remove_component<WeaponController>();
 #pragma endregion
 		
+
 }
 
 void GameObject::handle_removed_components()
 {
+	//issue in this function
+	for (auto it = components.begin(); it != components.end(); ++it)
+	{
+		for (auto it2 = components_to_remove.begin(); it2 != components_to_remove.end(); ++it2)
+		{
+			if ((*it) == (*it2))
+			{
+				it = components.erase(it);
+			}
+		}
+	}
+
+	/*
 	for (auto& c_t_r : components_to_remove)
 	{
+		//change to find if
 		components.erase(std::find(components.begin(), components.end(), c_t_r));
-		delete c_t_r;
+		//delete c_t_r;
 	}
+	*/
 	components_to_remove.clear();
 }
 

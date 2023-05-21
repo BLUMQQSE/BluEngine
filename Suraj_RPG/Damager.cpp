@@ -25,7 +25,7 @@ void Damager::fixed_update()
 	{
 		if (cols[i]->get_game_object()->has_component_of_type<IDamageable>())
 		{
-			IDamageable* col_i = cols[i]->get_game_object()->get_component_of_type<IDamageable>();
+			IDamageable* col_i = cols[i]->get_game_object()->get_component_of_type<IDamageable>().lock().get();
 			collisions.push_back(col_i->get_game_object());
 		}
 	}
@@ -43,7 +43,7 @@ void Damager::apply_damage(float amount, DamageNS::Type type, DamageNS::Target t
 			iter = collisions.erase(iter);
 		}
 		if((*iter).lock()->has_component<IDamageable>())
-			(*iter).lock()->get_component<IDamageable>().take_damage(amount, type, target);
+			(*iter).lock()->get_component<IDamageable>().lock()->take_damage(amount, type, target);
 	}
 
 }

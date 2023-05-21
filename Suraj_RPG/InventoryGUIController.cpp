@@ -18,11 +18,11 @@ InventoryGUIController::~InventoryGUIController()
 }
 void InventoryGUIController::init()
 {
-	general_inventory = &game_object->get_child("GeneralInventory").lock()->get_component<Inventory>();
-	general_window = &game_object->get_child("GeneralInventory").lock()->get_component<InventoryWindow>();
+	general_inventory = game_object->get_child("GeneralInventory").lock()->get_component<Inventory>().lock().get();
+	general_window = game_object->get_child("GeneralInventory").lock()->get_component<InventoryWindow>().lock().get();
 
-	combat_inventory = &game_object->get_child("CombatInventory").lock()->get_component<Inventory>();
-	combat_window = &game_object->get_child("CombatInventory").lock()->get_component<InventoryWindow>();
+	combat_inventory = game_object->get_child("CombatInventory").lock()->get_component<Inventory>().lock().get();
+	combat_window = game_object->get_child("CombatInventory").lock()->get_component<InventoryWindow>().lock().get();
 
 	external_inventory = nullptr;
 	external_window = nullptr;

@@ -151,7 +151,7 @@ int Inventory::add_item(int index, ItemData* item, int count)
 
 			go->unserialize_json(ResourceManager::Instance()->get_prefab_data(item->get_prefab_file_name()));
 
-			ItemController* cont = go->get_component_of_type<ItemController>();
+			ItemController* cont = go->get_component_of_type<ItemController>().lock().get();
 			if (cont)
 			{
 				cont->set_data(item);

@@ -212,14 +212,14 @@ void GameEditorView::create_inspec_panel()
 {
 	inspec_panel->clear();
 	variables_in_components.clear();
-	std::vector<std::pair<Component*,
+	std::vector<std::pair<std::weak_ptr<Component>,
 		std::vector<bm98::Editor::SerializedVar>>> selected_gameobject_components;
 
-	std::vector<Component*> components = selected_gameobject->get_components();
+	std::vector<std::weak_ptr<Component>> components = selected_gameobject->get_components();
 
 	for (std::size_t i = 0; i < components.size(); i++)
 	{
-		selected_gameobject_components.push_back(std::make_pair(components[i], components[i]->get_editor_values()));
+		selected_gameobject_components.push_back(std::make_pair(components[i], components[i].lock()->get_editor_values()));
 	}
 
 
@@ -232,13 +232,13 @@ void GameEditorView::create_inspec_panel()
 
 	for (std::size_t i = 0; i < selected_gameobject_components.size(); i++)
 	{
-		std::string component_name = typeid(*components[i]).name();
+		std::string component_name = typeid(*components[i].lock()).name();
 		component_name = component_name.substr(12);
 
-		inspec_panel->add_element(typeid(*components[i]).name(), create_component_panel(component_panel_height, inspec_panel->get_width(), 
+		inspec_panel->add_element(typeid(*components[i].lock()).name(), create_component_panel(component_panel_height, inspec_panel->get_width(), 
 			component_name, selected_gameobject_components[i].second));
 
-		component_panel_height += inspec_panel->get_panel(typeid(*components[i]).name())->get_height();
+		component_panel_height += inspec_panel->get_panel(typeid(*components[i].lock()).name())->get_height();
 
 	}
 	//if (!inspec_active)

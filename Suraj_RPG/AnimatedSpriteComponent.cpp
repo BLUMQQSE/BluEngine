@@ -7,7 +7,8 @@ namespace bm98
 {
 AnimatedSpriteComponent::AnimatedSpriteComponent()
 {
-	animation = new Animation(game_object->get_component<SpriteComponent>().get_sprite(), game_object->get_component<SpriteComponent>().get_texture_sheet());
+	animation = new Animation(game_object->get_component<SpriteComponent>().lock()->get_sprite(),
+							  game_object->get_component<SpriteComponent>().lock()->get_texture_sheet());
 }
 
 AnimatedSpriteComponent::AnimatedSpriteComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,

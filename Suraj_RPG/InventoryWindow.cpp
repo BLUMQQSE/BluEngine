@@ -10,7 +10,7 @@ namespace bm98
 
 void InventoryWindow::init()
 {
-	inventory = &game_object->get_component<Inventory>();
+	inventory = game_object->get_component<Inventory>().lock().get();
 	int size = inventory->get_size();
 
 	if (size == 18)

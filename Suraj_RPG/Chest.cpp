@@ -24,19 +24,19 @@ void Chest::initiate_interaction(Interactor* interactor)
 	IInteractable::initiate_interaction(interactor);
 
 	// Orient interactor to chest
-	interactor->get_game_object()->get_component<RigidbodyComponent>().set_velocity(Vector2f::Zero());
-	interactor->get_game_object()->get_component<RigidbodyComponent>().set_orientation(
+	interactor->get_game_object()->get_component<RigidbodyComponent>().lock()->set_velocity(Vector2f::Zero());
+	interactor->get_game_object()->get_component<RigidbodyComponent>().lock()->set_orientation(
 		Orientation::VectorToDirection(this->game_object->get_center() - interactor->get_game_object()->get_center()));
 
 	if (interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
 		// TODO: play "open_chest" animation
-		game_object->get_component<SpriteComponent>().get_sprite().setTextureRect(sf::IntRect(0, 32, 32, 32));
+		game_object->get_component<SpriteComponent>().lock()->get_sprite().setTextureRect(sf::IntRect(0, 32, 32, 32));
 
 		// TODO: play "open_chest" audio
 
-		interactor->get_game_object()->get_component<InventoryGUIController>().set_external(&game_object->get_component<InventoryWindow>());
-		interactor->get_game_object()->get_component<InventoryGUIController>().toggle_inventory(InventoryNS::WindowToggle::OPEN_ALL);
+		interactor->get_game_object()->get_component<InventoryGUIController>().lock()->set_external(game_object->get_component<InventoryWindow>().lock().get());
+		interactor->get_game_object()->get_component<InventoryGUIController>().lock()->toggle_inventory(InventoryNS::WindowToggle::OPEN_ALL);
 	}
 	input_delay.reset();
 
@@ -60,13 +60,13 @@ void Chest::exit_interaction()
 	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
 		// TODO: play "close_chest" animation
-		game_object->get_component<SpriteComponent>().get_sprite().setTextureRect(sf::IntRect(0, 0, 32, 32));
+		game_object->get_component<SpriteComponent>().lock()->get_sprite().setTextureRect(sf::IntRect(0, 0, 32, 32));
 		// TODO: play "close_chest" audio
 
 
 
-		current_interactor->get_game_object()->get_component<InventoryGUIController>().toggle_inventory(InventoryNS::WindowToggle::CLOSE_ALL);
-		current_interactor->get_game_object()->get_component<InventoryGUIController>().remove_external();
+		current_interactor->get_game_object()->get_component<InventoryGUIController>().lock()->toggle_inventory(InventoryNS::WindowToggle::CLOSE_ALL);
+		current_interactor->get_game_object()->get_component<InventoryGUIController>().lock()->remove_external();
 	}
 
 	IInteractable::exit_interaction();

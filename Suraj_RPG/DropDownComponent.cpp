@@ -38,7 +38,7 @@ void DropDownComponent::init()
 	new_child->set_parent(game_object.get()->self());
 
 	new_child->add_component<ButtonComponent>(width, height, text_list[0], char_size);
-	active_selection = &new_child->get_component<ButtonComponent>();
+	active_selection = new_child->get_component<ButtonComponent>().lock().get();
 
 	for (size_t i = 0; i < text_list.size(); i++)
 	{
@@ -50,7 +50,7 @@ void DropDownComponent::init()
 		new_child->add_component<ButtonComponent>(width, height, text_list[i], char_size, i);
 		new_child->set_active(false);
 
-		this->list.push_back(&new_child->get_component<ButtonComponent>());
+		this->list.push_back(new_child->get_component<ButtonComponent>().lock().get());
 		this->list[i]->set_render(false);
 
 		SceneManager::Instance()->instantiate_gameobject(std::shared_ptr<GameObject>(new_child).get());

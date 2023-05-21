@@ -40,6 +40,7 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	SceneManager::Instance()->load_scene_prefab("default.json");
 
 	active_scene->set_view(scene_view);
+	active_scene->set_editor_scene(true);
 
 	pmenu = new PauseMenu(*window, font);
 	pmenu->add_button("BACK", 500.f, 500.f, "Back");
@@ -219,15 +220,15 @@ void EditorState::init_tilemap_stuff(GameObject* selected_gameobject)
 		return;
 
 	texture_selector->init(UNIT_SIZE,
-						   selected_gameobject->get_component<TilemapComponent>().get_texture());
+						   selected_gameobject->get_component<TilemapComponent>().lock()->get_texture());
 
-	selector_rect.setSize(sf::Vector2f(selected_gameobject->get_component<TilemapComponent>().grid_size(),
-						  selected_gameobject->get_component<TilemapComponent>().grid_size()));
+	selector_rect.setSize(sf::Vector2f(selected_gameobject->get_component<TilemapComponent>().lock()->grid_size(),
+						  selected_gameobject->get_component<TilemapComponent>().lock()->grid_size()));
 
 	selector_rect.setFillColor(sf::Color(255, 255, 255, 150));
 	selector_rect.setOutlineThickness(2.f);
 	selector_rect.setOutlineColor(sf::Color::White);
-	selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().get_texture());
+	selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().lock()->get_texture());
 }
 
 void EditorState::remove_tilemap_stuff()
@@ -280,17 +281,17 @@ void EditorState::update_gui()
 	if (texture_selector->mouse_in_container())
 	{
 		
-		selected_gameobject->get_component<TilemapComponent>().highlight_layer(texture_selector->get_layer());
+		selected_gameobject->get_component<TilemapComponent>().lock()->highlight_layer(texture_selector->get_layer());
 		texture_selector->update();
 		if (texture_selector->get_tileset_selector()->changed_selection())
 		{
 			// texture sheet change
 			std::string set_key = texture_selector->get_tileset_selector()->get_selected_button()->get_text();
 
-			texture_selector->set_texture_sheet(selected_gameobject->get_component<TilemapComponent>().tile_sheet(set_key));
-			selected_gameobject->get_component<TilemapComponent>().set_texture(set_key);
+			texture_selector->set_texture_sheet(selected_gameobject->get_component<TilemapComponent>().lock()->tile_sheet(set_key));
+			selected_gameobject->get_component<TilemapComponent>().lock()->set_texture(set_key);
 			// below line did not fix changing the selector texture
-			selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().get_texture());
+			selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().lock()->get_texture());
 			
 
 		}
@@ -313,8 +314,8 @@ void EditorState::update_gui()
 	{
 		selector_rect.setOutlineColor(sf::Color::Red);
 		
-		selector_rect.setSize(sf::Vector2f(selected_gameobject->get_component<TilemapComponent>().grid_size(), 
-			selected_gameobject->get_component<TilemapComponent>().grid_size()));
+		selector_rect.setSize(sf::Vector2f(selected_gameobject->get_component<TilemapComponent>().lock()->grid_size(),
+			selected_gameobject->get_component<TilemapComponent>().lock()->grid_size()));
 		
 	}
 	else
@@ -322,7 +323,7 @@ void EditorState::update_gui()
 		selector_rect.setOutlineColor(sf::Color::White);
 		selector_rect.setSize(sf::Vector2f(texture_rect.width, texture_rect.height));
 	}
-	selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().get_texture());
+	selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().lock()->get_texture());
 	selector_rect.setTextureRect(texture_rect);
 
 	selector_rect.setPosition(Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x * UNIT_SIZE,
@@ -333,7 +334,7 @@ void EditorState::update_gui()
 		if (Input::Instance()->get_mouse_down(Input::Mouse::LEFT) ||
 			Input::Instance()->get_mouse(Input::Mouse::LEFT))
 		{
-			selected_gameobject->get_component<TilemapComponent>().add_tiles(
+			selected_gameobject->get_component<TilemapComponent>().lock()->add_tiles(
 				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
 				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
 				texture_selector->get_layer(),
@@ -347,7 +348,7 @@ void EditorState::update_gui()
 		if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT) ||
 			Input::Instance()->get_mouse(Input::Mouse::RIGHT))
 		{
-			selected_gameobject->get_component<TilemapComponent>().remove_tiles(
+			selected_gameobject->get_component<TilemapComponent>().lock()->remove_tiles(
 				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).x,
 				Input::Instance()->mouse_position_grid(UNIT_SIZE, scene_view).y,
 				texture_selector->get_layer(),

@@ -38,7 +38,7 @@ void Destructor::destruct()
 				true_damage = damage - (units * attentuation);
 			}
 
-			cols[i]->get_game_object()->get_component_of_type<IDestructable>()->take_damage(true_damage);
+			cols[i]->get_game_object()->get_component_of_type<IDestructable>().lock()->take_damage(true_damage);
 		}
 	}
 

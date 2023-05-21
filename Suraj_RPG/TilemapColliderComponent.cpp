@@ -18,7 +18,7 @@ TilemapColliderComponent::~TilemapColliderComponent()
 
 void TilemapColliderComponent::awake()
 {
-	tilemap = &game_object->get_component<TilemapComponent>();
+	tilemap = game_object->get_component<TilemapComponent>().lock().get();
 	for (int i = 0; i < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); i++)
 	{
 		colliders.push_back(std::vector<FloatConvex>());

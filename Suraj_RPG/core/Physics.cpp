@@ -111,7 +111,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 		if (objects[i][0].first.lock() == ignore)
 			continue;
 
-		ColliderComponent* c = objects[i][0].first.lock()->get_component_of_type<ColliderComponent>();
+		ColliderComponent* c = objects[i][0].first.lock()->get_component_of_type<ColliderComponent>().lock().get();
 		if (!c)
 			continue;
 
@@ -177,7 +177,7 @@ int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, std::s
 		if (objects[i][0].first.lock() == object_to_ignore)
 			continue;
 
-		ColliderComponent* c = objects[i][0].first.lock()->get_component_of_type<ColliderComponent>();
+		ColliderComponent* c = objects[i][0].first.lock()->get_component_of_type<ColliderComponent>().lock().get();
 
 		if (!c)
 			continue;
@@ -242,8 +242,8 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 	if (!a.first.lock()->is_active() || !b.first.lock()->is_active())
 		return;
 
-	ColliderComponent* a_collider = a.first.lock()->get_component_of_type<ColliderComponent>();
-	ColliderComponent* b_collider = b.first.lock()->get_component_of_type<ColliderComponent>();
+	ColliderComponent* a_collider = a.first.lock()->get_component_of_type<ColliderComponent>().lock().get();
+	ColliderComponent* b_collider = b.first.lock()->get_component_of_type<ColliderComponent>().lock().get();
 
 	if (!a_collider || !b_collider)
 		return;
@@ -270,8 +270,8 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 		b_rigid_gameobject = b_rigid_gameobject->get_parent().lock().get();
 	}
 
-	RigidbodyComponent* a_rigid = &a_rigid_gameobject->get_component<RigidbodyComponent>();
-	RigidbodyComponent* b_rigid = &b_rigid_gameobject->get_component<RigidbodyComponent>();
+	RigidbodyComponent* a_rigid = a_rigid_gameobject->get_component<RigidbodyComponent>().lock().get();
+	RigidbodyComponent* b_rigid = b_rigid_gameobject->get_component<RigidbodyComponent>().lock().get();
 	if (!a_rigid || !b_rigid)
 		return;
 

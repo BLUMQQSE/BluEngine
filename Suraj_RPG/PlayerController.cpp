@@ -36,20 +36,20 @@ bm98::PlayerController::~PlayerController()
 
 void bm98::PlayerController::init()
 {
-	anim = &game_object->get_component<AnimationComponent>();
+	anim = game_object->get_component<AnimationComponent>();
 
-	rigid = &game_object->get_component<RigidbodyComponent>();
-	interactor = &game_object->get_component<Interactor>();
-	inventory = &game_object->get_component<InventoryGUIController>();
+	rigid = game_object->get_component<RigidbodyComponent>();
+	interactor = game_object->get_component<Interactor>();
+	inventory = game_object->get_component<InventoryGUIController>();
 }
 
 void PlayerController::awake()
 {
 	init_animations();
 
-	camera = &SceneManager::Instance()->find_with_tag(Tags::Tag::CAMERA,
+	camera = SceneManager::Instance()->find_with_tag(Tags::Tag::CAMERA,
 											game_object).lock()->get_component<CameraComponent>();
-	
+
 }
 
 void bm98::PlayerController::update()
@@ -57,14 +57,14 @@ void bm98::PlayerController::update()
 	update_input();
 	update_animations();
 
-	interactor->interact();
+	interactor.lock()->interact();
 
-	if (interactor->is_interacting())
+	if (interactor.lock()->is_interacting())
 		return;
 
-	Vector2f movement = game_object->get_center() - camera->get_game_object()->get_center();
+	Vector2f movement = game_object->get_center() - camera.lock()->get_game_object()->get_center();
 	
-	camera->get_game_object()->move(movement);
+	camera.lock()->get_game_object()->move(movement);
 }
 
 void bm98::PlayerController::late_update()
@@ -74,11 +74,11 @@ void bm98::PlayerController::late_update()
 
 void bm98::PlayerController::fixed_update()
 {
-	if (interactor->is_interacting())
+	if (interactor.lock()->is_interacting())
 		return;
 	
 	if(!attack)
-		rigid->apply_acceleration(movement_input);
+		rigid.lock()->apply_acceleration(movement_input);
 
 }
 
@@ -121,22 +121,22 @@ void PlayerController::unserialize_json(Json::Value obj)
 
 void PlayerController::init_animations()
 {
-	anim->add_animation("IDLE_UP", 30.f, 0, 0, 1, 0, 64, 64, true);
-	anim->add_animation("IDLE_LEFT", 30.f, 0, 1, 1, 0, 64, 64, true);
-	anim->add_animation("IDLE_DOWN", 30.f, 0, 2, 1, 0, 64, 64, true);
-	anim->add_animation("IDLE_RIGHT", 30.f, 0, 3, 1, 0, 64, 64, true);
+	anim.lock()->add_animation("IDLE_UP", 30.f, 0, 0, 1, 0, 64, 64, true);
+	anim.lock()->add_animation("IDLE_LEFT", 30.f, 0, 1, 1, 0, 64, 64, true);
+	anim.lock()->add_animation("IDLE_DOWN", 30.f, 0, 2, 1, 0, 64, 64, true);
+	anim.lock()->add_animation("IDLE_RIGHT", 30.f, 0, 3, 1, 0, 64, 64, true);
 
-	anim->add_animation("WALK_UP", 30.f, 0, 4, 3, 0, 64, 64, true);
-	anim->add_animation("WALK_LEFT", 30.f, 0, 5, 3, 0, 64, 64, true);
-	anim->add_animation("WALK_DOWN", 30.f, 0, 6, 3, 0, 64, 64, true);
-	anim->add_animation("WALK_RIGHT", 30.f, 0, 7, 3, 0, 64, 64, true);
+	anim.lock()->add_animation("WALK_UP", 30.f, 0, 4, 3, 0, 64, 64, true);
+	anim.lock()->add_animation("WALK_LEFT", 30.f, 0, 5, 3, 0, 64, 64, true);
+	anim.lock()->add_animation("WALK_DOWN", 30.f, 0, 6, 3, 0, 64, 64, true);
+	anim.lock()->add_animation("WALK_RIGHT", 30.f, 0, 7, 3, 0, 64, 64, true);
 
-	anim->add_animation("ATTACK_UP",  15.f, 0, 16, 5, 0, 64, 64, false, true);
-	anim->add_animation("ATTACK_LEFT", 15.f, 0, 17, 5, 0, 64, 64, false, true);
-	anim->add_animation("ATTACK_DOWN", 15.f, 0, 18, 5, 0, 64, 64, false, true);
-	anim->add_animation("ATTACK_RIGHT", 15.f, 0, 19, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_UP",  15.f, 0, 16, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_LEFT", 15.f, 0, 17, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_DOWN", 15.f, 0, 18, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_RIGHT", 15.f, 0, 19, 5, 0, 64, 64, false, true);
 
-	anim->play("IDLE_DOWN");
+	anim.lock()->play("IDLE_DOWN");
 }
 
 void bm98::PlayerController::update_input()
@@ -174,7 +174,7 @@ void bm98::PlayerController::update_input()
 	}
 	if (Input::Instance()->get_action_down("INVENTORY"))
 	{
-		inventory->toggle_inventory(InventoryNS::WindowToggle::FULL_INVENTORY);
+		inventory.lock()->toggle_inventory(InventoryNS::WindowToggle::FULL_INVENTORY);
 	}
 	if (Input::Instance()->get_action("LEFT"))
 		movement_input.x = -1;
@@ -192,12 +192,12 @@ void bm98::PlayerController::update_input()
 
 	if (movement_input != Vector2f::Zero())
 	{
-		game_object->get_component<AudioSource>().set_sound("footsteps.wav");
-		game_object->get_component<AudioSource>().play();
+		game_object->get_component<AudioSource>().lock()->set_sound("footsteps.wav");
+		game_object->get_component<AudioSource>().lock()->play();
 	}
 	else
 	{
-		game_object->get_component<AudioSource>().stop();
+		game_object->get_component<AudioSource>().lock()->stop();
 	}
 
 }
@@ -205,48 +205,48 @@ void PlayerController::update_animations()
 {
 	if (attack)
 	{
-		if (rigid->get_orientation() == Orientation::Direction::UP)
-			anim->play("ATTACK_UP");
-		else if (rigid->get_orientation() == Orientation::Direction::LEFT)
-			anim->play("ATTACK_LEFT");
-		else if (rigid->get_orientation() == Orientation::Direction::DOWN)
-			anim->play("ATTACK_DOWN");
-		else if (rigid->get_orientation() == Orientation::Direction::RIGHT)
-			anim->play("ATTACK_RIGHT");
+		if (rigid.lock()->get_orientation() == Orientation::Direction::UP)
+			anim.lock()->play("ATTACK_UP");
+		else if (rigid.lock()->get_orientation() == Orientation::Direction::LEFT)
+			anim.lock()->play("ATTACK_LEFT");
+		else if (rigid.lock()->get_orientation() == Orientation::Direction::DOWN)
+			anim.lock()->play("ATTACK_DOWN");
+		else if (rigid.lock()->get_orientation() == Orientation::Direction::RIGHT)
+			anim.lock()->play("ATTACK_RIGHT");
 
 		return;
 	}
-	Vector2f movement = rigid->get_velocity();
+	Vector2f movement = rigid.lock()->get_velocity();
 	if (movement.x == 0 && movement.y == 0
-		&& rigid->get_orientation() == Orientation::Direction::UP)
-		anim->play("IDLE_UP");
+		&& rigid.lock()->get_orientation() == Orientation::Direction::UP)
+		anim.lock()->play("IDLE_UP");
 	else if (movement.x == 0 && movement.y == 0
-		&& rigid->get_orientation() == Orientation::Direction::LEFT)
-		anim->play("IDLE_LEFT");
+		&& rigid.lock()->get_orientation() == Orientation::Direction::LEFT)
+		anim.lock()->play("IDLE_LEFT");
 	else if (movement.x == 0 && movement.y == 0
-		&& rigid->get_orientation() == Orientation::Direction::DOWN)
-		anim->play("IDLE_DOWN");
+		&& rigid.lock()->get_orientation() == Orientation::Direction::DOWN)
+		anim.lock()->play("IDLE_DOWN");
 	else if (movement.x == 0 && movement.y == 0
-		&& rigid->get_orientation() == Orientation::Direction::RIGHT)
-		anim->play("IDLE_RIGHT");
+		&& rigid.lock()->get_orientation() == Orientation::Direction::RIGHT)
+		anim.lock()->play("IDLE_RIGHT");
 
 	else if (movement.x < 0 && movement.y == 0
-		&& rigid->get_orientation() == Orientation::Direction::LEFT)
-		anim->play("WALK_LEFT", rigid->get_velocity().x,
-			rigid->get_max_velocity());
+		&& rigid.lock()->get_orientation() == Orientation::Direction::LEFT)
+		anim.lock()->play("WALK_LEFT", rigid.lock()->get_velocity().x,
+			rigid.lock()->get_max_velocity());
 	else if (movement.x > 0 && movement.y == 0
-		&& rigid->get_orientation() == Orientation::Direction::RIGHT)
-		anim->play("WALK_RIGHT", rigid->get_velocity().x,
-			rigid->get_max_velocity());
+		&& rigid.lock()->get_orientation() == Orientation::Direction::RIGHT)
+		anim.lock()->play("WALK_RIGHT", rigid.lock()->get_velocity().x,
+			rigid.lock()->get_max_velocity());
 
 	else if (movement.y < 0
-		&& rigid->get_orientation() == Orientation::Direction::UP)
-		anim->play("WALK_UP", rigid->get_velocity().y,
-			rigid->get_max_velocity());
+		&& rigid.lock()->get_orientation() == Orientation::Direction::UP)
+		anim.lock()->play("WALK_UP", rigid.lock()->get_velocity().y,
+			rigid.lock()->get_max_velocity());
 	else if (movement.y > 0
-		&& rigid->get_orientation() == Orientation::Direction::DOWN)
-		anim->play("WALK_DOWN", rigid->get_velocity().y,
-			rigid->get_max_velocity());
+		&& rigid.lock()->get_orientation() == Orientation::Direction::DOWN)
+		anim.lock()->play("WALK_DOWN", rigid.lock()->get_velocity().y,
+			rigid.lock()->get_max_velocity());
 }
 
 void PlayerController::handle_event(Event* event)
@@ -285,22 +285,22 @@ void PlayerController::handle_event(Event* event)
 			if (anim_name == "ATTACK_UP")
 			{
 				attack = false;
-				this->anim->play("IDLE_UP");
+				this->anim.lock()->play("IDLE_UP");
 			}
 			else if (anim_name == "ATTACK_LEFT")
 			{
 				attack = false;
-				this->anim->play("IDLE_LEFT");
+				this->anim.lock()->play("IDLE_LEFT");
 			}
 			else if (anim_name == "ATTACK_DOWN")
 			{
 				attack = false;
-				this->anim->play("IDLE_DOWN");
+				this->anim.lock()->play("IDLE_DOWN");
 			}
 			else if (anim_name == "ATTACK_RIGHT")
 			{
 				attack = false;
-				this->anim->play("IDLE_RIGHT");
+				this->anim.lock()->play("IDLE_RIGHT");
 			}
 			// then check if the parameter = ATTACK_UP
 				// play("idle_up")

@@ -82,7 +82,7 @@ void Interactor::fixed_update()
 	{
 		if (cols[i]->get_game_object()->has_component_of_type<IInteractable>())
 		{
-			IInteractable* col_i = cols[i]->get_game_object()->get_component_of_type<IInteractable>();
+			IInteractable* col_i = cols[i]->get_game_object()->get_component_of_type<IInteractable>().lock().get();
 			if (interactable == nullptr)
 				interactable = col_i;
 			else if (!col_i->is_busy() && (interactable->get_priority() < col_i->get_priority()))

@@ -27,8 +27,8 @@ ChildAnimationComponent::~ChildAnimationComponent()
 
 void ChildAnimationComponent::init()
 {
-	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
-	texture_sheet = &game_object->get_component<SpriteComponent>().get_texture_sheet();
+	sprite = &game_object->get_component<SpriteComponent>().lock()->get_sprite();
+	texture_sheet = &game_object->get_component<SpriteComponent>().lock()->get_texture_sheet();
 }
 
 void ChildAnimationComponent::awake()
@@ -40,9 +40,9 @@ void ChildAnimationComponent::awake()
 		{
 			g = g->get_parent().lock();
 		}
-		if (&g->get_component<AnimationComponent>())
+		if (g->get_component<AnimationComponent>().lock())
 		{
-			parent_animation_component = &g->get_component<AnimationComponent>();
+			parent_animation_component = g->get_component<AnimationComponent>().lock().get();
 			add_animations();
 			parents_last_animation = parent_animation_component->get_active_animation_key();
 			return;

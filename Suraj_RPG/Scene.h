@@ -17,6 +17,8 @@ public:
 	void init();
 	void scene_change();
 
+	void set_editor_scene(bool is_editor_scene) { this->in_editor = is_editor_scene; }
+
 	void update();
 	void late_update();
 	void fixed_update();
@@ -65,6 +67,8 @@ public:
 private:
 	std::string file_name;
 	std::string scene_name;
+
+	bool in_editor = false;
 
 	std::vector<std::shared_ptr<GameObject>> objects_in_scene;
 	std::vector<std::shared_ptr<GameObject>> objects_to_add;

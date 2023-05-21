@@ -43,13 +43,14 @@ public:
 private:
     Vector2f movement_input;
     bool attack;
-    AnimationComponent* anim;
-    RigidbodyComponent* rigid;
-    Interactor* interactor;
-    InventoryGUIController* inventory;
+    
+    std::weak_ptr<AnimationComponent> anim;
+    std::weak_ptr<RigidbodyComponent> rigid;
+    std::weak_ptr<Interactor> interactor;
+    std::weak_ptr<InventoryGUIController> inventory;
 
-    CameraComponent* camera;
-    Inventory* inv;
+    std::weak_ptr<CameraComponent> camera;
+    std::weak_ptr<Inventory> inv;
 
     void init_animations();
 

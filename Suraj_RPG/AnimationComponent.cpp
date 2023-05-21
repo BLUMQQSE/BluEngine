@@ -28,8 +28,8 @@ AnimationComponent::~AnimationComponent()
 
 void AnimationComponent::init()
 {
-	sprite = &game_object->get_component<SpriteComponent>().get_sprite();
-	texture_sheet = &game_object->get_component<SpriteComponent>().get_texture_sheet();
+	sprite = &game_object->get_component<SpriteComponent>().lock()->get_sprite();
+	texture_sheet = &game_object->get_component<SpriteComponent>().lock()->get_texture_sheet();
 }
 
 void AnimationComponent::late_update()
