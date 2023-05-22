@@ -2,7 +2,7 @@
 #include "Physics.h"
 #include "../Collisions.h"
 #include "../GameObject.h"
-#include "../Tile.h"
+#include "../tiles/Tile.h"
 #include "../TilemapColliderComponent.h"
 namespace bm98::core
 {
@@ -105,7 +105,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 	for (std::size_t i = 0; i < objects.size(); i++)
 	{
 
-		if (!mask.layers[static_cast<int>(objects[i][0].first.lock()->get_info().layer)])
+		if (mask != objects[i][0].first.lock()->get_info().layer)
 			continue;
 		
 		if (objects[i][0].first.lock() == ignore)
@@ -172,7 +172,7 @@ int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, std::s
 
 	for (std::size_t i = 0; i < objects.size(); i++)
 	{
-		if (!mask.layers[static_cast<int>(objects[i][0].first.lock()->get_info().layer)])
+		if (mask != objects[i][0].first.lock()->get_info().layer)
 			continue;
 
 		if (objects[i][0].first.lock() == object_to_ignore)

@@ -73,7 +73,7 @@ public:
 
 	virtual void set_world_position(Vector2f pos);
 
-	FloatConvex get_collider_bounds();
+	FloatConvex& get_collider_bounds();
 	const bool is_trigger() const;
 	const bool is_active();
 

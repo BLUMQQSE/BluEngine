@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "GameClock.h"
 #include "core/Time.h"
-#include "Gui.h"
+#include "gui/Gui.h"
 #include "core/ResourceManager.h"
 namespace bm98
 {

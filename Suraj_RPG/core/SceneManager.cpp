@@ -9,7 +9,7 @@
 
 #include "../Scene.h"
 #include "../GameObject.h"
-#include "../SceneChange.h"
+#include "../scripts/interaction/SceneChange.h"
 namespace bm98::core
 {
 

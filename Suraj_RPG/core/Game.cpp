@@ -13,8 +13,8 @@
 #include "ResourceManager.h"
 #include "ConsoleManager.h"
 
-#include "../GameState.h"
-#include "../MainMenuState.h"
+#include "../states/GameState.h"
+#include "../states/MainMenuState.h"
 
 
 //#include <windows.h>

@@ -3,7 +3,7 @@
 
 #include "../Timer.h"
 #include "../Dialogue.h"
-#include"../Gui.h";
+#include"../gui/Gui.h";
 
 namespace bm98::core
 {

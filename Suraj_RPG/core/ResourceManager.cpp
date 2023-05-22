@@ -2,9 +2,9 @@
 #include "Debug.h"
 #include "ResourceManager.h"
 #include "FileManager.h"
-#include "../DataAsset.h"
-#include "../ItemData.h"
-#include "../WeaponData.h"
+#include "../data_assets/DataAsset.h"
+#include "../data_assets/ItemData.h"
+#include "../data_assets/WeaponData.h"
 #include "../TilemapComponent.h"
 namespace bm98::core 
 {

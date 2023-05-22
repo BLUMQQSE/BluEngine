@@ -33,9 +33,6 @@
     <Filter Include="Scripts">
       <UniqueIdentifier>{98f24351-850e-4551-a204-9a495bbd5011}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Components\GUI">
-      <UniqueIdentifier>{83729e8f-d376-45e2-85b4-efca66e0f40f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripts\Interaction">
       <UniqueIdentifier>{2ba15b2c-4187-4d01-b632-d2ff83e16127}</UniqueIdentifier>
     </Filter>
@@ -61,49 +58,25 @@
     <Filter Include="Scripts\Items">
       <UniqueIdentifier>{cc651e0b-64a6-4bd1-aeaa-dd88acdfc0fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts\Damager">
-      <UniqueIdentifier>{e37241b0-8e00-423c-b254-4ec97dbe0a6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DataAssets">
       <UniqueIdentifier>{67fd264c-dce2-4712-8378-b9aac46d6923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Damage">
+      <UniqueIdentifier>{e37241b0-8e00-423c-b254-4ec97dbe0a6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>States</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>States</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="MainMenuState.cpp">
-      <Filter>States</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="EditorState.cpp">
-      <Filter>States</Filter>
-    </ClCompile>
-    <ClCompile Include="Tile.cpp">
-      <Filter>Tiles</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Gui.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="PauseMenu.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="SettingsState.cpp">
-      <Filter>States</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsSettings.cpp">
       <Filter>Source Files</Filter>
@@ -120,50 +93,17 @@
     <ClCompile Include="..\External\JSON\dist\jsoncpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataAsset.cpp">
-      <Filter>DataAssets</Filter>
-    </ClCompile>
     <ClCompile Include="GameClock.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemData.cpp">
-      <Filter>DataAssets</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerController.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="PrefabEditor.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneEditorView.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Inventory.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
     <ClCompile Include="IRenderable.cpp">
       <Filter>Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="ButtonComponent.cpp">
-      <Filter>Components\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="DontDestroyOnLoad.cpp">
       <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="IInteractable.cpp">
-      <Filter>Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="Interactor.cpp">
-      <Filter>Scripts\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneChange.cpp">
-      <Filter>Scripts\Interaction</Filter>
-    </ClCompile>
-    <ClCompile Include="DropDownComponent.cpp">
-      <Filter>Components\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Core</Filter>
@@ -182,9 +122,6 @@
     </ClCompile>
     <ClCompile Include="CapsuleColliderComponent.cpp">
       <Filter>Components\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEditorView.cpp">
-      <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="SensoryComponent.cpp">
       <Filter>Components\AI</Filter>
@@ -222,44 +159,11 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InventoryWindow.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="InventoryGUIController.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Chest.cpp">
-      <Filter>Scripts\Interaction</Filter>
-    </ClCompile>
     <ClCompile Include="Delay.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Destructor.cpp">
-      <Filter>Scripts\Destruction</Filter>
-    </ClCompile>
-    <ClCompile Include="IDestructable.cpp">
-      <Filter>Interfaces</Filter>
-    </ClCompile>
     <ClCompile Include="Dialogue.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemController.cpp">
-      <Filter>Scripts\Items</Filter>
-    </ClCompile>
-    <ClCompile Include="WeaponController.cpp">
-      <Filter>Scripts\Items</Filter>
-    </ClCompile>
-    <ClCompile Include="WeaponData.cpp">
-      <Filter>DataAssets</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureSelector.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="CombatInventory.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Bed.cpp">
-      <Filter>Scripts\Interaction</Filter>
     </ClCompile>
     <ClCompile Include="core\FileManager.cpp">
       <Filter>Core</Filter>
@@ -303,46 +207,109 @@
     <ClCompile Include="DummyAI.cpp">
       <Filter>Components\AI</Filter>
     </ClCompile>
-    <ClCompile Include="Damager.cpp">
-      <Filter>Scripts\Damager</Filter>
+    <ClCompile Include="states\MainMenuState.cpp">
+      <Filter>States</Filter>
     </ClCompile>
-    <ClCompile Include="IDamageable.cpp">
-      <Filter>Interfaces</Filter>
+    <ClCompile Include="states\SettingsState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="states\State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="states\EditorState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="states\GameState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\Gui.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\PauseMenu.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\PrefabEditor.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\SceneEditorView.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\TextureSelector.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GameEditorView.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="tiles\Tile.cpp">
+      <Filter>Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\InventoryWindow.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\PlayerController.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Inventory.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\InventoryGUIController.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="data_assets\ItemData.cpp">
+      <Filter>DataAssets</Filter>
+    </ClCompile>
+    <ClCompile Include="data_assets\WeaponData.cpp">
+      <Filter>DataAssets</Filter>
+    </ClCompile>
+    <ClCompile Include="data_assets\DataAsset.cpp">
+      <Filter>DataAssets</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\items\WeaponController.cpp">
+      <Filter>Scripts\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\items\ItemController.cpp">
+      <Filter>Scripts\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\damage\IDamageable.cpp">
+      <Filter>Scripts\Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\damage\Damager.cpp">
+      <Filter>Scripts\Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\destruction\IDestructable.cpp">
+      <Filter>Scripts\Destruction</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\destruction\Destructor.cpp">
+      <Filter>Scripts\Destruction</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\interaction\IInteractable.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\interaction\Interactor.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\interaction\SceneChange.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\interaction\Bed.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\interaction\Chest.cpp">
+      <Filter>Scripts\Interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\damage\IntervalDamager.cpp">
+      <Filter>Scripts\Damage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameState.h">
-      <Filter>States</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>States</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="MainMenuState.h">
-      <Filter>States</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="EditorState.h">
-      <Filter>States</Filter>
-    </ClInclude>
-    <ClInclude Include="Tile.h">
-      <Filter>Tiles</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Gui.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="PauseMenu.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="SettingsState.h">
-      <Filter>States</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsSettings.h">
       <Filter>Header Files</Filter>
@@ -398,53 +365,20 @@
     <ClInclude Include="..\External\JSON\include\json\version.h">
       <Filter>Header Files\JSON</Filter>
     </ClInclude>
-    <ClInclude Include="DataAsset.h">
-      <Filter>DataAssets</Filter>
-    </ClInclude>
     <ClInclude Include="GameClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IObject.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="ItemData.h">
-      <Filter>DataAssets</Filter>
-    </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerController.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneEditorView.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="PrefabEditor.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Inventory.h">
-      <Filter>Scripts</Filter>
     </ClInclude>
     <ClInclude Include="IRenderable.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="ButtonComponent.h">
-      <Filter>Components\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="DontDestroyOnLoad.h">
       <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="IInteractable.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Interactor.h">
-      <Filter>Scripts\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneChange.h">
-      <Filter>Scripts\Interaction</Filter>
-    </ClInclude>
-    <ClInclude Include="DropDownComponent.h">
-      <Filter>Components\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Core</Filter>
@@ -466,9 +400,6 @@
     </ClInclude>
     <ClInclude Include="CapsuleColliderComponent.h">
       <Filter>Components\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="GameEditorView.h">
-      <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="SensoryComponent.h">
       <Filter>Components\AI</Filter>
@@ -506,44 +437,11 @@
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InventoryWindow.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="InventoryGUIController.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Chest.h">
-      <Filter>Scripts\Interaction</Filter>
-    </ClInclude>
     <ClInclude Include="Delay.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="Destructor.h">
-      <Filter>Scripts\Destruction</Filter>
-    </ClInclude>
-    <ClInclude Include="IDestructable.h">
-      <Filter>Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="Dialogue.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemController.h">
-      <Filter>Scripts\Items</Filter>
-    </ClInclude>
-    <ClInclude Include="WeaponController.h">
-      <Filter>Scripts\Items</Filter>
-    </ClInclude>
-    <ClInclude Include="WeaponData.h">
-      <Filter>DataAssets</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureSelector.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="CombatInventory.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
-    <ClInclude Include="Bed.h">
-      <Filter>Scripts\Interaction</Filter>
     </ClInclude>
     <ClInclude Include="core\FileManager.h">
       <Filter>Core</Filter>
@@ -587,11 +485,98 @@
     <ClInclude Include="DummyAI.h">
       <Filter>Components\AI</Filter>
     </ClInclude>
-    <ClInclude Include="Damager.h">
-      <Filter>Scripts\Damager</Filter>
+    <ClInclude Include="states\MainMenuState.h">
+      <Filter>States</Filter>
     </ClInclude>
-    <ClInclude Include="IDamageable.h">
-      <Filter>Interfaces</Filter>
+    <ClInclude Include="states\SettingsState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="states\State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="states\EditorState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="states\GameState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GameEditorView.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\Gui.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\PauseMenu.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\PrefabEditor.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\SceneEditorView.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\TextureSelector.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="tiles\Tile.h">
+      <Filter>Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\InventoryGUIController.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\InventoryWindow.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\PlayerController.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Inventory.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="data_assets\DataAsset.h">
+      <Filter>DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="data_assets\ItemData.h">
+      <Filter>DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="data_assets\WeaponData.h">
+      <Filter>DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\items\ItemController.h">
+      <Filter>Scripts\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\items\WeaponController.h">
+      <Filter>Scripts\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\damage\IDamageable.h">
+      <Filter>Scripts\Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\damage\Damager.h">
+      <Filter>Scripts\Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\destruction\Destructor.h">
+      <Filter>Scripts\Destruction</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\destruction\IDestructable.h">
+      <Filter>Scripts\Destruction</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\interaction\IInteractable.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\interaction\Interactor.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\interaction\SceneChange.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\interaction\Bed.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\interaction\Chest.h">
+      <Filter>Scripts\Interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\damage\IntervalDamager.h">
+      <Filter>Scripts\Damage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

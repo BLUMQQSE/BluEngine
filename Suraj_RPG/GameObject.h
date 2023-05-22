@@ -285,7 +285,7 @@ public:
 		//if allready has component, ignore adding it again
 		
 		if (has_component<T>())
-			return std::weak_ptr<T>();
+			return get_component<T>();
 			
 			//return get_component<T>();
 

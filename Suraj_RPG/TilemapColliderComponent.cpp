@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TilemapColliderComponent.h"
 #include "TilemapComponent.h"
-#include "Tile.h"
+#include "tiles/Tile.h"
 #include "GameObject.h"
 namespace bm98
 {
@@ -34,7 +34,7 @@ bool TilemapColliderComponent::intersects(const FloatConvex collider, PhysicsNS:
 {
 	for (int h = 0; h < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); h++)
 	{
-		if (!mask.layers[h])
+		if (mask != h)
 			continue;
 		for (int i = 0; i < colliders[h].size(); i++)
 		{

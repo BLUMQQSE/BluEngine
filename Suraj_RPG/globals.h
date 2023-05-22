@@ -18,6 +18,93 @@ static std::string RemoveNamespace(std::string string)
 	return string;
 }
 
+class EnumFlag
+{
+public:
+	std::vector<std::pair<std::string, bool>> flags;
+	/// <param name="all">By default false, if true will set all layers to true.</param>
+	EnumFlag(std::vector<std::string> enums, bool all = false)
+	{
+		flags.resize(enums.size());
+		for (std::size_t i = 0; i < flags.size(); i++)
+		{
+			flags[i] = std::make_pair(enums[i], all);
+		}
+	}
+
+	template<typename T> void operator+=(T in)
+	{
+		int i = static_cast<int>(in);
+		flags[i].second = true;
+	}
+
+	/// <param name="l">Sets bool flag for Layer l to true.</param>
+	template <typename T> void add_flag(T in)
+	{
+		int i = static_cast<int>(in);
+		flags[i].second = true;
+	}
+
+	template<typename T> void operator-=(T in)
+	{
+		int i = static_cast<int>(in);
+		flags[i].second = false;
+	}
+
+	/// <param name="l">Sets bool flag for Layer l to false.</param>
+	template <typename T> void remove_flag(T in)
+	{
+		int i = static_cast<int>(in);
+		flags[i].second = false;
+	}
+
+	template <typename T> bool operator== (T rhs)
+	{
+		int index = static_cast<int>(rhs);
+		if (index >= flags.size())
+			return false;
+		return flags[index].second;
+	}
+
+	Json::Value serialize_field()
+	{
+		Json::Value obj;
+		for (int i = 0; i < flags.size(); i++)
+		{
+			if(flags[i].second)
+				obj.append(flags[i].first);
+		}
+		return obj;
+	}
+
+	void unserialize_field(Json::Value obj)
+	{
+		int x;
+		std::cout << flags.size();
+		int y;
+		for (auto flag : obj)
+		{
+			for (auto& f : flags)
+			{
+				if (f.first == flag["enum-name"].asString())
+					f.second = true;
+			}
+		}
+	}
+
+	std::vector<std::string> FlagToVector()
+	{
+		std::vector<std::string> result;
+		for (int i = 0; i < flags.size(); i++)
+		{
+			if (flags[i].second)
+				result.push_back(flags[i].first);
+		}
+		return result;
+	}
+};
+
+
 namespace Var
 {
 enum class Type
@@ -29,6 +116,7 @@ enum class Type
 	Vector2i,
 	FloatConvex,
 	Dropdown,
+	FlagDropdown,
 	Header,
 	String,
 };
@@ -51,6 +139,8 @@ static std::string ToString(Type type)
 		return "FLOATCONVEX";
 	case bm98::Var::Type::Dropdown:
 		return "DROPDOWN";
+	case bm98::Var::Type::FlagDropdown:
+		return "FLAGDROPDOWN";
 	case bm98::Var::Type::Header:
 		return "HEADER";
 	case bm98::Var::Type::String:
@@ -76,6 +166,8 @@ static Type ToType(std::string type)
 		return Type::FloatConvex;
 	if (type == "DROPDOWN")
 		return Type::Dropdown;
+	if (type == "FLAGDROPDOWN")
+		return Type::FlagDropdown;
 	if (type == "HEADER")
 		return Type::Header;
 	if (type == "STRING")
@@ -406,64 +498,75 @@ static std::string ToString(Layer layer)
 }
 
 /// <summary>Bitset containing bool flags for all Physics layers.</summary>
-struct LayerMask
+class LayerMask : EnumFlag
 {
-	std::bitset<static_cast<int>(Layer::_LAST_DONT_REMOVE)> layers;
+public:
+	//std::bitset<static_cast<int>(Layer::_LAST_DONT_REMOVE)> layers;
 	/// <param name="all">By default false, if true will set all layers to true.</param>
 	LayerMask(bool all = false)
+	: EnumFlag(ToVector(), all) 
 	{
-		for (std::size_t i = 0; i < layers.size(); i++)
-		{
-			layers[i] = all;
-		}
 	}
+
+	template <typename T> void operator+= (T rhs)
+	{
+		int i = static_cast<int>(rhs);
+		if (i > flags.size())
+			return;
+		flags[i].second = true;
+	}
+
 	/// <param name="l">Sets bool flag for Layer l to true.</param>
 	void add_layer(Layer l)
 	{
-		layers[static_cast<int>(l)] = true;
+		add_flag(l);
 	}
 	/// <param name="l">Sets bool flag for Layers l to true.</param>
 	void add_layers(std::vector<Layer> l)
 	{
-		for (std::size_t i = 0; i < layers.size(); i++)
-			layers[static_cast<int>(l[i])] = true;
+		for (std::size_t i = 0; i < l.size(); i++)
+			add_flag(l[i]);
 	}
+
+	template <typename T> void operator-=(T rhs)
+	{
+		int i = static_cast<int>(rhs);
+		if (i > flags.size())
+			return;
+		flags[i].second = false;
+	}
+
 	/// <param name="l">Sets bool flag for Layer l to false.</param>
 	void remove_layer(Layer l)
 	{
-		layers[static_cast<int>(l)] = false;
+		remove_flag(l);
 	}
 	/// <param name="l">Sets bool flag for Layers l to false.</param>
 	void remove_layers(std::vector<Layer> l)
 	{
-		for (std::size_t i = 0; i < layers.size(); i++)
-			layers[static_cast<int>(l[i])] = false;
+		for (std::size_t i = 0; i < l.size(); i++)
+			remove_flag(l[i]);
+	}
+	template <typename T> bool operator== (T rhs)
+	{
+		int index = static_cast<int>(rhs);
+		if (index >= flags.size())
+			return false;
+		return flags[index].second;
 	}
 
 	Json::Value serialize_field()
 	{
-		Json::Value obj;
-		for (auto mask : ToVector(layers))
-		{
-			if (mask.second)
-			{
-				obj.append(mask.first);
-				//Json::Value obj2;
-				//obj2["layer"] = mask.first;
-				//obj.append(obj2);
-			}
-		}
-		return obj;
+		return EnumFlag::serialize_field();
 	}
 
 	void unserialize_field(Json::Value obj)
 	{
-		for (auto layer : obj)
-		{
-			add_layer(ToLayer(layer.asString()));
-		}
+		EnumFlag::unserialize_field(obj);
+		
 	}
 
+	/*
 	/// <returns>A vector of string values and their respective bool flags for all layers of the LayerMask 
 	/// layers.</returns>
 	static std::vector<std::pair<std::string, bool>> ToVector(std::bitset<static_cast<int>(Layer::_LAST_DONT_REMOVE)> layers)
@@ -475,7 +578,7 @@ struct LayerMask
 		}
 		return vec;
 	}
-
+	*/
 };
 
 }
@@ -869,8 +972,7 @@ static std::vector<std::string> TypeVector()
 enum class Target
 {
 	PLAYER,
-	ENEMY,
-	ALL
+	ENEMY
 };
 
 static std::string ToString(Target target)
@@ -881,8 +983,6 @@ static std::string ToString(Target target)
 			return "PLAYER";
 		case Target::ENEMY:
 			return "ENEMY";
-		case Target::ALL:
-			return "ALL";
 	}
 	//core::Debug::Instance()->log("[Damager] ToString target undefined " + std::to_string((int)target),
 	//							 core::Debug::LogLevel::WARNING);
@@ -895,8 +995,6 @@ static Target ToTarget(std::string target)
 		return Target::PLAYER;
 	if (target == "ENEMY")
 		return Target::ENEMY;
-	if (target == "ALL")
-		return Target::ALL;
 	//core::Debug::Instance()->log("[Damager] ToString target undefined " + target,
 	//							 core::Debug::LogLevel::WARNING);
 	return Target::ENEMY;
@@ -904,7 +1002,7 @@ static Target ToTarget(std::string target)
 
 static std::vector<std::string> TargetVector()
 {
-	return { "PLAYER", "ENEMY", "ALL" };
+	return { "PLAYER", "ENEMY" };
 }
 
 #pragma endregion

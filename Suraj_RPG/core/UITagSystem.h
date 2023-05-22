@@ -5,7 +5,7 @@
 
 #include "../IRenderable.h"
 #include "../Timer.h"
-#include "../Gui.h"
+#include "../gui/Gui.h"
 
 namespace bm98
 {

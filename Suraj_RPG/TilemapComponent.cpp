@@ -4,7 +4,7 @@
 #include "core/Debug.h"
 #include "core/Renderer.h"
 #include "AnimatedSpriteComponent.h"
-#include "Tile.h"
+#include "tiles/Tile.h"
 #include "core/FileManager.h"
 #include "GameObject.h"
 #include "core/ResourceManager.h"

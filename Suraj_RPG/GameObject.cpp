@@ -6,11 +6,6 @@
 #include "Collisions.h"
 #include "core/SceneManager.h"
 
-#pragma region GUI
-
-#include "ButtonComponent.h"
-
-#pragma endregion
 #pragma region Physics
 
 #include "BoxColliderComponent.h"
@@ -29,20 +24,20 @@
 #include "CameraComponent.h"
 
 
-#include "PlayerController.h"
+#include "scripts/PlayerController.h"
 
 #include "DontDestroyOnLoad.h"
-#include "SceneChange.h"
+#include "scripts/interaction/SceneChange.h"
 #include "AudioSource.h"
-#include "Inventory.h"
-#include "CombatInventory.h"
-#include "InventoryWindow.h"
-#include "InventoryGUIController.h"
-#include "Interactor.h"
-#include "IInteractable.h"
-#include "ItemController.h"
-#include "WeaponController.h";
-#include "Chest.h"
+#include "scripts/Inventory.h"
+#include "scripts/InventoryWindow.h"
+#include "scripts/InventoryGUIController.h"
+#include "scripts/interaction/Interactor.h"
+#include "scripts/interaction/IInteractable.h"
+#include "scripts/items/ItemController.h"
+#include "scripts/items/WeaponController.h";
+#include "scripts/interaction/Chest.h"
+#include "scripts/damage/Damager.h"
 
 #include "DummyAI.h"
 
@@ -497,8 +492,6 @@ std::weak_ptr<Component> GameObject::add_component_by_name(std::string component
 #pragma region B
 	if (component_name == "BoxColliderComponent")
 		return add_component<BoxColliderComponent>();
-	if (component_name == "ButtonComponent")
-		return add_component<ButtonComponent>();
 #pragma endregion
 #pragma region C
 	if (component_name == "CameraComponent")
@@ -509,10 +502,10 @@ std::weak_ptr<Component> GameObject::add_component_by_name(std::string component
 		return add_component<Chest>();
 	if (component_name == "ChildAnimationComponent")
 		return add_component<ChildAnimationComponent>();
-	if (component_name == "CombatInventory")
-		return add_component<CombatInventory>();
 #pragma endregion
 #pragma region D
+	if (component_name == "Damager")
+		return add_component<Damager>();
 	if (component_name == "DontDestroyOnLoad")
 		return add_component<DontDestroyOnLoad>();
 	if (component_name == "DummyAI")
@@ -574,8 +567,6 @@ void GameObject::remove_component_by_name(std::string component_name)
 #pragma region B
 	if (component_name == "BoxColliderComponent")
 		return remove_component<BoxColliderComponent>();
-	if (component_name == "ButtonComponent")
-		return remove_component<ButtonComponent>();
 #pragma endregion
 #pragma region C
 	if (component_name == "CameraComponent")
@@ -586,10 +577,10 @@ void GameObject::remove_component_by_name(std::string component_name)
 		return remove_component<Chest>();
 	if (component_name == "ChildAnimationComponent")
 		return remove_component<ChildAnimationComponent>();
-	if (component_name == "CombatInventory")
-		return remove_component<CombatInventory>();
 #pragma endregion
 #pragma region D
+	if (component_name == "Damager")
+		return remove_component<Damager>();
 	if (component_name == "DontDestroyOnLoad")
 		return remove_component<DontDestroyOnLoad>();
 	if (component_name == "DummyAI")

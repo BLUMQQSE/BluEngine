@@ -1,7 +1,7 @@
 #pragma once
 #include "../globals.h"
 #include "EventSystem.h"
-#include "../gui.h"
+#include "../gui/Gui.h"
 namespace bm98
 {
 class GameState;

@@ -91,7 +91,7 @@ void ColliderComponent::set_world_position(Vector2f pos)
 	collider_bounds.set_position(pos + offset);
 }
 
-FloatConvex ColliderComponent::get_collider_bounds()
+FloatConvex& ColliderComponent::get_collider_bounds()
 {
 	return collider_bounds;
 }
