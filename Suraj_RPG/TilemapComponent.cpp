@@ -469,7 +469,6 @@ void TilemapComponent::editor_update()
 	if (max_size.y == 0)
 		max_size.y = 1;
 	//======================================================
-	std::cout << "map: " << map.size() << ", map[0]: " << map[0].size()<<"\n";
 	if (max_size.x == map.size() && max_size.y == map[0].size())
 	{
 		return update_tilemap_changes();

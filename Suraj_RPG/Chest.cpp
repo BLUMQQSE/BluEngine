@@ -16,7 +16,7 @@ void Chest::init()
 	debug_exit_message = " CLOSED CHEST ";
 }
 
-void Chest::initiate_interaction(Interactor* interactor)
+void Chest::initiate_interaction(std::shared_ptr<Interactor> interactor)
 {
 	if (!IInteractable::check_can_initiate(interactor))
 		return;
@@ -57,7 +57,7 @@ void Chest::exit_interaction()
 {
 	
 	
-	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
+	if (current_interactor.lock()->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
 		// TODO: play "close_chest" animation
 		game_object->get_component<SpriteComponent>().lock()->get_sprite().setTextureRect(sf::IntRect(0, 0, 32, 32));
@@ -65,8 +65,8 @@ void Chest::exit_interaction()
 
 
 
-		current_interactor->get_game_object()->get_component<InventoryGUIController>().lock()->toggle_inventory(InventoryNS::WindowToggle::CLOSE_ALL);
-		current_interactor->get_game_object()->get_component<InventoryGUIController>().lock()->remove_external();
+		current_interactor.lock()->get_game_object()->get_component<InventoryGUIController>().lock()->toggle_inventory(InventoryNS::WindowToggle::CLOSE_ALL);
+		current_interactor.lock()->get_game_object()->get_component<InventoryGUIController>().lock()->remove_external();
 	}
 
 	IInteractable::exit_interaction();

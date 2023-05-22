@@ -12,7 +12,7 @@ namespace bm98
 
 void Destructor::destruct()
 {
-	std::vector<ColliderComponent*> cols;
+	std::vector<std::weak_ptr<ColliderComponent>> cols;
 	int count = core::Physics::Instance()->OverlapCircle(game_object->get_world_position(), max_distance,
 		damage_mask, this->game_object, cols);
 
@@ -21,9 +21,9 @@ void Destructor::destruct()
 
 	for (int i = 0; i < count; i++)
 	{
-		if (cols[i]->get_game_object()->has_component_of_type<IDestructable>())
+		if (cols[i].lock()->get_game_object()->has_component_of_type<IDestructable>())
 		{
-			Vector2f distance = cols[i]->get_game_object()->get_world_position() - 
+			Vector2f distance = cols[i].lock()->get_game_object()->get_world_position() -
 				this->game_object->get_world_position();
 
 			float true_damage;
@@ -38,7 +38,7 @@ void Destructor::destruct()
 				true_damage = damage - (units * attentuation);
 			}
 
-			cols[i]->get_game_object()->get_component_of_type<IDestructable>().lock()->take_damage(true_damage);
+			cols[i].lock()->get_game_object()->get_component_of_type<IDestructable>().lock()->take_damage(true_damage);
 		}
 	}
 

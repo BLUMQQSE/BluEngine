@@ -13,16 +13,16 @@ void ItemController::handle_instant_interaction()
 {
 	if (item_state != ItemNS::State::DROPPED)
 		return;
-	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
+	if (current_interactor.lock()->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
-		Inventory* inv = current_interactor->get_game_object()->get_child("GeneralInventory").lock()->get_component<Inventory>().lock().get();
+		std::weak_ptr<Inventory> inv = current_interactor.lock()->get_game_object()->get_child("GeneralInventory").lock()->get_component<Inventory>();
 
-		int index = inv->get_first_available_include_match(item_data);
+		int index = inv.lock()->get_first_available_include_match(item_data);
 		if (index == -1)
 			return;
 		//try to put as many into index as possible
 
-		inv->add_item(index, item_data, 1);
+		inv.lock()->add_item(index, item_data, 1);
 		item_state = ItemNS::State::IN_USE;
 		//if any remain place into next available position
 		SceneManager::Instance()->destroy_gameobject(this->game_object->self());

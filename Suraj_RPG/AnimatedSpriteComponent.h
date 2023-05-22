@@ -33,7 +33,7 @@ public:
 	void end();
 
 private:
-	Animation* animation;
+	std::unique_ptr<Animation> animation;
 
 };
 }

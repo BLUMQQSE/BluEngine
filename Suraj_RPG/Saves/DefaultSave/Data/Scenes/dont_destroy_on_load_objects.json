@@ -31,8 +31,8 @@
 					{
 						"local-position" : 
 						{
-							"x" : 0.0,
-							"y" : 0.0
+							"x" : -1000.0,
+							"y" : -1000.0
 						},
 						"position" : 
 						{
@@ -68,8 +68,8 @@
 					{
 						"local-position" : 
 						{
-							"x" : 0.0,
-							"y" : 0.0
+							"x" : -1000.0,
+							"y" : -1000.0
 						},
 						"position" : 
 						{
@@ -103,6 +103,11 @@
 							"sorting-layer" : "ACTOR",
 							"z-order" : 10
 						},
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
 						"sprite-file-path" : "player_sprite_sheet.png"
 					}
 				},
@@ -112,7 +117,7 @@
 					{
 						"acceleration" : 0.5,
 						"body-type" : "KINEMATIC",
-						"deceleration" : 2,
+						"deceleration" : 2.0,
 						"max-velocity" : 7.0,
 						"orientation" : "UP"
 					}
@@ -146,8 +151,8 @@
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 0.0,
-								"y" : 0.0
+								"x" : 1015.0,
+								"y" : 1000.0
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
@@ -232,8 +237,8 @@
 				},
 				"position" : 
 				{
-					"x" : 50.0,
-					"y" : -17.926944732666016
+					"x" : 1032.0,
+					"y" : 1032.0
 				},
 				"rotation" : 0.0
 			}

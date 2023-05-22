@@ -246,7 +246,6 @@
     <ClCompile Include="SettingsState.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="State.cpp" />
-    <ClCompile Include="Test.cpp" />
     <ClCompile Include="TextureSelector.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TilemapColliderComponent.cpp" />
@@ -343,7 +342,6 @@
     <ClInclude Include="SettingsState.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="State.h" />
-    <ClInclude Include="Test.h" />
     <ClInclude Include="TextureSelector.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TilemapColliderComponent.h" />

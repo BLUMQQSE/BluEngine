@@ -12,25 +12,25 @@ class Collisions
 class Collision
 {
 public:
-	Collision(GameObject* game_object, ColliderComponent* collider)
+	Collision(std::shared_ptr<GameObject> game_object, std::shared_ptr<ColliderComponent> collider)
 	{
 		this->game_object = game_object;
 		this->collider = collider;
 	}
 
-	GameObject* game_object;
-	ColliderComponent* collider;
+	std::weak_ptr<GameObject> game_object;
+	std::weak_ptr<ColliderComponent> collider;
 	int contact_count;
 };
 
 class Collider
 {
 public:
-	Collider(GameObject* game_object)
+	Collider(std::shared_ptr<GameObject> game_object)
 	{
 		this->game_object = game_object;
 	}
-	GameObject* game_object;
+	std::weak_ptr<GameObject> game_object;
 
 };
 }

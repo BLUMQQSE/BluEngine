@@ -1466,13 +1466,13 @@ Slider::~Slider()
 
 void Slider::update()
 {
-	if (!mouse_in_bounds())
-		return;
-
 	if (mouse_on_slider() && Input::Instance()->get_mouse())
 		held = true;
 	if (Input::Instance()->get_mouse_up())
 		held = false;
+
+	if (!held)
+		return;
 
 	if (held)
 	{

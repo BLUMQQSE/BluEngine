@@ -56,10 +56,10 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 	//active_scene->set_view(view);
 
-	pmenu = new PauseMenu(*window, font);
+	pmenu = std::make_unique<PauseMenu>(*window, font);
 	pmenu->add_button("QUIT", 500.f, 500.f, "Quit Game");
 
-	editor_view = new GameEditorView();
+	editor_view = std::make_unique<GameEditorView>();
 	//Time::Instance()->set_time_scale(5000.f);
 	test_dialogue = new Dialogue("Sample_Dialogue.json");
 
@@ -68,9 +68,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 GameState::~GameState()
 {
-	delete pmenu;
 	delete view;
-	delete editor_view;
 
 	active_scene = nullptr;
 	delete test_dialogue;

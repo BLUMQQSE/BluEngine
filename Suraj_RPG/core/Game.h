@@ -60,7 +60,7 @@ private:
 
 	//Input* input_handler;
 
-	std::stack <State*> states;
+	std::stack<State*> states;
 	int state_count;
 
 	void update_sfml_events();

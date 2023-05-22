@@ -21,7 +21,7 @@ public:
 
     inline const bool is_busy() const { return busy; }
 
-    inline Interactor* get_current_interactor() { return current_interactor; }
+    inline std::weak_ptr<Interactor> get_current_interactor() { return current_interactor; }
     inline float get_duration() { return interaction_duration; }
     inline Interaction::Type get_type() { return interaction_type; }
 
@@ -30,8 +30,8 @@ public:
     /// <summary>
     /// Check if interactor is able to initiate an interaction.
     /// </summary>
-    bool check_can_initiate(Interactor* interactor);
-    virtual void initiate_interaction(Interactor* interactor);
+    bool check_can_initiate(std::shared_ptr<Interactor> interactor);
+    virtual void initiate_interaction(std::shared_ptr<Interactor> interactor);
     
     virtual void exit_interaction();
 
@@ -56,7 +56,7 @@ protected:
     
     float timer_as_float;
 
-    Interactor* current_interactor;
+    std::weak_ptr<Interactor> current_interactor = std::shared_ptr<Interactor>();
     Interaction::Priority interaction_priority;
     std::string priority_as_string;
 

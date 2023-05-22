@@ -15,7 +15,6 @@ public:
 	virtual ~Scene();
 
 	void init();
-	void scene_change();
 
 	void set_editor_scene(bool is_editor_scene) { this->in_editor = is_editor_scene; }
 

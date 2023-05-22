@@ -34,7 +34,7 @@ public:
 
 //    FloatConvex circle2 = FloatConvex::circle(Vector2f(300, 600), 40);
 
-    GUI::ProgressBar* pb;
+    std::unique_ptr<GUI::ProgressBar> pb;
 
     FloatConvex square = FloatConvex::Polygon(Vector2f(300, 600),
         { Vector2f(0,0), Vector2f(100, 0), Vector2f(100, 100), Vector2f(0, 100) });;
@@ -58,14 +58,14 @@ private:
     char z_order = 0;
     sf::Texture background_texture;
     sf::RectangleShape background;
-    std::map<std::string, GUI::Button*> buttons;
-    std::map<std::string, GUI::DropDownList*> drop_downs;
+    std::map<std::string, std::unique_ptr<GUI::Button>> buttons;
+    std::map<std::string, std::unique_ptr<GUI::DropDownList>> drop_downs;
    
     sf::Text options_text;
 
-    std::map<std::string, GUI::Slider*> volume_sliders;
-    std::map < std::string, 
-        std::pair<GUI::Label*, GUI::Label*>> volume_displays;
+    std::map<std::string, std::unique_ptr<GUI::Slider>> volume_sliders;
+    std::map <std::string, std::pair<std::unique_ptr<GUI::Label>,
+        std::unique_ptr<GUI::Label>>> volume_displays;
 
     std::vector<sf::VideoMode> modes;
 

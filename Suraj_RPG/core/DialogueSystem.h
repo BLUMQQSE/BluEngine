@@ -52,9 +52,9 @@ private:
 
 	GUI::Panel* dialogue_panel;
 	GUI::Panel* choices_panel;
-	GUI::RichText* statement;
-	std::array<GUI::RichText*, 4> choices;
-	std::array<GUI::Button*, 4> choice_buttons;
+	std::unique_ptr<GUI::RichText> statement;
+	std::array<std::unique_ptr<GUI::RichText>, 4> choices;
+	std::array<std::unique_ptr<GUI::Button>, 4> choice_buttons;
 
 
 	// Inherited via Listener

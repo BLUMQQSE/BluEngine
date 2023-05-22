@@ -30,7 +30,7 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 
 	Renderer::Instance()->add(Renderer::RenderObject(&concave, _render, options_layer, z_order));
 
-	pb = new GUI::ProgressBar();
+	pb = std::make_unique<GUI::ProgressBar>();
 	pb->set_position(Vector2f(800, 300));
 	pb->set_size(Vector2f(300, 200));
 	pb->set_percentage(.75f);
@@ -40,27 +40,6 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 
 SettingsState::~SettingsState()
 {
-	auto it = this->buttons.begin();
-	for (it = this->buttons.begin(); it != buttons.end(); ++it)
-	{
-		delete it->second;
-	}
-
-	auto it2 = this->drop_downs.begin();
-	for (it2 = this->drop_downs.begin(); it2 != drop_downs.end(); ++it2)
-	{
-		delete it2->second;
-	}
-
-	for (auto& it3 : volume_sliders)
-		delete it3.second;
-
-	for (auto v : volume_displays)
-	{
-		delete v.second.first;
-		delete v.second.second;
-	}
-	delete pb;
 }
 
 void SettingsState::init_state()
@@ -128,10 +107,10 @@ void SettingsState::update()
 	Debug::Instance()->mouse_position_display(font);
 
 
-	//if (holding)
-	//{
-	//	square.set_position(Input::Instance()->mouse_position() + offset);
-	//}
+	if (holding)
+	{
+		square.set_position(Input::Instance()->mouse_position() + offset);
+	}
 
 
 	for (auto& it : buttons)
@@ -202,29 +181,30 @@ void SettingsState::init_text()
 
 void SettingsState::init_buttons()
 {
-	buttons["BACK"] = new GUI::Button(100.f, 540.f, 150.f, 60.f, &font, "BACK", 28,
+	buttons["BACK"] = std::make_unique<GUI::Button>(100.f, 540.f, 150.f, 60.f, &font, "BACK", 28,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
-	buttons["APPLY"] = new GUI::Button(850.f, 540.f, 150.f, 60.f, &font, "APPLY", 28,
+	buttons["APPLY"] = std::make_unique<GUI::Button>(850.f, 540.f, 150.f, 60.f, &font, "APPLY", 28,
 		sf::Color(70, 70, 70, 250), sf::Color(20, 20, 20, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 }
 
 void SettingsState::init_volume_display()
 {
-	volume_sliders["MASTER"] = new GUI::Slider(700, 400, 400, 0, 100, 100, true);
-	volume_sliders["MUSIC"] = new GUI::Slider(700, 500, 400, 0, 100, 100, true);
-	volume_sliders["SOUND"] = new GUI::Slider(700, 600, 400, 0, 100, 100, true);
-	volume_sliders["AMBIENT"] = new GUI::Slider(700, 700, 400, 0, 100, 100, true);
+	volume_sliders["MASTER"] = std::make_unique<GUI::Slider>(700, 400, 400, 0, 100, 100, true);
+	volume_sliders["MUSIC"] = std::make_unique<GUI::Slider>(700, 500, 400, 0, 100, 100, true);
+	volume_sliders["SOUND"] = std::make_unique<GUI::Slider>(700, 600, 400, 0, 100, 100, true);
+	volume_sliders["AMBIENT"] = std::make_unique<GUI::Slider>(700, 700, 400, 0, 100, 100, true);
 
-	volume_displays["MASTER"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 400, 22, font, "MASTER", sf::Color::White),
-		new GUI::Label(700 + volume_sliders.at("MASTER")->get_width() + 10, 400, 22, font, "100%", sf::Color::White));
-	volume_displays["MUSIC"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 500, 22, font, "MUSIC", sf::Color::White),
-		new GUI::Label(700 + volume_sliders.at("MUSIC")->get_width() + 10, 500, 22, font, "100%", sf::Color::White));
-	volume_displays["SOUND"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 600, 22, font, "SOUND", sf::Color::White),
-		new GUI::Label(700 + volume_sliders.at("SOUND")->get_width() + 10, 600, 22, font, "100%", sf::Color::White));
-	volume_displays["AMBIENT"] = std::pair<GUI::Label*, GUI::Label*>(new GUI::Label(650, 700, 22, font, "AMBIENT", sf::Color::White),
-		new GUI::Label(700 + volume_sliders.at("AMBIENT")->get_width() + 10, 700, 22, font, "100%", sf::Color::White));
+	volume_displays["MASTER"] = std::pair<std::unique_ptr<GUI::Label>, std::unique_ptr<GUI::Label>>(std::make_unique<GUI::Label>(650, 400, 22, font, "MASTER", sf::Color::White),
+		std::make_unique<GUI::Label>(700 + volume_sliders.at("MASTER")->get_width() + 10, 400, 22, font, "100%", sf::Color::White));
+
+	volume_displays["MUSIC"] = std::pair<std::unique_ptr<GUI::Label>, std::unique_ptr<GUI::Label>>(std::make_unique<GUI::Label>(650, 500, 22, font, "MUSIC", sf::Color::White),
+		std::make_unique<GUI::Label>(700 + volume_sliders.at("MUSIC")->get_width() + 10, 500, 22, font, "100%", sf::Color::White));
+	volume_displays["SOUND"] = std::pair<std::unique_ptr<GUI::Label>, std::unique_ptr<GUI::Label>>(std::make_unique<GUI::Label>(650, 600, 22, font, "SOUND", sf::Color::White),
+		std::make_unique<GUI::Label>(700 + volume_sliders.at("SOUND")->get_width() + 10, 600, 22, font, "100%", sf::Color::White));
+	volume_displays["AMBIENT"] = std::pair<std::unique_ptr<GUI::Label>, std::unique_ptr<GUI::Label>>(std::make_unique<GUI::Label>(650, 700, 22, font, "AMBIENT", sf::Color::White),
+		std::make_unique<GUI::Label>(700 + volume_sliders.at("AMBIENT")->get_width() + 10, 700, 22, font, "100%", sf::Color::White));
 
 }
 
@@ -235,7 +215,7 @@ void SettingsState::init_drop_downs()
 	{
 		modes_str.push_back(std::to_string(i.width) + 'x' + std::to_string(i.height));
 	}
-	drop_downs["RESOLUTION"] = new GUI::DropDownList(100, 100, 150, 30, font,
+	drop_downs["RESOLUTION"] = std::make_unique<GUI::DropDownList>(100, 100, 150, 30, font,
 		modes_str);
 
 	//drop_downs["FULLSCREEN"] = new GUI::DropDownList(800, 175, 150, 30, font, screen_list, 2);

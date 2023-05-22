@@ -36,7 +36,7 @@ void IInteractable::late_update()
 	handle_interaction();
 }
 
-bool IInteractable::check_can_initiate(Interactor* interactor)
+bool IInteractable::check_can_initiate(std::shared_ptr<Interactor> interactor)
 {
 	if (interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 		if (require_player_input && !Input::Instance()->get_action_down("INTERACT"))
@@ -47,7 +47,7 @@ bool IInteractable::check_can_initiate(Interactor* interactor)
 	return true;
 }
 
-void IInteractable::initiate_interaction(Interactor* interactor)
+void IInteractable::initiate_interaction(std::shared_ptr<Interactor> interactor)
 {
 	if (!check_can_initiate(interactor))
 		return;
@@ -80,17 +80,17 @@ void IInteractable::exit_interaction()
 	if (interaction_type != Interaction::Type::INSTANT)
 	{
 		Debug::LogLevel level = Debug::LogLevel::BASIC;
-		if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
+		if (current_interactor.lock()->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 			level = Debug::LogLevel::INFO;
 
-		Debug::Instance()->log(current_interactor->get_game_object()->get_info().name +
+		Debug::Instance()->log(current_interactor.lock()->get_game_object()->get_info().name +
 			debug_exit_message
 			+ game_object->get_info().name, level);
 	}
 	busy = false;
-	if(current_interactor)
-		current_interactor->remove_interactable();
-	current_interactor = nullptr;
+	if(!current_interactor.expired())
+		current_interactor.lock()->remove_interactable();
+	current_interactor = std::weak_ptr<Interactor>();
 }
 
 
@@ -120,7 +120,7 @@ void IInteractable::unserialize_json(Json::Value obj)
 	require_player_input = obj["require-player-input"].asBool();
 
 	busy = false;
-	current_interactor = nullptr;
+	current_interactor = std::weak_ptr<Interactor>();
 
 }
 

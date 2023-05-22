@@ -49,8 +49,8 @@ private:
     sf::View* view;
     std::unique_ptr<Scene> active_scene;
 
-    PauseMenu* pmenu;
-    GameEditorView* editor_view;
+    std::unique_ptr<PauseMenu> pmenu;
+    std::unique_ptr<GameEditorView> editor_view;
 
     Dialogue* test_dialogue;
 

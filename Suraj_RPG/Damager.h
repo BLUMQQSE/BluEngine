@@ -31,7 +31,7 @@ private:
     FloatConvex& hitbox;
     PhysicsNS::LayerMask damageable_mask;
     //std::vector<IDamageable*> collisions;
-    std::vector<std::weak_ptr<GameObject>> collisions;
+    std::vector<std::weak_ptr<IDamageable>> collisions;
 
 };
 

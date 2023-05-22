@@ -62,8 +62,8 @@ private:
 	sf::Sprite sheet;
 	sf::Font* font;
 
-	GUI::Panel* texture_selector_panel;
-	GUI::Panel* sheet_panel;
+	std::unique_ptr<GUI::Panel> texture_selector_panel;
+	std::unique_ptr<GUI::Panel> sheet_panel;
 
 	sf::RectangleShape selector;
 	sf::IntRect texture_rect;

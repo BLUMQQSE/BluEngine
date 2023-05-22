@@ -1,16 +1,17 @@
 #pragma once
 #include"Component.h"
+#include "core/EventSystem.h"
 #include "Animation.h"
 namespace bm98
 {
 class AnimationComponent;
 
-class ChildAnimationComponent : public Component
+class ChildAnimationComponent : public Component, public Listener
 {
 public:
 	ChildAnimationComponent();
 	ChildAnimationComponent(sf::Sprite& sprite, sf::Texture& texture_sheet,
-		AnimationComponent& parent_animation_component);
+		std::shared_ptr<AnimationComponent> parent_animation_component);
 
 
 	virtual ~ChildAnimationComponent();
@@ -26,11 +27,16 @@ public:
 private:
 	sf::Sprite* sprite;
 	sf::Texture* texture_sheet;
-	AnimationComponent* parent_animation_component;
-	std::map<std::string, Animation*> animations;
+	std::weak_ptr<AnimationComponent> parent_animation_component;
+	std::map<std::string, std::shared_ptr<Animation>> animations;
 	std::string parents_last_animation;
 
 	void add_animations();
+
+	bool parent_animator_exists = false;
+
+	// Inherited via Listener
+	virtual void handle_event(Event* event) override;
 
 };
 

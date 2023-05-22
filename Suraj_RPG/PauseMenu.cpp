@@ -48,21 +48,22 @@ PauseMenu::~PauseMenu()
 	Renderer::Instance()->remove(&background);
 	Renderer::Instance()->remove(&container);
 	Renderer::Instance()->remove(&menu_text);
-	auto it = this->buttons.begin();
-	for (it = this->buttons.begin(); it != buttons.end(); ++it)
-	{
-		delete it->second;
-	}
+	
 }
 
-std::map<std::string, GUI::Button*>& PauseMenu::get_buttons()
+std::map<std::string, std::weak_ptr<GUI::Button>> PauseMenu::get_buttons()
 {
-	return buttons;
+	std::map<std::string, std::weak_ptr<GUI::Button>> result;
+	for (auto& b : buttons)
+	{
+		result[b.first] = b.second;
+	}
+	return result;
 }
 
 void PauseMenu::add_button(const std::string key, float x, float y, const std::string text)
 {
-	buttons[key] = new GUI::Button(x, y, 150.f, 60.f, &font, text, 28,
+	buttons[key] = std::make_shared<GUI::Button>(x, y, 150.f, 60.f, &font, text, 28,
 		sf::Color(150, 150, 150, 255), sf::Color(120, 120, 120, 100), sf::Color(250, 250, 250, 250),
 		sf::Color(70, 70, 70, 0), sf::Color(150, 150, 150, 0), sf::Color(20, 20, 20, 0));
 	buttons.at(key)->set_render(false);

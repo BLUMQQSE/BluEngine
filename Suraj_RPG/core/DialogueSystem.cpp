@@ -20,11 +20,12 @@ void DialogueSystem::open_dialogue(Dialogue& dialogue)
 
 	dialogue_playing = true;
 
-	statement = new GUI::RichText();
+	//statement = new GUI::RichText();
+	statement = std::make_unique<GUI::RichText>();
 	for (std::size_t i = 0; i < 4; i++)
 	{
-		choices[i] = new GUI::RichText();
-		choice_buttons[i] = new GUI::Button();
+		choices[i] = std::make_unique<GUI::RichText>();
+		choice_buttons[i] = std::make_unique<GUI::Button>();
 	}
 	create_dialogue_panel();
 	
@@ -96,14 +97,14 @@ void DialogueSystem::shutdown()
 void DialogueSystem::create_dialogue_panel()
 {
 	dialogue_panel = new GUI::Panel(0, Renderer::Instance()->get_window_size().y - 200, Renderer::Instance()->get_window_size().x, 200);
-	dialogue_panel->add_element("statement", statement);
+	dialogue_panel->add_element("statement", statement.get());
 	statement->set_render(false);
 	//choices_panel = new GUI::Panel(Renderer::Instance()->get_window_size().x - 150, dialogue_panel->get_position().y + 200, 150, 200);
 	choices_panel = new GUI::Panel(500, 300, 200, 200);
 	int choice = 0;
 	for (auto& b : choice_buttons)
 	{
-		choices_panel->add_element("choice"+std::to_string(choice), b);
+		choices_panel->add_element("choice"+std::to_string(choice), b.get());
 		choice++;
 	}
 }

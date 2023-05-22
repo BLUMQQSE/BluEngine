@@ -9,7 +9,7 @@ public:
 	PauseMenu(sf::RenderWindow& window, sf::Font& font);
 	virtual ~PauseMenu();
 
-	std::map<std::string, GUI::Button*>& get_buttons();
+	std::map<std::string, std::weak_ptr<GUI::Button>> get_buttons();
 
 	void add_button(const std::string key, float x, float y,
 		const std::string text);
@@ -30,7 +30,7 @@ private:
 
 	float previous_time_scale;
 
-	std::map<std::string, GUI::Button*> buttons;
+	std::map<std::string, std::shared_ptr<GUI::Button>> buttons;
 
 };
 

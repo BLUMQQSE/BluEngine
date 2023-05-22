@@ -63,8 +63,8 @@ private:
     sf::RectangleShape selector_rect;
     sf::IntRect texture_rect;
 
-    std::map<std::string, GUI::Button*> buttons;
-    PauseMenu* pmenu;
+    std::map<std::string, std::unique_ptr<GUI::Button>> buttons;
+    std::unique_ptr<PauseMenu> pmenu;
 
     GUI::TextureSelector* texture_selector;
 

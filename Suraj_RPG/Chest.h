@@ -15,7 +15,7 @@ public:
 
 protected:
 
-    virtual void initiate_interaction(Interactor* interactor) override;
+    virtual void initiate_interaction(std::shared_ptr<Interactor> interactor) override;
     virtual void handle_interaction() override;
     virtual void exit_interaction() override;
 

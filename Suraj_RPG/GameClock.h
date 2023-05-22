@@ -238,7 +238,7 @@ public:
 
 private:
 	GameClockDisplay() {}
-	~GameClockDisplay() { delete clock_panel; }
+	~GameClockDisplay() {  }
 	GameClockDisplay(const GameClockDisplay& rhs)
 	{
 
@@ -251,7 +251,7 @@ private:
 	// Inherited via Listener
 	virtual void handle_event(Event* event) override;
 
-	Panel* clock_panel;
+	std::unique_ptr<Panel> clock_panel;
 	
 
 };

@@ -25,14 +25,13 @@ protected:
     void init_background();
     //void init_fonts();
     void init_buttons();
-    void delete_buttons();
 
 private: 
     IRenderable background_renderable{ Sorting::Layer::BACKGROUND, 0, true };
 
     sf::Texture background_texture;
     sf::RectangleShape background;
-    std::map<std::string, GUI::Button*> buttons;
+    std::map<std::string, std::unique_ptr<GUI::Button>> buttons;
 
     sf::Shader shader;
     sf::Music music;

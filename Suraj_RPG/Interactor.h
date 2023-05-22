@@ -28,7 +28,7 @@ public:
 	/// update method.
 	/// </summary>
 	/// <param name="interactable"></param>
-	void interact(IInteractable* interactable);
+	void interact(std::weak_ptr<IInteractable> interactable);
 	void cancel_interaction();
 
 	virtual void fixed_update() override;
@@ -46,8 +46,8 @@ protected:
 	
 	bool interacting;
 
-	IInteractable* potential_interactable = nullptr;
-	IInteractable* current_interactable = nullptr;
+	std::weak_ptr<IInteractable> potential_interactable;
+	std::weak_ptr<IInteractable> current_interactable;
 
 	virtual Json::Value serialize_json();
 	virtual void unserialize_json(Json::Value obj);

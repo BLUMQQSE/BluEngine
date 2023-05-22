@@ -10,7 +10,7 @@ namespace bm98
 
 void SceneChange::handle_instant_interaction()
 {
-	if (current_interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
+	if (current_interactor.lock()->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{
 		if (destination.scene_name != SceneManager::Instance()->get_active_scene_name())
 		{
@@ -19,7 +19,7 @@ void SceneChange::handle_instant_interaction()
 		
 		}
 		else
-			current_interactor->get_game_object()->set_world_position(destination.position);
+			current_interactor.lock()->get_game_object()->set_world_position(destination.position);
 	}
 }
 

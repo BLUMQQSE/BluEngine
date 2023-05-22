@@ -16,8 +16,8 @@ TextureSelector::TextureSelector(float x, float y, float width, float height,
 	this->position = sf::Vector2f(x, y);
 
 
-	texture_selector_panel = new GUI::Panel(x, y, width + 20, height + 20);
-	sheet_panel = new GUI::Panel(x + 20, y + 60, width - 20, height - 60);
+	texture_selector_panel = std::make_unique<GUI::Panel>(x, y, width + 20, height + 20);
+	sheet_panel = std::make_unique<GUI::Panel>(x + 20, y + 60, width - 20, height - 60);
 
 	sheet_default_pos = Vector2f(x + 20, y + 60);
 	this->sheet.setPosition(sheet_default_pos);
@@ -58,8 +58,6 @@ TextureSelector::~TextureSelector()
 	Renderer::Instance()->remove_ui(&sheet);
 	Renderer::Instance()->remove_ui(&selector);
 
-	delete texture_selector_panel;
-	delete sheet_panel;
 	delete texture_view;
 }
 
@@ -320,10 +318,6 @@ void TextureSelector::add_to_buffer(sf::View* view)
 void TextureSelector::clear()
 {
 	set_render(false);
-
-	delete texture_selector_panel;
-	delete sheet_panel;
-
 
 	if (this->sheet.getGlobalBounds().width > this->sheet_panel->get_width())
 	{

@@ -54,7 +54,7 @@ public:
 	/// The closest collider which is not on a gameobject related to the calling gameobject.</returns>
 	bool raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameObject> ignore,
 		float distance = INFINITY, PhysicsNS::LayerMask mask = PhysicsNS::LayerMask(),
-		RayHit* hit = nullptr);
+		std::shared_ptr<RayHit> hit = std::shared_ptr<RayHit>(nullptr));
 
 	/// <summary>
 	/// Creates a circle from origin with provided radius.
@@ -64,9 +64,9 @@ public:
 	/// <returns>
 	/// All colliders within the circle not related to the object calling the functions.</returns>
 	int OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
-		std::shared_ptr<GameObject> object_to_ignore, std::vector<ColliderComponent*>& collisions);
+		std::shared_ptr<GameObject> object_to_ignore, std::vector<std::weak_ptr<ColliderComponent>>& collisions);
 	int OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask,
-		std::shared_ptr<GameObject> object_to_ignore, std::vector<ColliderComponent*>& collisions);
+		std::shared_ptr<GameObject> object_to_ignore, std::vector<std::weak_ptr<ColliderComponent>>& collisions);
 
 private:
 

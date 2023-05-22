@@ -84,7 +84,6 @@ protected:
 	Vector2f offset;
 
 	CollisionDetection collision_check_type;
-	RigidbodyComponent* rb;
 };
 
 }

@@ -7,7 +7,7 @@ namespace bm98
 {
 AnimatedSpriteComponent::AnimatedSpriteComponent()
 {
-	animation = new Animation(game_object->get_component<SpriteComponent>().lock()->get_sprite(),
+	animation = std::make_unique<Animation>(game_object->get_component<SpriteComponent>().lock()->get_sprite(),
 							  game_object->get_component<SpriteComponent>().lock()->get_texture_sheet());
 }
 
@@ -22,14 +22,13 @@ AnimatedSpriteComponent::AnimatedSpriteComponent(sf::Sprite& sprite, sf::Texture
 	int width = static_cast<int>(animation_rect.left / frame_width);
 	int height = static_cast<int>(animation_rect.top / frame_height);
 
-	animation = new Animation(sprite, texture_sheet, animation_timer, width,
+	animation = std::make_unique<Animation>(sprite, texture_sheet, animation_timer, width,
 		height, x, 0, frame_width, frame_height, true, false);
 	animation->play(1, 1);
 }
 
 AnimatedSpriteComponent::~AnimatedSpriteComponent()
 {
-	delete animation;
 }
 
 void AnimatedSpriteComponent::init()

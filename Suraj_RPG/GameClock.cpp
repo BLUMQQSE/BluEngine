@@ -12,8 +12,8 @@ using namespace core;
 
 void GameClock::init()
 {
-	set_day(4);
-	set_hour(11);
+	set_day(3);
+	set_hour(23);
 	set_minute(45);
 }
 
@@ -131,7 +131,7 @@ void bm98::GUI::GameClockDisplay::init()
 	EventSystem::Instance()->subscribe(EventID::GAMECLOCK_MIN_CHANGE, this);
 	EventSystem::Instance()->subscribe(EventID::GAMECLOCK_DAY_CHANGE, this);
 
-	clock_panel = new Panel(10, 10, 200, 60, sf::Color(180, 180, 180, 220));
+	clock_panel = std::make_unique<Panel>(10, 10, 200, 60, sf::Color(180, 180, 180, 220));
 
 	Label* day_label = 
 		new Label(0, 0, 16, ResourceManager::Instance()->get_font("calibri-regular.ttf"), "Day: " + GameClock::Instance()->get_day_name());
@@ -166,7 +166,6 @@ void bm98::GUI::GameClockDisplay::handle_event(Event* event)
 			break;
 		case EventID::GAMECLOCK_DAY_CHANGE:
 			GameTime g = *static_cast<GameTime*>(event->get_parameter());
-			std::cout << g.day << "\n";
 			break;
 	}
 }

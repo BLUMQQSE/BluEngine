@@ -89,24 +89,24 @@ void bm98::PlayerController::add_to_buffer(sf::View*)
 void bm98::PlayerController::on_collision_enter(Collision info)
 {
 
-	std::cout << "Player enter collision with: " << info.game_object->get_info().name << "\n";
+	std::cout << "Player enter collision with: " << info.game_object.lock()->get_info().name << "\n";
 }
 
 void PlayerController::on_collision_stay(Collision info)
 {
-	std::cout << "Player stayed in collision with: " << info.game_object->get_info().name << "\n";
+	std::cout << "Player stayed in collision with: " << info.game_object.lock()->get_info().name << "\n";
 
 }
 
 void PlayerController::on_collision_exit(Collision info)
 {
-	std::cout << "Player exit collision with: " << info.game_object->get_info().name << "\n";
+	std::cout << "Player exit collision with: " << info.game_object.lock()->get_info().name << "\n";
 
 }
 
 void PlayerController::on_trigger_enter(Collider info)
 {
-	std::cout << "Player enter trigger of: " << info.game_object->get_info().name << "\n";
+	std::cout << "Player enter trigger of: " << info.game_object.lock()->get_info().name << "\n";
 }
 
 Json::Value PlayerController::serialize_json()

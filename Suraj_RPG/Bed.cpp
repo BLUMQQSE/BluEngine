@@ -13,7 +13,7 @@ void Bed::init()
 	require_player_input = true;
 }
 
-void Bed::initiate_interaction(Interactor * interactor)
+void Bed::initiate_interaction(std::shared_ptr<Interactor> interactor)
 {
 	if (!IInteractable::check_can_initiate(interactor))
 		return;

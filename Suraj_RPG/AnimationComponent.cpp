@@ -20,10 +20,11 @@ AnimationComponent::AnimationComponent(sf::Sprite& sprite, sf::Texture& texture_
 
 AnimationComponent::~AnimationComponent()
 {
-	for (auto& i : animations)
-	{
-		delete i.second;
-	}
+//	for (auto& i : animations)
+	//{
+		//delete i.second;
+	//}
+	animations.clear();
 }
 
 void AnimationComponent::init()
@@ -95,16 +96,22 @@ float AnimationComponent::get_max_modifier()
 	return max_modifier;
 }
 
-std::map<std::string, Animation*> AnimationComponent::get_animations()
+std::map<std::string, std::weak_ptr<Animation>> AnimationComponent::get_animations()
 {
-	return animations;
+	std::map<std::string, std::weak_ptr<Animation>> result;
+	for (auto i = animations.begin(); i != animations.end(); ++i)
+	{
+		result[i->first] = i->second;
+	}
+
+	return result;
 }
 
 void AnimationComponent::add_animation(const std::string key,
 	float anim_timer, int start_frame_x, int start_frame_y, int frames_x, int frames_y,
 	int frame_width, int frame_height, bool loop_animation, bool must_complete)
 {
-	animations[key] = new Animation(*this->sprite, *this->texture_sheet, anim_timer * UNIT_SIZE,
+	animations[key] = std::make_shared<Animation>(*this->sprite, *this->texture_sheet, anim_timer * UNIT_SIZE,
 		start_frame_x, start_frame_y, frames_x - 1, frames_y - 1, frame_width, frame_height,
 		loop_animation, must_complete);
 }

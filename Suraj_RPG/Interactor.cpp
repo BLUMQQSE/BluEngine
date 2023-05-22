@@ -9,16 +9,16 @@ namespace bm98
 
 void Interactor::interact()
 {
-	if (potential_interactable == nullptr)
+	if (potential_interactable.expired())
 		return;
 
-	if (!potential_interactable->check_can_initiate(this))
+	if (!potential_interactable.lock()->check_can_initiate(std::static_pointer_cast<Interactor>(this->self())))
 	{
 	//	Debug::Instance()->log(game_object->get_info().name + " COULD NOT INITIATE INTERACTION WITH "
 	//		+ potential_interactable->get_game_object()->get_info().name, Debug::LogLevel::WARNING);
 		return;
 	}
-	if (potential_interactable->get_type() != Interaction::Type::INSTANT)
+	if (potential_interactable.lock()->get_type() != Interaction::Type::INSTANT)
 	{
 		current_interactable = potential_interactable;
 		interacting = true;
@@ -27,49 +27,49 @@ void Interactor::interact()
 	//Debug::Instance()->log(game_object->get_info().name + " INITIATING INTERACTION WITH "
 	//	+ potential_interactable->get_game_object()->get_info().name);
 
-	potential_interactable->initiate_interaction(this);
-	potential_interactable = nullptr;
+	potential_interactable.lock()->initiate_interaction(std::static_pointer_cast<Interactor>(this->self()));
+	potential_interactable = std::weak_ptr<IInteractable>();
 	
 }
 
-void Interactor::interact(IInteractable* interactable)
+void Interactor::interact(std::weak_ptr<IInteractable> interactable)
 {
-	if (interactable == nullptr)
+	if (!interactable.lock())
 		return;
 	
-	if (!interactable->check_can_initiate(this))
+	if (!interactable.lock()->check_can_initiate(std::static_pointer_cast<Interactor>(this->self())))
 	{
 		Debug::Instance()->log(game_object->get_info().name + " COULD NOT INITIATE INTERACTION WITH "
-			+ interactable->get_game_object()->get_info().name, Debug::LogLevel::WARNING);
+			+ interactable.lock()->get_game_object()->get_info().name, Debug::LogLevel::WARNING);
 		return;
 	}
-	if (current_interactable)
-		current_interactable->exit_interaction();
+	if (!current_interactable.expired())
+		current_interactable.lock()->exit_interaction();
 
-	if (interactable->get_type() != Interaction::Type::INSTANT)
+	if (interactable.lock()->get_type() != Interaction::Type::INSTANT)
 	{
 		current_interactable = interactable;
 		interacting = true;
 	}
 
 	Debug::Instance()->log(game_object->get_info().name + " INITIATING INTERACTION WITH "
-		+ interactable->get_game_object()->get_info().name);
-	interactable->initiate_interaction(this);
+		+ interactable.lock()->get_game_object()->get_info().name);
+	interactable.lock()->initiate_interaction(std::static_pointer_cast<Interactor>(this->self()));
 
 }
 
 void Interactor::cancel_interaction()
 {
-	if (!current_interactable)
+	if (current_interactable.expired())
 		return;
 
-	current_interactable->exit_interaction();
+	current_interactable.lock()->exit_interaction();
 }
 
 void Interactor::fixed_update()
 {
-	potential_interactable = nullptr;
-	std::vector<ColliderComponent*> cols;
+	potential_interactable = std::weak_ptr<IInteractable>();
+	std::vector<std::weak_ptr<ColliderComponent>> cols;
 	count = core::Physics::Instance()->OverlapCircle(game_object->get_center(), interaction_radius,
 		interactable_mask, this->game_object, cols);
 
@@ -77,27 +77,27 @@ void Interactor::fixed_update()
 		return;
 
 	// need to reduce cols to only include gameobjects including IInteractable
-	IInteractable* interactable = nullptr;
+	std::weak_ptr<IInteractable> interactable;
 	for (int i = 0; i < count; i++)
 	{
-		if (cols[i]->get_game_object()->has_component_of_type<IInteractable>())
+		if (cols[i].lock()->get_game_object()->has_component_of_type<IInteractable>())
 		{
-			IInteractable* col_i = cols[i]->get_game_object()->get_component_of_type<IInteractable>().lock().get();
-			if (interactable == nullptr)
+			std::weak_ptr<IInteractable> col_i = cols[i].lock()->get_game_object()->get_component_of_type<IInteractable>();
+			if (!interactable.lock())
 				interactable = col_i;
-			else if (!col_i->is_busy() && (interactable->get_priority() < col_i->get_priority()))
+			else if (!col_i.lock()->is_busy() && (interactable.lock()->get_priority() < col_i.lock()->get_priority()))
 				interactable = col_i;
 		}
 	}
 
-	if (interactable == nullptr)
+	if (!interactable.lock())
 		return;
 
-	if (current_interactable)
+	if (current_interactable.lock())
 	{
-		if (current_interactable == interactable)
+		if (current_interactable.lock() == interactable.lock())
 			return;
-		if (current_interactable->get_priority() >= interactable->get_priority())
+		if (current_interactable.lock()->get_priority() >= interactable.lock()->get_priority())
 			return;
 	}
 
@@ -107,7 +107,7 @@ void Interactor::fixed_update()
 
 void Interactor::remove_interactable()
 {
-	current_interactable = nullptr;
+	current_interactable = std::weak_ptr<IInteractable>();
 	interacting = false;
 }
 

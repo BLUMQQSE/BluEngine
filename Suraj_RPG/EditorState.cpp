@@ -42,7 +42,7 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	active_scene->set_view(scene_view);
 	active_scene->set_editor_scene(true);
 
-	pmenu = new PauseMenu(*window, font);
+	pmenu = std::make_unique<PauseMenu>(*window, font);
 	pmenu->add_button("BACK", 500.f, 500.f, "Back");
 	pmenu->add_button("SAVE", 500, 440, "Save");
 	pmenu->add_button("LOAD", 500, 380, "Load");
@@ -65,17 +65,9 @@ EditorState::~EditorState()
 	Renderer::Instance()->remove(&selector_rect);
 
 	delete scene_view;
-	//delete active_scene;
-
-	//delete selected_gameobject;
 	
 	delete texture_selector;
 	delete scene_editor;
-	auto it = this->buttons.begin();
-	for (it = this->buttons.begin(); it != buttons.end(); ++it)
-	{
-		delete it->second;
-	}
 }
 
 void EditorState::init_state()
@@ -86,8 +78,6 @@ void EditorState::init_state()
 void EditorState::on_end_state()
 {
 	Debug::Instance()->core_log("[EditorState] Shutdown", Debug::LogLevel::INFO);
-
-	//FileManager::Instance()->save_to_file_styled(selected_gameobject->serialize_json(), "tilemap_test.json");
 
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_DESTROY_);
 	State::on_end_state();
@@ -124,8 +114,6 @@ void EditorState::update()
 	if (!paused)
 	{
 		State::update();
-		//if(selected_gameobject)
-		//	selected_gameobject->update();
 
 		for (auto& it : buttons)
 		{
@@ -153,9 +141,6 @@ void EditorState::update()
 
 void EditorState::render()
 {
-	//if(selected_gameobject)
-	//	selected_gameobject->add_to_buffer(scene_view);
-
 	if (!paused)
 	{
 		active_scene->render(scene_view);
@@ -209,8 +194,7 @@ void EditorState::init_gui()
 	selector_rect.setFillColor(sf::Color(255, 255, 255, 150));
 	selector_rect.setOutlineThickness(2.f);
 	selector_rect.setOutlineColor(sf::Color::White);
-	//selector_rect.setTexture(selected_gameobject->get_component<TilemapComponent>().get_texture());
-
+	
 }
 
 void EditorState::init_tilemap_stuff(GameObject* selected_gameobject)

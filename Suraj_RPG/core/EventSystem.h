@@ -354,9 +354,10 @@ private:
 	Caller caller;
 };
 
-class Listener
+class Listener 
 {
 public:
+	
 	Listener();
 	virtual ~Listener();
 	/// <summary>
