@@ -807,10 +807,11 @@ void FlagDropDownList::update()
 			{
 				// check if i is already true
 				int x = i->get_id();
-				if (enum_flag.flags[x].second)
+				
+				if (enum_flag.at(x))
 				{
 					// set false
-					enum_flag.flags[x].second = false;
+					enum_flag[x] = false;
 					i->set_colors(sf::Color(255, 255, 255, 150), sf::Color(255, 255, 255, 255), sf::Color(250, 250, 250, 250),
 								  sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200),
 								  sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(20, 20, 20, 0));
@@ -818,12 +819,25 @@ void FlagDropDownList::update()
 				else
 				{
 					// set true
-					enum_flag.flags[x].second = true;
+					enum_flag[x]= true;
 					i->set_colors(sf::Color(255, 255, 255, 150), sf::Color(255, 255, 255, 200), sf::Color(250, 250, 250, 50),
 								  sf::Color(70, 170, 70, 200), sf::Color(150, 250, 150, 200), sf::Color(20, 120, 20, 200),
 								  sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255));
 				}
 
+				// determine color
+				if (enum_flag == false)
+				{
+					active_selection->set_colors(sf::Color(255, 255, 255, 150), sf::Color(255, 255, 255, 255), sf::Color(250, 250, 250, 250),
+												 sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200),
+												 sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(20, 20, 20, 0));
+				}
+				else
+				{
+					active_selection->set_colors(sf::Color(255, 255, 255, 150), sf::Color(255, 255, 255, 200), sf::Color(250, 250, 250, 50),
+												 sf::Color(70, 170, 70, 200), sf::Color(150, 250, 150, 200), sf::Color(20, 120, 20, 200),
+												 sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255));
+				}
 
 				toggle_list(false);
 				selection_change = true;
@@ -903,12 +917,13 @@ const bool FlagDropDownList::mouse_in_bounds()
 	return false;
 }
 
-const std::vector<int> FlagDropDownList::get_selected_indexes() const
+const std::vector<int> FlagDropDownList::get_selected_indexes()
 {
 	std::vector<int> result;
-	for (int i = 0; i < enum_flag.flags.size(); i++)
+	
+	for (int i = 0; i < enum_flag.size(); i++)
 	{
-		if (enum_flag.flags[i].second)
+		if (enum_flag.at(i))
 			result.push_back(i);
 	}
 	return result;

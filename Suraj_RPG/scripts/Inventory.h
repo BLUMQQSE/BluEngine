@@ -1,5 +1,5 @@
 #pragma once
-#include "../data_assets/ItemData.h"
+#include "../data_assets/DataAssets.h"
 #include "../Component.h"
 namespace bm98
 {

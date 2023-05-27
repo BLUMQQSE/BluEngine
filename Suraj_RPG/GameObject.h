@@ -88,32 +88,6 @@ public:
 	/// <returns>Position of gameobject relative to its parent. If no parent
 	///exists, the local position is 0.</returns>
 	const Vector2f& get_local_position() const { return local_position; }
-	
-	/*
-	void set_world_position(const Vector2f pos)
-	{
-		position = pos;
-		if (parent)
-			local_position = parent->position - position;
-		else
-			local_position = Vector2f::zero();
-		for (std::size_t i = 0; i < children.size(); i++)
-			children[i]->set_world_position(children[i]->get_local_position() + pos);
-		for (std::size_t i = 0; i < components.size(); i++)
-			components[i]->set_world_position(pos);
-	}
-
-	void set_local_position(const Vector2f pos)
-	{
-		Vector2f change = pos - local_position;
-		set_world_position(position + change);
-	}
-
-	void move(const Vector2f offset)
-	{
-		set_world_position(position + offset);
-	}
-	*/
 
 	void set_world_position(const Vector2f pos)
 	{

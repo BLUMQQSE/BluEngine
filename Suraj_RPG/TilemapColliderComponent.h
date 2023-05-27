@@ -13,12 +13,12 @@ public:
     virtual void awake() override;
     virtual void start() override;
 
-    bool intersects(const FloatConvex collider, 
+    Vector2f intersects(const FloatConvex collider, 
         PhysicsNS::LayerMask mask);
 
 private:
 
-    TilemapComponent* tilemap;
+    std::weak_ptr<TilemapComponent> tilemap;
     std::vector<std::vector<FloatConvex>> colliders;
 
     void create_colliders();

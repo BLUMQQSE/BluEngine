@@ -3,7 +3,7 @@
 #include "../interaction/Interactor.h"
 #include "../../GameObject.h"
 #include "../Inventory.h"
-#include "../../data_assets/ItemData.h"
+#include "../../data_assets/DataAssets.h"
 #include "../../core/ResourceManager.h"
 #include "../../core/SceneManager.h"
 namespace bm98
@@ -35,7 +35,7 @@ Json::Value ItemController::serialize_json()
 	obj[RemoveNamespace(typeid(IInteractable).name())] = IInteractable::serialize_json();
 
 	obj["item-state"] = ItemNS::ToString(item_state);
-	obj["item-data"] = item_data->get_file_name();
+	obj["item-data"] = item_data->get_id();
 
 	return obj;
 }
@@ -44,7 +44,7 @@ void ItemController::unserialize_json(Json::Value obj)
 {
 	IInteractable::unserialize_json(obj[RemoveNamespace(typeid(IInteractable).name())]);
 	item_state = ItemNS::ToState(obj["item-state"].asString());
-	item_data = dynamic_cast<ItemData*>(ResourceManager::Instance()->get_data_asset(obj["item-data"].asString()));
+	item_data = ResourceManager::Instance()->get_data_asset<ItemData>(obj["item-data"].asString());
 	
 
 }

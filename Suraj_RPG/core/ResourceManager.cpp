@@ -2,9 +2,7 @@
 #include "Debug.h"
 #include "ResourceManager.h"
 #include "FileManager.h"
-#include "../data_assets/DataAsset.h"
-#include "../data_assets/ItemData.h"
-#include "../data_assets/WeaponData.h"
+#include "../data_assets/DataAssets.h"
 #include "../TilemapComponent.h"
 namespace bm98::core 
 {
@@ -54,11 +52,14 @@ bool ResourceManager::has_prefab_data(std::string prefab_file_name)
 	}
 	return true;
 }
-
+/*
 DataAsset* ResourceManager::get_data_asset(std::string asset_file_name)
 {
 	return asset_data.at(asset_file_name);
 }
+*/
+
+
 
 bool ResourceManager::has_data_asset(std::string asset_file_name)
 {
@@ -171,21 +172,18 @@ void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 			{
 				if (entry.path().string().find("WeaponData"))
 				{
-					asset_data[file_name] = new WeaponData();
-					asset_data[file_name]->set_file_name(file_name);
+					asset_data[file_name] = new WeaponData(file_name);
 					asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 				}
 				else
 				{
-					asset_data[file_name] = new ItemData();
-					asset_data[file_name]->set_file_name(file_name);
+					asset_data[file_name] = new ItemData(file_name);
 					asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 				}
 			}
 			else
 			{
-				asset_data[file_name] = new DataAsset();
-				asset_data[file_name]->set_file_name(file_name);
+				asset_data[file_name] = new DataAsset(file_name);
 				asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 			}
 			continue;

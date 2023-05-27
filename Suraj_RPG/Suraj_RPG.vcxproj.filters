@@ -255,13 +255,7 @@
     <ClCompile Include="scripts\InventoryGUIController.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="data_assets\ItemData.cpp">
-      <Filter>DataAssets</Filter>
-    </ClCompile>
-    <ClCompile Include="data_assets\WeaponData.cpp">
-      <Filter>DataAssets</Filter>
-    </ClCompile>
-    <ClCompile Include="data_assets\DataAsset.cpp">
+    <ClCompile Include="data_assets\DataAssets.cpp">
       <Filter>DataAssets</Filter>
     </ClCompile>
     <ClCompile Include="scripts\items\WeaponController.cpp">
@@ -533,13 +527,7 @@
     <ClInclude Include="scripts\Inventory.h">
       <Filter>Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="data_assets\DataAsset.h">
-      <Filter>DataAssets</Filter>
-    </ClInclude>
-    <ClInclude Include="data_assets\ItemData.h">
-      <Filter>DataAssets</Filter>
-    </ClInclude>
-    <ClInclude Include="data_assets\WeaponData.h">
+    <ClInclude Include="data_assets\DataAssets.h">
       <Filter>DataAssets</Filter>
     </ClInclude>
     <ClInclude Include="scripts\items\ItemController.h">

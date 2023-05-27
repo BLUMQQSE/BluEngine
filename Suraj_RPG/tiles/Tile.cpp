@@ -13,6 +13,10 @@ Tile::Tile(int x_offset, int y_offset, int grid_x, int grid_y, float grid_size_f
 	this->sprite.setPosition(std::floor(static_cast<float>(x_offset + grid_x) * grid_size_f), 
 		std::floor(static_cast<float>(y_offset + grid_y) * grid_size_f));
 
+	this->collider = FloatConvex::Rectangle(Vector2f(std::floor(static_cast<float>(x_offset + grid_x) * grid_size_f),
+											std::floor(static_cast<float>(y_offset + grid_y) * grid_size_f)),
+											Vector2f(grid_size_f, grid_size_f));
+
 	this->grid_x = grid_x;
 	this->grid_y = grid_y;
 
@@ -167,6 +171,13 @@ Json::Value Tile::serialize_json()
 	obj["texture-rect.height"] = texture_rect.height;
 
 	obj["collision"] = collision;
+
+	if(collision)
+	{
+		obj["collider"] = collider.serialize_json();
+	}
+	
+	
 	obj["tile-type"] = TileNS::ToString(type);
 	obj["texture-source"] = texture_source;
 	obj["animated-sprite"] = (animated_sprite_component != nullptr);
@@ -187,6 +198,13 @@ void Tile::unserialize_json(Json::Value obj)
 	texture_rect.height = obj["texture-rect.height"].asInt64();
 
 	collision = obj["collision"].asBool();
+
+	if (collision)
+	{
+		collider.unserialize_json(obj["collider"]);
+
+		int x = 5;
+	}
 	type = TileNS::ToTiletype(obj["tile-type"].asString());
 	texture_source = obj["texture-source"].asString();
 	animation_timer = obj["animation-timer"].asFloat();

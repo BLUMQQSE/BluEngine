@@ -44,7 +44,7 @@ protected:
     PhysicsNS::LayerMask damageable_mask;
 
     float damage_amount = 1;
-    DamageNS::Type damage_type = DamageNS::Type::DEFAULT;
+    EnumFlag damage_type{ DamageNS::TypeVector() };
     //DamageNS::Target damage_target = DamageNS::Target::ALL;
     
     EnumFlag damage_target{ DamageNS::TargetVector() };

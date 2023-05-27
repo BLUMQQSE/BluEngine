@@ -5,8 +5,7 @@
 #include "../SpriteComponent.h"
 #include "../CameraComponent.h"
 #include "../AudioSource.h"
-#include "../data_assets/ItemData.h"
-#include "../data_assets/DataAsset.h"
+#include "../data_assets/DataAssets.h"
 #include "Inventory.h"
 #include "../CapsuleColliderComponent.h"
 #include "../scripts/interaction/Interactor.h"
@@ -74,7 +73,7 @@ void bm98::PlayerController::fixed_update()
 {
 	if (interactor.lock()->is_interacting())
 		return;
-	
+
 	if(!attack)
 		rigid.lock()->apply_acceleration(movement_input);
 

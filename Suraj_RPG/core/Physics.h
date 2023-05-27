@@ -53,7 +53,7 @@ public:
 	/// <returns>
 	/// The closest collider which is not on a gameobject related to the calling gameobject.</returns>
 	bool raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameObject> ignore,
-		float distance = INFINITY, PhysicsNS::LayerMask mask = PhysicsNS::LayerMask(),
+		float distance = INFINITY, PhysicsNS::LayerMask mask = PhysicsNS::LayerMask(true),
 		std::shared_ptr<RayHit> hit = std::shared_ptr<RayHit>(nullptr));
 
 	/// <summary>
@@ -96,6 +96,8 @@ private:
 	/// </summary>
 	void handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionState>& a,
 		std::pair<std::weak_ptr<GameObject>, CollisionState>& b);
+	void handle_tilemap_collision(std::pair<std::weak_ptr<GameObject>, CollisionState>& object,
+								  std::pair<std::weak_ptr<GameObject>, CollisionState>& tilemap);
 	void update_collision_state(std::pair<std::weak_ptr<GameObject>, CollisionState>& a,
 		std::pair<std::weak_ptr<GameObject>, CollisionState>& b);
 

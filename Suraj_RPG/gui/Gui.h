@@ -219,7 +219,6 @@ public:
 	virtual void set_position(float x, float y) override;
 
 	virtual void set_render(bool render) override;
-
 	void toggle_list(bool toggle);
 
 	bool changed_selection();
@@ -227,7 +226,7 @@ public:
 	const bool mouse_in_bounds();
 
 	const EnumFlag& get_enum_flag() const { return enum_flag; }
-	const std::vector<int> get_selected_indexes() const;
+	const std::vector<int> get_selected_indexes();
 	
 
 private:

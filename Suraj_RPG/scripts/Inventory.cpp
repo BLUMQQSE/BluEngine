@@ -9,7 +9,6 @@
 
 namespace bm98
 {
-
 void Inventory::init()
 {
 
@@ -28,7 +27,7 @@ Json::Value Inventory::serialize_json()
 		if (content[i].current_capacity > 0)
 		{
 			obj2["current-capacity"] = content[i].current_capacity;
-			obj2["item"] = content[i].item->get_name();
+			obj2["item"] = content[i].item->get_id();
 			obj2["index"] = i;
 			obj["content"].append(obj2);
 		}
@@ -52,7 +51,7 @@ void Inventory::unserialize_json(Json::Value obj)
 	{
 		int i = item["index"].asInt64();
 		content[i].current_capacity = item["current-capacity"].asInt64();
-		content[i].item = dynamic_cast<ItemData*>(core::ResourceManager::Instance()->get_data_asset(item["item"].asString()));
+		content[i].item = core::ResourceManager::Instance()->get_data_asset<ItemData>(item["item"].asString());
 	}
 }
 

@@ -105,7 +105,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 	for (std::size_t i = 0; i < objects.size(); i++)
 	{
 
-		if (mask != objects[i][0].first.lock()->get_info().layer)
+		if (!mask[objects[i][0].first.lock()->get_info().layer])
 			continue;
 		
 		if (objects[i][0].first.lock() == ignore)
@@ -123,27 +123,30 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 			if (it != rel.end())
 				continue;
 		
-		// TODO: change later to return distance from intersection point between origin and contact with collider
-		if (Vector2f::SqrDistance(origin, objects[i][0].first.lock()->get_world_position())
-			< hit->distance * hit->distance)
+		if (dynamic_cast<TilemapColliderComponent*>(c.lock().get()))
 		{
-			if (dynamic_cast<TilemapColliderComponent*>(c.lock().get()))
+			Vector2f intersect = dynamic_cast<TilemapColliderComponent*>(c.lock().get())->intersects(ray, mask);
+			if (intersect != Vector2f::Infinity())
 			{
-				if (dynamic_cast<TilemapColliderComponent*>(c.lock().get())->intersects(ray, mask))
+				if (hit)
 				{
-					hit->distance = Vector2f::Distance(origin, objects[i][0].first.lock()->get_world_position());
-					hit_something = true;
+					hit->distance = intersect.magnitude() + Vector2f(origin + direction.get_normalized() * distance).magnitude();
 					hit->collider = c.lock().get();
 				}
+				hit_something = true;
 			}
-			else
+		}
+		else
+		{
+			Vector2f intersect = FloatConvex::Intersection(ray, c.lock()->get_collider_bounds());
+			if (intersect != Vector2f::Infinity())
 			{
-				if (FloatConvex::Intersection(ray, c.lock()->get_collider_bounds()) != Vector2f::Infinity())
+				if (hit)
 				{
-					hit->distance = Vector2f::Distance(origin, objects[i][0].first.lock()->get_world_position());
-					hit_something = true;
+					hit->distance = intersect.magnitude() + Vector2f(origin + direction.get_normalized() * distance).magnitude();
 					hit->collider = c.lock().get();
 				}
+				hit_something = true;
 			}
 		}
 	}
@@ -172,7 +175,7 @@ int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, std::s
 
 	for (std::size_t i = 0; i < objects.size(); i++)
 	{
-		if (mask != objects[i][0].first.lock()->get_info().layer)
+		if (!mask[objects[i][0].first.lock()->get_info().layer])
 			continue;
 
 		if (objects[i][0].first.lock() == object_to_ignore)
@@ -193,7 +196,8 @@ int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, std::s
 
 		if (dynamic_cast<TilemapColliderComponent*>(c.lock().get()))
 		{
-			if (dynamic_cast<TilemapColliderComponent*>(c.lock().get())->intersects(shape, mask))
+			Vector2f intersect = dynamic_cast<TilemapColliderComponent*>(c.lock().get())->intersects(shape, mask);
+			if (intersect != Vector2f::Infinity())
 			{
 				collisions.push_back(c);
 			}
@@ -252,6 +256,19 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 		return;
 	if (!a_collider.lock()->is_active() || !b_collider.lock()->is_active())
 		return;
+
+	if (dynamic_cast<TilemapColliderComponent*>(a_collider.lock().get()) && dynamic_cast<TilemapColliderComponent*>(b_collider.lock().get()))
+		return;
+	if (dynamic_cast<TilemapColliderComponent*>(a_collider.lock().get()))
+	{
+		handle_tilemap_collision(b, a);
+		return;
+	}
+	if (dynamic_cast<TilemapColliderComponent*>(b_collider.lock().get()))
+	{
+		handle_tilemap_collision(a, b);
+		return;
+	}
 
 	std::weak_ptr<GameObject> a_rigid_gameobject = a.first;
 	std::weak_ptr<GameObject> b_rigid_gameobject = b.first;
@@ -334,6 +351,65 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 
 }
 
+void Physics::handle_tilemap_collision(std::pair<std::weak_ptr<GameObject>, CollisionState>& a, std::pair<std::weak_ptr<GameObject>, CollisionState>& tilemap)
+{
+	std::weak_ptr<ColliderComponent> a_collider = a.first.lock()->get_component_of_type<ColliderComponent>();
+	std::weak_ptr<ColliderComponent> tilemap_collider = tilemap.first.lock()->get_component_of_type<ColliderComponent>();
+
+	std::weak_ptr<GameObject> a_rigid_gameobject = a.first;
+
+	while (a_rigid_gameobject.lock()->get_parent().lock())
+	{
+		if (a_rigid_gameobject.lock()->has_component<RigidbodyComponent>())
+			break;
+
+		a_rigid_gameobject = a_rigid_gameobject.lock()->get_parent();
+	}
+	
+	std::weak_ptr<RigidbodyComponent> a_rigid = a_rigid_gameobject.lock()->get_component<RigidbodyComponent>();
+	if (!a_rigid.lock())
+		return;
+
+	PhysicsNS::LayerMask mask {true};
+
+	Vector2f collision_overlap = tilemap.first.lock()->get_component<TilemapColliderComponent>().lock()->intersects(
+		a_collider.lock()->get_collider_bounds(), mask);
+
+	// Collision does not exist this update, check if a collider has exited and return
+	if (collision_overlap == Vector2f::Infinity())
+	{
+		if (a.second == CollisionState::TRIGGER)
+		{
+			a.second = CollisionState::TRIGGER_EXIT;
+			a.first.lock()->on_trigger_exit(Collider(tilemap.first.lock()));
+		}
+		if (a.second == CollisionState::COLLISION)
+		{
+			a.second = CollisionState::COLLISION_EXIT;
+			a.first.lock()->on_collision_exit(Collision(tilemap.first.lock(),
+											  tilemap_collider.lock()));
+		}
+		if (tilemap.second == CollisionState::TRIGGER)
+		{
+			tilemap.second = CollisionState::TRIGGER_EXIT;
+			tilemap.first.lock()->on_trigger_exit(Collider(a.first.lock()));
+		}
+		if (tilemap.second == CollisionState::COLLISION)
+		{
+			tilemap.second = CollisionState::COLLISION_EXIT;
+			tilemap.first.lock()->on_collision_exit(Collision(a.first.lock(),
+											  a_collider.lock()));
+		}
+		return;
+	}
+
+	if (a_collider.lock()->is_trigger() || tilemap_collider.lock()->is_trigger())
+		return;
+
+	a_rigid_gameobject.lock()->move(collision_overlap);
+
+	a_rigid.lock()->halt(-collision_overlap.get_normalized());
+}
 
 void Physics::update_collision_state(std::pair<std::weak_ptr<GameObject>, CollisionState>& a,
 									 std::pair<std::weak_ptr<GameObject>, CollisionState>& b)

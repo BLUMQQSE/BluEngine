@@ -18,10 +18,10 @@ static std::string RemoveNamespace(std::string string)
 	return string;
 }
 
+
 class EnumFlag
 {
 public:
-	std::vector<std::pair<std::string, bool>> flags;
 	/// <param name="all">By default false, if true will set all layers to true.</param>
 	EnumFlag(std::vector<std::string> enums, bool all = false)
 	{
@@ -32,61 +32,84 @@ public:
 		}
 	}
 
-	template<typename T> void operator+=(T in)
+	int size()
 	{
-		int i = static_cast<int>(in);
-		flags[i].second = true;
+		return flags.size();
 	}
 
-	/// <param name="l">Sets bool flag for Layer l to true.</param>
-	template <typename T> void add_flag(T in)
+	template <typename T> bool contains(T in)
 	{
-		int i = static_cast<int>(in);
-		flags[i].second = true;
+		int index = static_cast<int>(in);
+		if (index >= flags.size())
+		{
+			return false;
+		}
+		return flags[index].second;
 	}
 
-	template<typename T> void operator-=(T in)
+	template <typename T> bool at(T in)
 	{
-		int i = static_cast<int>(in);
-		flags[i].second = false;
+		int index = static_cast<int>(in);
+		if (index >= flags.size())
+		{
+			return false;
+		}
+		return flags[index].second;
 	}
 
-	/// <param name="l">Sets bool flag for Layer l to false.</param>
-	template <typename T> void remove_flag(T in)
+	template <typename T> bool& operator[](T in)
 	{
-		int i = static_cast<int>(in);
-		flags[i].second = false;
+		int index = static_cast<int>(in);
+		if (index >= flags.size())
+		{
+			flags.resize(index + 1);
+		}
+		return flags[index].second;
 	}
 
 	template <typename T> bool operator== (T rhs)
 	{
 		int index = static_cast<int>(rhs);
-		if (index >= flags.size())
+		EnumFlag flag = static_cast<EnumFlag>(rhs);
+		
+		if (flag.size() != size())
 			return false;
-		return flags[index].second;
+		
+		for (int i = 0; i < size(); i++)
+		{
+			if (flags[i] != flag[i])
+				return false;
+		}
+
+		return true;
 	}
 
-	Json::Value serialize_field()
+	bool operator==(bool rhs)
+	{
+		for (auto f : flags)
+			if (f.second)
+				return rhs;
+		return !rhs;
+	}
+
+	virtual Json::Value serialize_field()
 	{
 		Json::Value obj;
 		for (int i = 0; i < flags.size(); i++)
 		{
-			if(flags[i].second)
+			if (flags[i].second)
 				obj.append(flags[i].first);
 		}
 		return obj;
 	}
 
-	void unserialize_field(Json::Value obj)
+	virtual void unserialize_field(Json::Value obj)
 	{
-		int x;
-		std::cout << flags.size();
-		int y;
 		for (auto flag : obj)
 		{
 			for (auto& f : flags)
 			{
-				if (f.first == flag["enum-name"].asString())
+				if (f.first == flag.asString())
 					f.second = true;
 			}
 		}
@@ -102,8 +125,11 @@ public:
 		}
 		return result;
 	}
-};
 
+protected:
+	std::vector<std::pair<std::string, bool>> flags;
+
+};
 
 namespace Var
 {
@@ -498,7 +524,7 @@ static std::string ToString(Layer layer)
 }
 
 /// <summary>Bitset containing bool flags for all Physics layers.</summary>
-class LayerMask : EnumFlag
+class LayerMask : public EnumFlag
 {
 public:
 	//std::bitset<static_cast<int>(Layer::_LAST_DONT_REMOVE)> layers;
@@ -507,78 +533,6 @@ public:
 	: EnumFlag(ToVector(), all) 
 	{
 	}
-
-	template <typename T> void operator+= (T rhs)
-	{
-		int i = static_cast<int>(rhs);
-		if (i > flags.size())
-			return;
-		flags[i].second = true;
-	}
-
-	/// <param name="l">Sets bool flag for Layer l to true.</param>
-	void add_layer(Layer l)
-	{
-		add_flag(l);
-	}
-	/// <param name="l">Sets bool flag for Layers l to true.</param>
-	void add_layers(std::vector<Layer> l)
-	{
-		for (std::size_t i = 0; i < l.size(); i++)
-			add_flag(l[i]);
-	}
-
-	template <typename T> void operator-=(T rhs)
-	{
-		int i = static_cast<int>(rhs);
-		if (i > flags.size())
-			return;
-		flags[i].second = false;
-	}
-
-	/// <param name="l">Sets bool flag for Layer l to false.</param>
-	void remove_layer(Layer l)
-	{
-		remove_flag(l);
-	}
-	/// <param name="l">Sets bool flag for Layers l to false.</param>
-	void remove_layers(std::vector<Layer> l)
-	{
-		for (std::size_t i = 0; i < l.size(); i++)
-			remove_flag(l[i]);
-	}
-	template <typename T> bool operator== (T rhs)
-	{
-		int index = static_cast<int>(rhs);
-		if (index >= flags.size())
-			return false;
-		return flags[index].second;
-	}
-
-	Json::Value serialize_field()
-	{
-		return EnumFlag::serialize_field();
-	}
-
-	void unserialize_field(Json::Value obj)
-	{
-		EnumFlag::unserialize_field(obj);
-		
-	}
-
-	/*
-	/// <returns>A vector of string values and their respective bool flags for all layers of the LayerMask 
-	/// layers.</returns>
-	static std::vector<std::pair<std::string, bool>> ToVector(std::bitset<static_cast<int>(Layer::_LAST_DONT_REMOVE)> layers)
-	{
-		std::vector<std::pair<std::string, bool>> vec;
-		for (int i = 0; i < static_cast<int>(Layer::_LAST_DONT_REMOVE); i++)
-		{
-			vec.push_back(std::make_pair(ToString(static_cast<Layer>(i)), layers[i]));
-		}
-		return vec;
-	}
-	*/
 };
 
 }
@@ -929,7 +883,9 @@ namespace DamageNS
 enum class Type
 {
 	DEFAULT,
-	FIRE
+	FIRE, 
+	ELECTRIC,
+	EXPLOSIVE
 };
 
 static std::string ToString(Type type)
@@ -940,6 +896,10 @@ static std::string ToString(Type type)
 			return "DEFAULT";
 		case Type::FIRE:
 			return "FIRE";
+		case Type::ELECTRIC:
+			return "ELECTRIC";
+		case Type::EXPLOSIVE:
+			return "EXPLOSIVE";
 	}
 	//core::Debug::Instance()->log("[Damager] ToString type undefined " + std::to_string((int)type),
 	//							 core::Debug::LogLevel::WARNING);
@@ -952,6 +912,10 @@ static Type ToType(std::string type)
 		return Type::DEFAULT;
 	if (type == "FIRE")
 		return Type::FIRE;
+	if (type == "ELECTRIC")
+		return Type::ELECTRIC;
+	if (type == "EXPLOSIVE")
+		return Type::EXPLOSIVE;
 
 	//core::Debug::Instance()->log("[Damager] ToString target undefined " + type,
 	//							 core::Debug::LogLevel::WARNING);
@@ -960,7 +924,7 @@ static Type ToType(std::string type)
 
 static std::vector<std::string> TypeVector()
 {
-	return { "DEFAULT", "FIRE" };
+	return { "DEFAULT", "FIRE", "ELECTRIC", "EXPLOSIVE"};
 }
 
 #pragma endregion

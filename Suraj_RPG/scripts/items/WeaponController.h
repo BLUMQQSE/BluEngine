@@ -1,6 +1,6 @@
 #pragma once
 #include "ItemController.h"
-#include "../../data_assets/WeaponData.h"
+#include "../../data_assets/DataAssets.h"
 namespace bm98
 {
 

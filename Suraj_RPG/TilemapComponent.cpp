@@ -143,7 +143,7 @@ sf::Texture* TilemapComponent::tile_sheet(std::string key)
 void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer, const sf::IntRect texture_rect,
 	TileNS::Type tile_type, bool collision, bool animated_sprite, float animation_timer)
 {
-	if (animated_sprite)
+;	if (animated_sprite)
 	{
 		if (x < 0 || y < 0 || x >= max_size.x || y >= max_size.y)
 			return;

@@ -190,9 +190,7 @@
     <ClCompile Include="core\SceneManager.cpp" />
     <ClCompile Include="core\Time.cpp" />
     <ClCompile Include="core\UITagSystem.cpp" />
-    <ClCompile Include="data_assets\DataAsset.cpp" />
-    <ClCompile Include="data_assets\ItemData.cpp" />
-    <ClCompile Include="data_assets\WeaponData.cpp" />
+    <ClCompile Include="data_assets\DataAssets.cpp" />
     <ClCompile Include="Delay.cpp" />
     <ClCompile Include="Dialogue.cpp" />
     <ClCompile Include="DontDestroyOnLoad.cpp" />
@@ -289,9 +287,7 @@
     <ClInclude Include="core\SceneManager.h" />
     <ClInclude Include="core\Time.h" />
     <ClInclude Include="core\UITagSystem.h" />
-    <ClInclude Include="data_assets\DataAsset.h" />
-    <ClInclude Include="data_assets\ItemData.h" />
-    <ClInclude Include="data_assets\WeaponData.h" />
+    <ClInclude Include="data_assets\DataAssets.h" />
     <ClInclude Include="Delay.h" />
     <ClInclude Include="Dialogue.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />

@@ -48,7 +48,14 @@ public:
 	/// Gets DataAsset data stored for DataAsset at asset_file_name.
 	/// </summary>
 	/// <param name="prefab_file_name">Name of JSON file loading in.</param>
-	DataAsset* get_data_asset(std::string asset_file_name);
+	
+	//DataAsset* get_data_asset(std::string asset_file_name);
+
+	template <typename T> T* get_data_asset(std::string asset_file_name)
+	{
+		return dynamic_cast<T*>(asset_data.at(asset_file_name));
+	}
+
 	/// <summary>
 	/// Verifies provided key is valid. Should only be needed by editor and
 	/// components altered by editor.

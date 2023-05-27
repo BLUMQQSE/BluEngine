@@ -175,9 +175,7 @@
 					{
 						"interactable-mask" : 
 						[
-							{
-								"enum-name" : "INTERACTABLE"
-							}
+							"INTERACTABLE"	
 						],
 						"interaction-radius" : 60.0
 					}

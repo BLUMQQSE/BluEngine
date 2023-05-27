@@ -525,17 +525,15 @@ void FloatConvex::unserialize_json(Json::Value obj)
 	shape_type = string_to_shapetype(obj["shape-type"].asString());
 	rotation = obj["rotation"].asFloat();
 
-	model.reserve(point_count);
+	model.resize(point_count);
 	int x = 0;
 	for (Json::Value point : obj["model"])
 	{
-		model.push_back(Vector2f());
 		model[x].unserialize_json(point);
 		x++;
 	}
 
 	set_position(position);
-
 }
 
 bool FloatConvex::PreliminaryCircleCheck(FloatConvex a, FloatConvex b)

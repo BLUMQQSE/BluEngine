@@ -12,138 +12,6 @@
 						"IRenderable" : 
 						{
 							"render" : true,
-							"sorting-layer" : "ITEM",
-							"z-order" : 0
-						},
-						"size" : 
-						{
-							"x" : 32,
-							"y" : 32
-						},
-						"sprite-file-path" : "chest.png"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 20.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 20.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 993.5999755859375,
-								"y" : 1132.699951171875
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 20.0,
-						"hitbox-offsetX" : 5.0,
-						"hitbox-offsetY" : 5.0,
-						"hitbox-width" : 20.0,
-						"trigger" : false
-					}
-				},
-				{
-					"name" : "RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 0.0,
-						"body-type" : "KINEMATIC",
-						"deceleration" : 0.0,
-						"max-velocity" : 0.0,
-						"orientation" : "DOWN"
-					}
-				},
-				{
-					"name" : "Chest",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INPUT",
-							"require-player-input" : true
-						}
-					}
-				},
-				{
-					"name" : "Inventory",
-					"value" : 
-					{
-						"content" : 
-						[
-							{
-								"current-capacity" : 1,
-								"index" : 0,
-								"item" : "SwordData.json"
-							}
-						],
-						"inventory-type" : "GENERAL",
-						"max-size" : 8
-					}
-				},
-				{
-					"name" : "InventoryWindow",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "Chest",
-				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 988.5999755859375,
-					"y" : 1127.699951171875
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SpriteComponent",
-					"value" : 
-					{
-						"IRenderable" : 
-						{
-							"render" : true,
 							"sorting-layer" : "BACKGROUND",
 							"z-order" : 0
 						},
@@ -336,245 +204,6 @@
 				{
 					"x" : 200.0,
 					"y" : 0.0
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SpriteComponent",
-					"value" : 
-					{
-						"IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ITEM",
-							"z-order" : 0
-						},
-						"size" : 
-						{
-							"x" : 64,
-							"y" : 64
-						},
-						"sprite-file-path" : "sword.png"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 10.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 10.0,
-									"y" : 10.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 10.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 741.20001220703125,
-								"y" : 1335.0999755859375
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 10.0,
-						"hitbox-offsetX" : 10.0,
-						"hitbox-offsetY" : 20.0,
-						"hitbox-width" : 10.0,
-						"trigger" : true
-					}
-				},
-				{
-					"name" : "WeaponController",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INSTANT",
-							"require-player-input" : false
-						},
-						"item-data" : "SwordData.json",
-						"item-state" : "DROPPED"
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "Sword3",
-				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 731.20001220703125,
-					"y" : 1315.0999755859375
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SpriteComponent",
-					"value" : 
-					{
-						"IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ACTOR",
-							"z-order" : 0
-						},
-						"size" : 
-						{
-							"x" : 64,
-							"y" : 64
-						},
-						"sprite-file-path" : "player.png"
-					}
-				},
-				{
-					"name" : "DummyAI",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "Dummy",
-				"physics-layer" : "DEFAULT",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 1171.0,
-					"y" : 737.0999755859375
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SceneChange",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INSTANT",
-							"require-player-input" : true
-						},
-						"destination-position" : 
-						{
-							"x" : 100.0,
-							"y" : 200.0
-						},
-						"destination-scene" : "cave.json"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 20.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 20.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 1138.9000244140625,
-								"y" : 691.79998779296875
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 20.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 20.0,
-						"trigger" : true
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "SceneChange",
-				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 1138.9000244140625,
-					"y" : 691.79998779296875
 				},
 				"rotation" : 0.0
 			}
@@ -11669,31 +11298,91 @@
 								"tile-type" : "DEFAULT"
 							},
 							{
-								"animated-sprite" : false,
-								"animation-timer" : 0.0,
-								"collision" : false,
+								"animated-sprite" : true,
+								"animation-timer" : 300.0,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 960.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 30,
 								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
-								"texture-rect.left" : 32,
-								"texture-rect.top" : 1056,
-								"texture-rect.width" : 32,
-								"texture-source" : "grasslands.png",
+								"texture-rect.left" : 0,
+								"texture-rect.top" : 0,
+								"texture-rect.width" : 256,
+								"texture-source" : "water.png",
 								"tile-type" : "DEFAULT"
 							},
 							{
-								"animated-sprite" : false,
-								"animation-timer" : 0.0,
-								"collision" : false,
+								"animated-sprite" : true,
+								"animation-timer" : 300.0,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 960.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 30,
 								"grid.y" : 43,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
-								"texture-rect.left" : 32,
-								"texture-rect.top" : 1088,
-								"texture-rect.width" : 32,
-								"texture-source" : "grasslands.png",
+								"texture-rect.left" : 0,
+								"texture-rect.top" : 0,
+								"texture-rect.width" : 256,
+								"texture-source" : "water.png",
 								"tile-type" : "DEFAULT"
 							},
 							{
@@ -12595,10 +12284,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 992.0,
+										"y" : 1312.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 31,
 								"grid.y" : 41,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -12609,10 +12328,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 992.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 31,
 								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -12623,10 +12372,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 992.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 31,
 								"grid.y" : 43,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -13491,26 +13270,42 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1024.0,
+										"y" : 1280.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 32,
 								"grid.y" : 40,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 32,
-								"grid.y" : 40,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
 								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
@@ -13519,10 +13314,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1024.0,
+										"y" : 1312.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 32,
 								"grid.y" : 41,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -13533,10 +13358,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1024.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 32,
 								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -13547,10 +13402,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1024.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 32,
 								"grid.y" : 43,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -13561,10 +13446,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1024.0,
+										"y" : 1408.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 32,
 								"grid.y" : 44,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -13575,10 +13490,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1024.0,
+										"y" : 1440.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 32,
 								"grid.y" : 45,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -14401,10 +14346,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1056.0,
+										"y" : 1248.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 33,
 								"grid.y" : 39,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -14415,26 +14390,42 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1056.0,
+										"y" : 1280.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 33,
 								"grid.y" : 40,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 33,
-								"grid.y" : 40,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
 								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
@@ -14443,10 +14434,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1056.0,
+										"y" : 1312.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 33,
 								"grid.y" : 41,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -14457,10 +14478,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1056.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 33,
 								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -14471,10 +14522,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1056.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 33,
 								"grid.y" : 43,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -14485,10 +14566,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1056.0,
+										"y" : 1408.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 33,
 								"grid.y" : 44,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -14499,10 +14610,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1056.0,
+										"y" : 1440.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 33,
 								"grid.y" : 45,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -15381,10 +15522,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1088.0,
+										"y" : 1248.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 34,
 								"grid.y" : 39,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -15395,26 +15566,42 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1088.0,
+										"y" : 1280.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 34,
 								"grid.y" : 40,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 34,
-								"grid.y" : 40,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
 								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
@@ -15423,10 +15610,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1088.0,
+										"y" : 1312.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 34,
 								"grid.y" : 41,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -15437,10 +15654,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1088.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 34,
 								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -15451,10 +15698,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1088.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 34,
 								"grid.y" : 43,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -15465,10 +15742,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1088.0,
+										"y" : 1408.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 34,
 								"grid.y" : 44,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -15479,10 +15786,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1088.0,
+										"y" : 1440.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 34,
 								"grid.y" : 45,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -16213,7 +16550,7 @@
 								"layer" : "FLOOR",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 1024,
-								"texture-rect.top" : 1056,
+								"texture-rect.top" : 1088,
 								"texture-rect.width" : 32,
 								"texture-source" : "grasslands.png",
 								"tile-type" : "DEFAULT"
@@ -16230,6 +16567,50 @@
 								"texture-rect.top" : 1056,
 								"texture-rect.width" : 32,
 								"texture-source" : "grasslands.png",
+								"tile-type" : "DEFAULT"
+							},
+							{
+								"animated-sprite" : false,
+								"animation-timer" : 0.0,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 896.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
+								"grid.x" : 35,
+								"grid.y" : 28,
+								"layer" : "BACKGROUND",
+								"texture-rect.height" : 32,
+								"texture-rect.left" : 0,
+								"texture-rect.top" : 288,
+								"texture-rect.width" : 32,
+								"texture-source" : "cave.png",
 								"tile-type" : "DEFAULT"
 							},
 							{
@@ -16403,10 +16784,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 1248.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 35,
 								"grid.y" : 39,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -16417,26 +16828,42 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 1280.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 35,
 								"grid.y" : 40,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 35,
-								"grid.y" : 40,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
 								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
@@ -16445,10 +16872,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 1312.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 35,
 								"grid.y" : 41,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -16459,10 +16916,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 35,
 								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -16473,10 +16960,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 35,
 								"grid.y" : 43,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -16487,10 +17004,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 1408.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 35,
 								"grid.y" : 44,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -16501,10 +17048,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1120.0,
+										"y" : 1440.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 35,
 								"grid.y" : 45,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -17397,10 +17974,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1152.0,
+										"y" : 1248.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 36,
 								"grid.y" : 39,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -17411,26 +18018,42 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1152.0,
+										"y" : 1280.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 36,
 								"grid.y" : 40,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 36,
-								"grid.y" : 40,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
 								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
@@ -17439,10 +18062,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1152.0,
+										"y" : 1312.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 36,
 								"grid.y" : 41,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -17453,10 +18106,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1152.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 36,
 								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -17467,10 +18150,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1152.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 36,
 								"grid.y" : 43,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -17481,10 +18194,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1152.0,
+										"y" : 1408.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 36,
 								"grid.y" : 44,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -17495,10 +18238,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1152.0,
+										"y" : 1440.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 36,
 								"grid.y" : 45,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -18363,10 +19136,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1184.0,
+										"y" : 1248.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 37,
 								"grid.y" : 39,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -18377,26 +19180,42 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1184.0,
+										"y" : 1280.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 37,
 								"grid.y" : 40,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 37,
-								"grid.y" : 40,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
 								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
@@ -18405,26 +19224,42 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1184.0,
+										"y" : 1312.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 37,
 								"grid.y" : 41,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 37,
-								"grid.y" : 41,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
 								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
@@ -18433,24 +19268,84 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1184.0,
+										"y" : 1344.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 37,
 								"grid.y" : 42,
 								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
+								"texture-rect.top" : 0,
+								"texture-rect.width" : 256,
 								"texture-source" : "water.png",
 								"tile-type" : "DEFAULT"
 							},
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1184.0,
+										"y" : 1376.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 37,
-								"grid.y" : 42,
-								"layer" : "FLOOR",
+								"grid.y" : 43,
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -18461,52 +19356,40 @@
 							{
 								"animated-sprite" : true,
 								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 37,
-								"grid.y" : 43,
-								"layer" : "BACKGROUND",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 37,
-								"grid.y" : 43,
-								"layer" : "FLOOR",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
-								"texture-rect.top" : 0,
-								"texture-rect.width" : 256,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
-								"grid.x" : 37,
-								"grid.y" : 44,
-								"layer" : "BACKGROUND",
-								"texture-rect.height" : 32,
-								"texture-rect.left" : 0,
-								"texture-rect.top" : -2147483648,
-								"texture-rect.width" : 32,
-								"texture-source" : "water.png",
-								"tile-type" : "DEFAULT"
-							},
-							{
-								"animated-sprite" : true,
-								"animation-timer" : 300.0,
-								"collision" : false,
+								"collider" : 
+								{
+									"model" : 
+									[
+										{
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 0.0
+										},
+										{
+											"x" : 32.0,
+											"y" : 32.0
+										},
+										{
+											"x" : 0.0,
+											"y" : 32.0
+										}
+									],
+									"point-count" : 4,
+									"position" : 
+									{
+										"x" : 1184.0,
+										"y" : 1408.0
+									},
+									"rotation" : 0.0,
+									"shape-type" : "POLYGON"
+								},
+								"collision" : true,
 								"grid.x" : 37,
 								"grid.y" : 44,
-								"layer" : "FLOOR",
+								"layer" : "BACKGROUND",
 								"texture-rect.height" : 32,
 								"texture-rect.left" : 0,
 								"texture-rect.top" : 0,
@@ -33040,13 +33923,384 @@
 			{
 				"local-position" : 
 				{
-					"x" : 0.0,
-					"y" : 0.0
+					"x" : -200.0,
+					"y" : -200.0
 				},
 				"position" : 
 				{
 					"x" : 0.0,
 					"y" : 0.0
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SceneChange",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INSTANT",
+							"require-player-input" : true
+						},
+						"destination-position" : 
+						{
+							"x" : 100.0,
+							"y" : 200.0
+						},
+						"destination-scene" : "cave.json"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 20.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 1138.9000244140625,
+								"y" : 691.79998779296875
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 20.0,
+						"trigger" : true
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "SceneChange",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 1138.9000244140625,
+					"y" : 691.79998779296875
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ITEM",
+							"z-order" : 0
+						},
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
+						"sprite-file-path" : "sword.png"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 10.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 10.0,
+									"y" : 10.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 10.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 741.20001220703125,
+								"y" : 1335.0999755859375
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 10.0,
+						"hitbox-offsetX" : 10.0,
+						"hitbox-offsetY" : 20.0,
+						"hitbox-width" : 10.0,
+						"trigger" : true
+					}
+				},
+				{
+					"name" : "WeaponController",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INSTANT",
+							"require-player-input" : false
+						},
+						"item-data" : "SwordData.json",
+						"item-state" : "DROPPED"
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Sword3",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 731.20001220703125,
+					"y" : 1315.0999755859375
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ITEM",
+							"z-order" : 0
+						},
+						"size" : 
+						{
+							"x" : 32,
+							"y" : 32
+						},
+						"sprite-file-path" : "chest.png"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 20.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 993.5999755859375,
+								"y" : 1132.699951171875
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 5.0,
+						"hitbox-offsetY" : 5.0,
+						"hitbox-width" : 20.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.0,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 0.0,
+						"max-velocity" : 0.0,
+						"orientation" : "DOWN"
+					}
+				},
+				{
+					"name" : "Chest",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INPUT",
+							"require-player-input" : true
+						}
+					}
+				},
+				{
+					"name" : "Inventory",
+					"value" : 
+					{
+						"content" : 
+						[
+							{
+								"current-capacity" : 1,
+								"index" : 0,
+								"item" : "SwordData.json"
+							}
+						],
+						"inventory-type" : "GENERAL",
+						"max-size" : 8
+					}
+				},
+				{
+					"name" : "InventoryWindow",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "Chest",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 988.5999755859375,
+					"y" : 1127.699951171875
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ACTOR",
+							"z-order" : 0
+						},
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
+						"sprite-file-path" : "player.png"
+					}
+				},
+				{
+					"name" : "DummyAI",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "Dummy",
+				"physics-layer" : "DEFAULT",
+				"tag" : "UNTAGGED"
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 1171.0,
+					"y" : 737.0999755859375
 				},
 				"rotation" : 0.0
 			}

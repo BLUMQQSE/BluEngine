@@ -18,11 +18,12 @@ TilemapColliderComponent::~TilemapColliderComponent()
 
 void TilemapColliderComponent::awake()
 {
-	tilemap = game_object->get_component<TilemapComponent>().lock().get();
+	tilemap = game_object->get_component<TilemapComponent>();
 	for (int i = 0; i < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); i++)
 	{
 		colliders.push_back(std::vector<FloatConvex>());
 	}
+
 }
 
 void TilemapColliderComponent::start()
@@ -30,24 +31,29 @@ void TilemapColliderComponent::start()
 	create_colliders();
 }
 
-bool TilemapColliderComponent::intersects(const FloatConvex collider, PhysicsNS::LayerMask mask)
+Vector2f TilemapColliderComponent::intersects(const FloatConvex collider, PhysicsNS::LayerMask mask)
 {
+	Vector2f resolution = Vector2f::Zero();
 	for (int h = 0; h < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); h++)
 	{
-		if (mask != h)
+		if (!mask[h])
 			continue;
 		for (int i = 0; i < colliders[h].size(); i++)
 		{
-			if (FloatConvex::Intersection(colliders[h][i], collider) != Vector2f::Infinity())
-				return true;
+			Vector2f intersect = FloatConvex::Intersection(collider, colliders[h][i]);
+			if (intersect != Vector2f::Infinity())
+				resolution += intersect;
 		}
 	}
-	return false;
+	if (resolution == Vector2f::Zero())
+		resolution = Vector2f::Infinity();
+
+	return resolution;
 }
 
 void TilemapColliderComponent::create_colliders()
 {
-	std::vector<Tile*> t = tilemap->get_collidable_tiles();
+	std::vector<Tile*> t = tilemap.lock().get()->get_collidable_tiles();
 
 	for (int i = 0; i < t.size(); i++)
 	{
