@@ -12,11 +12,11 @@ public:
     {
         InventoryItem()
         {
-            item = nullptr;
+            item = std::shared_ptr<ItemData>(nullptr);
             current_capacity = 0;
         }
 
-        ItemData* item;
+        std::weak_ptr<ItemData> item;
         int current_capacity;
     };
 
@@ -36,7 +36,7 @@ public:
         return max_size;
     }
 
-    inline ItemData* get_item(int index)
+    inline std::weak_ptr<ItemData> get_item(int index)
     {
         return content[index].item;
     }
@@ -46,7 +46,7 @@ public:
         return content.at(index).current_capacity;
     }
 
-    bool check_compatability(int index, ItemData* data);
+    bool check_compatability(int index, std::shared_ptr<ItemData> data);
     /// <summary>
     /// Returns the first empty index in the inventory. If the inventory is full, this function
     /// will return -1.
@@ -61,14 +61,14 @@ public:
     /// If the inventory is full, this function will return -1.
     /// </summary>
     /// <returns></returns>
-    int get_first_available_include_match(ItemData* item);
+    int get_first_available_include_match(std::shared_ptr<ItemData> item);
     /// <summary>
     /// Adds item at index and increases current_capacity by count.
     /// </summary>
     /// <returns>Returns 0 if all items get added. Returns remainder of any numbers
     /// unable to be added.</returns>
-    int add_item(int index, ItemData* item, int count = 1);
-    ItemData* remove_item(int index, int count = 1);
+    int add_item(int index, std::shared_ptr<ItemData> item, int count = 1);
+    std::weak_ptr<ItemData> remove_item(int index, int count = 1);
 
     virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 

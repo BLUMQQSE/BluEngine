@@ -16,12 +16,23 @@ public:
 
 	void init();
 
+	void set_start_id(unsigned long next_id) { this->next_id = next_id; }
+
+	unsigned long get_next_id()
+	{
+		unsigned long result = next_id;
+		next_id++;
+		return result;
+	}
+
 	void set_editor_scene(bool is_editor_scene) { this->in_editor = is_editor_scene; }
 
 	void update();
 	void late_update();
 	void fixed_update();
 	void render(sf::View * view = nullptr);
+
+	void on_draw_gizmos();
 
 	sf::View* get_view() { return scene_view; }
 	void set_view(sf::View* view) { this->scene_view = view; }
@@ -66,8 +77,13 @@ public:
 private:
 	std::string file_name;
 	std::string scene_name;
+	unsigned long next_id = 1;
 
+	bool dont_destroys_loaded = false;
 	bool in_editor = false;
+
+	// set by GameEditorView and SceneEditorView and calls on_draw_gizmos_selected
+	GameObject* selected_object;
 
 	std::vector<std::shared_ptr<GameObject>> objects_in_scene;
 	std::vector<std::shared_ptr<GameObject>> objects_to_add;
@@ -76,6 +92,7 @@ private:
 	sf::View* scene_view;
 	void insert_sort();
 
+	
 
 
 };

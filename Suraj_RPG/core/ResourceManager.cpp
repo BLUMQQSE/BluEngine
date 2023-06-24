@@ -1,5 +1,6 @@
 #include "../pch.h"
 #include "Debug.h"
+#include "EventSystem.h"
 #include "ResourceManager.h"
 #include "FileManager.h"
 #include "../data_assets/DataAssets.h"
@@ -13,29 +14,20 @@ void ResourceManager::load_resources()
 	iterate_fonts_directory("Fonts/");
 	iterate_audio_directory("Resources/Audio/Sounds/");
 	iterate_prefab_directory("Data/Prefabs/");
+	
 	iterate_data_asset_directory("Data/DataAssets/");
 	
+	unserialize_data_assets();
+
 	TilemapComponent::LoadTileSheets();
 }
 
 void ResourceManager::reload()
 {
-	/*
 	asset_data.clear();
-	prefab_data.clear();
-	sound_buffers.clear();
-	sound_data.clear();
-	textures.clear();
-	fonts.clear();
-
-
-
 	iterate_data_asset_directory("Data/DataAssets/");
-	iterate_prefab_directory("Data/Prefabs/");
-	iterate_audio_directory("Resources/Audio/Sounds/");
-	iterate_textures_directory("Resources/Images/");
-	iterate_fonts_directory("Fonts/");
-	*/
+	unserialize_data_assets();
+	EventSystem::Instance()->push_event(EventID::_SYSTEM_RESOURCES_RELOAD_FLAG_);
 }
 
 Json::Value ResourceManager::get_prefab_data(std::string prefab_file_name)
@@ -133,10 +125,7 @@ bool ResourceManager::has_font(std::string font_file_name)
 
 void ResourceManager::shutdown()
 {
-	for (auto a : asset_data)
-	{
-		delete a.second;
-	}
+
 }
 
 ResourceManager::ResourceManager()
@@ -171,21 +160,18 @@ void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 			if (entry.path().string().find("ItemData"))
 			{
 				if (entry.path().string().find("WeaponData"))
-				{
-					asset_data[file_name] = new WeaponData(file_name);
-					asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
-				}
+					asset_data[file_name] = std::make_shared<WeaponData>(file_name);
+				else if (entry.path().string().find("EnemyData"))
+					asset_data[file_name] = std::make_shared<EnemyData>(file_name);
 				else
-				{
-					asset_data[file_name] = new ItemData(file_name);
-					asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
-				}
+					asset_data[file_name] = std::make_shared<ItemData>(file_name);
 			}
 			else
 			{
-				asset_data[file_name] = new DataAsset(file_name);
-				asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
+				asset_data[file_name] = std::make_shared<DataAsset>(file_name);
 			}
+
+			asset_data.at(file_name)->unserialize_json(FileManager::Instance()->load_from_file(dir_path + file_name));
 			continue;
 		}
 		
@@ -263,6 +249,11 @@ void ResourceManager::iterate_fonts_directory(std::string dir_path)
 		iterate_fonts_directory(dir_path + file_name + "/");
 		
 	}
+}
+
+void ResourceManager::unserialize_data_assets()
+{
+
 }
 
 void ResourceManager::handle_event(Event* event)

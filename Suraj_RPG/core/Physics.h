@@ -26,7 +26,7 @@ public:
 
 	struct RayHit
 	{
-		ColliderComponent* collider = nullptr;
+		std::weak_ptr<ColliderComponent> collider = std::shared_ptr<ColliderComponent>(nullptr);
 		float distance = INFINITY;
 	};
 
@@ -100,7 +100,6 @@ private:
 								  std::pair<std::weak_ptr<GameObject>, CollisionState>& tilemap);
 	void update_collision_state(std::pair<std::weak_ptr<GameObject>, CollisionState>& a,
 		std::pair<std::weak_ptr<GameObject>, CollisionState>& b);
-
 
 
 	// Inherited via Listener

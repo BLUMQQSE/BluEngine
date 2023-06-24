@@ -47,6 +47,14 @@ void Component::add_to_buffer(sf::View* view)
 {
 }
 
+void Component::on_draw_gizmos()
+{
+}
+
+void Component::on_draw_gizmos_selected()
+{
+}
+
 void Component::on_collision_enter(Collision info)
 {
 }

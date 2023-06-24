@@ -92,6 +92,18 @@ void TextUITag::set_view(sf::View* view)
 	rt->set_view(view);
 }
 
+void TextUITag::set_fill_color(sf::Color text_color)
+{
+	this->fill_color = text_color;
+	rt->set_fill_color(text_color);
+}
+
+void TextUITag::set_outline_color(sf::Color outline_color)
+{
+	this->outline_color = outline_color;
+	rt->set_outline_color(outline_color);
+}
+
 void TextUITag::no_action(const ActionSegment& action)
 {
 	rt->set_render(true);

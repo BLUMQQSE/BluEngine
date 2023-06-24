@@ -134,7 +134,11 @@ public:
 
 	virtual void set_view(sf::View* view) override;
 
+	void set_fill_color(sf::Color text_color);
+	void set_outline_color(sf::Color outline_color);
 	virtual void no_action(const ActionSegment& action) override;
+
+
 	virtual void disappear(const ActionSegment& action) override;
 	virtual void move(const ActionSegment& action, Vector2f move_speed) override;
 	virtual bool fade(const ActionSegment& action, float fade_speed) override;

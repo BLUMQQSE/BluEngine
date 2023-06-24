@@ -27,6 +27,8 @@ public:
 	virtual void late_update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
+	virtual void on_draw_gizmos() override;
+
 	virtual void on_destroy() override;
 
 	/// <returns>Size of each Tile within the map.</returns>
@@ -70,6 +72,12 @@ public:
 	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 	virtual void editor_update() override;
 
+	void set_physical_layer(Sorting::Layer layer, PhysicsNS::Layer physic);
+	PhysicsNS::Layer get_physical_layer(Sorting::Layer layer) 
+	{ 
+		return physical_layers[layer]; 
+	}
+
 	/// <summary>
 	/// Loads tile sheets used by the tilemap from tiles_file_path and loads them into
 	/// the tile_sheets map.
@@ -95,7 +103,7 @@ private:
 	std::vector<sf::Sprite> render_sprites;
 	std::vector<sf::RenderTexture*> render_textures;
 	std::vector<Sorting::Layer> render_layers;
-	std::unordered_map<int, PhysicsNS::Layer> physical_layers;
+	std::unordered_map<Sorting::Layer, PhysicsNS::Layer> physical_layers;
 
 
 	std::string file_path = "";

@@ -1,5 +1,6 @@
 #pragma once
 #include "globals.h"
+#include "core/Renderer.h"
 #include "Math.h"
 #include "IData.h"
 
@@ -72,11 +73,35 @@ public:
 	virtual void fixed_update();
 	virtual void add_to_buffer(sf::View* view = nullptr);
 
+	virtual void on_draw_gizmos();
+	virtual void on_draw_gizmos_selected();
+	/// <summary>
+	/// Called on gameobject which has collided with another collider for first
+	/// fixed update.
+	/// </summary>
 	virtual void on_collision_enter(Collision info);
+	/// <summary>
+	/// Called on gameobject which has maintained contact with another collider since
+	/// previous fixed_update.
+	/// </summary>
 	virtual void on_collision_stay(Collision info);
+	/// <summary>
+	/// Called on gameobject which has lost contact with a prior collider.
+	/// </summary>
 	virtual void on_collision_exit(Collision info);
+	/// <summary>
+	/// Called on object containing a trigger which had a non-trigger collider enter for 
+	/// first fixed_update.
+	/// </summary>
 	virtual void on_trigger_enter(Collider info);
+	/// <summary>
+	/// Called on gameobject containing a trigger which has maintained contact 
+	/// with another collider since previous fixed_update.
+	/// </summary>
 	virtual void on_trigger_stay(Collider info);
+	/// <summary>
+	/// Called on gameobject containing a trigger which has lost contact with a prior collider.
+	/// </summary>
 	virtual void on_trigger_exit(Collider info);
 
 	virtual void set_world_position(Vector2f pos);
@@ -92,6 +117,7 @@ public:
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values();
 	virtual void editor_update() {}
+
 
 protected:
 

@@ -8,6 +8,7 @@ namespace bm98::core
 
 class Time : public IData, public Listener
 {
+#define FIXED_INTERVAL .02f
 public:
 	// Returns instance of the EventSystem
 	static Time* Instance()
@@ -25,8 +26,6 @@ public:
 	const float time_since_startup();
 
 	const float total_real_time();
-
-
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;

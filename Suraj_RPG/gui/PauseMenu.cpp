@@ -2,6 +2,7 @@
 #include "PauseMenu.h"
 #include "../core/Renderer.h"
 #include "../core/Time.h"
+#include "../core/Input.h"
 namespace bm98
 {
 using namespace core;

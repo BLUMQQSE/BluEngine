@@ -64,6 +64,9 @@
     <Filter Include="Scripts\Damage">
       <UniqueIdentifier>{e37241b0-8e00-423c-b254-4ec97dbe0a6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components\AI\PathFinding">
+      <UniqueIdentifier>{827b56dd-bda5-48e5-bae9-f01b55853c6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -293,6 +296,9 @@
     </ClCompile>
     <ClCompile Include="scripts\damage\IntervalDamager.cpp">
       <Filter>Scripts\Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="ContextSteering.cpp">
+      <Filter>Components\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -527,9 +533,6 @@
     <ClInclude Include="scripts\Inventory.h">
       <Filter>Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="data_assets\DataAssets.h">
-      <Filter>DataAssets</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\items\ItemController.h">
       <Filter>Scripts\Items</Filter>
     </ClInclude>
@@ -565,6 +568,12 @@
     </ClInclude>
     <ClInclude Include="scripts\damage\IntervalDamager.h">
       <Filter>Scripts\Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="data_assets\DataAssets.h">
+      <Filter>DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextSteering.h">
+      <Filter>Components\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

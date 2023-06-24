@@ -35,7 +35,7 @@ void Chest::initiate_interaction(std::shared_ptr<Interactor> interactor)
 
 		// TODO: play "open_chest" audio
 
-		interactor->get_game_object()->get_component<InventoryGUIController>().lock()->set_external(game_object->get_component<InventoryWindow>().lock().get());
+		interactor->get_game_object()->get_component<InventoryGUIController>().lock()->set_external(game_object->get_component<InventoryWindow>().lock());
 		interactor->get_game_object()->get_component<InventoryGUIController>().lock()->toggle_inventory(InventoryNS::WindowToggle::OPEN_ALL);
 	}
 	input_delay.reset();

@@ -48,12 +48,9 @@ public:
 	/// Gets DataAsset data stored for DataAsset at asset_file_name.
 	/// </summary>
 	/// <param name="prefab_file_name">Name of JSON file loading in.</param>
-	
-	//DataAsset* get_data_asset(std::string asset_file_name);
-
-	template <typename T> T* get_data_asset(std::string asset_file_name)
+	template <typename T> std::weak_ptr<T> get_data_asset(std::string asset_file_name)
 	{
-		return dynamic_cast<T*>(asset_data.at(asset_file_name));
+		return std::static_pointer_cast<T>(asset_data.at(asset_file_name));
 	}
 
 	/// <summary>
@@ -124,7 +121,9 @@ private:
 
 
 	std::unordered_map<std::string, Json::Value> prefab_data;
-	std::unordered_map<std::string, DataAsset*> asset_data; 
+	//std::unordered_map<std::string, DataAsset*> asset_data; 
+	std::unordered_map<std::string, std::shared_ptr<DataAsset>> asset_data;
+
 	std::unordered_map<std::string, sf::SoundBuffer> sound_buffers;
 	std::unordered_map<std::string, Json::Value> sound_data;
 
@@ -137,6 +136,8 @@ private:
 	void iterate_audio_directory(std::string dir_path);
 	void iterate_textures_directory(std::string dir_path);
 	void iterate_fonts_directory(std::string dir_path);
+
+	void unserialize_data_assets();
 
 	// Inherited via Listener
 	virtual void handle_event(Event* event) override;

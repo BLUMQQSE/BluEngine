@@ -23,7 +23,6 @@ void TilemapColliderComponent::awake()
 	{
 		colliders.push_back(std::vector<FloatConvex>());
 	}
-
 }
 
 void TilemapColliderComponent::start()
@@ -31,8 +30,25 @@ void TilemapColliderComponent::start()
 	create_colliders();
 }
 
-Vector2f TilemapColliderComponent::intersects(const FloatConvex collider, PhysicsNS::LayerMask mask)
+void TilemapColliderComponent::on_draw_gizmos_selected()
 {
+	for (int h = 0; h < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); h++)
+	{
+		for (std::size_t i = 0; i < colliders[h].size(); i++)
+		{
+			Gizmo::outline_color = Color::Red;
+			Gizmo::fill_color = Color::Transparent;
+			Gizmo::draw_convex(colliders[h][i]);
+			Gizmo::fill_color = Gizmo::outline_color;
+			Gizmo::outline_color = Color::Transparent;
+			Gizmo::draw_line(colliders[h][i].get_position(), colliders[h][i].get_position() + Vector2f(colliders[h][i].getGlobalBounds().width, colliders[h][i].getGlobalBounds().height));
+		}
+	}
+}
+
+TilemapIntersect TilemapColliderComponent::intersects(const FloatConvex collider, PhysicsNS::LayerMask mask)
+{
+	TilemapIntersect result;
 	Vector2f resolution = Vector2f::Zero();
 	for (int h = 0; h < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); h++)
 	{
@@ -40,15 +56,42 @@ Vector2f TilemapColliderComponent::intersects(const FloatConvex collider, Physic
 			continue;
 		for (int i = 0; i < colliders[h].size(); i++)
 		{
-			Vector2f intersect = FloatConvex::Intersection(collider, colliders[h][i]);
-			if (intersect != Vector2f::Infinity())
-				resolution += intersect;
+			ObjectIntersect temp = FloatConvex::Intersection(collider, colliders[h][i]);
+			if (temp.collision_exists)
+			{
+				if (result.collision_exists)
+				{
+					result.penetration_vector += temp.penetration_vector;
+					result.convex_2.push_back(temp.convex_2);
+				}
+				else
+				{
+					result = temp;
+				}
+			}
 		}
 	}
-	if (resolution == Vector2f::Zero())
-		resolution = Vector2f::Infinity();
 
-	return resolution;
+	return result;
+}
+
+Vector2f TilemapColliderComponent::get_closest_point(Vector2f pos)
+{
+	Vector2f closest = Vector2f::Infinity();
+	for (int h = 0; h < static_cast<int>(PhysicsNS::Layer::_LAST_DONT_REMOVE); h++)
+	{
+		for (int i = 0; i < colliders[h].size(); i++)
+		{
+			Vector2f temp = colliders[h][i].get_closest_point(pos);
+			if (closest == Vector2f::Infinity())
+				closest = temp;
+			else
+				if (Vector2f::Distance(temp, pos) < Vector2f::Distance(closest, pos))
+					closest = temp;
+		}
+	}
+
+	return closest;
 }
 
 void TilemapColliderComponent::create_colliders()

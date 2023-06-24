@@ -96,7 +96,7 @@ const float Time::total_real_time()
 
 void Time::update_fixed_delta()
 {
-	if (game_fixed_timer.get_elapsed_time().asSeconds() >= .01f)
+	if (game_fixed_timer.get_elapsed_time().asSeconds() >= FIXED_INTERVAL)
 	{
 		fixed_delta = game_fixed_timer.restart().asSeconds();
 	}

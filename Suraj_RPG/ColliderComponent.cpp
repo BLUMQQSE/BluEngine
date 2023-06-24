@@ -10,12 +10,24 @@ ColliderComponent::ColliderComponent()
 
 ColliderComponent::~ColliderComponent()
 {
-	core::Renderer::Instance()->remove(&collider_bounds);
+	//core::Renderer::Instance()->remove(&collider_bounds);
 }
 
 void ColliderComponent::init()
 {
 	collider_bounds.init();
+}
+
+void ColliderComponent::on_draw_gizmos()
+{
+	if (active)
+	{
+		if (!trigger)
+			Gizmo::outline_color = Color::Red;
+		else
+			Gizmo::outline_color = Color::LimeGreen;
+		Gizmo::draw_convex(collider_bounds);
+	}
 }
 
 bool ColliderComponent::intersects(const FloatConvex collider)
@@ -83,7 +95,6 @@ void ColliderComponent::editor_update()
 void ColliderComponent::set_active(bool active)
 {
 	Component::set_active(active);
-	set_render(active);
 }
 
 void ColliderComponent::set_world_position(Vector2f pos)
@@ -94,6 +105,11 @@ void ColliderComponent::set_world_position(Vector2f pos)
 FloatConvex& ColliderComponent::get_collider_bounds()
 {
 	return collider_bounds;
+}
+
+Vector2f ColliderComponent::get_closest_point(Vector2f pos)
+{
+	return collider_bounds.get_closest_point(pos);
 }
 
 const bool ColliderComponent::is_trigger() const

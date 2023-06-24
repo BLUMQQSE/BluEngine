@@ -10,7 +10,6 @@ using namespace core;
 
 BoxColliderComponent::BoxColliderComponent()
 {
-	set_sorting_layer(Sorting::Layer::UI, false);
 }
 
 BoxColliderComponent::BoxColliderComponent(float offset_x,
@@ -58,7 +57,7 @@ void BoxColliderComponent::init()
 
 void BoxColliderComponent::awake()
 {	
-	Renderer::Instance()->add(Renderer::RenderObject(&collider_bounds, this));
+	//Renderer::Instance()->add(Renderer::RenderObject(&collider_bounds, this));
 }
 
 void BoxColliderComponent::update()
@@ -73,8 +72,15 @@ void BoxColliderComponent::fixed_update()
 
 void BoxColliderComponent::add_to_buffer(sf::View* view)
 {
-	set_view(view);
-	//Renderer::add(Renderer::RenderObject(&hitbox, render, SortingLayer::UI, 0, &view));
+}
+
+void BoxColliderComponent::on_draw_gizmos()
+{
+	ColliderComponent::on_draw_gizmos();
+	Gizmo::fill_color = Gizmo::outline_color;
+	Gizmo::outline_color = Color::Transparent;
+	Gizmo::draw_line(collider_bounds.get_position(), collider_bounds.get_position() +
+					 Vector2f(collider_bounds.getGlobalBounds().width - 2, collider_bounds.getGlobalBounds().height - 2));
 }
 
 #pragma region IData

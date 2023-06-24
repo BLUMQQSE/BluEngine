@@ -40,6 +40,7 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	SceneManager::Instance()->load_scene_prefab("default.json");
 
 	active_scene->set_view(scene_view);
+	Gizmo::set_view(scene_view);
 	active_scene->set_editor_scene(true);
 
 	pmenu = std::make_unique<PauseMenu>(*window, font);
@@ -88,7 +89,7 @@ void EditorState::update_input()
 	if (Input::Instance()->using_input_box())
 		return;
 
-	if (Input::Instance()->get_action_down("V"))
+	if (Input::Instance()->get_action_down("TILDE"))
 	{
 		scene_editor->toggle_editor(SceneEditorView::EditorPanel::ALL);
 	}
@@ -188,7 +189,7 @@ void EditorState::init_views()
 
 void EditorState::init_gui()
 {
-	texture_selector = new GUI::TextureSelector(120.f + 800, 20.f, 500.f, 500.f,
+	texture_selector = new GUI::TextureSelector(400, 20.f, 570.f, 500.f,
 		TilemapComponent::GetTilesetKeys());
 	
 	selector_rect.setFillColor(sf::Color(255, 255, 255, 150));
@@ -258,6 +259,17 @@ void EditorState::update_gui()
 	{
 		remove_tilemap_stuff();
 		return;
+	}
+
+	if (texture_selector->get_physical_dropdown()->changed_selection())
+	{
+		selected_gameobject->get_component<TilemapComponent>().lock()->set_physical_layer(texture_selector->get_layer(),
+																						  (PhysicsNS::Layer)texture_selector->get_physical_dropdown()->get_selected_index());
+	}
+	if (texture_selector->get_layer_dropdown()->changed_selection())
+	{
+		texture_selector->get_physical_dropdown()->set_selected_index((int)
+			selected_gameobject->get_component<TilemapComponent>().lock()->get_physical_layer(texture_selector->get_layer()));
 	}
 	
 	init_tilemap_stuff(selected_gameobject);

@@ -33,7 +33,7 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 	//active_scene = new Scene(active_scene_name);
 	active_scene = std::make_unique<Scene>(active_scene_name);
-
+	active_scene->set_start_id(1);
 	//SceneManager::Instance()->init(active_scene);
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, (void*)active_scene.get());
 	
@@ -82,9 +82,12 @@ void GameState::on_end_state()
 {
 	Debug::Instance()->core_log("[GameState] Shutdown", Debug::LogLevel::INFO);
 	SceneManager::Instance()->save_scene(true);
+	
 	FileManager::Instance()->save_to_file_styled(serialize_json(),
 		FileManager::Instance()->get_save_name()+"gamestate.json");
 	//SceneManager::Instance()->destroy();
+
+
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_DESTROY_);
 	State::on_end_state();
 }
@@ -118,6 +121,7 @@ void GameState::unpause_state()
 
 void GameState::update()
 {
+	/*
 	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT))
 	{
 		if (!DialogueSystem::Instance()->is_open())
@@ -125,6 +129,7 @@ void GameState::update()
 		else
 			DialogueSystem::Instance()->close_dialogue();
 	}
+	*/
 	//update editor first in case event occured last frame
 	editor_view->update();
 
@@ -173,6 +178,11 @@ Json::Value GameState::serialize_json()
 {
 	Json::Value obj;
 	obj["active-scene-name"] = SceneManager::Instance()->get_active_scene_name();
+
+	if(active_scene)
+		next_available_id = active_scene->get_next_id();
+	obj["next-available-id"] = (uint64_t)next_available_id;
+	
 	return obj;
 }
 
@@ -181,12 +191,15 @@ void GameState::unserialize_json(Json::Value obj)
 	if (obj == Json::Value::null)
 	{
 		active_scene_name = SceneManager::Instance()->get_default_scene();
+		next_available_id = 1;
 
 		FileManager::Instance()->save_to_file_styled(serialize_json(), FileManager::Instance()->get_save_name() + "/gamestate.json");
 
 		return;
 	}
+	
 	active_scene_name = obj["active-scene-name"].asString();
+	next_available_id = obj["next-available-id"].asUInt64();
 }
 
 void GameState::init_view()

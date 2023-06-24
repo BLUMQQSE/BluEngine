@@ -17,6 +17,10 @@ public:
 	SceneChange() {}
 	virtual ~SceneChange() {}	
 
+	virtual void on_trigger_enter(Collider info) override;
+		
+
+
 protected:
 	Destination destination;
 

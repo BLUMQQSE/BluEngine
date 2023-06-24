@@ -388,6 +388,12 @@ Button::Button()
 
 }
 
+Button::Button(Vector2f pos, Vector2f size, sf::Font* font, std::string text, unsigned character_size,
+			   sf::Color idle, sf::Color hover, sf::Color active, bool transparent)
+{		
+	reinit(pos, size, font, text, character_size, idle, hover, active, transparent);
+}
+
 Button::Button(float x, float y, float width, float height, sf::Font* font,
 	std::string text, unsigned character_size, sf::Color text_idle, sf::Color text_hover,
 	sf::Color text_active,
@@ -406,7 +412,23 @@ Button::~Button()
 	Renderer::Instance()->remove_ui(&text);
 }
 
-void Button::reinit(float x, float y, float width, float height, sf::Font* font, 
+void Button::reinit(Vector2f pos, Vector2f size, sf::Font* font, std::string text, unsigned character_size, sf::Color idle, sf::Color hover, sf::Color active, bool transparent)
+{
+	int alpha = 0;
+	int alpha_background = 0;
+	if (!transparent)
+	{
+		alpha += 255;
+		alpha_background = 50;
+	}
+	reinit(pos.x, pos.y, size.x, size.y, font, text, character_size,
+		   sf::Color(idle.r, idle.g, idle.b, 250), sf::Color(hover.r, hover.g, hover.b, 100), sf::Color(active.r, active.g, active.b, 250),
+		   sf::Color(idle.r, idle.g, idle.b, 3*alpha_background), sf::Color(hover.r, hover.g, hover.b, alpha_background), 
+		   sf::Color(active.r, active.g, active.b, 3 * alpha_background),
+		   sf::Color(idle.r, idle.g, idle.b, alpha), sf::Color(hover.r, hover.g, hover.b, alpha), sf::Color(active.r, active.g, active.b, alpha));
+}
+
+void Button::reinit(float x, float y, float width, float height, sf::Font* font,
 					std::string text, unsigned character_size, sf::Color text_idle, sf::Color text_hover,
 					sf::Color text_active, 
 					sf::Color idle_color, sf::Color hover_color, sf::Color active_color,
@@ -464,9 +486,6 @@ void Button::reinit(float x, float y, float width, float height, sf::Font* font,
 
 void Button::update()
 {
-	
-	//std::cout << std::boolalpha << Renderer::Instance()->is_top_ui(&shape) << "\n";
-
 	if (shape.getGlobalBounds().contains(Input::Instance()->mouse_position(get_view())) &&
 		Input::Instance()->get_mouse_down() && Renderer::Instance()->is_top_ui(&shape))
 	{
@@ -746,8 +765,8 @@ const Button* DropDownList::get_selected_button() const
 #pragma region FLAG_DROP_DOWN_LIST
 
 FlagDropDownList::FlagDropDownList(float x, float y, float width, float height, sf::Font& font,
-								   std::vector<std::string> list, unsigned default_index, int char_size)
-	: font(font), show_list(false), selection_change(false), enum_flag(list)
+								   EnumFlag flag, unsigned default_index, int char_size)
+	: font(font), show_list(false), selection_change(false), enum_flag(flag)
 {
 	this->position = sf::Vector2f(x, y);
 	this->width = width;
@@ -761,14 +780,21 @@ FlagDropDownList::FlagDropDownList(float x, float y, float width, float height, 
 		sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(20, 20, 20, 0)
 	);
 
+	if (enum_flag == true)
+	{
+		active_selection->set_colors(sf::Color(255, 255, 255, 150), sf::Color(255, 255, 255, 200), sf::Color(250, 250, 250, 50),
+									 sf::Color(70, 170, 70, 200), sf::Color(150, 250, 150, 200), sf::Color(20, 120, 20, 200),
+									 sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255));
+	}
+
 	active_selection->set_outline_thickness(2);
 
-	for (size_t i = 0; i < list.size(); i++)
+	for (size_t i = 0; i < flag.size(); i++)
 	{
 		this->list.push_back(
 			new GUI::Button(
 			x, y + ((i + 1) * height), width, height,
-			&font, list[i], char_size,
+			&font, flag.string_at(i), char_size,
 			sf::Color(255, 255, 255, 150), sf::Color(255, 255, 255, 255), sf::Color(250, 250, 250, 250),
 			sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200),
 			sf::Color(255, 255, 255, 0), sf::Color(255, 255, 255, 0), sf::Color(20, 20, 20, 0), i
@@ -839,7 +865,7 @@ void FlagDropDownList::update()
 												 sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255), sf::Color(0, 255, 0, 255));
 				}
 
-				toggle_list(false);
+				//toggle_list(false);
 				selection_change = true;
 				//active_selection->set_text(i->get_text());
 				//active_selection->set_id(i->get_id());
@@ -929,9 +955,13 @@ const std::vector<int> FlagDropDownList::get_selected_indexes()
 	return result;
 }
 
+void FlagDropDownList::set_enum_flag(EnumFlag flag)
+{
+	enum_flag = flag;
+
+}
+
 #pragma endregion
-
-
 
 #pragma region CHECK_BOX
 

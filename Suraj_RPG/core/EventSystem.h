@@ -211,7 +211,7 @@ enum class EventID
 	_SYSTEM_RENDERER_REFRESH_,
 	_SYSTEM_RENDERER_RENDER_,
 	_SYSTEM_RENDERER_CLEAR_,
-	_SYSTEM_RENDERER_CLEAR_GIZMOS_,
+	_SYSTEM_RENDERER_DRAW_GIZMOS_,
 	_SYSTEM_RENDERER_UPDATE_TOP_UI_,
 	_SYSTEM_RENDERER_FIXED_UPDATE_,
 #pragma endregion
@@ -251,6 +251,19 @@ enum class EventID
 	_SYSTEM_DIALOGUESYSTEM_UPDATE_,
 
 #pragma endregion
+
+#pragma region ResourceManager
+
+	_SYSTEM_RESOURCES_RELOAD_FLAG_,
+
+#pragma endregion
+
+#pragma region Scene
+
+	_SYSTEM_SCENE_SET_SELECTED_GAMEOBJECT_,
+
+#pragma endregion
+
 
 #pragma region STATE
 
@@ -294,7 +307,6 @@ enum class EventID
 #pragma endregion
 
 #pragma region Gameobject
-	GAMEOBJECT_INSTANTIATE,
 	GAMEOBJECT_DESTROY,
 	GAMEOBJECT_PARENT_CHANGE,
 

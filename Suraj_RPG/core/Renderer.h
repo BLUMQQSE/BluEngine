@@ -2,6 +2,7 @@
 #include "../globals.h"
 #include "../IRenderable.h"
 #include "Math.h"
+#include "ResourceManager.h"
 #include "EventSystem.h"
 
 namespace bm98::core
@@ -12,6 +13,8 @@ extern float SCALE;
 class Renderer
 	: sf::RenderTarget, public Listener
 {
+#define DRAW_GIZMOS true
+
 public:
 	// Returns instance of the EventSystem
 	static Renderer* Instance()
@@ -56,25 +59,12 @@ public:
 
 	};
 
-	struct GizmoObject
-	{
-		GizmoObject(FloatConvex drawable)
-		{
-			this->drawable = drawable;
-		}
-
-		FloatConvex drawable;
-
-
-	};
 	void init(RenderTarget* render_target);
 
 	inline bool is_top_ui(sf::Drawable* drawable) { return drawable == top_ui; }
 
 	void add(RenderObject render_object);
 	void add_ui(RenderObject ui_render_object);
-
-	void add_gizmo(GizmoObject gizmo);
 
 	void remove(sf::Drawable* drawable);
 	void remove_ui(sf::Drawable* drawable);
@@ -114,7 +104,6 @@ public:
 	sf::Vector2u get_window_size();
 	const sf::RenderTarget* get_window() const;
 
-
 protected:
 
 private:
@@ -128,10 +117,6 @@ private:
 	Renderer& operator=(const Renderer& rhs) {}
 
 	RenderTarget* window;
-
-	bool draw_gizmos = true;
-
-	std::vector<GizmoObject> gizmos;
 
 	std::list<RenderObject> renderables;
 	std::list<RenderObject> ui_renderables;
@@ -148,14 +133,82 @@ private:
 	void render();
 	void render_list(std::list<RenderObject>& list);
 
-	void render_gizmos();
 	void clear();
-	void clear_gizmos();
 	void fixed_update();
 
 	void update_top_ui();
 
 	void sort();
+
+};
+
+
+class Gizmo
+{
+public:
+
+	static sf::Color outline_color; //= sf::Color::White;
+	static sf::Color fill_color; //= sf::Color::Transparent;
+	static float outline_thickness; //= 1;
+
+	static void set_view(sf::View* v) { view = v; }
+
+	static void reset_values()
+	{
+		outline_color = sf::Color::White;
+		fill_color = sf::Color::Transparent;
+		outline_thickness = 1;
+	}
+
+	static void draw_convex(FloatConvex& convex)
+	{
+		convex.setFillColor(fill_color);
+		convex.setOutlineColor(outline_color);
+		convex.setOutlineThickness(outline_thickness);
+
+		Renderer::Instance()->draw(&convex, view);
+	}
+
+	static void draw_line(Vector2f from, Vector2f to)
+	{
+		FloatConvex line = FloatConvex::Line(from, to, 1.f);
+		draw_convex(line);
+	}
+
+	static void draw_circle(Vector2f center, float radius)
+	{
+		FloatConvex cir = FloatConvex::Circle(center, radius);
+		draw_convex(cir);
+	}
+
+	static void draw_rectangle(Vector2f pos, Vector2f size)
+	{
+		FloatConvex rec = FloatConvex::Rectangle(pos, size);
+		draw_convex(rec);
+	}
+
+	static void draw_text(Vector2f pos, std::string text, int size, sf::Color text_color, bool overlay = false)
+	{
+		sf::Text t;
+		t.setString(text);
+		int x = std::floorf(pos.x);
+		int y = std::floorf(pos.y);
+		t.setPosition(x, y);
+		//t.setFillColor(fill_color);
+		t.setFillColor(text_color);
+		t.setOutlineThickness(1);
+		t.setOutlineColor(sf::Color::Black);
+		//t.setOutlineColor(outline_color);
+		t.setFont(ResourceManager::Instance()->get_font("calibri-regular.ttf"));
+		t.setCharacterSize(size);
+		if (overlay)
+			Renderer::Instance()->draw(&t);
+		else
+			Renderer::Instance()->draw(&t, view);
+	}
+
+private:
+	static sf::View* view;
 
 };
 

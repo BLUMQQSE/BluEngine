@@ -132,16 +132,16 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 40.0,
+									"x" : 30.0,
 									"y" : 0.0
 								},
 								{
-									"x" : 40.0,
-									"y" : 80.0
+									"x" : 30.0,
+									"y" : 30.0
 								},
 								{
 									"x" : 0.0,
-									"y" : 80.0
+									"y" : 30.0
 								}
 							],
 							"point-count" : 4,
@@ -156,7 +156,7 @@
 						"collision-check-type" : "DISCRETE",
 						"hitbox-height" : 100.0,
 						"hitbox-offsetX" : 15.0,
-						"hitbox-offsetY" : 0.0,
+						"hitbox-offsetY" : 40.0,
 						"hitbox-width" : 50.0,
 						"trigger" : false
 					}
@@ -183,6 +183,19 @@
 				{
 					"name" :"InventoryGUIController",
 					"value" : null
+				},
+				{
+					"name" : "Damager",
+					"value" : 
+					{
+						"damage-amount" : 10,
+						"damage-target" : null,
+						"damage-type" : null,
+						"damageable-mask" : 
+						[
+							"DEFAULT"
+						]
+					}
 				}
 			],
 			"info" : 

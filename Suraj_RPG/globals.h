@@ -18,7 +18,6 @@ static std::string RemoveNamespace(std::string string)
 	return string;
 }
 
-
 class EnumFlag
 {
 public:
@@ -35,6 +34,15 @@ public:
 	int size()
 	{
 		return flags.size();
+	}
+
+	int count()
+	{
+		int result = 0;
+		for (int i = 0; i < flags.size(); i++)
+			if (flags[i].second)
+				result++;
+		return result;
 	}
 
 	template <typename T> bool contains(T in)
@@ -55,6 +63,16 @@ public:
 			return false;
 		}
 		return flags[index].second;
+	}
+
+	template <typename T> std::string string_at(T in)
+	{
+		int index = static_cast<int>(in);
+		if (index >= flags.size())
+		{
+			return "";
+		}
+		return flags[index].first;
 	}
 
 	template <typename T> bool& operator[](T in)
@@ -128,6 +146,15 @@ public:
 
 protected:
 	std::vector<std::pair<std::string, bool>> flags;
+
+};
+
+class Color : public sf::Color
+{
+public:
+	static const sf::Color Orange;
+	static const sf::Color LimeGreen;
+	static const sf::Color Teal;
 
 };
 

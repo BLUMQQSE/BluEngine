@@ -63,7 +63,7 @@ void TilemapComponent::init()
 	// Setting physical layers for each sorting layer to default
 	for (int i = 0; i < static_cast<int>(Sorting::Layer::UI); i++)
 	{
-		physical_layers[i] = PhysicsNS::Layer::DEFAULT;
+		physical_layers[(Sorting::Layer)i] = PhysicsNS::Layer::DEFAULT;
 	}
 	this->map_updateables.reserve(this->max_size.x * this->max_size.y * this->layers);
 
@@ -111,6 +111,11 @@ void TilemapComponent::add_to_buffer(sf::View* view)
 	set_view(view);
 }
 
+void TilemapComponent::on_draw_gizmos()
+{
+
+}
+
 void TilemapComponent::on_destroy()
 {
 	Renderer::Instance()->remove(&outline);
@@ -151,7 +156,7 @@ void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer,
 		if (map[x][y][static_cast<int>(layer)])
 			delete map[x][y][static_cast<int>(layer)];
 
-		map[x][y][static_cast<int>(layer)] = new Tile(position.x, position.y, x, y, grid_size_f, layer, physical_layers[static_cast<int>(layer)]);
+		map[x][y][static_cast<int>(layer)] = new Tile(position.x, position.y, x, y, grid_size_f, layer, physical_layers[layer]);
 
 		map[x][y][static_cast<int>(layer)]->add_animated_sprite_component(current_tileset_key, &tile_sheets.at(current_tileset_key), texture_rect, animation_timer);
 		map[x][y][static_cast<int>(layer)]->set_collision(collision);
@@ -193,7 +198,7 @@ void TilemapComponent::add_tiles(const int x, const int y, Sorting::Layer layer,
 
 			map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)] =
 				new Tile(position.x, position.y, x + static_cast<int>(w) / 32.f, y + static_cast<int>(h) / 32.f, grid_size_f, layer,
-					physical_layers[static_cast<int>(layer)]);
+					physical_layers[layer]);
 
 			map[x + static_cast<int>(w) / 32.f][y + static_cast<int>(h) / 32.f][static_cast<int>(layer)]->set_texture(
 				current_tileset_key, &tile_sheets.at(current_tileset_key), sub_rect);
@@ -244,7 +249,7 @@ void TilemapComponent::highlight_layer(Sorting::Layer layer)
 
 PhysicsNS::Layer TilemapComponent::get_layer(Sorting::Layer layer)
 {
-	return physical_layers.at(static_cast<int>(layer));
+	return physical_layers.at(layer);
 }
 
 sf::Texture* TilemapComponent::get_texture()
@@ -371,10 +376,13 @@ Json::Value TilemapComponent::serialize_json()
 	obj["grid-size"] = grid_size_u;
 	obj["file-path"] = file_path;
 
-	//for (auto r : map_renderables)
-	//{
-	//	obj["tiles"].append(r->serialize_json());
-	//}
+	for (auto& layer : physical_layers)
+	{
+		Json::Value obj2;
+		obj2["layer"] = Sorting::ToString(layer.first);
+		obj2["physical-layer"] = PhysicsNS::ToString(layer.second);
+		obj["physical-layers"].append(obj2);
+	}
 
 	for (int x = 0; x < map.size(); x++)
 		for (int y = 0; y < map[x].size(); y++)
@@ -401,6 +409,11 @@ void TilemapComponent::unserialize_json(Json::Value obj)
 	file_path = obj["file-path"].asString();
 
 	grid_size_f = static_cast<float>(grid_size_u);
+
+	for (auto layer : obj["physical-layers"])
+	{
+		physical_layers[Sorting::ToLayer(layer["layer"].asString())] = PhysicsNS::ToLayer(layer["physical-layer"].asString());
+	}
 
 	this->map_updateables.clear();
 	this->map_collidables.clear();
@@ -430,7 +443,7 @@ void TilemapComponent::unserialize_json(Json::Value obj)
 		std::string texture_source = tile["texture-source"].asString();
 		float animation_timer = tile["animation-timer"].asFloat();
 
-		map[x][y][z] = new Tile(position.x, position.y, x, y, grid_size_f, static_cast<Sorting::Layer>(z), physical_layers[z]);
+		map[x][y][z] = new Tile(position.x, position.y, x, y, grid_size_f, static_cast<Sorting::Layer>(z), physical_layers[(Sorting::Layer)z]);
 
 		if (tile["animated-sprite"].asBool())
 		{
@@ -488,6 +501,11 @@ void TilemapComponent::editor_update()
 	update_tilemap_changes();
 
 	
+}
+
+void TilemapComponent::set_physical_layer(Sorting::Layer layer, PhysicsNS::Layer physic)
+{
+	physical_layers[layer] = physic;
 }
 
 void TilemapComponent::LoadTileSheets()

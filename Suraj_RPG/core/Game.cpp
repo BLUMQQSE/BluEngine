@@ -78,7 +78,7 @@ void Game::run()
     while (window->isOpen())
     {
         update_delta_time();
-        if (Time::Instance()->fixed_delta_time() >= .01f)
+        if (Time::Instance()->fixed_delta_time() >= FIXED_INTERVAL)
         {
             fixed_update();
         }
@@ -127,10 +127,10 @@ void Game::update_delta_time()
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_FIXED_UPDATE_);
 
-    if (fps_averager == 1500)
+    if (fps_averager == 200)
     {
         fps_averager = 0;
-        fps = fps_col / 1500;
+        fps = fps_col / 200;
         fps_col = 0;
 
 
@@ -196,7 +196,6 @@ void Game::update()
 
 void Game::fixed_update()
 {
-    EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_);
     if (!states.empty())
     {
         states.top()->fixed_update();
@@ -304,5 +303,6 @@ void Game::unserialize_json(Json::Value obj)
     // Initialize time in Time class
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_INITIALIZE_, static_cast<void*>(&t));
 }
+
 
 }

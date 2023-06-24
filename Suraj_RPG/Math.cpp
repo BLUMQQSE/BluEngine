@@ -29,6 +29,12 @@ Vector2f::Vector2f(sf::Vector2f vec)
 	this->y = vec.y;
 }
 
+Vector2f::Vector2f(sf::Vector2i vec)
+{
+	this->x = vec.x;
+	this->y = vec.y;
+}
+
 float Vector2f::sqr_magnitude()
 {
 	return std::pow(x, 2) + std::pow(y, 2);
@@ -339,7 +345,7 @@ void FloatConvex::init()
 bool FloatConvex::contains_point(Vector2f position)
 {
 	FloatConvex point = FloatConvex::Polygon(position, {Vector2f(0,0), Vector2f(1, 0), Vector2f(0.5f, 1)});
-	return FloatConvex::Intersection(*this, point) != Vector2f::Infinity();
+	return FloatConvex::Intersection(*this, point).collision_exists;
 }
 
 void FloatConvex::move(float x, float y)
@@ -419,13 +425,37 @@ Vector2f FloatConvex::get_model_center()
 	return c;
 }
 
-Vector2f FloatConvex::Intersection(FloatConvex a, FloatConvex b)
+Vector2f FloatConvex::get_closest_point(Vector2f pos)
 {
+	Vector2f closest;
+
+	closest = position + model[0];
+	for (int i = 1; i < model.size(); i++)
+	{
+		if (Vector2f::Distance(position + model[i], pos) <
+			Vector2f::Distance(closest, pos))
+		{
+			closest = position + model[i];
+		}
+	}
+
+	return closest;
+}
+
+ObjectIntersect FloatConvex::Intersection(FloatConvex a, FloatConvex b)
+{
+	ObjectIntersect intersect;
+	intersect.convex_1 = a;
+	intersect.convex_2 = b;
+
 	if (a.get_shape_type() == ShapeType::CIRCLE && b.get_shape_type() == ShapeType::CIRCLE)
 	{
-		if(PreliminaryCircleCheck(a, b) == false)
-		return Vector2f::Infinity();
+		if (PreliminaryCircleCheck(a, b) == false)
+		{
+			return intersect;
+		}
 	}
+
 	Vector2f normal = Vector2f::Infinity();
 	float depth = INFINITY;
 
@@ -443,11 +473,12 @@ Vector2f FloatConvex::Intersection(FloatConvex a, FloatConvex b)
 		ProjectVertices(b, axis, minB, maxB);
 
 		if (minA >= maxB || minB >= maxA)
-			return Vector2f::Infinity();
+			return intersect;
 
 		float axisDepth = std::min(maxB - minA, maxA - minB);
 		if (axisDepth < depth)
 		{
+			//intersect.detection_point = 
 			depth = axisDepth;
 			normal = axis;
 		}
@@ -468,11 +499,12 @@ Vector2f FloatConvex::Intersection(FloatConvex a, FloatConvex b)
 		ProjectVertices(b, axis, minB, maxB);
 
 		if (minA >= maxB || minB >= maxA)
-			return Vector2f::Infinity();
+			return intersect;
 		
 		float axisDepth = std::min(maxB - minA, maxA - minB);
 		if (axisDepth < depth)
 		{
+			//intersect.detection_point = 
 			depth = axisDepth;
 			normal = axis;
 		}
@@ -493,7 +525,9 @@ Vector2f FloatConvex::Intersection(FloatConvex a, FloatConvex b)
 		normal = -normal;
 
 	// subtract 1 from depth so that after collision is resolved can still detect the shapes are touching
-	return (depth-1) * normal;
+	intersect.penetration_vector = (depth - 1) * normal;
+	intersect.collision_exists = true;
+	return intersect;
 
 }
 

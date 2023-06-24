@@ -120,6 +120,9 @@ void SceneManager::load_scene_prefab(std::string scene_name)
 	active_scene->set_file_name(scene_name);
 	active_scene->unserialize_json(obj);
 
+	for (int i = 0; i < get_objects_in_scene().size(); i++)
+		get_objects_in_scene()[i].lock()->get_info().unique_id = 0;
+
 	EventSystem::Instance()->push_event(EventID::SCENE_CHANGE_FLAG);
 }
 
@@ -152,12 +155,13 @@ void SceneManager::save_scene_prefab()
 	FileManager::Instance()->save_to_file_styled(active_scene->serialize_json(), scenes_file_path + active_scene->get_file_name());
 }
 
-void SceneManager::instantiate_gameobject(GameObject* game_object)
+void SceneManager::instantiate_gameobject(std::shared_ptr<GameObject> game_object)
 {
 	if (!game_object)
 		return;
 	
-	EventSystem::Instance()->push_event(EventID::GAMEOBJECT_INSTANTIATE, static_cast<void*>(game_object));
+	active_scene->insert_gameobject(game_object);
+	//EventSystem::Instance()->push_event(EventID::GAMEOBJECT_INSTANTIATE, static_cast<void*>(game_object));
 }
 
 void SceneManager::instantiate_gameobject_on_load(std::shared_ptr<GameObject> game_object)
@@ -179,17 +183,6 @@ std::vector<std::weak_ptr<GameObject>> SceneManager::get_objects_in_scene()
 	return active_scene->get_objects();
 }
 
-std::weak_ptr<GameObject> SceneManager::test(Tags::Tag tag, std::shared_ptr<GameObject> ignore)
-{
-	std::vector<std::weak_ptr<GameObject>> objects = active_scene->get_objects();
-	for (auto& o : objects)
-	{
-		if(o.lock()->get_info().tag == tag && o.lock() != ignore)
-			return o;
-	}
-	return std::weak_ptr(std::shared_ptr<GameObject>(nullptr));
-}
-
 std::weak_ptr<GameObject> SceneManager::find(std::string name, std::shared_ptr<GameObject> object_to_ignore)
 {
 	std::vector<std::weak_ptr<GameObject>> objects = active_scene->get_objects();
@@ -199,6 +192,21 @@ std::weak_ptr<GameObject> SceneManager::find(std::string name, std::shared_ptr<G
 
 	return std::weak_ptr<GameObject>(std::shared_ptr<GameObject>(nullptr));
 
+}
+
+std::weak_ptr<GameObject> SceneManager::find_with_id(unsigned long id, std::shared_ptr<GameObject> ignore)
+{
+	std::vector<std::weak_ptr<GameObject>> objects = active_scene->get_objects();
+	std::cout << objects.size() << " AAA\n";
+	for (auto& o : objects)
+	{
+		if (o.lock()->get_info().unique_id == id)
+		{
+			return o;
+		}
+	}
+
+	return std::weak_ptr<GameObject>(std::shared_ptr<GameObject>(nullptr));
 }
 
 std::weak_ptr<GameObject> SceneManager::find_with_tag(Tags::Tag tag, std::shared_ptr<GameObject> object_to_ignore)

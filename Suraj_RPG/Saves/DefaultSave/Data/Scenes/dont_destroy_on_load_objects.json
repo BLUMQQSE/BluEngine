@@ -1,4 +1,272 @@
 {
 	"file-name" : "dont_destroy_on_load_objects.json",
-	"scene-name" : ""
+	"gameobjects" : 
+	[
+		{
+			"components" : 
+			[
+				{
+					"name" : "CameraComponent",
+					"value" : null
+				},
+				{
+					"name" : "DontDestroyOnLoad",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "MainCamera",
+				"physics-layer" : "PHYSICS_IGNORE",
+				"tag" : "CAMERA",
+				"unique-id" : 4
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 178.89079284667969,
+					"y" : 232.0
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"children" : 
+			[
+				{
+					"components" : 
+					[
+						{
+							"name" : "Inventory",
+							"value" : 
+							{
+								"content" : 
+								[
+									{
+										"current-capacity" : 1,
+										"index" : 0,
+										"item" : "SwordData.json"
+									}
+								],
+								"inventory-type" : "GENERAL",
+								"max-size" : 18
+							}
+						},
+						{
+							"name" : "InventoryWindow",
+							"value" : null
+						}
+					],
+					"info" : 
+					{
+						"name" : "GeneralInventory",
+						"physics-layer" : "DEFAULT",
+						"tag" : "PLAYER",
+						"unique-id" : 1
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : -1000.0000610351562,
+							"y" : -1000.0
+						},
+						"position" : 
+						{
+							"x" : -853.1092529296875,
+							"y" : -800.0
+						},
+						"rotation" : 0.0
+					}
+				},
+				{
+					"components" : 
+					[
+						{
+							"name" : "Inventory",
+							"value" : 
+							{
+								"inventory-type" : "COMBAT",
+								"max-size" : 10
+							}
+						},
+						{
+							"name" : "InventoryWindow",
+							"value" : null
+						}
+					],
+					"info" : 
+					{
+						"name" : "CombatInventory",
+						"physics-layer" : "DEFAULT",
+						"tag" : "PLAYER",
+						"unique-id" : 2
+					},
+					"transform" : 
+					{
+						"local-position" : 
+						{
+							"x" : -1000.0000610351562,
+							"y" : -1000.0
+						},
+						"position" : 
+						{
+							"x" : -853.1092529296875,
+							"y" : -800.0
+						},
+						"rotation" : 0.0
+					}
+				}
+			],
+			"components" : 
+			[
+				{
+					"name" : "PlayerController",
+					"value" : null
+				},
+				{
+					"name" : "AudioSource",
+					"value" : 
+					{
+						"current-audio-clip" : "footsteps.wav"
+					}
+				},
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ACTOR",
+							"z-order" : 10
+						},
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
+						"sprite-file-path" : "player_sprite_sheet.png"
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.5,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 2.0,
+						"max-velocity" : 7.0,
+						"orientation" : "RIGHT"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 30.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 30.0,
+									"y" : 30.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 30.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 161.89079284667969,
+								"y" : 240.0
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 100.0,
+						"hitbox-offsetX" : 15.0,
+						"hitbox-offsetY" : 40.0,
+						"hitbox-width" : 50.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "AnimationComponent",
+					"value" : null
+				},
+				{
+					"name" : "DontDestroyOnLoad",
+					"value" : null
+				},
+				{
+					"name" : "Interactor",
+					"value" : 
+					{
+						"interactable-mask" : 
+						[
+							"INTERACTABLE"
+						],
+						"interaction-radius" : 60.0
+					}
+				},
+				{
+					"name" : "InventoryGUIController",
+					"value" : null
+				},
+				{
+					"name" : "Damager",
+					"value" : 
+					{
+						"damage-amount" : 10,
+						"damage-target" : null,
+						"damage-type" : null,
+						"damageable-mask" : 
+						[
+							"DEFAULT"
+						]
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Player",
+				"physics-layer" : "DEFAULT",
+				"tag" : "PLAYER",
+				"unique-id" : 3
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 146.89079284667969,
+					"y" : 200.0
+				},
+				"rotation" : 0.0
+			}
+		}
+	]
 }

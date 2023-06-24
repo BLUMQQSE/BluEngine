@@ -16,6 +16,7 @@ public:
 		FAILURE = spdlog::level::err
 
 	};
+
 	// Returns instance of the Debugger
 	static Debug* Instance()
 	{
@@ -36,6 +37,7 @@ public:
 	void mouse_position_display(sf::Font& font, sf::View* view = nullptr);
 	void mouse_position_display(sf::Font& font, sf::View* view,
 		sf::Vector2f offset);
+
 
 private:
 	

@@ -88,14 +88,6 @@ void Renderer::add_ui(RenderObject ui_render_object)
 
 }
 
-void Renderer::add_gizmo(GizmoObject gizmo)
-{
-	if (!draw_gizmos)
-		return;
-	gizmos.push_back(gizmo);
-}
-
-
 void Renderer::remove(sf::Drawable* drawable)
 {	
 	
@@ -142,6 +134,7 @@ void Renderer::draw(sf::Drawable* drawable, sf::View* view, sf::Shader* shader)
 		return;
 	}
 	window->draw(*drawable);
+	window->setView(window->getDefaultView());
 }
 
 void Renderer::clear_screen()
@@ -167,9 +160,11 @@ void Renderer::refresh()
 
 void Renderer::render()
 {
-	//std::cout << renderables.size() << "\n";
 	render_list(renderables);
-	render_gizmos();
+
+	if(DRAW_GIZMOS)
+		EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_DRAW_GIZMOS_);
+	
 	render_list(ui_renderables);
 }
 
@@ -197,23 +192,10 @@ void Renderer::render_list(std::list<RenderObject>& list)
 	}
 }
 
-void Renderer::render_gizmos()
-{
-	for (const auto& g : gizmos)
-	{
-		window->draw(g.drawable);
-	}
-}
-
 void Renderer::clear()
 {
 	renderables.clear();
 	ui_renderables.clear();
-}
-
-void Renderer::clear_gizmos()
-{
-	gizmos.clear();
 }
 
 void Renderer::fixed_update()
@@ -273,7 +255,6 @@ Renderer::Renderer()
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_RENDER_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_, this);
-	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_, this);
 	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_, this);
 }
 
@@ -298,9 +279,6 @@ void Renderer::handle_event(Event* event)
 		break;
 	case EventID::_SYSTEM_RENDERER_REFRESH_:
 		refresh();
-		break;
-	case EventID::_SYSTEM_RENDERER_CLEAR_GIZMOS_:
-		clear_gizmos();
 		break;
 	case EventID::_SYSTEM_RENDERER_UPDATE_TOP_UI_:
 		update_top_ui();

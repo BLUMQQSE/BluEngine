@@ -13,11 +13,14 @@ public:
     virtual void awake() override;
     virtual void start() override;
 
-    Vector2f intersects(const FloatConvex collider, 
+    virtual void on_draw_gizmos_selected() override;
+
+    TilemapIntersect intersects(const FloatConvex collider, 
         PhysicsNS::LayerMask mask);
 
-private:
+    virtual Vector2f get_closest_point(Vector2f pos) override;
 
+private:
     std::weak_ptr<TilemapComponent> tilemap;
     std::vector<std::vector<FloatConvex>> colliders;
 

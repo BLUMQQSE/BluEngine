@@ -16,6 +16,7 @@ public:
 	Vector2f();
 	Vector2f(float x, float y);
 	Vector2f(sf::Vector2f vec);
+	Vector2f(sf::Vector2i vec);
 
 	float sqr_magnitude();
 	float magnitude();
@@ -82,6 +83,7 @@ public:
 	virtual void unserialize_json(Json::Value obj) override;
 };
 
+class ObjectIntersect;
 /// <summary>
 /// Class to wrap sf::ConvexShape and add math functionality.
 /// </summary>
@@ -223,12 +225,14 @@ public:
 	inline std::vector<Vector2f> get_model() { return model; }
 	inline ShapeType get_shape_type() { return shape_type; }
 
+	Vector2f get_closest_point(Vector2f pos);
+
 	/// <summary>
 	/// Determines if two shapes overlap.
 	/// </summary>
 	/// <returns>The minimum penetration vector between the two shapes. This vector is
 	/// a.position - b.position. If no collision, returns Vector2f::infinity().</returns>
-	static Vector2f Intersection(FloatConvex a, FloatConvex b);
+	static ObjectIntersect Intersection(FloatConvex a, FloatConvex b);
 
 
 	// Inherited via IData
@@ -256,6 +260,157 @@ private:
 
 
 };
+
+
+class Intersect
+{
+public:
+
+	bool collision_exists = false;
+	Vector2f penetration_vector = Vector2f::Infinity();
+
+	virtual void calculate_contacts(Vector2f first = Vector2f::Zero(),
+									Vector2f second = Vector2f::Zero()) {}
+
+	std::vector<Vector2f> get_contact_points()
+	{
+		if (contact_points.size() == 0)
+			calculate_contacts();
+		return contact_points;
+	}
+
+	Vector2f get_contact_center()
+	{
+		if (contact_center == Vector2f::Infinity())
+			calculate_contacts();
+		return contact_center;
+	}
+
+protected:
+	std::vector<Vector2f> contact_points;
+	// Average of all points in contact
+	Vector2f contact_center = Vector2f::Infinity();
+
+};
+
+class ObjectIntersect : public Intersect
+{
+public:
+	FloatConvex convex_1;
+	FloatConvex convex_2;
+
+	ObjectIntersect()
+	{
+
+	}
+
+	ObjectIntersect(Intersect i)
+	{
+		collision_exists = i.collision_exists;
+		penetration_vector = i.penetration_vector;
+		contact_center = i.get_contact_center();
+		contact_points = i.get_contact_points();
+	}
+
+	void calculate_contacts(Vector2f first = Vector2f::Zero(), 
+							Vector2f second = Vector2f::Zero()) override
+	{
+		if (contact_points.size() > 0)
+			return;
+
+		convex_1.move(first.x, first.y);
+		convex_2.move(second.x, second.y);
+
+		for (int i = 0; i < convex_1.getPointCount(); i++)
+		{
+			if (convex_2.contains_point(convex_1.getPoint(i)))
+				contact_points.push_back(convex_1.getPoint(i));
+		}
+		for (int i = 0; i < convex_2.getPointCount(); i++)
+		{
+			if (convex_1.contains_point(convex_2.getPoint(i)))
+				contact_points.push_back(convex_2.getPoint(i));
+		}
+
+		for (int i = 0; i < contact_points.size(); i++)
+			contact_center += contact_points[i];
+
+		if (contact_points.size() > 0)
+		{
+			contact_center.x /= contact_points.size();
+		}
+	}
+
+
+};
+
+class TilemapIntersect : public Intersect
+{
+public:
+
+	TilemapIntersect()
+	{
+
+	}
+	TilemapIntersect(Intersect i)
+	{
+		collision_exists = i.collision_exists;
+		penetration_vector = i.penetration_vector;
+		contact_center = i.get_contact_center();
+		contact_points = i.get_contact_points();
+	}
+	TilemapIntersect(ObjectIntersect o)
+	{
+		convex_1.push_back(o.convex_1);
+		convex_2.push_back(o.convex_2);
+		collision_exists = o.collision_exists;
+		penetration_vector = o.penetration_vector;
+		contact_center = o.get_contact_center();
+		contact_points = o.get_contact_points();
+	}
+
+	std::vector<FloatConvex> convex_1;
+	std::vector<FloatConvex> convex_2;
+	virtual void calculate_contacts(Vector2f first = Vector2f::Zero(),
+									Vector2f second = Vector2f::Zero())
+	{
+		for(auto& c1 : convex_1)
+			c1.move(first.x, first.y);
+		for(auto& c2 : convex_2)
+			c2.move(second.x, second.y);
+
+		for (auto& c1 : convex_1)
+		{
+			for (int i = 0; i < c1.getPointCount(); i++)
+			{
+				for (auto& c2 : convex_2)
+				{
+					if (c2.contains_point(c1.getPoint(i)))
+						contact_points.push_back(c1.getPoint(i));
+				}
+			}
+		}
+		for (auto& c2 : convex_2)
+		{
+			for (int i = 0; i < c2.getPointCount(); i++)
+			{
+				for (auto& c1 : convex_1)
+				{
+					if (c1.contains_point(c2.getPoint(i)))
+						contact_points.push_back(c2.getPoint(i));
+				}
+			}
+		}
+		for (int i = 0; i < contact_points.size(); i++)
+			contact_center += contact_points[i];
+
+		if (contact_points.size() > 0)
+		{
+			contact_center.x /= contact_points.size();
+		}
+	}
+};
+
 
 }
 

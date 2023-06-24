@@ -105,6 +105,18 @@ void Interactor::fixed_update()
 
 }
 
+void Interactor::on_draw_gizmos()
+{
+	if (count > 0)
+		Gizmo::outline_color = Color::Red;
+	else
+		Gizmo::outline_color = Color::Cyan;
+
+	Gizmo::draw_circle(game_object->get_center(), interaction_radius);
+	Gizmo::draw_text(game_object->get_center() + Vector2f(0, interaction_radius), "[" +
+					 std::to_string(game_object->get_info().unique_id) + "] Interactor", 10, Color::White);
+}
+
 void Interactor::remove_interactable()
 {
 	current_interactable = std::weak_ptr<IInteractable>();
@@ -141,7 +153,7 @@ std::vector<Editor::SerializedVar> Interactor::get_editor_values()
 	vars.push_back(Editor::SerializedVar("count", static_cast<void*>(&count), Var::Type::Int));
 	vars.push_back(Editor::SerializedVar("radius", static_cast<void*>(&interaction_radius), Var::Type::Float));
 	vars.push_back(Editor::SerializedVar("interacting", static_cast<void*>(&interacting), Var::Type::Bool));
-	vars.push_back(Editor::SerializedVar("mask", static_cast<void*>(&interactable_mask), Var::Type::FlagDropdown, PhysicsNS::ToVector()));
+	vars.push_back(Editor::SerializedVar("mask", static_cast<void*>(&interactable_mask), Var::Type::FlagDropdown));
 
 	return vars;
 }

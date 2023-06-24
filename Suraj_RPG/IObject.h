@@ -29,5 +29,14 @@ public:
 
 	}
 
+	virtual void on_draw_gizmos()
+	{
+
+	}
+	virtual void on_draw_gizmos_selected()
+	{
+
+	}
+
 };
 }

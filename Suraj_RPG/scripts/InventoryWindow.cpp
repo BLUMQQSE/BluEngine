@@ -10,8 +10,8 @@ namespace bm98
 
 void InventoryWindow::init()
 {
-	inventory = game_object->get_component<Inventory>().lock().get();
-	int size = inventory->get_size();
+	inventory = game_object->get_component<Inventory>();
+	int size = inventory.lock()->get_size();
 
 	if (size == 18)
 	{
@@ -60,7 +60,7 @@ void InventoryWindow::handle_event(Event* event)
 	{
 		case EventID::INTERACTION_INVENTORY_UPDATED:
 
-			if (static_cast<Inventory*>(event->get_caller().pointer) == inventory)
+			if (static_cast<Inventory*>(event->get_caller().pointer) == inventory.lock().get())
 				refresh_window();
 			break;
 		default:
@@ -84,15 +84,15 @@ void InventoryWindow::create_inventory_window()
 			images.push_back(panel->get_panel("Image" + std::to_string(i)));
 			counts.push_back(dynamic_cast<GUI::Label*>(panel->get_element("Count" + std::to_string(i))));
 
-			if (inventory->get_item(i))
+			if (inventory.lock()->get_item(i).lock())
 			{
 				images[i]->set_fill_color(sf::Color::White);
 				images[i]->apply_texture(
-					inventory->get_item(i)->get_texture(),
-					inventory->get_item(i)->get_rect()
+					inventory.lock()->get_item(i).lock()->get_texture(),
+					inventory.lock()->get_item(i).lock()->get_rect()
 				);
-				if (inventory->get_capacity(i) > 1)
-					counts[i]->set_text(std::to_string(inventory->get_capacity(i)));
+				if (inventory.lock()->get_capacity(i) > 1)
+					counts[i]->set_text(std::to_string(inventory.lock()->get_capacity(i)));
 			}
 			i++;
 		}

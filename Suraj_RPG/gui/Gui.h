@@ -111,6 +111,8 @@ class Button : public GUIObject
 
 public:
 	Button();
+	Button(Vector2f pos, Vector2f size, sf::Font* font, std::string text, unsigned character_size,
+		   sf::Color idle, sf::Color hover, sf::Color active, bool transparent = false);
 	Button(float x, float y, float width, float height, sf::Font* font,
 		std::string text, unsigned character_size, sf::Color text_idle, sf::Color text_hover,
 		sf::Color text_active, sf::Color idle_color, sf::Color hover_color,
@@ -120,6 +122,8 @@ public:
 		sf::Color outline_active_color = sf::Color::Transparent, short unsigned id = 0);
 	virtual ~Button();
 
+	void reinit(Vector2f pos, Vector2f size, sf::Font* font, std::string text, unsigned character_size,
+				sf::Color idle, sf::Color hover, sf::Color active, bool transparent = false);
 	void reinit(float x, float y, float width, float height, sf::Font* font,
 				std::string text, unsigned character_size, sf::Color text_idle, sf::Color text_hover,
 				sf::Color text_active, sf::Color idle_color, sf::Color hover_color,
@@ -211,7 +215,7 @@ class FlagDropDownList : public GUIObject
 {
 public:
 	FlagDropDownList(float x, float y, float width, float height, sf::Font& font,
-				 std::vector<std::string> list, unsigned default_index = 0, int char_size = 14);
+				 EnumFlag flag, unsigned default_index = 0, int char_size = 14);
 	~FlagDropDownList();
 
 	virtual void update() override;
@@ -227,6 +231,8 @@ public:
 
 	const EnumFlag& get_enum_flag() const { return enum_flag; }
 	const std::vector<int> get_selected_indexes();
+
+	void set_enum_flag(EnumFlag flag);
 	
 
 private:

@@ -46,15 +46,14 @@ public:
 	/// <summary>
 	/// Instantiates game objects into the active scene.
 	/// </summary>
-	void instantiate_gameobject(GameObject* game_object);
+	void instantiate_gameobject(std::shared_ptr<GameObject> game_object);
 	void instantiate_gameobject_on_load(std::shared_ptr<GameObject> game_object);
 	void destroy_gameobject(std::shared_ptr<GameObject> game_object);
 
 	std::vector<std::weak_ptr<GameObject>> get_objects_in_scene();
 
-	std::weak_ptr<GameObject> test(Tags::Tag tag, std::shared_ptr<GameObject> ignore);
-
 	std::weak_ptr<GameObject> find(std::string name, std::shared_ptr<GameObject> object_to_ignore);
+	std::weak_ptr<GameObject> find_with_id(unsigned long id, std::shared_ptr<GameObject> object_to_ignore);
 	std::weak_ptr<GameObject> find_with_tag(Tags::Tag tag, std::shared_ptr<GameObject> object_to_ignore);
 	std::vector<std::weak_ptr<GameObject>> find_all_with_tag(Tags::Tag tag, std::shared_ptr<GameObject> object_to_ignore);
 	template <typename T> static  std::weak_ptr<GameObject> find_of_type(std::shared_ptr<GameObject> object_to_ignore);

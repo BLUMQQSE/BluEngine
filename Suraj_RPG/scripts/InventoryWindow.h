@@ -21,7 +21,7 @@ public:
 
 	/// <returns>The inventory window panel.</returns>
 	inline GUI::Panel* get_window() { return panel; }
-	inline Inventory* get_inventory() { return inventory; }
+	inline std::weak_ptr<Inventory> get_inventory() { return inventory; }
 
 	inline std::vector<GUI::Panel*> get_slots() { return slots; }
 	inline std::vector<GUI::Panel*> get_images() { return images; }
@@ -33,7 +33,7 @@ public:
 	void refresh_window();
 
 private:
-	Inventory* inventory;
+	std::weak_ptr<Inventory> inventory;
 	GUI::Panel* panel;
 	std::vector<GUI::Panel*> slots;
 	std::vector<GUI::Panel*> images;

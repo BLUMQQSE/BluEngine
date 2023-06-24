@@ -28,6 +28,9 @@ public:
     virtual void fixed_update() override;
     virtual void add_to_buffer(sf::View* = nullptr) override;
 
+    virtual void on_draw_gizmos() override;
+    virtual void on_draw_gizmos_selected() override;
+
     virtual void on_collision_enter(Collision info) override;
     virtual void on_collision_stay(Collision info) override;
     virtual void on_collision_exit(Collision info) override;
@@ -43,6 +46,8 @@ public:
 private:
     Vector2f movement_input;
     bool attack;
+
+    bool raycast = false;
     
     std::weak_ptr<AnimationComponent> anim;
     std::weak_ptr<RigidbodyComponent> rigid;

@@ -4,7 +4,6 @@
 #include "core/Debug.h"
 
 #include "Component.h"
-#include "IRenderable.h"
 #include "Math.h"
 namespace bm98
 {
@@ -52,13 +51,15 @@ static std::vector<std::string> collisiondetection_to_vector()
 
 
 class ColliderComponent :
-    public Component , public IRenderable
+    public Component
 {
 public:
 	ColliderComponent();
 	virtual ~ColliderComponent();
 
 	virtual void init() override;
+
+	virtual void on_draw_gizmos() override;
 
 	virtual bool intersects(const FloatConvex collider);
 
@@ -74,6 +75,8 @@ public:
 	virtual void set_world_position(Vector2f pos);
 
 	FloatConvex& get_collider_bounds();
+	virtual Vector2f get_closest_point(Vector2f pos);
+
 	const bool is_trigger() const;
 	const bool is_active();
 

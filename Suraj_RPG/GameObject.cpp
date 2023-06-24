@@ -40,6 +40,7 @@
 #include "scripts/damage/Damager.h"
 
 #include "DummyAI.h"
+#include "ContextSteering.h"
 
 namespace bm98
 {
@@ -47,6 +48,8 @@ using namespace core;
 GameObject::GameObject()
 {
 	unique_runtime_id = get_unique_id();
+	info.unique_id = 0;
+	info.layer = PhysicsNS::Layer::DEFAULT;
 	active = true;
 }
 
@@ -90,7 +93,6 @@ void GameObject::on_destroy()
 void GameObject::update()
 {
 	handle_removed_components();
-	
 	if (!active)
 		return;
 	for(std::size_t i = 0; i != components.size(); i++)
@@ -113,76 +115,59 @@ void GameObject::fixed_update()
 		components[i]->fixed_update();
 }
 
+
+void GameObject::on_draw_gizmos()
+{
+	for (auto& c : components)
+	{
+		Gizmo::reset_values();
+		c->on_draw_gizmos();
+	}
+}
+
+void GameObject::on_draw_gizmos_selected()
+{
+	for (auto& c : components)
+	{
+		Gizmo::reset_values();
+		c->on_draw_gizmos_selected();
+	}
+}
+
 void GameObject::on_collision_enter(Collision info)
 {
-	if (has_component<RigidbodyComponent>())
-	{
-		for (std::size_t i = 0; i != components.size(); i++)
-			components[i]->on_collision_enter(info);
-		return;
-	}
-	if (parent.lock())
-		parent.lock()->on_collision_enter(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_collision_enter(info);
 }
 
 void GameObject::on_collision_stay(Collision info)
 {
-	if (has_component<RigidbodyComponent>())
-	{
-		for (std::size_t i = 0; i != components.size(); i++)
-			components[i]->on_collision_stay(info);
-		return;
-	}
-	if (parent.lock())
-		parent.lock()->on_collision_stay(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_collision_stay(info);
 }
 
 void GameObject::on_collision_exit(Collision info)
 {
-	if (has_component<RigidbodyComponent>())
-	{
-		for (std::size_t i = 0; i != components.size(); i++)
-			components[i]->on_collision_exit(info);
-		return;
-	}
-	if (parent.lock())
-		parent.lock()->on_collision_exit(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_collision_exit(info);	
 }
 
 void GameObject::on_trigger_enter(Collider info)
 {
-	if (has_component<RigidbodyComponent>())
-	{
-		for (std::size_t i = 0; i != components.size(); i++)
-			components[i]->on_trigger_enter(info);
-		return;
-	}
-	if (parent.lock())
-		parent.lock()->on_trigger_enter(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_trigger_enter(info);
 }
 
 void GameObject::on_trigger_stay(Collider info)
 {
-	if (has_component<RigidbodyComponent>())
-	{
-		for (std::size_t i = 0; i != components.size(); i++)
-			components[i]->on_trigger_stay(info);
-		return;
-	}
-	if (parent.lock())
-		parent.lock()->on_trigger_stay(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_trigger_stay(info);
 }
 
 void GameObject::on_trigger_exit(Collider info)
 {
-	if (has_component<RigidbodyComponent>())
-	{
-		for (std::size_t i = 0; i != components.size(); i++)
-			components[i]->on_trigger_exit(info);
-		return;
-	}
-	if (parent.lock())
-		parent.lock()->on_trigger_exit(info);
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_trigger_exit(info);
 }
 
 void GameObject::add_to_buffer(sf::View* view)
@@ -261,6 +246,7 @@ void GameObject::set_parent(std::shared_ptr<GameObject> parent)
 		set_local_position(parent->get_world_position() - get_world_position());
 		// 
 		//seems to be the posiotion issue
+		
 		this->parent.lock()->add_child(this->self());
 	}
 }
@@ -454,6 +440,8 @@ void GameObject::unserialize_json(Json::Value obj)
 
 void GameObject::add_child(std::shared_ptr<GameObject> child)
 {
+	if (!child.get())
+		int x = 3;
 	children.push_back(child);
 }
 
@@ -502,6 +490,8 @@ std::weak_ptr<Component> GameObject::add_component_by_name(std::string component
 		return add_component<Chest>();
 	if (component_name == "ChildAnimationComponent")
 		return add_component<ChildAnimationComponent>();
+	if (component_name == "ContextSteering")
+		return add_component<ContextSteering>();
 #pragma endregion
 #pragma region D
 	if (component_name == "Damager")
@@ -577,6 +567,8 @@ void GameObject::remove_component_by_name(std::string component_name)
 		return remove_component<Chest>();
 	if (component_name == "ChildAnimationComponent")
 		return remove_component<ChildAnimationComponent>();
+	if (component_name == "ContextSteering")
+		return remove_component<ContextSteering>();
 #pragma endregion
 #pragma region D
 	if (component_name == "Damager")

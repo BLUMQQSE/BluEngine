@@ -16,8 +16,8 @@ public:
     struct Hand
     {
         Inventory::InventoryItem item;
-        Inventory* inventory;
-        InventoryWindow* window;
+        std::weak_ptr<Inventory> inventory;
+        std::weak_ptr<InventoryWindow> window;
         int index = 0;
         FloatConvex image;
         Vector2f image_size;
@@ -48,8 +48,8 @@ public:
         void clear()
         {
             item = Inventory::InventoryItem();
-            inventory = nullptr;
-            window = nullptr;
+            inventory = std::shared_ptr<Inventory>(nullptr);
+            window = std::shared_ptr<InventoryWindow>(nullptr);
             index = 0;
             image.setFillColor(sf::Color::Transparent);
             render = false;
@@ -58,9 +58,9 @@ public:
 
         void send_back()
         {
-            if (item.item)
+            if (item.item.lock())
             {
-                inventory[index].add_item(index, item.item, item.current_capacity);
+                inventory.lock().get()[index].add_item(index, item.item.lock(), item.current_capacity);
             }
             clear();
         }
@@ -75,17 +75,17 @@ public:
     /// Currently Close all not working
     /// </summary>
     void toggle_inventory(InventoryNS::WindowToggle window_to_toggle);
-    void set_external(InventoryWindow* inv);
+    void set_external(std::shared_ptr<InventoryWindow> inv);
     void remove_external();
 
 private:
-    Inventory* general_inventory;
-    Inventory* combat_inventory;
-    Inventory* external_inventory;
+    std::weak_ptr<Inventory> general_inventory;
+    std::weak_ptr<Inventory> combat_inventory;
+    std::weak_ptr<Inventory> external_inventory;
 
-    InventoryWindow* general_window;
-    InventoryWindow* combat_window;
-    InventoryWindow* external_window;
+    std::weak_ptr<InventoryWindow> general_window;
+    std::weak_ptr<InventoryWindow> combat_window;
+    std::weak_ptr<InventoryWindow> external_window;
 
     Hand hand;
 
@@ -93,9 +93,9 @@ private:
     void handle_right_click();
     void handle_shift_left_click();
 
-    int mouse_in_slot(InventoryWindow*& win, Inventory*& inv);
-    bool mouse_in_bounds(InventoryWindow*& win, Inventory*& inv);
-    int mouse_in_slot(InventoryWindow*& win);
+    int mouse_in_slot(std::shared_ptr<InventoryWindow>& win, std::shared_ptr<Inventory>& inv);
+    bool mouse_in_bounds(std::shared_ptr<InventoryWindow>& win, std::shared_ptr<Inventory>& inv);
+    int mouse_in_slot(std::shared_ptr<InventoryWindow>& win);
 
 
 };

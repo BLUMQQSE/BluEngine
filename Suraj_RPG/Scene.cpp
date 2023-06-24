@@ -17,11 +17,12 @@ Scene::Scene(std::string file_name)
 	:file_name(file_name)
 {
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_PARENT_CHANGE, this);
-	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_INSTANTIATE, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_DESTROY, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_DRAW_GIZMOS_, this);
 
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG, this);
 	EventSystem::Instance()->subscribe(EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG, this);
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_SCENE_SET_SELECTED_GAMEOBJECT_, this);
 }
 
 Scene::~Scene()
@@ -42,6 +43,7 @@ void Scene::init()
 		if (o->has_component<CameraComponent>())
 		{
 			scene_view = &o->get_component<CameraComponent>().lock()->get_camera_view();
+			Gizmo::set_view(scene_view);
 		}
 	}
 
@@ -79,6 +81,16 @@ void Scene::render(sf::View* view)
 	}
 }
 
+void Scene::on_draw_gizmos()
+{
+	for (auto& g : objects_in_scene)
+		g->on_draw_gizmos();
+
+	if (selected_object)
+		selected_object->on_draw_gizmos_selected();
+
+}
+
 std::vector<std::weak_ptr<GameObject>> Scene::get_dont_destroy_objects()
 {
 	std::vector<std::weak_ptr<GameObject>> objs;
@@ -95,6 +107,12 @@ std::vector<std::weak_ptr<GameObject>> Scene::get_dont_destroy_objects()
 void Scene::insert_gameobject(std::shared_ptr<GameObject> go, bool initialize)
 {
 	go->add_to_buffer(scene_view);
+
+	if (go->get_info().unique_id == 0)
+	{
+		go->get_info().unique_id = get_next_id();
+	}
+
 	if (initialize)
 	{
 		std::vector<std::shared_ptr<GameObject>> objs;
@@ -102,12 +120,20 @@ void Scene::insert_gameobject(std::shared_ptr<GameObject> go, bool initialize)
 
 		objs.push_back(go);
 		
-		
 		std::vector<std::weak_ptr<GameObject>> posterity = go->get_all_posterity();
 		objs.insert(objs.end(), posterity.begin(), posterity.end());
 		
 		for (std::size_t i = 0; i < objs.size(); i++)
+		{
+			if (objs[i]->get_info().unique_id == 0)
+			{
+				objs[i]->get_info().unique_id = get_next_id();
+			}
 			objects_in_scene.push_back(objs[i]);
+
+			EventSystem::Instance()->push_event(
+				EventID::SCENE_ADDED_GAMEOBJECT_FLAG, static_cast<void*>(objs[i].get()));
+		}
 		for (std::size_t i = 0; i < objs.size(); i++)
 			objs[i]->init();
 		for (std::size_t i = 0; i < objs.size(); i++)
@@ -121,7 +147,7 @@ void Scene::insert_gameobject(std::shared_ptr<GameObject> go, bool initialize)
 	{
 		// this occurs on loading objects from file, do not need posterity
 		//Physics::add_to_physics(go);
-		objects_in_scene.push_back(go);
+		objects_in_scene.push_back(go->self());
 		
 		insert_sort();
 	}
@@ -258,29 +284,49 @@ void Scene::unserialize_json(Json::Value obj)
 	file_name = obj["file-name"].asString();
 	scene_name = obj["scene-name"].asString();
 
+	std::vector<std::shared_ptr<GameObject>> objects_loaded;
 	for (Json::Value game_object : obj["gameobjects"])
 	{
 		std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
-		
+		objects_loaded.push_back(go);
+
 		go->unserialize_json(game_object);
 
 
 		insert_gameobject(go, false);
 	}
 
-	init();
+	if (file_name == "dont_destroy_on_load_objects.json")
+		return;
 
-	for (auto& go : objects_in_scene)
-		if (!go->is_initialized())
-			go->init();
+	if (!dont_destroys_loaded)
+	{
+		init();
+		for (auto& go : objects_in_scene)
+			if (!go->is_initialized())
+				go->init();
 
-	for (auto& go : objects_in_scene)
-		if (!go->is_initialized())
-			go->awake();
-	for (auto& go : objects_in_scene)
-		if (!go->is_initialized())
-			go->start();
+		for (auto& go : objects_in_scene)
+			if (!go->is_initialized())
+				go->awake();
+		for (auto& go : objects_in_scene)
+			if (!go->is_initialized())
+				go->start();
+		dont_destroys_loaded = true;
+	}
+	else
+	{
+		for (auto& go : objects_loaded)
+			if (!go->is_initialized())
+				go->init();
 
+		for (auto& go : objects_loaded)
+			if (!go->is_initialized())
+				go->awake();
+		for (auto& go : objects_loaded)
+			if (!go->is_initialized())
+				go->start();
+	}
 }
 
 #pragma endregion
@@ -289,65 +335,56 @@ void Scene::handle_event(Event* event)
 {
 	switch (event->get_event_id())
 	{
-	case EventID::GAMEOBJECT_PARENT_CHANGE:
-		insert_sort();
-		EventSystem::Instance()->push_event(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG);
-		break;
-	case EventID::GAMEOBJECT_INSTANTIATE:
-	{
-		// here is the issue, at this point the shared pointer does not exist
-		std::shared_ptr<GameObject> new_object(static_cast<GameObject*>(event->get_parameter()));	
-
-		if (!new_object)
-			return;
-
-		insert_gameobject(new_object);
-
-		EventSystem::Instance()->push_event(
-			EventID::SCENE_ADDED_GAMEOBJECT_FLAG, static_cast<void*>(new_object.get()));
-
-		break;
-	}
-	case EventID::GAMEOBJECT_DESTROY:
-	{
-		std::shared_ptr<GameObject>remove_object(static_cast<GameObject*>(event->get_parameter())->self());
-		if (!remove_object)
-			return;
-
-		remove_gameobject(remove_object);
-
-		EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG);
-
-		break;
-	}
-	case EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG:
-	{
-		GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
-		Component* c = static_cast<Component*>(event->get_parameter());
-
-		if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
-			return;
-
-		Physics::Instance()->add_to_physics(obj->self());
-		break;
-	}
-	case EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG:
-	{
-		if (in_editor)
+		case EventID::_SYSTEM_SCENE_SET_SELECTED_GAMEOBJECT_:
+			selected_object = (GameObject*) event->get_parameter();
 			break;
-		GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
-		Component* c = static_cast<Component*>(event->get_parameter());
+		case EventID::_SYSTEM_RENDERER_DRAW_GIZMOS_:
+			on_draw_gizmos();
+			break;
+		case EventID::GAMEOBJECT_PARENT_CHANGE:
+			insert_sort();
+			EventSystem::Instance()->push_event(EventID::SCENE_GAMEOBJECT_ORDER_CHANGE_FLAG);
+			break;
+		case EventID::GAMEOBJECT_DESTROY:
+		{
+			std::shared_ptr<GameObject>remove_object(static_cast<GameObject*>(event->get_parameter())->self());
+			if (!remove_object)
+				return;
 
-		if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
-			return;
-		// verify it has both, because as of right now neigther would've been removed
-		if (!obj->has_component_of_type<ColliderComponent>() && !obj->has_component<RigidbodyComponent>())
-			return;
+			remove_gameobject(remove_object);
 
-		Physics::Instance()->remove_from_physics(obj->self());
+			EventSystem::Instance()->push_event(EventID::SCENE_REMOVED_GAMEOBJECT_FLAG);
+
+			break;
+		}
+		case EventID::GAMEOBJECT_COMPONENT_ADDED_FLAG:
+		{
+			GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
+			Component* c = static_cast<Component*>(event->get_parameter());
+
+			if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
+				return;
+
+			Physics::Instance()->add_to_physics(obj->self());
+			break;
+		}
+		case EventID::GAMEOBJECT_COMPONENT_REMOVED_FLAG:
+		{
+			if (in_editor)
+				break;
+			GameObject* obj = static_cast<GameObject*>(event->get_caller().pointer);
+			Component* c = static_cast<Component*>(event->get_parameter());
+
+			if (!obj || (!dynamic_cast<ColliderComponent*>(c) && !dynamic_cast<RigidbodyComponent*>(c)))
+				return;
+			// verify it has both, because as of right now neigther would've been removed
+			if (!obj->has_component_of_type<ColliderComponent>() && !obj->has_component<RigidbodyComponent>())
+				return;
+
+			Physics::Instance()->remove_from_physics(obj->self());
 		
-		break;
-	}
+			break;
+		}
 	}
 }
 

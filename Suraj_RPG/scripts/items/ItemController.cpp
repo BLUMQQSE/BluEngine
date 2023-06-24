@@ -17,12 +17,12 @@ void ItemController::handle_instant_interaction()
 	{
 		std::weak_ptr<Inventory> inv = current_interactor.lock()->get_game_object()->get_child("GeneralInventory").lock()->get_component<Inventory>();
 
-		int index = inv.lock()->get_first_available_include_match(item_data);
+		int index = inv.lock()->get_first_available_include_match(item_data.lock());
 		if (index == -1)
 			return;
 		//try to put as many into index as possible
 
-		inv.lock()->add_item(index, item_data, 1);
+		inv.lock()->add_item(index, item_data.lock(), 1);
 		item_state = ItemNS::State::IN_USE;
 		//if any remain place into next available position
 		SceneManager::Instance()->destroy_gameobject(this->game_object->self());
@@ -35,7 +35,7 @@ Json::Value ItemController::serialize_json()
 	obj[RemoveNamespace(typeid(IInteractable).name())] = IInteractable::serialize_json();
 
 	obj["item-state"] = ItemNS::ToString(item_state);
-	obj["item-data"] = item_data->get_id();
+	obj["item-data"] = item_data.lock()->get_id();
 
 	return obj;
 }
@@ -56,8 +56,8 @@ std::vector<Editor::SerializedVar> ItemController::get_editor_values()
 	vals = IInteractable::get_editor_values();
 	vals.push_back(Editor::SerializedVar("state", static_cast<void*>(&item_state), Var::Type::Dropdown,
 		ItemNS::ToVector()));
-	if(item_data)
-		vals.push_back(Editor::SerializedVar("name", static_cast<void*>(&item_data->get_name()), 
+	if(item_data.lock())
+		vals.push_back(Editor::SerializedVar("name", static_cast<void*>(&item_data.lock()->get_name()),
 			Var::Type::String));
 
 	return vals;

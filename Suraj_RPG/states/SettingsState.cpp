@@ -148,7 +148,7 @@ void SettingsState::late_update()
 void SettingsState::fixed_update()
 {
 	Vector2f dif;
-	dif = FloatConvex::Intersection(square, concave);
+	dif = FloatConvex::Intersection(square, concave).penetration_vector;
 
 	if (dif != Vector2f::Infinity())
 	{

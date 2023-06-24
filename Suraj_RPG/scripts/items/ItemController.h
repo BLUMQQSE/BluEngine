@@ -12,12 +12,12 @@ public:
 	ItemController() {}
 	~ItemController() {}
 
-	virtual ItemData* get_data() { return item_data; }
-	virtual void set_data(ItemData* data) { item_data = data; };
+	virtual std::weak_ptr<ItemData> get_data() { return item_data; }
+	virtual void set_data(std::shared_ptr<ItemData> data) { item_data = data; };
 
 protected:
     ItemNS::State item_state = ItemNS::State::DROPPED;
-	ItemData* item_data;
+	std::weak_ptr<ItemData> item_data;
 
 	virtual void handle_instant_interaction() override;
 	// Inherited via IData

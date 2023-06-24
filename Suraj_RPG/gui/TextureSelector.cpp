@@ -151,20 +151,27 @@ void TextureSelector::init_dropdowns(std::vector<std::string> tilesets_names)
 	GUI::DropDownList* layer_selector = new GUI::DropDownList(0.f, 0.f, 120.f, 50.f, *font, sub);
 	GUI::DropDownList* tile_collection_selector = new GUI::DropDownList(130, 0, 120.f, 50.f, *font, tilesets_names);
 	GUI::DropDownList* tile_type_selector = new GUI::DropDownList(260, 0, 120, 50, *font, TileNS::ToVector());
+	GUI::DropDownList* physical_selector = new GUI::DropDownList(460, 0, 120, 50, *font, PhysicsNS::ToVector());
 
 	texture_selector_panel->add_element("layer_selector", layer_selector);
 	texture_selector_panel->add_element("tile_collection_selector", tile_collection_selector);
 	texture_selector_panel->add_element("tile_type_selector", tile_type_selector);
+	texture_selector_panel->add_element("physical_selector", physical_selector);
 
 }
 
 void TextureSelector::init_checkboxes(float size)
 {
-	GUI::Checkbox* collision_checkbox = new GUI::Checkbox(400, 15, size);
-	GUI::Checkbox* animation_checkbox = new GUI::Checkbox(430, 15, size);
+	GUI::Checkbox* collision_checkbox = new GUI::Checkbox(400, 25, size);
+	GUI::Checkbox* animation_checkbox = new GUI::Checkbox(430, 25, size);
+
+	GUI::Label* collision_label = new GUI::Label(400, 5, 18, *font, "C");
+	GUI::Label* animation_label = new GUI::Label(430, 5, 18, *font, "A");
 
 	texture_selector_panel->add_element("collision_checkbox", collision_checkbox);
 	texture_selector_panel->add_element("animation_checkbox", animation_checkbox);
+	texture_selector_panel->add_element("collision_label", collision_label);
+	texture_selector_panel->add_element("animation_label", animation_label);
 }
 
 void TextureSelector::set_texture_sheet(sf::Texture* texture)
@@ -252,6 +259,11 @@ DropDownList* TextureSelector::get_tileset_selector()
 	return  texture_selector_panel->get_dropdown("tile_collection_selector");
 }
 
+DropDownList* TextureSelector::get_physical_dropdown()
+{
+	return texture_selector_panel->get_dropdown("physical_selector");
+}
+
 Checkbox* TextureSelector::get_collision_checkbox()
 {
 	return texture_selector_panel->get_checkbox("collision_checkbox");
@@ -267,12 +279,12 @@ void TextureSelector::update()
 	if (!get_render())
 		return;
 
-	texture_selector_panel->get_checkbox("animation_checkbox")->update();
-	texture_selector_panel->get_checkbox("collision_checkbox")->update();
-
-	texture_selector_panel->get_dropdown("layer_selector")->update();
-	texture_selector_panel->get_dropdown("tile_type_selector")->update();
-	texture_selector_panel->get_dropdown("tile_collection_selector")->update();
+	texture_selector_panel->update();
+	//texture_selector_panel->get_checkbox("animation_checkbox")->update();
+	//texture_selector_panel->get_checkbox("collision_checkbox")->update();
+	//texture_selector_panel->get_dropdown("layer_selector")->update();
+	//texture_selector_panel->get_dropdown("tile_type_selector")->update();
+	//texture_selector_panel->get_dropdown("tile_collection_selector")->update();
 
 	float delta = Time::Instance()->delta_time();
 
@@ -306,12 +318,14 @@ void TextureSelector::add_to_buffer(sf::View* view)
 	//text_view = view;
 
 	//set_render(!hidden);
-	texture_selector_panel->get_checkbox("animation_checkbox")->add_to_buffer();
-	texture_selector_panel->get_checkbox("collision_checkbox")->add_to_buffer();
+	
+	texture_selector_panel->add_to_buffer();
+	//texture_selector_panel->get_checkbox("animation_checkbox")->add_to_buffer();
+	//texture_selector_panel->get_checkbox("collision_checkbox")->add_to_buffer();
 
-	texture_selector_panel->get_dropdown("layer_selector")->add_to_buffer();
-	texture_selector_panel->get_dropdown("tile_type_selector")->add_to_buffer();
-	texture_selector_panel->get_dropdown("tile_collection_selector")->add_to_buffer();
+	//texture_selector_panel->get_dropdown("layer_selector")->add_to_buffer();
+	//texture_selector_panel->get_dropdown("tile_type_selector")->add_to_buffer();
+	//texture_selector_panel->get_dropdown("tile_collection_selector")->add_to_buffer();
 
 }
 

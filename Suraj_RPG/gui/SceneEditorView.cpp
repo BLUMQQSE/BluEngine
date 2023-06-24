@@ -360,10 +360,10 @@ void SceneEditorView::create_inspec_panel()
 	{
 		std::string component_name = RemoveNamespace(typeid(*components[i].lock()).name());
 		//component_name = component_name.substr(12);
-		inspec_panel->add_element(typeid(*components[i].lock()).name(), create_component_panel(component_panel_height, inspec_panel->get_width(),
+		inspec_panel->add_element(component_name, create_component_panel(component_panel_height, inspec_panel->get_width(),
 			component_name, selected_gameobject_components[i].second));
 
-		component_panel_height += inspec_panel->get_panel(typeid(*components[i].lock()).name())->get_height();
+		component_panel_height += inspec_panel->get_panel(component_name)->get_height();
 
 	}
 	//inspec_panel->set_render(inspec_active);
@@ -453,8 +453,10 @@ void SceneEditorView::update_scene_editor_panel()
 			selected_gameobject->add_component_by_name(input);
 		//selected_gameobject->init();
 		if (!c.lock())
+		{
+			Debug::Instance()->core_log("'" + input + "' Is not a valid component name", Debug::LogLevel::WARNING);
 			return;
-
+		}
 		c.lock()->init();
 		c.lock()->awake();
 		c.lock()->start();
@@ -473,10 +475,11 @@ void SceneEditorView::update_scene_editor_panel()
 	}
 	else if (scene_editor_panel->get_button("add_gameobject")->is_pressed())
 	{
-		//std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
-		GameObject* go = new GameObject();
+		std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+		//GameObject* go = new GameObject();
 		go->get_info().name = "Empty";
 		SceneManager::Instance()->instantiate_gameobject(go);
+		go->get_info().unique_id = 0;
 	
 	
 	}
@@ -718,7 +721,6 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 	for (std::size_t i = 0; i < vars.second.size(); i++)
 	{
 		// here handle updating for all objects in scene
-
 		if (vars.second[i].variable == nullptr)
 			continue;
 
@@ -755,6 +757,7 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 		}
 		case Var::Type::FlagDropdown:
 		{
+			// Not the issue
 			EnumFlag value = dynamic_cast<GUI::FlagDropDownList*>(vars.first->get_element(vars.second[i].name))->get_enum_flag();
 			*static_cast<EnumFlag*>(vars.second[i].variable) = value;
 

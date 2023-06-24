@@ -18,6 +18,7 @@
 #include "../core/ResourceManager.h"
 #include "../core/Input.h"
 #include "../core/SceneManager.h"
+#include "damage/Damager.h"
 namespace bm98
 {
 using namespace core;
@@ -45,8 +46,7 @@ void PlayerController::awake()
 	init_animations();
 
 	camera = SceneManager::Instance()->find_with_tag(Tags::Tag::CAMERA,
-											game_object).lock()->get_component<CameraComponent>();
-
+											game_object->self()).lock()->get_component<CameraComponent>();
 }
 
 void bm98::PlayerController::update()
@@ -74,6 +74,8 @@ void bm98::PlayerController::fixed_update()
 	if (interactor.lock()->is_interacting())
 		return;
 
+	//raycast = Physics::Instance()->raycast(game_object->get_center(), Vector2f(0, -1), game_object->self(), 80);
+
 	if(!attack)
 		rigid.lock()->apply_acceleration(movement_input);
 
@@ -83,27 +85,40 @@ void bm98::PlayerController::add_to_buffer(sf::View*)
 {
 }
 
-void bm98::PlayerController::on_collision_enter(Collision info)
+void PlayerController::on_draw_gizmos()
+{
+	/*
+	if (raycast)
+		Gizmo::fill_color = Color::Red;
+	else
+		Gizmo::fill_color = Color::Green;
+	Gizmo::outline_color = Color::Transparent;
+	Gizmo::draw_line(game_object->get_center(), game_object->get_center() + Vector2f(0, -80));
+	*/
+	//Gizmo::draw_text(game_object->get_center() + Vector2f(100, -100), "PlayerController", 10, Color::Red);
+}
+
+void PlayerController::on_draw_gizmos_selected()
 {
 
-	std::cout << "Player enter collision with: " << info.game_object.lock()->get_info().name << "\n";
+}
+
+void bm98::PlayerController::on_collision_enter(Collision info)
+{
+	game_object->get_component<Damager>().lock()->apply_damage();
 }
 
 void PlayerController::on_collision_stay(Collision info)
 {
-	std::cout << "Player stayed in collision with: " << info.game_object.lock()->get_info().name << "\n";
-
 }
 
 void PlayerController::on_collision_exit(Collision info)
 {
-	std::cout << "Player exit collision with: " << info.game_object.lock()->get_info().name << "\n";
 
 }
 
 void PlayerController::on_trigger_enter(Collider info)
 {
-	std::cout << "Player enter trigger of: " << info.game_object.lock()->get_info().name << "\n";
 }
 
 Json::Value PlayerController::serialize_json()
@@ -128,10 +143,10 @@ void PlayerController::init_animations()
 	anim.lock()->add_animation("WALK_DOWN", 30.f, 0, 6, 3, 0, 64, 64, true);
 	anim.lock()->add_animation("WALK_RIGHT", 30.f, 0, 7, 3, 0, 64, 64, true);
 
-	anim.lock()->add_animation("ATTACK_UP",  15.f, 0, 16, 5, 0, 64, 64, false, true);
-	anim.lock()->add_animation("ATTACK_LEFT", 15.f, 0, 17, 5, 0, 64, 64, false, true);
-	anim.lock()->add_animation("ATTACK_DOWN", 15.f, 0, 18, 5, 0, 64, 64, false, true);
-	anim.lock()->add_animation("ATTACK_RIGHT", 15.f, 0, 19, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_UP",  5.f, 0, 16, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_LEFT", 5.f, 0, 17, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_DOWN", 5.f, 0, 18, 5, 0, 64, 64, false, true);
+	anim.lock()->add_animation("ATTACK_RIGHT", 5.f, 0, 19, 5, 0, 64, 64, false, true);
 
 	anim.lock()->play("IDLE_DOWN");
 }

@@ -19,18 +19,15 @@ public:
     virtual ~Damager(){}
 
     virtual void init() override;
-    /// <summary>
-    /// Retrieves all IDamageables within the damager's collider.
-    /// </summary>
-    virtual void fixed_update() override;
+    virtual void update() override;
     virtual void editor_update() override;
     /// <summary>
-    /// Immediately applies
+    /// Immediately applies damage to all applicable damageables in damager collider.
     /// </summary>
     /// <param name="amount"></param>
     /// <param name="type"></param>
     /// <param name="target"></param>
-    void apply_damage_to_all();
+    void apply_damage();
 
     virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 
@@ -43,7 +40,7 @@ protected:
 
     PhysicsNS::LayerMask damageable_mask;
 
-    float damage_amount = 1;
+    unsigned damage_amount = 1;
     EnumFlag damage_type{ DamageNS::TypeVector() };
     //DamageNS::Target damage_target = DamageNS::Target::ALL;
     

@@ -12,6 +12,139 @@
 						"IRenderable" : 
 						{
 							"render" : true,
+							"sorting-layer" : "ITEM",
+							"z-order" : 0
+						},
+						"size" : 
+						{
+							"x" : 32,
+							"y" : 32
+						},
+						"sprite-file-path" : "chest.png"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 20.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 961.20001220703125,
+								"y" : 893.5999755859375
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 5.0,
+						"hitbox-offsetY" : 5.0,
+						"hitbox-width" : 20.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.0,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 0.0,
+						"max-velocity" : 0.0,
+						"orientation" : "DOWN"
+					}
+				},
+				{
+					"name" : "Chest",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INPUT",
+							"require-player-input" : true
+						}
+					}
+				},
+				{
+					"name" : "Inventory",
+					"value" : 
+					{
+						"content" : 
+						[
+							{
+								"current-capacity" : 1,
+								"index" : 0,
+								"item" : "SwordData.json"
+							}
+						],
+						"inventory-type" : "GENERAL",
+						"max-size" : 8
+					}
+				},
+				{
+					"name" : "InventoryWindow",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "Chest",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED",
+				"unique-id" : 10
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 956.20001220703125,
+					"y" : 888.5999755859375
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
 							"sorting-layer" : "BACKGROUND",
 							"z-order" : 0
 						},
@@ -37,16 +170,16 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 10.0,
+									"x" : 0.0,
 									"y" : 0.0
 								},
 								{
-									"x" : 10.0,
-									"y" : 10.0
+									"x" : 0.0,
+									"y" : 0.0
 								},
 								{
 									"x" : 0.0,
-									"y" : 10.0
+									"y" : 0.0
 								}
 							],
 							"point-count" : 4,
@@ -88,7 +221,8 @@
 			{
 				"name" : "Sword",
 				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
+				"tag" : "UNTAGGED",
+				"unique-id" : 8
 			},
 			"transform" : 
 			{
@@ -109,21 +243,35 @@
 			"components" : 
 			[
 				{
-					"name" : "SpriteComponent",
+					"name" : "SceneChange",
 					"value" : 
 					{
-						"IRenderable" : 
+						"IInteractable" : 
 						{
-							"render" : true,
-							"sorting-layer" : "BACKGROUND",
-							"z-order" : 0
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INSTANT",
+							"require-player-input" : true
 						},
-						"size" : 
+						"destination-position" : 
 						{
-							"x" : 64,
-							"y" : 64
+							"x" : 100.0,
+							"y" : 200.0
 						},
-						"sprite-file-path" : "sword.png"
+						"destination-scene" : "cave.json"
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.5,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 2.0,
+						"max-velocity" : 7.0,
+						"orientation" : "UP"
 					}
 				},
 				{
@@ -140,58 +288,42 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 10.0,
+									"x" : 20.0,
 									"y" : 0.0
 								},
 								{
-									"x" : 10.0,
-									"y" : 10.0
+									"x" : 20.0,
+									"y" : 20.0
 								},
 								{
 									"x" : 0.0,
-									"y" : 10.0
+									"y" : 20.0
 								}
 							],
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 210.0,
-								"y" : 20.0
+								"x" : 1138.9000244140625,
+								"y" : 691.79998779296875
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
 						},
 						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 10.0,
-						"hitbox-offsetX" : 10.0,
-						"hitbox-offsetY" : 20.0,
-						"hitbox-width" : 10.0,
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 20.0,
 						"trigger" : true
-					}
-				},
-				{
-					"name" : "WeaponController",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INSTANT",
-							"require-player-input" : false
-						},
-						"item-data" : "SwordData.json",
-						"item-state" : "DROPPED"
 					}
 				}
 			],
 			"info" : 
 			{
-				"name" : "Sword2",
+				"name" : "SceneChange",
 				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
+				"tag" : "UNTAGGED",
+				"unique-id" : 5
 			},
 			"transform" : 
 			{
@@ -202,8 +334,8 @@
 				},
 				"position" : 
 				{
-					"x" : 200.0,
-					"y" : 0.0
+					"x" : 1138.9000244140625,
+					"y" : 691.79998779296875
 				},
 				"rotation" : 0.0
 			}
@@ -219,6 +351,41 @@
 						"grid-size" : 32,
 						"max-size.x" : 100,
 						"max-size.y" : 100,
+						"physical-layers" : 
+						[
+							{
+								"layer" : "FLOOR",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "BACKGROUND_DECORATIONS",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "FOREGROUND_WALLS",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "BACKGROUND",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "ITEM",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "ACTOR",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "EFFECTS",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "FOREGROUND",
+								"physical-layer" : "DEFAULT"
+							}
+						],
 						"position.x" : 0,
 						"position.y" : 0,
 						"tiles" : 
@@ -16572,37 +16739,7 @@
 							{
 								"animated-sprite" : false,
 								"animation-timer" : 0.0,
-								"collider" : 
-								{
-									"model" : 
-									[
-										{
-											"x" : 0.0,
-											"y" : 0.0
-										},
-										{
-											"x" : 32.0,
-											"y" : 0.0
-										},
-										{
-											"x" : 32.0,
-											"y" : 32.0
-										},
-										{
-											"x" : 0.0,
-											"y" : 32.0
-										}
-									],
-									"point-count" : 4,
-									"position" : 
-									{
-										"x" : 1120.0,
-										"y" : 896.0
-									},
-									"rotation" : 0.0,
-									"shape-type" : "POLYGON"
-								},
-								"collision" : true,
+								"collision" : false,
 								"grid.x" : 35,
 								"grid.y" : 28,
 								"layer" : "BACKGROUND",
@@ -33917,7 +34054,8 @@
 			{
 				"name" : "Tilemap",
 				"physics-layer" : "DEFAULT",
-				"tag" : "UNTAGGED"
+				"tag" : "UNTAGGED",
+				"unique-id" : 7
 			},
 			"transform" : 
 			{
@@ -33930,95 +34068,6 @@
 				{
 					"x" : 0.0,
 					"y" : 0.0
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SceneChange",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INSTANT",
-							"require-player-input" : true
-						},
-						"destination-position" : 
-						{
-							"x" : 100.0,
-							"y" : 200.0
-						},
-						"destination-scene" : "cave.json"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 20.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 20.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 1138.9000244140625,
-								"y" : 691.79998779296875
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 20.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 20.0,
-						"trigger" : true
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "SceneChange",
-				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 1138.9000244140625,
-					"y" : 691.79998779296875
 				},
 				"rotation" : 0.0
 			}
@@ -34109,7 +34158,8 @@
 			{
 				"name" : "Sword3",
 				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
+				"tag" : "UNTAGGED",
+				"unique-id" : 9
 			},
 			"transform" : 
 			{
@@ -34136,15 +34186,15 @@
 						"IRenderable" : 
 						{
 							"render" : true,
-							"sorting-layer" : "ITEM",
+							"sorting-layer" : "BACKGROUND",
 							"z-order" : 0
 						},
 						"size" : 
 						{
-							"x" : 32,
-							"y" : 32
+							"x" : 64,
+							"y" : 64
 						},
-						"sprite-file-path" : "chest.png"
+						"sprite-file-path" : "sword.png"
 					}
 				},
 				{
@@ -34161,48 +34211,37 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 20.0,
+									"x" : 10.0,
 									"y" : 0.0
 								},
 								{
-									"x" : 20.0,
-									"y" : 20.0
+									"x" : 10.0,
+									"y" : 10.0
 								},
 								{
 									"x" : 0.0,
-									"y" : 20.0
+									"y" : 10.0
 								}
 							],
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 993.5999755859375,
-								"y" : 1132.699951171875
+								"x" : 210.0,
+								"y" : 20.0
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
 						},
 						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 20.0,
-						"hitbox-offsetX" : 5.0,
-						"hitbox-offsetY" : 5.0,
-						"hitbox-width" : 20.0,
-						"trigger" : false
+						"hitbox-height" : 10.0,
+						"hitbox-offsetX" : 10.0,
+						"hitbox-offsetY" : 20.0,
+						"hitbox-width" : 10.0,
+						"trigger" : true
 					}
 				},
 				{
-					"name" : "RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 0.0,
-						"body-type" : "KINEMATIC",
-						"deceleration" : 0.0,
-						"max-velocity" : 0.0,
-						"orientation" : "DOWN"
-					}
-				},
-				{
-					"name" : "Chest",
+					"name" : "WeaponController",
 					"value" : 
 					{
 						"IInteractable" : 
@@ -34211,37 +34250,20 @@
 							"interaction-duration" : 0.0,
 							"interaction-priority" : "MID",
 							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INPUT",
-							"require-player-input" : true
-						}
+							"interaction-type" : "INSTANT",
+							"require-player-input" : false
+						},
+						"item-data" : "SwordData.json",
+						"item-state" : "DROPPED"
 					}
-				},
-				{
-					"name" : "Inventory",
-					"value" : 
-					{
-						"content" : 
-						[
-							{
-								"current-capacity" : 1,
-								"index" : 0,
-								"item" : "SwordData.json"
-							}
-						],
-						"inventory-type" : "GENERAL",
-						"max-size" : 8
-					}
-				},
-				{
-					"name" : "InventoryWindow",
-					"value" : null
 				}
 			],
 			"info" : 
 			{
-				"name" : "Chest",
+				"name" : "Sword2",
 				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
+				"tag" : "UNTAGGED",
+				"unique-id" : 11
 			},
 			"transform" : 
 			{
@@ -34252,55 +34274,8 @@
 				},
 				"position" : 
 				{
-					"x" : 988.5999755859375,
-					"y" : 1127.699951171875
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SpriteComponent",
-					"value" : 
-					{
-						"IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ACTOR",
-							"z-order" : 0
-						},
-						"size" : 
-						{
-							"x" : 64,
-							"y" : 64
-						},
-						"sprite-file-path" : "player.png"
-					}
-				},
-				{
-					"name" : "DummyAI",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "Dummy",
-				"physics-layer" : "DEFAULT",
-				"tag" : "UNTAGGED"
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
+					"x" : 200.0,
 					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 1171.0,
-					"y" : 737.0999755859375
 				},
 				"rotation" : 0.0
 			}

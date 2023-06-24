@@ -21,12 +21,24 @@ void DataAsset::unserialize_json(Json::Value obj)
 
 #pragma endregion
 
+#pragma region EnemyData
+
+void EnemyData::unserialize_json(Json::Value obj)
+{
+	detection_radius = obj["pathfinding"]["detection-radius"].asFloat();
+	detection_mask.unserialize_field(obj["pathfinding"]["detection-mask"]);
+}
+
+#pragma endregion
+
+
 #pragma region ItemData
 
 using namespace core;
 
 void ItemData::unserialize_json(Json::Value obj)
 {
+	std::cout << "flag: " << obj["stackable-limit"].asInt64() << "\n";
 	DataAsset::unserialize_json(obj);
 	stackable_limit = obj["stackable-limit"].asInt64();
 	prefab_file_name = obj["prefab-file-name"].asString();

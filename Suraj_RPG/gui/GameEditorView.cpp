@@ -132,12 +132,12 @@ void GameEditorView::create_heir_panel()
 			temp = temp->get_parent().lock()->self();
 		}
 
-		heir_panel->add_element(std::to_string(objs[i].lock()->get_unique_runtime_id()), new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
-			objs[i].lock()->get_info().name + " [" + std::to_string(objs[i].lock()->get_unique_runtime_id()) + "]", 12,
+		heir_panel->add_element(std::to_string((size_t)objs[i].lock()->get_info().unique_id), new GUI::Button(x, 40 * i, 100.f, 40.f, &ResourceManager::Instance()->get_font("calibri-regular.ttf"),
+			objs[i].lock()->get_info().name + " [" + std::to_string((size_t)objs[i].lock()->get_info().unique_id) + "]", 12,
 			sf::Color(255, 255, 255, 255), sf::Color(255, 255, 255, 200), sf::Color(255, 255, 255, 150),
 			sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255), sf::Color(0, 0, 200, 255)));
 
-		objects_in_scene_map[heir_panel->get_button(std::to_string(objs[i].lock()->get_unique_runtime_id()))] = objs[i].lock().get();
+		objects_in_scene_map[heir_panel->get_button(std::to_string((size_t)objs[i].lock()->get_info().unique_id))] = objs[i].lock().get();
 
 		x = 0;
 	}
@@ -202,6 +202,7 @@ void GameEditorView::update_heir_panel()
 		{
 			if (ois.first->mouse_in_bounds())
 			{
+				EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENE_SET_SELECTED_GAMEOBJECT_, ois.second);
 				selected_gameobject = ois.second;
 				gameobject_held = true;	
 				create_inspec_panel();
@@ -234,13 +235,12 @@ void GameEditorView::create_inspec_panel()
 
 	for (std::size_t i = 0; i < selected_gameobject_components.size(); i++)
 	{
-		std::string component_name = typeid(*components[i].lock()).name();
-		component_name = component_name.substr(12);
+		std::string component_name = RemoveNamespace(typeid(*components[i].lock()).name());
 
-		inspec_panel->add_element(typeid(*components[i].lock()).name(), create_component_panel(component_panel_height, inspec_panel->get_width(), 
+		inspec_panel->add_element(component_name, create_component_panel(component_panel_height, inspec_panel->get_width(), 
 			component_name, selected_gameobject_components[i].second));
 
-		component_panel_height += inspec_panel->get_panel(typeid(*components[i].lock()).name())->get_height();
+		component_panel_height += inspec_panel->get_panel(component_name)->get_height();
 
 	}
 	//if (!inspec_active)
@@ -315,7 +315,7 @@ GUI::Panel* GameEditorView::create_component_panel(float pos_y, float width, std
 
 			GUI::FlagDropDownList* drop_down = new GUI::FlagDropDownList(150, height, 80, 15,
 																		 ResourceManager::Instance()->get_font("calibri-regular.ttf"),
-																		 vars[i].extra_data, 0, 12);
+																		 *static_cast<EnumFlag*>(vars[i].variable), 0, 12);
 
 			items_in_panel.push_back(std::make_pair(vars[i].name, drop_down));
 
@@ -436,8 +436,9 @@ void GameEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<E
 		}
 		case Var::Type::FlagDropdown:
 		{
-			EnumFlag value = dynamic_cast<GUI::FlagDropDownList*>(vars.first->get_element(vars.second[i].name))->get_enum_flag();
-			*static_cast<EnumFlag*>(vars.second[i].variable) = value;
+
+			//EnumFlag value = *static_cast<EnumFlag*>(vars.second[i].variable);
+			//dynamic_cast<GUI::FlagDropDownList*>(vars.first->get_element(vars.second[i].name))->set_enum_flag(value);
 
 			break;
 		}

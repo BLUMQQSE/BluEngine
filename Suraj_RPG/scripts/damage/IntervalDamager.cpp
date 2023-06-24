@@ -18,12 +18,12 @@ void IntervalDamager::update()
 		if (hd.first == 0)
 		{
 			// damageable just entered, should get hit
-			
 			collisions.at(i).lock()->take_damage(damage_amount, damage_type, damage_target);
 			hd.first++;
 		}
 		else
 		{
+			// damageable is waiting for timer to complete
 			if (hd.second.get_elapsed_time().asSeconds() >= hit_interval)
 			{
 				hd.second.restart();

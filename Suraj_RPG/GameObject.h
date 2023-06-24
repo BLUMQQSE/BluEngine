@@ -42,7 +42,7 @@ public:
 
 	struct Info
 	{
-		unsigned int id;
+		unsigned long unique_id;
 		std::string name;
 		Tags::Tag tag;
 		PhysicsNS::Layer layer;
@@ -54,6 +54,8 @@ public:
 			obj["name"] = name;
 			obj["tag"] = Tags::ToString(tag);
 			obj["physics-layer"] = PhysicsNS::ToString(layer);
+			obj["unique-id"] = (uint64_t)unique_id;
+
 
 			return obj;
 		}
@@ -63,6 +65,7 @@ public:
 			name = obj["name"].asString();
 			tag = Tags::ToTag(obj["tag"].asString());
 			layer = PhysicsNS::ToLayer(obj["physics-layer"].asString());
+			unique_id = obj["unique-id"].asUInt64();
 		}
 
 	};
@@ -183,11 +186,36 @@ public:
 	virtual void late_update() override;
 	virtual void fixed_update() override;
 
+	virtual void on_draw_gizmos() override;
+	virtual void on_draw_gizmos_selected() override;
+
+	/// <summary>
+	/// Called on gameobject which has collided with another collider for first
+	/// fixed update.
+	/// </summary>
 	virtual void on_collision_enter(Collision info);
+	/// <summary>
+	/// Called on gameobject which has maintained contact with another collider since
+	/// previous fixed_update.
+	/// </summary>
 	virtual void on_collision_stay(Collision info);
+	/// <summary>
+	/// Called on gameobject which has lost contact with a prior collider.
+	/// </summary>
 	virtual void on_collision_exit(Collision info);
+	/// <summary>
+	/// Called on object containing a trigger which had a non-trigger collider enter for 
+	/// first fixed_update.
+	/// </summary>
 	virtual void on_trigger_enter(Collider info);
+	/// <summary>
+	/// Called on gameobject containing a trigger which has maintained contact 
+	/// with another collider since previous fixed_update.
+	/// </summary>
 	virtual void on_trigger_stay(Collider info);
+	/// <summary>
+	/// Called on gameobject containing a trigger which has lost contact with a prior collider.
+	/// </summary>
 	virtual void on_trigger_exit(Collider info);
 
 	virtual void add_to_buffer(sf::View* view = nullptr) override;

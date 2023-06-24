@@ -177,6 +177,7 @@
     <ClCompile Include="ChildAnimationComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Collisions.cpp" />
+    <ClCompile Include="ContextSteering.cpp" />
     <ClCompile Include="core\ConsoleManager.cpp" />
     <ClCompile Include="core\Debug.cpp" />
     <ClCompile Include="core\DialogueSystem.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="ChildAnimationComponent.h" />
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Collisions.h" />
+    <ClInclude Include="ContextSteering.h" />
     <ClInclude Include="core\ConsoleManager.h" />
     <ClInclude Include="core\Debug.h" />
     <ClInclude Include="core\DialogueSystem.h" />

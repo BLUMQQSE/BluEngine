@@ -1,8 +1,10 @@
 #pragma once
 #include "../globals.h"
 #include "../IData.h"
+#include "../core/EventSystem.h"
 namespace bm98
 {
+using namespace core;
 class DataAsset : public IData
 {
 public:
@@ -21,6 +23,7 @@ public:
 protected:
 	std::string id;
     std::string name;
+
 };
 
 class ItemData :
@@ -55,6 +58,23 @@ protected:
 
 };
 
+class EnemyData : public DataAsset
+{
+public:
+    EnemyData(std::string id) : DataAsset(id) {}
+    virtual ~EnemyData() {}
+
+    float get_detection_radius() { return detection_radius; }
+    PhysicsNS::LayerMask get_detection_mask() { return detection_mask; }
+
+    virtual void unserialize_json(Json::Value obj) override;
+
+private:
+
+    float detection_radius;
+    PhysicsNS::LayerMask detection_mask;
+
+};
 
 class DamagerData;
 class WeaponData :
@@ -78,7 +98,7 @@ protected:
     float attack_radius = 0.0f;
     float attack_cross_section = 0.0f;
 
-    DamagerData* damager_data;
+    std::weak_ptr<DamagerData> damager_data;
 
 };
 

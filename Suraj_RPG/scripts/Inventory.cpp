@@ -27,7 +27,7 @@ Json::Value Inventory::serialize_json()
 		if (content[i].current_capacity > 0)
 		{
 			obj2["current-capacity"] = content[i].current_capacity;
-			obj2["item"] = content[i].item->get_id();
+			obj2["item"] = content[i].item.lock()->get_id();
 			obj2["index"] = i;
 			obj["content"].append(obj2);
 		}
@@ -44,7 +44,7 @@ void Inventory::unserialize_json(Json::Value obj)
 	for (int i = 0; i < max_size; i++)
 	{
 		content[i].current_capacity = 0;
-		content[i].item = nullptr;
+		content[i].item = std::shared_ptr<ItemData>(nullptr);
 	}
 
 	for (Json::Value item : obj["content"])
@@ -57,7 +57,7 @@ void Inventory::unserialize_json(Json::Value obj)
 
 #pragma endregion
 
-bool Inventory::check_compatability(int index, ItemData* data)
+bool Inventory::check_compatability(int index, std::shared_ptr<ItemData> data)
 {
 	if (inventory_type != InventoryNS::Type::COMBAT)
 		return true;
@@ -88,13 +88,13 @@ std::vector<int> Inventory::get_all_available_indexes()
 	return available;
 }
 
-int Inventory::get_first_available_include_match(ItemData* item)
+int Inventory::get_first_available_include_match(std::shared_ptr<ItemData> item)
 {
 	int first_empty_index = -1;
 
 	for (int i = 0; i < content.size(); i++)
 	{
-		if (content[i].item == item && content[i].current_capacity < item->get_stackable_limit())
+		if (content[i].item.lock() == item && content[i].current_capacity < item->get_stackable_limit())
 			return i;
 		else
 			if (first_empty_index == -1 && content[i].current_capacity == 0 && check_compatability(i, item))
@@ -103,7 +103,7 @@ int Inventory::get_first_available_include_match(ItemData* item)
 	return first_empty_index;
 }
 
-int Inventory::add_item(int index, ItemData* item, int count)
+int Inventory::add_item(int index, std::shared_ptr<ItemData> item, int count)
 {
 	core::EventSystem::Instance()->push_event(core::EventID::INTERACTION_INVENTORY_UPDATED, nullptr,
 											  Caller(Caller::Name::INVENTORY, (void*)this));
@@ -124,7 +124,8 @@ int Inventory::add_item(int index, ItemData* item, int count)
 	}
 	else
 	{
-		if (content[index].item != item)
+
+		if (content[index].item.lock() != item)
 			return count;
 
 		if (content[index].current_capacity + count > item->get_stackable_limit())
@@ -142,7 +143,8 @@ int Inventory::add_item(int index, ItemData* item, int count)
 	// we've successfully placed the item, so now instantiate if placed into combat
 	if (result == 0 && inventory_type == InventoryNS::Type::COMBAT && item)
 	{
-		GameObject* go = new GameObject();
+		//GameObject* go = new GameObject();
+		std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
 		if (ResourceManager::Instance()->has_prefab_data(item->get_prefab_file_name()))
 		{
 			//ItemData* item = (ItemData*) ResourceManager::Instance()->get_data_asset("SwordData.json");
@@ -157,19 +159,19 @@ int Inventory::add_item(int index, ItemData* item, int count)
 			}
 		}
 		go->get_info().name = ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index));
-		go->set_parent(this->game_object.get()->self());
+		go->set_parent(this->game_object->self());
 		SceneManager::Instance()->instantiate_gameobject(go);
 	}
 
 	return result;
 }
 
-ItemData* Inventory::remove_item(int index, int count)
+std::weak_ptr<ItemData> Inventory::remove_item(int index, int count)
 {
-	ItemData* item = nullptr;
+	std::weak_ptr<ItemData> item = std::shared_ptr<ItemData>(nullptr);
 
 	if (content[index].current_capacity == 0)
-		return nullptr;
+		return item;
 
 	core::EventSystem::Instance()->push_event(core::EventID::INTERACTION_INVENTORY_UPDATED, nullptr,
 											  Caller(Caller::Name::INVENTORY, (void*)this));
@@ -177,10 +179,10 @@ ItemData* Inventory::remove_item(int index, int count)
 	item = content[index].item;
 	content[index].current_capacity = std::max(0, content[index].current_capacity - count);
 	if (content[index].current_capacity == 0)
-		content[index].item = nullptr;
+		content[index].item = std::shared_ptr<ItemData>(nullptr);
 
 	// we've successfully found item we're removing, now destroy gameobject if combat inventory
-	if (item && inventory_type == InventoryNS::Type::COMBAT && item)
+	if (item.lock() && inventory_type == InventoryNS::Type::COMBAT)
 	{
 		std::cout << "destroying " << ItemNS::ToString(static_cast<ItemNS::WearableLocation>(index)) << "\n";
 		SceneManager::Instance()->destroy_gameobject(std::shared_ptr<GameObject>(this->game_object->get_child(

@@ -45,6 +45,7 @@ protected:
     void init_singletons();
 private:
     std::string active_scene_name;
+    unsigned long next_available_id;
 
     sf::View* view;
     std::unique_ptr<Scene> active_scene;

@@ -32,6 +32,7 @@ public:
 	void cancel_interaction();
 
 	virtual void fixed_update() override;
+	virtual void on_draw_gizmos() override;
 
 	/// <summary>
 	/// Should only be called by IInteractable on exit_interaction().

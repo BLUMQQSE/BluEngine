@@ -28,6 +28,7 @@ public:
 	DropDownList* get_layer_dropdown();
 	DropDownList* get_tiletype_selector();
 	DropDownList* get_tileset_selector();
+	DropDownList* get_physical_dropdown();
 	Checkbox* get_collision_checkbox();
 	Checkbox* get_animation_checkbox();
 
