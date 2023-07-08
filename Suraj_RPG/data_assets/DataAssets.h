@@ -64,15 +64,16 @@ public:
     EnemyData(std::string id) : DataAsset(id) {}
     virtual ~EnemyData() {}
 
-    float get_detection_radius() { return detection_radius; }
-    PhysicsNS::LayerMask get_detection_mask() { return detection_mask; }
+    const float& get_detection_radius() const { return detection_radius; }
+    const PhysicsNS::LayerMask& get_target_mask() const { return target_mask; }
+    const PhysicsNS::LayerMask& get_obstacle_mask() const { return obstacle_mask; }
 
     virtual void unserialize_json(Json::Value obj) override;
 
 private:
-
     float detection_radius;
-    PhysicsNS::LayerMask detection_mask;
+    PhysicsNS::LayerMask target_mask;
+    PhysicsNS::LayerMask obstacle_mask;
 
 };
 
@@ -105,20 +106,64 @@ protected:
 class DamagerData : public DataAsset
 {
 public:
-
+    DamagerData(std::string id) : DataAsset(id){}
+    virtual ~DamagerData(){}
     // Inherited via IData
     virtual void unserialize_json(Json::Value obj) override;
+
+    const unsigned& get_damage_amount() const { return damage_amount; }
+    const unsigned& get_knockback_amount() const { return knockback_amount; }
+    const float& get_cooldown() const { return cooldown; }
+    const PhysicsNS::LayerMask& get_damageable_mask() const { return damageable_mask; }
+    const EnumFlag& get_damage_type() const { return damage_type; }
+    const EnumFlag& get_damage_target() const { return damage_target; }
 
 protected:
 
     PhysicsNS::LayerMask damageable_mask;
-    float damage_amount;
+    unsigned damage_amount;
+    unsigned knockback_amount;
+    float cooldown;
     EnumFlag damage_type{ DamageNS::TypeVector() };
     EnumFlag damage_target{ DamageNS::TargetVector() };
 
 };
 
 
+class EffectData : public DataAsset
+{
+public:
+    EffectData(std::string id) : DataAsset(id){}
+    virtual ~EffectData(){}
+
+    virtual void unserialize_json(Json::Value obj) override;
+
+    std::string get_effect_name() { return effect_name; }
+    std::string get_effect_description() { return effect_description; }
+    bool get_reccuring_effect() { return reccuring_effect; }
+    float get_effect_duration() { return effect_duration; }
+    float get_intermission_duration() { return intermission_duration; }
+    const EnumFlag& get_effect_type() const { return effect_type; }
+    const PhysicsNS::LayerMask& get_effect_mask() const { return effect_mask; }
+    float get_effect_modifier() { return effect_modifier; }
+
+protected:
+
+    std::string effect_name;
+    std::string effect_description;
+    bool reccuring_effect;
+    float effect_duration;
+    // if recurring effect and intermission duration is 0, steadily remove using delta_time
+    float intermission_duration;
+    EnumFlag effect_type{EffectNS::ToVector()};
+
+    PhysicsNS::LayerMask effect_mask;
+
+
+    float effect_modifier;
+
+
+};
 
 
 

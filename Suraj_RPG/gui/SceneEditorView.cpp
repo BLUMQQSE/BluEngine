@@ -143,8 +143,7 @@ void SceneEditorView::update()
 			(
 				Input::Instance()->get_action_down("ENTER") ||
 				Input::Instance()->get_action_down("SPACE")) ||
-				Input::Instance()->get_mouse_down() ||
-				Input::Instance()->get_mouse_up()
+				Input::Instance()->get_mouse()
 			)
 		{
 			// Reinitialize gameobject to update any changes which may have occured
@@ -511,8 +510,14 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		{
 		case Var::Type::Int:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
+
 
 			GUI::InputBox* input_box = new GUI::InputBox(150, height, 40, 12, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
@@ -521,7 +526,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 
 			int value = *static_cast<int*>(vars[i].variable);
 			std::stringstream s;
-			s << PRECISION << value;
+			s << PRECISION(1) << value;
 			input_box->set_text(s.str());
 
 			height += 20;
@@ -529,8 +534,11 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Float:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 
 			GUI::InputBox* input_box = new GUI::InputBox(150, height, 40, 12, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
@@ -539,7 +547,7 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 
 			float value = *static_cast<float*>(vars[i].variable);
 			std::stringstream s;
-			s << PRECISION << value;
+			s << PRECISION(1) << value;
 			input_box->set_text(s.str());
 
 			height += 20;
@@ -547,8 +555,11 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Bool:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 
 			GUI::Checkbox* check_box = new GUI::Checkbox(150, height, 12);
 
@@ -562,8 +573,13 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Dropdown:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 
 			GUI::DropDownList* drop_down = new GUI::DropDownList(150, height, 80, 15,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"),
@@ -579,8 +595,11 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::FlagDropdown:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-									 ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 
 			GUI::FlagDropDownList* drop_down = new GUI::FlagDropDownList(150, height, 80, 15,
 																 ResourceManager::Instance()->get_font("calibri-regular.ttf"),
@@ -595,8 +614,12 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Vector2f:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 
 			GUI::InputBox* x = new GUI::InputBox(110, height, 40, 12, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
@@ -610,10 +633,10 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 
 			Vector2f vec = *static_cast<Vector2f*>(vars[i].variable);
 			std::stringstream s;
-			s << PRECISION << vec.x;
+			s << PRECISION(1) << vec.x;
 			x->set_text(s.str());
 			s.str("");
-			s << PRECISION << vec.y;
+			s << PRECISION(1) << vec.y;
 			y->set_text(s.str());
 
 			height += 20;
@@ -621,8 +644,12 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::Vector2i:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 
 			GUI::InputBox* x = new GUI::InputBox(110, height, 40, 12, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
@@ -636,10 +663,10 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 
 			Vector2i vec = *static_cast<Vector2i*>(vars[i].variable);
 			std::stringstream s;
-			s << PRECISION << vec.x;
+			s << PRECISION(1) << vec.x;
 			x->set_text(s.str());
 			s.str("");
-			s << PRECISION << vec.y;
+			s << PRECISION(1) << vec.y;
 			y->set_text(s.str());
 
 			height += 20;
@@ -647,8 +674,12 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::FloatConvex:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 			FloatConvex polygon = *static_cast<FloatConvex*>(vars[i].variable);
 			std::cout << polygon.getPointCount() << " points\n";
 
@@ -665,10 +696,10 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 				items_in_panel.push_back(std::make_pair(std::to_string(i) + "_y_" + vars[i].name, y));
 
 				s.str("");
-				s << PRECISION << model[i].x;
+				s << PRECISION(1) << model[i].x;
 				x->set_text(s.str());
 				s.str("");
-				s << PRECISION << model[i].y;
+				s << PRECISION(1) << model[i].y;
 				y->set_text(s.str());
 
 				height += 20;
@@ -686,8 +717,12 @@ GUI::Panel* SceneEditorView::create_component_panel(float pos_y, float width, st
 		}
 		case Var::Type::String:
 		{
-			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, new GUI::Label(0, height, 12,
-				ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name)));
+			GUI::Label* label = new GUI::Label(0, height, 12,
+											   ResourceManager::Instance()->get_font("calibri-regular.ttf"), vars[i].name);
+			if (!vars[i].modifiable_from_editor)
+				label->set_fill_color(sf::Color::Red);
+
+			items_in_panel.push_back(std::make_pair("l_" + vars[i].name, label));
 
 			GUI::InputBox* input_box = new GUI::InputBox(70, height, 140, 12, 12,
 				ResourceManager::Instance()->get_font("calibri-regular.ttf"));
@@ -724,6 +759,11 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 		if (vars.second[i].variable == nullptr)
 			continue;
 
+		if (vars.second[i].modifiable_from_editor == false)
+		{
+			reset_gui_to_component_value(vars.first, vars.second[i]);
+			continue;
+		}
 		switch (vars.second[i].type)
 		{
 		case Var::Type::Int:
@@ -811,6 +851,105 @@ void SceneEditorView::update_component_panel(std::pair<GUI::Panel*, std::vector<
 		}
 		}
 
+	}
+}
+
+void SceneEditorView::reset_gui_to_component_value(GUI::Panel* panel, Editor::SerializedVar var)
+{
+	switch (var.type)
+	{
+		case Var::Type::Int:
+		{
+			int value = *static_cast<int*>(var.variable);
+			std::stringstream s;
+			s << PRECISION(1) << value;
+			dynamic_cast<GUI::InputBox*>(panel->get_element(var.name))->set_text(s.str());
+			break;
+		}
+		case Var::Type::Float:
+		{
+			float value = *static_cast<float*>(var.variable);
+			std::stringstream s;
+			s << PRECISION(1) << value;
+			dynamic_cast<GUI::InputBox*>(panel->get_element(var.name))->set_text(s.str());
+			break;
+		}
+		case Var::Type::Bool:
+		{
+
+			bool value = *static_cast<bool*>(var.variable);
+			dynamic_cast<GUI::Checkbox*>(panel->get_element(var.name))->set_checked(value);
+
+			break;
+		}
+		case Var::Type::Dropdown:
+		{
+			int value = *static_cast<int*>(var.variable);
+			dynamic_cast<GUI::DropDownList*>(panel->get_element(var.name))->set_selected_index(value);
+
+			break;
+		}
+		case Var::Type::FlagDropdown:
+		{
+
+			//EnumFlag value = *static_cast<EnumFlag*>(vars.second[i].variable);
+			//dynamic_cast<GUI::FlagDropDownList*>(vars.first->get_element(vars.second[i].name))->set_enum_flag(value);
+
+			break;
+		}
+		case Var::Type::Vector2f:
+		{
+			Vector2f vec = *static_cast<Vector2f*>(var.variable);
+			std::stringstream s;
+			s << PRECISION(1) << vec.x;
+			dynamic_cast<GUI::InputBox*>(panel->get_element("x_" + var.name))->set_text(s.str());
+			s.str("");
+			s << PRECISION(1) << vec.y;
+			dynamic_cast<GUI::InputBox*>(panel->get_element("y_" + var.name))->set_text(s.str());
+
+			break;
+		}
+		case Var::Type::Vector2i:
+		{
+			Vector2i vec = *static_cast<Vector2i*>(var.variable);
+			std::stringstream s;
+			s << PRECISION(1) << vec.x;
+			dynamic_cast<GUI::InputBox*>(panel->get_element("ix_" + var.name))->set_text(s.str());
+			s.str("");
+			s << PRECISION(1) << vec.y;
+			dynamic_cast<GUI::InputBox*>(panel->get_element("iy_" + var.name))->set_text(s.str());
+
+			break;
+		}
+		case Var::Type::FloatConvex:
+		{
+			FloatConvex poly = *static_cast<FloatConvex*>(var.variable);
+			std::vector<Vector2f> model = poly.get_model();
+			std::stringstream s;
+			for (std::size_t i = 0; i < model.size(); i++)
+			{
+				s.str("");
+				s << PRECISION(1) << model[i].x;
+				dynamic_cast<GUI::InputBox*>(panel->get_element(std::to_string(i) + "_x_" + var.name))->set_text(s.str());
+				s.str("");
+				s << PRECISION(1) << model[i].y;
+				dynamic_cast<GUI::InputBox*>(panel->get_element(std::to_string(i) + "_y_" + var.name))->set_text(s.str());
+
+			}
+			break;
+		}
+		case Var::Type::Header:
+		{
+			break;
+		}
+		case Var::Type::String:
+		{
+			std::string value = "empty";
+			if (var.variable)
+				value = *static_cast<std::string*>(var.variable);
+			dynamic_cast<GUI::InputBox*>(panel->get_element(var.name))->set_text(value);
+			break;
+		}
 	}
 }
 

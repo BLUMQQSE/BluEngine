@@ -13,7 +13,6 @@ extern float SCALE;
 class Renderer
 	: sf::RenderTarget, public Listener
 {
-#define DRAW_GIZMOS true
 
 public:
 	// Returns instance of the EventSystem
@@ -25,9 +24,10 @@ public:
 
 	struct RenderObject
 	{
+		// Constructor should only be used by GUI
 		RenderObject(sf::Drawable* drawable, bool& render, Sorting::Layer& sorting_layer,
 			char& z_order, sf::View** view = nullptr, sf::Shader** shader = nullptr)
-			:render(render), sorting_layer(sorting_layer), z_order(z_order)
+			:render(render), sorting_layer(sorting_layer), z_order(z_order) 
 		{
 			this->sorting_layer = sorting_layer;
 			this->drawable = drawable;
@@ -35,10 +35,26 @@ public:
 			this->view = view;
 			this->shader = shader;
 		}
+		// Optional extension for Y-Sort
+		RenderObject(sf::Drawable* drawable, bool& render, Sorting::Layer& sorting_layer,
+					 char& z_order, float* y_pos, int* render_depth, sf::View** view = nullptr, sf::Shader** shader = nullptr)
+			:render(render), sorting_layer(sorting_layer), z_order(z_order),
+			y_pos(y_pos), render_depth(render_depth)
+		{
+			this->sorting_layer = sorting_layer;
+			this->drawable = drawable;
+			this->z_order = z_order;
+			this->view = view;
+			this->shader = shader;
+			this->render_depth = render_depth;
+			this->y_pos = y_pos;
+		}
 		
+		// Constructor should be used by any game entity to ensure render_depth is locatable
 		RenderObject(sf::Drawable* drawable, IRenderable* renderable)
 			:render(renderable->get_render()), sorting_layer(renderable->get_sorting_layer()),
-			z_order(renderable->get_z_order())
+			z_order(renderable->get_z_order()), y_pos(&renderable->get_y_pos()),
+			render_depth(&renderable->get_render_depth())
 		{
 			this->sorting_layer = renderable->get_sorting_layer();
 			this->z_order = renderable->get_z_order();
@@ -46,18 +62,105 @@ public:
 			this->shader = renderable->get_shader_pointer();
 			this->drawable = drawable;
 		}
+		
+		bool operator<(const RenderObject& rhs)
+		{
+			if (sorting_layer == rhs.sorting_layer)
+			{
+				if ((int)z_order == (int)rhs.z_order)
+				{
+					if (*y_pos == *rhs.y_pos)
+					{
+						return render_depth < rhs.render_depth;
+					}
+					return *y_pos < *rhs.y_pos;
+				}
+				return (int)z_order < (int)rhs.z_order;
+
+			}
+			return sorting_layer < rhs.sorting_layer;
+		}
+		bool operator<=(const RenderObject& rhs)
+		{
+			if (sorting_layer == rhs.sorting_layer)
+			{
+				if ((int)z_order == (int)rhs.z_order)
+				{
+					if (*y_pos == *y_pos)
+					{
+						return render_depth <= rhs.render_depth;
+					}
+					return *y_pos <= *rhs.y_pos;
+				}
+				return (int)z_order <= (int)rhs.z_order;
+
+			}
+			return sorting_layer <= rhs.sorting_layer;
+		}
 
 		Sorting::Layer& sorting_layer;
 		bool& render;
 		sf::Drawable* drawable;
 		char& z_order;
+		
 		sf::View** view;
 		sf::Shader** shader;
+
+		// Used for y-sort
+		float* y_pos = nullptr;
+		int* render_depth = nullptr;
 
 		// Will be used by ui elements
 		bool has_global_bounds = false;
 
 	};
+
+	struct TestShit
+	{
+		TestShit() {}
+		TestShit(Sorting::Layer layer, bool render, sf::Drawable* drawable, char z_order,
+				 sf::View** view, sf::Shader** shader, float y_pos, int render_depth,
+				 bool has_global_bounds)
+			:sorting_layer(layer), render(render), drawable(drawable), z_order(z_order),
+			view(view), shader(shader), y_pos(y_pos), render_depth(render_depth),
+			has_global_bounds(has_global_bounds)
+		{
+
+		}
+		TestShit(const RenderObject& r)
+		{
+			sorting_layer = r.sorting_layer;
+			render = r.render;
+			drawable = r.drawable;
+			z_order = r.z_order;
+			view = r.view;
+			shader = r.shader;
+			y_pos = *r.y_pos;
+			render_depth = *r.render_depth;
+			has_global_bounds = r.has_global_bounds;
+		}
+
+		Sorting::Layer sorting_layer;
+		bool render;
+		sf::Drawable* drawable = nullptr;
+		char z_order;
+
+		sf::View** view = nullptr;
+		sf::Shader** shader = nullptr;
+
+		// Used for y-sort
+		float y_pos;
+		int render_depth;
+
+		// Will be used by ui elements
+		bool has_global_bounds = false;
+	};
+
+	inline void set_draw_gizmos(bool draw) { draw_gizmos = draw; }
+	inline const bool get_draw_gizmos() { return draw_gizmos; }
+
+	inline const unsigned get_renderables_count() { return renderables.size(); }
+	inline const unsigned get_ui_renderables_count() { return ui_renderables.size(); }
 
 	void init(RenderTarget* render_target);
 
@@ -110,10 +213,7 @@ private:
 
 	Renderer();
 	~Renderer() { }
-	Renderer(const Renderer& rhs)
-	{
-
-	}
+	Renderer(const Renderer& rhs){}
 	Renderer& operator=(const Renderer& rhs) {}
 
 	RenderTarget* window;
@@ -132,14 +232,17 @@ private:
 
 	void render();
 	void render_list(std::list<RenderObject>& list);
+	void render_y_sorted_list(std::list<RenderObject>& list);
 
 	void clear();
 	void fixed_update();
 
 	void update_top_ui();
 
-	void sort();
+	std::vector<TestShit> sort_batch(std::vector<RenderObject> batch);
 
+	bool draw_gizmos = true;
+	bool use_y_sort = true;
 };
 
 

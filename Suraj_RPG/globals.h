@@ -3,7 +3,7 @@
 namespace bm98
 {
 
-#define PRECISION std::fixed << std::setprecision(1)
+#define PRECISION(AMOUNT) std::fixed << std::setprecision(AMOUNT)
 
 static std::string RemoveNamespace(std::string string)
 {
@@ -85,6 +85,15 @@ public:
 		return flags[index].second;
 	}
 
+	void operator+=(EnumFlag rhs)
+	{
+		for (int i = 0; i < size(); i++)
+		{
+			if (rhs[i] == true)
+				flags[i].second = true;
+		}
+	}
+
 	template <typename T> bool operator== (T rhs)
 	{
 		int index = static_cast<int>(rhs);
@@ -149,14 +158,39 @@ protected:
 
 };
 
-class Color : public sf::Color
+class Color
+	: public sf::Color
 {
 public:
 	static const sf::Color Orange;
 	static const sf::Color LimeGreen;
 	static const sf::Color Teal;
-
+	static const sf::Color LightGrey;
+	static const sf::Color Grey;
+	static const sf::Color Charcoal;
 };
+
+namespace EffectNS
+{
+
+enum class Type
+{
+	STANDALONE,
+	HEALTH,
+	MANA,
+	STAMINA,
+	SPEED,
+	NORMAL,
+	FIRE,
+	ELECTRIC
+};
+
+static std::vector<std::string> ToVector()
+{
+	return { "STANDALONE", "HEALTH", "MANA", "STAMINA", "SPEED", "NORMAL", "FIRE", "ELECTRIC" };
+}
+
+}
 
 namespace Var
 {
@@ -560,6 +594,7 @@ public:
 	: EnumFlag(ToVector(), all) 
 	{
 	}
+
 };
 
 }
@@ -649,6 +684,14 @@ enum class Direction
 	RIGHT,
 	_LAST_DONT_REMOVE
 };
+
+// returns all 8 direction starting at up and rotating clockwise
+static std::vector<Vector2f> GetDirections()
+{
+	return {Vector2f(0, -1), Vector2f(1, -1), Vector2f(1,0), Vector2f(1, 1),
+	Vector2f(0, 1), Vector2f(-1, 1), Vector2f(-1, 0), Vector2f(-1, -1)};
+}
+
 
 /// <returns>A Direction corresponding to the string value provided.</returns>
 static Direction ToDirection(std::string direction)

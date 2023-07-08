@@ -236,7 +236,8 @@ public:
 
 	const size_t get_unique_runtime_id() const;
 	Info& get_info();
-	Vector2f get_center();
+	Vector2f get_visual_center();
+	Vector2f get_physical_center();
 	std::weak_ptr<GameObject> get_parent();
 	/// <summary>
 	/// Returns all parents to root ancestor, as well as all children.
@@ -263,22 +264,6 @@ public:
 	virtual Json::Value serialize_json() override;
 	virtual void unserialize_json(Json::Value obj) override;
 
-
-	template <typename T> bool has_component() const
-	{
-		
-		return component_bitset[get_component_type_id<T>()];
-	}
-
-	template <typename T> bool has_component_of_type() const
-	{
-		for (std::size_t i = 0; i < components.size(); i++)
-		{
-			if (dynamic_cast<T*>(components[i].get()))
-				return true;
-		}
-		return false;
-	}
 
 #pragma region MODIFYING
 
@@ -351,6 +336,26 @@ public:
 		}
 	}
 
+	template <typename T> bool has_component() const
+	{
+		return component_bitset[get_component_type_id<T>()];
+	}
+
+	template <typename T> bool has_component_of_type() const
+	{
+		for (std::size_t i = 0; i < components.size(); i++)
+		{
+			if (dynamic_cast<T*>(components[i].get()))
+				return true;
+		}
+		return false;
+	}
+
+	template<typename T> bool has_component_with_interface() const
+	{
+		return has_component_of_type<T>();
+	}
+
 	template <typename T> std::weak_ptr<T> get_component() const
 	{
 		//auto ptr(component_array[get_component_type_id<T>()]);
@@ -361,10 +366,28 @@ public:
 		
 	}
 
+	/// <summary>
+	/// Used for checking if a component is derived from a non-component interface
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <returns></returns>
+	template <typename T> T* get_component_with_interface()
+	{
+		for (std::size_t i = 0; i < components.size(); i++)
+		{
+			// issue lies here in converting from component shared ptr to idamageable weak_ptr
+			if (dynamic_cast<T*>(components[i].get()))
+				return dynamic_cast<T*>(components[i].get());
+		}
+
+		return nullptr;
+	}
+
 	template <typename T> std::weak_ptr<T> get_component_of_type() 
 	{
 		for (std::size_t i = 0; i < components.size(); i++)
 		{
+			// issue lies here in converting from component shared ptr to idamageable weak_ptr
 			if (dynamic_cast<T*>(components[i].get()))
 				return std::static_pointer_cast<T>(components[i]);
 		}

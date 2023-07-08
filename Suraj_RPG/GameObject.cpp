@@ -269,7 +269,16 @@ GameObject::Info& GameObject::get_info()
 	return info;
 }
 
-Vector2f GameObject::get_center()
+Vector2f GameObject::get_physical_center()
+{
+	if (has_component_of_type<ColliderComponent>())
+	{
+		return get_component_of_type<ColliderComponent>().lock()->get_collider_bounds().get_center();
+	}
+	return get_world_position();
+}
+
+Vector2f GameObject::get_visual_center()
 {
 	if (has_component<SpriteComponent>())
 	{
@@ -277,14 +286,6 @@ Vector2f GameObject::get_center()
 		return sf::Vector2f(
 			sc.left + sc.width / 2,
 			sc.top + sc.height / 2
-		);
-	}
-	if (has_component<BoxColliderComponent>())
-	{
-		sf::FloatRect bc = get_component<BoxColliderComponent>().lock()->get_bounds();
-		return sf::Vector2f(
-			bc.left + bc.width / 2,
-			bc.top + bc.height / 2
 		);
 	}
 	return get_world_position();

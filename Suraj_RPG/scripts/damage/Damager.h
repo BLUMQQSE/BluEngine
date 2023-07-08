@@ -2,8 +2,8 @@
 #include "../../Component.h"
 
 #include "../../ColliderComponent.h"
-#include "../../GameObject.h"
 #include "../../core/Debug.h"
+#include "../../data_assets/DataAssets.h"
 
 namespace bm98
 {
@@ -19,7 +19,6 @@ public:
     virtual ~Damager(){}
 
     virtual void init() override;
-    virtual void update() override;
     virtual void editor_update() override;
     /// <summary>
     /// Immediately applies damage to all applicable damageables in damager collider.
@@ -38,15 +37,8 @@ protected:
 
     std::weak_ptr<ColliderComponent> collider;
 
-    PhysicsNS::LayerMask damageable_mask;
-
-    unsigned damage_amount = 1;
-    EnumFlag damage_type{ DamageNS::TypeVector() };
-    //DamageNS::Target damage_target = DamageNS::Target::ALL;
-    
-    EnumFlag damage_target{ DamageNS::TargetVector() };
-    
-    std::vector<std::weak_ptr<IDamageable>> collisions;
+    std::string damager_data_name;
+    std::weak_ptr<DamagerData> damager_data;
 
 };
 

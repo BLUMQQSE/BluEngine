@@ -70,7 +70,7 @@ void Interactor::fixed_update()
 {
 	potential_interactable = std::weak_ptr<IInteractable>();
 	std::vector<std::weak_ptr<ColliderComponent>> cols;
-	count = core::Physics::Instance()->OverlapCircle(game_object->get_center(), interaction_radius,
+	count = core::Physics::Instance()->OverlapCircle(game_object->get_visual_center(), interaction_radius,
 		interactable_mask, this->game_object, cols);
 
 	if (count == 0)
@@ -112,8 +112,8 @@ void Interactor::on_draw_gizmos()
 	else
 		Gizmo::outline_color = Color::Cyan;
 
-	Gizmo::draw_circle(game_object->get_center(), interaction_radius);
-	Gizmo::draw_text(game_object->get_center() + Vector2f(0, interaction_radius), "[" +
+	Gizmo::draw_circle(game_object->get_visual_center(), interaction_radius);
+	Gizmo::draw_text(game_object->get_visual_center() + Vector2f(0, interaction_radius), "[" +
 					 std::to_string(game_object->get_info().unique_id) + "] Interactor", 10, Color::White);
 }
 

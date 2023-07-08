@@ -36,7 +36,7 @@ void SpriteComponent::awake()
 
 void SpriteComponent::update()
 {
-
+	set_y_pos(game_object->get_visual_center().y + y_pos_offset);
 }
 
 void SpriteComponent::set_world_position(const Vector2f pos)
@@ -52,6 +52,8 @@ Json::Value SpriteComponent::serialize_json()
 
 	obj["sprite-file-path"] = file_path;
 	obj["size"] = size.serialize_json();
+	obj["sorting-group"] = sorting_group;
+	obj["pivot-offset"] = y_pos_offset;
 
 	return obj;
 }
@@ -63,6 +65,8 @@ void SpriteComponent::unserialize_json(Json::Value obj)
 
 	file_path = obj["sprite-file-path"].asString();
 	size.unserialize_json(obj["size"]);
+	sorting_group = obj["sorting-group"].asBool();
+	y_pos_offset = obj["pivot-offset"].asFloat();
 	
 	if (size.x == 0 || size.y == 0)
 		set_size(64, 64);
@@ -95,6 +99,7 @@ std::vector<Editor::SerializedVar> SpriteComponent::get_editor_values()
 void SpriteComponent::editor_update()
 {
 	set_sprite(file_path);
+	set_y_pos(game_object->get_visual_center().y + y_pos_offset);
 }
 
 sf::Sprite& SpriteComponent::get_sprite()

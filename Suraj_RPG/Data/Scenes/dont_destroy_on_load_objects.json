@@ -102,7 +102,7 @@
 						{
 							"render" : true,
 							"sorting-layer" : "ACTOR",
-							"z-order" : 10
+							"z-order" : 0
 						},
 						"sprite-file-path" : "player_sprite_sheet.png"
 					}
@@ -111,10 +111,10 @@
 					"name" : "RigidbodyComponent",
 					"value" : 
 					{
-						"acceleration" : 0.5,
+						"acceleration" : 3,
 						"body-type" : "KINEMATIC",
 						"deceleration" : 2,
-						"max-velocity" : 7.0,
+						"max-velocity" : 10.0,
 						"orientation" : "UP"
 					}
 				},
@@ -132,16 +132,16 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 30.0,
+									"x" : 15.0,
 									"y" : 0.0
 								},
 								{
-									"x" : 30.0,
-									"y" : 30.0
+									"x" : 15.0,
+									"y" : 10.0
 								},
 								{
 									"x" : 0.0,
-									"y" : 30.0
+									"y" : 10.0
 								}
 							],
 							"point-count" : 4,
@@ -154,10 +154,10 @@
 							"shape-type" : "POLYGON"
 						},
 						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 100.0,
-						"hitbox-offsetX" : 15.0,
-						"hitbox-offsetY" : 40.0,
-						"hitbox-width" : 50.0,
+						"hitbox-height" : 10.0,
+						"hitbox-offsetX" : 25.0,
+						"hitbox-offsetY" : 50.0,
+						"hitbox-width" : 15.0,
 						"trigger" : false
 					}
 				},
@@ -188,20 +188,14 @@
 					"name" : "Damager",
 					"value" : 
 					{
-						"damage-amount" : 10,
-						"damage-target" : null,
-						"damage-type" : null,
-						"damageable-mask" : 
-						[
-							"DEFAULT"
-						]
+						"damager-data" : "Test.json"
 					}
 				}
 			],
 			"info" : 
 			{
 				"name" : "Player",
-				"physics-layer" : "DEFAULT",
+				"physics-layer" : "PLAYER",
 				"tag" : "PLAYER"
 			},
 			"transform" : 

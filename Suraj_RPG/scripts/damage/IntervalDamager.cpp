@@ -12,13 +12,16 @@ IntervalDamager::~IntervalDamager()
 }
 void IntervalDamager::update()
 {
+	if (!damager_data.lock())
+		return;
+
 	int i = 0;
 	for (auto& hd : hit_delay)
 	{
 		if (hd.first == 0)
 		{
 			// damageable just entered, should get hit
-			collisions.at(i).lock()->take_damage(damage_amount, damage_type, damage_target);
+			//collisions.at(i).lock()->take_damage(damage_amount, damage_type, damage_target);
 			hd.first++;
 		}
 		else
@@ -27,7 +30,7 @@ void IntervalDamager::update()
 			if (hd.second.get_elapsed_time().asSeconds() >= hit_interval)
 			{
 				hd.second.restart();
-				collisions.at(i).lock()->take_damage(damage_amount, damage_type, damage_target);
+				//collisions.at(i).lock()->take_damage(damage_amount, damage_type, damage_target);
 				hd.first++;
 			}
 		}
@@ -38,7 +41,7 @@ void IntervalDamager::update()
 void IntervalDamager::fixed_update()
 {
 	Damager::fixed_update();
-	hit_delay.resize(collisions.size());
+	//hit_delay.resize(collisions.size());
 }
 
 std::vector<Editor::SerializedVar> IntervalDamager::get_editor_values()

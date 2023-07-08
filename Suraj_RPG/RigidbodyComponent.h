@@ -63,7 +63,6 @@ public:
 		float acceleration, float deceleration);
 	virtual ~RigidbodyComponent();
 
-	virtual void init() override;
 	virtual void update() override;
 	virtual void fixed_update() override;
 
@@ -72,26 +71,28 @@ public:
 
 	virtual std::vector<Editor::SerializedVar> get_editor_values() override;
 
-	Vector2f get_velocity();
-	const float get_max_velocity() const;
-	const BodyType get_body_type() const;
+	//Vector2f get_velocity() { return velocity; }
+	float get_velocity() { return current_velocity; }
+	float get_external_velocity() { return external_velocity; }
+	Vector2f get_movement_dir() { return movement_dir; }
+	const float get_max_velocity() const { return max_velocity; }
+	const BodyType get_body_type() const { return body_type; }
+	const MovementState get_movement_state() const { return current_movement_state; }
+	const Orientation::Direction get_orientation() const { return current_orientation; }
 
-	void set_velocity(Vector2f velocity);
-	void set_max_velocity(float velocity);
-	void set_acceleration(float acceleration);
-	void set_deceleration(float deceleration);
-	void set_body_type(BodyType body_type);
+	void set_velocity(float velocity) { this->current_velocity = velocity; }
+	void set_max_velocity(float velocity) { this->max_velocity = max_velocity; }
+	void set_acceleration(float acceleration) { this->acceleration = acceleration; }
+	void set_deceleration(float deceleration) { this->deceleration = deceleration; }
+	void set_body_type(BodyType body_type) { this->body_type = body_type; }
+	void set_orientation(Orientation::Direction dir) { this->current_orientation = dir; }
 
-	//movement states
-
-	const MovementState get_movement_state() const;
-	const Orientation::Direction get_orientation() const;
-
-	void set_orientation(Orientation::Direction dir);
-
-	void apply_acceleration(const Vector2f dir, const bool ignore_max_velocty = false);
-	void apply_velocity(const Vector2f velocity, const bool ignore_max_velocity = false);
+	void move(Vector2f dir);
 	void move_towards(const Vector2f dest);
+	 
+	void apply_external_force(Vector2f force, const bool ignore_mass = false);
+
+	
 
 	void halt(Vector2f dir);
 
@@ -104,10 +105,24 @@ protected:
 
 private:
 	float max_velocity;
+	
+	float current_velocity;
+	Vector2f movement_dir;
+	Vector2f facing_dir;
+
 	float acceleration;
 	float deceleration;
+	float mass;
 
-	Vector2f velocity;
+	bool freeze_x = false;
+	bool freeze_y = false;
+
+	float external_velocity;
+	Vector2f external_dir;
+
+	// ugly checks used to prevent decelerating right after accelerating
+	bool started_movement_this_frame = false;
+	bool started_external_movement_this_frame = false;
 
 	/// <summary>
 	/// Caps the velocity at max_velocity if it currently exceeds

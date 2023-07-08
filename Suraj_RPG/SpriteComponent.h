@@ -17,7 +17,6 @@ public:
 
     virtual void set_world_position(const Vector2f pos) override;
 
-
     // Inherited via IData
     virtual Json::Value serialize_json() override;
     virtual void unserialize_json(Json::Value obj) override;
@@ -42,6 +41,9 @@ private:
 
     Vector2i size = Vector2i(32, 32);
     std::string file_path;
+
+    bool sorting_group = false;
+    float y_pos_offset = 0.f;
 
 };
 

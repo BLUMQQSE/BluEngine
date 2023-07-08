@@ -1,0 +1,11 @@
+{
+    "damage-amount" : 25,
+    "knockback-amount" : 20,
+    "damage-cooldown" : 2,
+    "damage-target" : null,
+    "damage-type" : null,
+    "damageable-mask" : 
+    [
+        "ACTOR"
+    ]
+}

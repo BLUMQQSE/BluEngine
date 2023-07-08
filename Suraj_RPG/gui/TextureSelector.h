@@ -71,6 +71,9 @@ private:
 	sf::Vector2u mouse_pos_grid;
 
 	float grid_size;
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
 };
 
 }

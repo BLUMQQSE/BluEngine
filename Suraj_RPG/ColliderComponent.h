@@ -58,6 +58,7 @@ public:
 	virtual ~ColliderComponent();
 
 	virtual void init() override;
+	virtual void fixed_update() override;
 
 	virtual void on_draw_gizmos() override;
 

@@ -17,6 +17,19 @@ class IRenderable;
 namespace bm98::GUI
 {
 
+enum class Align
+{
+	TOP_LEFT,
+	TOP_CENTER,
+	TOP_RIGHT,
+	CENTER_LEFT,
+	CENTER,
+	CENTER_RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM_CENTER,
+	BOTTOM_RIGHT
+};
+
 class GUIObject : public IRenderable
 {
 public:
@@ -30,6 +43,7 @@ public:
 		position.y = y;
 	}
 	virtual sf::Vector2f get_position() { return position; }
+	virtual sf::Vector2f get_size() = 0;
 	virtual void update_sfml(sf::Event sfEvent) {}
 
 protected:
@@ -104,6 +118,10 @@ private:
 
 	bool valid_index(int index) { return index > 0 && index < string.size(); }
 
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
+
 };
 
 class Button : public GUIObject
@@ -173,6 +191,10 @@ private:
 	sf::Color outline_hover_color;
 	sf::Color outline_active_color;
 
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
+
 };
 
 class DropDownList : public GUIObject
@@ -209,6 +231,9 @@ private:
 	bool selection_change;
 	float width;
 	float height;
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
 };
 
 class FlagDropDownList : public GUIObject
@@ -247,6 +272,10 @@ private:
 	float width;
 	float height;
 
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
+
 };
 
 class Checkbox : public GUIObject
@@ -268,6 +297,9 @@ private:
 	float size;
 
 	bool checked;
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
 };
 
 class ScrollView : public GUIObject
@@ -294,6 +326,10 @@ private:
 	float height;
 	bool vertical;
 	bool horizontal;
+
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
 
 };
 
@@ -338,6 +374,10 @@ private:
 	void delete_last_char();
 
 
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
+
 };
 
 class Label : public GUIObject
@@ -351,11 +391,18 @@ public:
 	virtual void add_to_buffer(sf::View* = nullptr) override;
 	virtual void set_position(float x, float y) override;
 	void set_text(std::string new_text);
+	void set_fill_color(sf::Color color);
 	std::string get_text() { return text_content.getString(); }
 	sf::Drawable* get_drawable() { return &text_content; }
 
+	void align_text(Align alignment);
+
 private:
 	sf::Text text_content;
+
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
 
 };
 
@@ -384,6 +431,18 @@ public:
 	
 	void add_scroll_view(std::string key, ScrollView* sv);
 
+	void set_size(Vector2f size);
+
+	/// <summary>
+	/// Will set panel size to fit content as tight as possible.
+	/// </summary>
+	/// <param name="alignment">
+	/// DEFAULTS TOP_LEFT
+	/// TOP_LEFT: Will shrink panel from right and bottom
+	/// TOP_RIGHT: Will shrink panel from left and bottom
+	/// CENTER: Will shrink panel from left, right, bottom, top
+	/// </param>
+	void fit_to_content(Align alignment = Align::TOP_LEFT, Vector2f buffer = Vector2f(10,10));
 
 	float get_width();
 	float get_height();
@@ -406,6 +465,10 @@ private:
 	bool active;
 	sf::RectangleShape panel_shape;
 	std::unordered_map<std::string, GUIObject*> content;
+
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
 
 };
 
@@ -441,6 +504,10 @@ private:
 	float max_val;
 	float current_val;
 	
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
+
 };
 
 class TransformMover : public GUIObject
@@ -466,6 +533,10 @@ private:
 	bool vertical_held;
 	Vector2f size;
 
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
+
 };
 
 class ProgressBar : public GUIObject
@@ -486,6 +557,9 @@ private:
 	float percentage = 100;
 	Vector2f size = Vector2f::Zero();
 	Vector2f position = Vector2f::Zero();
+
+	// Inherited via GUIObject
+	virtual sf::Vector2f get_size() override;
 };
 
 }

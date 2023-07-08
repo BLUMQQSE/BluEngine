@@ -104,18 +104,21 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 {
 	if (distance == INFINITY)
 		distance = 10000.0f;
+	
 	FloatConvex ray = FloatConvex::Line(origin, origin + direction.get_normalized() * distance, 1);
 	
 	bool hit_something = false;
 	Intersect current_intersect;
-
-	std::vector<std::weak_ptr<GameObject>> rel = ignore->get_all_relatives();
 	
+	std::vector<std::weak_ptr<GameObject>> rel = ignore->get_all_relatives();
+	LineIntersect last_saved_intersect;
 	for (std::size_t i = 0; i < objects.size(); i++)
 	{
+#pragma region Verify GameObject is valid to check
+	
 		if (!mask[objects[i][0].first.lock()->get_info().layer])
 			continue;
-		
+
 		if (objects[i][0].first.lock() == ignore)
 			continue;
 
@@ -124,27 +127,59 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 			continue;
 
 		std::weak_ptr<GameObject> go = objects[i][0].first;
-		
+
 		std::vector<std::weak_ptr<GameObject>>::iterator it = std::find_if(rel.begin(), rel.end(),
 																		   [go](std::weak_ptr<GameObject> const& i) { return i.lock().get() == go.lock().get(); });
 		if (rel.size() != 0)
 			if (it != rel.end())
 				continue;
+#pragma endregion
+		// by here we know this object 1) exists : 2) has collider : 3) is not related to ignore
 		
+		
+		if (!dynamic_cast<TilemapColliderComponent*>(c.lock().get()))
+		{
+			LineIntersect temp_intersect = c.lock().get()->get_collider_bounds().line_intersects(origin, origin + (direction.get_normalized() * distance));
+			
+			if (!temp_intersect.collision_exists)
+				continue;
 
+			if (last_saved_intersect.collision_exists)
+			{
+				if (Vector2f::SqrDistance(origin, temp_intersect.get_contact_center()) < Vector2f::SqrDistance(origin, last_saved_intersect.get_contact_center()))
+				{
+					last_saved_intersect = temp_intersect;
+					if (hit)
+					{
+						hit->collider = c;
+					}
+				}
+			}
+			else
+			{
+				last_saved_intersect = temp_intersect;
+				hit_something = true;
+				if (hit)
+				{
+					hit->collider = c;
+				}
+			}
+		}
+		continue;
+		/*
 		Intersect intersect;
 		Vector2f intersect_contact_center;
 		if (dynamic_cast<TilemapColliderComponent*>(c.lock().get()))
 		{
-			intersect = dynamic_cast<TilemapColliderComponent*>(c.lock().get())->intersects(ray, mask);
-			TilemapIntersect t = intersect;
-			intersect_contact_center = t.get_contact_center();
+			//intersect = dynamic_cast<TilemapColliderComponent*>(c.lock().get())->intersects(ray, mask);
+			//TilemapIntersect t = intersect;
+			//intersect_contact_center = t.get_contact_center();
 		}
 		else
 		{
-			intersect = FloatConvex::Intersection(ray, c.lock()->get_collider_bounds());
-			ObjectIntersect o = intersect;
-			intersect_contact_center = o.get_contact_center();
+			//ObjectIntersect o = intersect;
+			intersect = FloatConvex::Intersection(ray, c.lock()->get_collider_bounds(), direction);
+			intersect_contact_center = intersect.get_contact_center();
 		}
 		if (current_intersect.collision_exists)
 		{
@@ -157,8 +192,17 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 					hit_something = true;
 					if (hit)
 					{
+					
 						hit->collider = c;
 					}
+					else
+					{
+						int x = 0;
+					}
+				}
+				else
+				{
+					int y = 12;
 				}
 			}
 		}
@@ -174,6 +218,7 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 				}
 			}
 		}
+		*/
 	}
 
 	return hit_something;
@@ -273,12 +318,12 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 		return;
 	if (dynamic_cast<TilemapColliderComponent*>(a_collider.lock().get()))
 	{
-		handle_tilemap_collision(b, a);
+		//handle_tilemap_collision(b, a);
 		return;
 	}
 	if (dynamic_cast<TilemapColliderComponent*>(b_collider.lock().get()))
 	{
-		handle_tilemap_collision(a, b);
+		//handle_tilemap_collision(a, b);
 		return;
 	}
 
@@ -338,10 +383,11 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 	}
 	else
 	{
+
 		// Here need all logic for switching from nothing to entry
 		//WRONG, need to look at alternative to see if trigger entry
 
-
+		
 		//need a pre test to check if either are triggers
 		if (a_collider.lock()->is_trigger())
 		{
@@ -394,8 +440,8 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 	if (a_collider.lock()->is_trigger() || b_collider.lock()->is_trigger())
 		return;
 
-	float a_velocity_abs = a_rigid.lock()->get_velocity().sqr_magnitude();
-	float b_velocity_abs = b_rigid.lock()->get_velocity().sqr_magnitude();
+	float a_velocity_abs = a_rigid.lock()->get_velocity() + a_rigid.lock()->get_external_velocity();
+	float b_velocity_abs = b_rigid.lock()->get_velocity() + b_rigid.lock()->get_external_velocity();
 
 	float total_velocity = a_velocity_abs + b_velocity_abs;
 
@@ -411,6 +457,7 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 	Vector2f b_movement = -collision.penetration_vector * b_velocity_percent;
 
 	((ObjectIntersect)collision).calculate_contacts(a_movement, b_movement);
+
 
 	a_rigid_gameobject.lock()->move(a_movement);
 	b_rigid_gameobject.lock()->move(b_movement);

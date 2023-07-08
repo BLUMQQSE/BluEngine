@@ -2,29 +2,6 @@
 #include "Debug.h"
 namespace bm98::core
 {
-/*
-sf::Text Debug::text_display;
-bool Debug::active = true;
-Sorting::Layer Debug::layer = Sorting::Layer::UI;
-char Debug::z_order = 100;
-
-void Debug::init()
-{
-	Renderer::Instance()->add(Renderer::RenderObject(&text_display, active, layer, z_order));
-}
-
-void Debug::Log(std::string message)
-{
-	std::cout << message << "\n";
-}
-
-void Debug::LogError(std::string message)
-{
-	std::cout << message << "\n";
-}
-
-
-*/
 
 void Debug::core_log(std::string message, LogLevel level)
 {

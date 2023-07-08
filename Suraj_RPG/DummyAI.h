@@ -8,7 +8,7 @@ namespace bm98
 {
 
 class DummyAI :
-    public IDamageable
+    public IDamageable, public Component
 {
 
 public:
@@ -26,7 +26,7 @@ private:
     std::pair<Vector2f, float> hit;
 
     // Inherited via IDamageable
-    virtual void take_damage(unsigned damage, EnumFlag damage_type, EnumFlag damage_target) override;
+    virtual void take_damage(std::weak_ptr<DamagerData> damage_data) override;
 };
 
 }

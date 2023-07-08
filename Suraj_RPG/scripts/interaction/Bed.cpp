@@ -24,7 +24,7 @@ void Bed::initiate_interaction(std::shared_ptr<Interactor> interactor)
 	IInteractable::initiate_interaction(interactor);
 
 	// Orient interactor to chest
-	interactor->get_game_object()->get_component<RigidbodyComponent>().lock()->set_velocity(Vector2f::Zero());
+	interactor->get_game_object()->get_component<RigidbodyComponent>().lock()->set_velocity(0.f);
 
 	if (interactor->get_game_object()->get_info().tag == Tags::Tag::PLAYER)
 	{

@@ -15,6 +15,8 @@ public:
     virtual void start() override;
     virtual void update() override;
 
+    void move(Vector2f offset);
+
     sf::View& get_camera_view();
     sf::FloatRect get_view_bounds();
 
@@ -23,6 +25,7 @@ public:
 
 private:
     sf::View camera_view;
+    float camera_speed = 20.f;
 
 };
 

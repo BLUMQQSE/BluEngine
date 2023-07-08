@@ -41,6 +41,8 @@ public:
 		TRIGGER_EXIT
 	};
 
+	unsigned const get_physics_objects_count() { return objects.size(); }
+
 	void add_to_physics(std::shared_ptr<GameObject> game_object);
 	void remove_from_physics(std::shared_ptr<GameObject> game_object);
 	void clear_objects();

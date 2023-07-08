@@ -127,10 +127,10 @@ void Game::update_delta_time()
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_FIXED_UPDATE_);
 
-    if (fps_averager == 200)
+    if (fps_averager == 50)
     {
         fps_averager = 0;
-        fps = fps_col / 200;
+        fps = fps_col / 50;
         fps_col = 0;
 
 
@@ -198,9 +198,13 @@ void Game::fixed_update()
 {
     if (!states.empty())
     {
+        EventSystem::Instance()->push_event(EventID::_SYSTEM_FIXED_UPDATE_START_FLAG_);
         states.top()->fixed_update();
+        EventSystem::Instance()->push_event(EventID::_SYSTEM_FIXED_UPDATE_END_FLAG_);
     }
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_GAMEOBJECT_FIXED_UPDATE_START_FLAG_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_PHYSICS_FIXED_UPDATE_);
+    EventSystem::Instance()->push_event(EventID::_SYSTEM_GAMEOBJECT_FIXED_UPDATE_END_FLAG_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_FIXED_UPDATE_);
     EventSystem::Instance()->push_event(EventID::_SYSTEM_TIME_RESET_FIXED_);
    

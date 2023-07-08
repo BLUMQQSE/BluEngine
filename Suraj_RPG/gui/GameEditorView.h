@@ -28,12 +28,15 @@ public:
 private:
 	GUI::Panel* heir_panel;
 	GUI::Panel* inspec_panel;
+	GUI::Panel* context_panel;
 
 	sf::View* heir_view;
 	sf::View* inspec_view;
+	sf::View* context_view;
 
 	bool heir_active = false;
 	bool inspec_active = false;
+	bool context_active = true;
 
 
 	bool gameobject_held = false;
@@ -55,6 +58,25 @@ private:
 	void create_inspec_panel();
 	void update_inspec_panel();
 
+	void create_context_panel();
+	void update_context_panel();
+	void align_context_panel();
+
+	unsigned update_intervals_ignored = 0;
+	const unsigned UPDATE_INTERVALS_TO_IGNORE = 80;
+	std::stringstream delta_string;
+
+	unsigned fixed_intervals_ignored = 0;
+	unsigned entity_fixed_intervals_ignored = 0;
+	const unsigned FIXED_INTERVALS_TO_IGNORE = 0;
+	//std::stringstream 
+
+	Timer fixed_update_timer;
+	unsigned fixed_update_duration = 0;
+	Timer entity_fixed_update_timer;
+	unsigned entity_fixed_update_duration = 0;
+
+	
 
 	GUI::Panel* create_component_panel(float pos_y, float width, std::string component_name,
 		std::vector<Editor::SerializedVar> vars);

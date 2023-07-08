@@ -26,7 +26,8 @@ void DataAsset::unserialize_json(Json::Value obj)
 void EnemyData::unserialize_json(Json::Value obj)
 {
 	detection_radius = obj["pathfinding"]["detection-radius"].asFloat();
-	detection_mask.unserialize_field(obj["pathfinding"]["detection-mask"]);
+	target_mask.unserialize_field(obj["pathfinding"]["target-mask"]);
+	obstacle_mask.unserialize_field(obj["pathfinding"]["obstacle-mask"]);
 }
 
 #pragma endregion
@@ -90,14 +91,30 @@ void WeaponData::unserialize_json(Json::Value obj)
 
 void DamagerData::unserialize_json(Json::Value obj)
 {
+	damage_amount = obj["damage-amount"].asUInt64();
+	knockback_amount = obj["knockback-amount"].asUInt64();
+	cooldown = obj["damage-cooldown"].asFloat();
 	damageable_mask.unserialize_field(obj["damageable-mask"]);
-	damage_amount = obj["damage-amount"].asFloat();
 	damage_type.unserialize_field(obj["damage-type"]);
 	damage_target.unserialize_field(obj["damage-target"]);
 }
 
 #pragma endregion
 
+#pragma region EffectData
 
+void EffectData::unserialize_json(Json::Value obj)
+{
+	effect_name = obj["effect-name"].asString();
+	effect_description = obj["effect-description"].asString();
+	effect_duration = obj["effect-duration"].asFloat();
+	effect_type.unserialize_field(obj["effect-type"]);
+
+	reccuring_effect = obj["reccuring-effect"].asBool();
+	intermission_duration = obj["intermission-duration"].asFloat();
+	effect_modifier = obj["effect-modifier"].asFloat();
+}
+
+#pragma endregion
 
 }

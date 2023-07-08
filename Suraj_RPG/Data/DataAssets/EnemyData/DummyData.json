@@ -1,0 +1,14 @@
+{
+    "pathfinding" :
+    {
+        "detection-radius" : 200,
+        "target-mask" :
+        [
+            "PLAYER"
+        ],
+        "obstacle-mask" :
+        [
+            "ACTOR"
+        ]
+    }
+}

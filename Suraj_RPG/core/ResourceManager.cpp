@@ -152,20 +152,25 @@ void ResourceManager::iterate_prefab_directory(std::string dir_path)
 
 void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 {
+	int x = 1;
 	for (const auto& entry : std::filesystem::directory_iterator(dir_path))
 	{
 		std::string file_name = entry.path().string().substr(dir_path.size(), entry.path().string().size() - 1);
 		if (!entry.is_directory())
 		{
-			if (entry.path().string().find("ItemData"))
+			if (entry.path().string().find("ItemData") != std::string::npos)
 			{
-				if (entry.path().string().find("WeaponData"))
+				if (entry.path().string().find("WeaponData") != std::string::npos)
 					asset_data[file_name] = std::make_shared<WeaponData>(file_name);
-				else if (entry.path().string().find("EnemyData"))
-					asset_data[file_name] = std::make_shared<EnemyData>(file_name);
 				else
 					asset_data[file_name] = std::make_shared<ItemData>(file_name);
 			}
+			else if (entry.path().string().find("EnemyData") != std::string::npos)
+				asset_data[file_name] = std::make_shared<EnemyData>(file_name);
+			else if (entry.path().string().find("DamagerData") != std::string::npos)
+				asset_data[file_name] = std::make_shared<DamagerData>(file_name);
+			else if (entry.path().string().find("EffectData") != std::string::npos)
+				asset_data[file_name] = std::make_shared<EffectData>(file_name);
 			else
 			{
 				asset_data[file_name] = std::make_shared<DataAsset>(file_name);
@@ -178,6 +183,7 @@ void ResourceManager::iterate_data_asset_directory(std::string dir_path)
 		iterate_data_asset_directory(dir_path + file_name + "/");
 		
 	}
+	int y= 2;
 }
 
 void ResourceManager::iterate_audio_directory(std::string dir_path)

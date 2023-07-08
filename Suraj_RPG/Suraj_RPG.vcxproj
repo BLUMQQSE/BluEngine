@@ -196,6 +196,7 @@
     <ClCompile Include="Dialogue.cpp" />
     <ClCompile Include="DontDestroyOnLoad.cpp" />
     <ClCompile Include="DummyAI.cpp" />
+    <ClCompile Include="Effector.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="GraphicsSettings.cpp" />
@@ -209,6 +210,7 @@
     <ClCompile Include="gui\SceneEditorView.cpp" />
     <ClCompile Include="gui\TextureSelector.cpp" />
     <ClCompile Include="HearingComponent.cpp" />
+    <ClCompile Include="IEffectable.cpp" />
     <ClCompile Include="IRenderable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp" />
@@ -294,6 +296,7 @@
     <ClInclude Include="Dialogue.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />
     <ClInclude Include="DummyAI.h" />
+    <ClInclude Include="Effector.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="GraphicsSettings.h" />
@@ -308,6 +311,7 @@
     <ClInclude Include="gui\TextureSelector.h" />
     <ClInclude Include="HearingComponent.h" />
     <ClInclude Include="IData.h" />
+    <ClInclude Include="IEffectable.h" />
     <ClInclude Include="IObject.h" />
     <ClInclude Include="IRenderable.h" />
     <ClInclude Include="Math.h" />

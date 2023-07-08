@@ -368,6 +368,20 @@ void RichText::rotate(float angle, int index)
 	string[index].first.rotate(angle);
 }
 
+sf::Vector2f RichText::get_size()
+{
+	sf::Vector2f result;
+	for (int i = 0; i < string.size(); i++)
+	{
+		result += Vector2f
+		(
+			string[i].first.getPosition().x + string[i].first.findCharacterPos(string[i].first.getString().getSize()).x - string[i].first.findCharacterPos(0).x,
+			string[i].first.getPosition().y + string[i].first.getCharacterSize()
+		);
+	}
+	return result;
+}
+
 
 /*
 void RichText::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -604,6 +618,11 @@ void Button::set_id(const short unsigned id)
 	this->id = id;
 }
 
+sf::Vector2f Button::get_size()
+{
+	return shape.getSize();
+}
+
 #pragma endregion
 
 #pragma region DROP_DOWN_LIST
@@ -758,6 +777,11 @@ const short unsigned& DropDownList::get_selected_index() const
 const Button* DropDownList::get_selected_button() const
 {
 	return active_selection;
+}
+
+sf::Vector2f DropDownList::get_size()
+{
+	return sf::Vector2f(width, height);
 }
 
 #pragma endregion
@@ -961,6 +985,11 @@ void FlagDropDownList::set_enum_flag(EnumFlag flag)
 
 }
 
+sf::Vector2f FlagDropDownList::get_size()
+{
+	return sf::Vector2f(width, height);
+}
+
 #pragma endregion
 
 #pragma region CHECK_BOX
@@ -1046,6 +1075,11 @@ void Checkbox::set_checked(bool checked)
 	}
 	check.setFillColor(sf::Color::Transparent);
 	return;
+}
+
+sf::Vector2f Checkbox::get_size()
+{
+	return sf::Vector2f(box.getSize());
 }
 
 #pragma endregion
@@ -1193,6 +1227,11 @@ void ScrollView::set_position(float x, float y)
 		vertical_handle.setFillColor(sf::Color::Green);
 	if (horizontal)
 		horizontal_handle.setFillColor(sf::Color::Green);
+}
+
+sf::Vector2f ScrollView::get_size()
+{
+	return sf::Vector2f();
 }
 
 #pragma endregion
@@ -1380,6 +1419,7 @@ void InputBox::set_text(std::string value)
 		(int)(box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
 		(int)(text.getPosition().y)
 	);
+	set_selected(false);
 }
 
 const bool InputBox::is_selected() const
@@ -1425,6 +1465,11 @@ void InputBox::delete_last_char()
 
 }
 
+sf::Vector2f InputBox::get_size()
+{
+	return box.getSize();
+}
+
 #pragma endregion
 
 #pragma region LABEL
@@ -1459,12 +1504,42 @@ void Label::add_to_buffer(sf::View* view)
 void Label::set_position(float x, float y)
 {
 	//GUIObject::set_position(x, y);
-	text_content.setPosition(sf::Vector2f(x, y));
+	text_content.setPosition(sf::Vector2f((int)x, (int)y));
+	//position = Vector2f(x, y);
 }
 
 void Label::set_text(std::string new_text)
 {
 	text_content.setString(new_text);
+}
+
+void Label::set_fill_color(sf::Color color)
+{
+	text_content.setFillColor(color);
+}
+
+void Label::align_text(Align alignment)
+{
+	Vector2f new_pos;
+	switch (alignment)
+	{
+		case Align::CENTER_RIGHT:
+		{
+			// need to use position as far right of text
+			// set text position to be left of that
+			// then reset position to texts new position
+			new_pos = position - Vector2f(text_content.getGlobalBounds().width, 0);
+			set_position(new_pos.x, new_pos.y);
+			position = new_pos;
+		}
+		default:
+			break;
+	}
+}
+
+sf::Vector2f Label::get_size()
+{
+	return sf::Vector2f(text_content.getGlobalBounds().width,text_content.getGlobalBounds().height);
 }
 
 #pragma endregion
@@ -1538,7 +1613,6 @@ void Panel::set_position(float x, float y)
 	panel_shape.setPosition(x, y);
 	for (auto& c : content)
 		c.second->set_position(x + c.second->get_position().x, y + c.second->get_position().y);
-		
 }
 
 void Panel::update_sfml(sf::Event sfEvent)
@@ -1614,6 +1688,11 @@ bool Panel::mouse_in_bounds()
 	return panel_shape.getGlobalBounds().contains(Input::Instance()->mouse_position( get_view() ));
 }
 
+sf::Vector2f Panel::get_size()
+{
+	return sf::Vector2f(get_width(), get_height());
+}
+
 Button* Panel::get_button(std::string key)
 {
 	return dynamic_cast<Button*>(content.at(key));
@@ -1631,6 +1710,47 @@ void Panel::add_scroll_view(std::string key, ScrollView* sv)
 	content[key] = sv;
 	set_view(&sv->get_scroll_view());
 	
+}
+
+void Panel::set_size(Vector2f size)
+{
+	panel_shape.setSize(size);
+}
+
+void Panel::fit_to_content(Align alignment, Vector2f buffer)
+{
+	switch (alignment)
+	{
+		case bm98::GUI::Align::TOP_LEFT:
+		{
+			if (content.size() == 0)
+			{
+				panel_shape.setSize(Vector2f(20, 20));
+				return;
+			}
+
+			float max_width = 0;
+			float max_height = 0;
+
+			for (auto& c : content)
+			{
+				Vector2f size;
+				size.x = c.second->get_size().x + c.second->get_position().x;
+				size.y = c.second->get_size().y + c.second->get_position().y;
+
+				if (size.x > max_width)
+					max_width = size.x;
+				if (size.y > max_height)
+					max_height = size.y;
+			}
+
+			panel_shape.setSize(Vector2f(max_width + buffer.x, max_height + buffer.y));
+			break;
+		}
+		default:
+			break;
+	}
+
 }
 
 float Panel::get_width()
@@ -1773,6 +1893,11 @@ const float Slider::get_value() const
 const float Slider::get_width() const
 {
 	return width;
+}
+
+sf::Vector2f Slider::get_size()
+{
+	return shape.getSize();
 }
 
 
@@ -1962,6 +2087,11 @@ sf::Vector2f TransformMover::get_position()
 	return position;
 }
 
+sf::Vector2f TransformMover::get_size()
+{
+	return size;
+}
+
 
 #pragma endregion
 
@@ -2023,6 +2153,11 @@ void ProgressBar::set_percentage(float percentage)
 		this->percentage = percentage;
 		set_size(size);
 	}
+}
+
+sf::Vector2f ProgressBar::get_size()
+{
+	return size;
 }
 
 #pragma endregion

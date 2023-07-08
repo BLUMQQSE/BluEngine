@@ -27,6 +27,8 @@ public:
 
 	const float total_real_time();
 
+	inline const unsigned get_fps_average() { return fps; }
+
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
 
@@ -57,12 +59,17 @@ private:
 	void reset_time_since_state_change();
 	void reset_fixed_delta();
 
+	void update_fps_average();
 
 	// Inherited via Listener
 	virtual void handle_event(Event* event) override;
 
 	Timer game_timer;
 	Timer game_fixed_timer;
+	
+	int fps_averager = 0;
+	float fps_col;
+	unsigned fps;
 
 };
 

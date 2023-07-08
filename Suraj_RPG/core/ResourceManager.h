@@ -50,7 +50,10 @@ public:
 	/// <param name="prefab_file_name">Name of JSON file loading in.</param>
 	template <typename T> std::weak_ptr<T> get_data_asset(std::string asset_file_name)
 	{
-		return std::static_pointer_cast<T>(asset_data.at(asset_file_name));
+		if (has_data_asset(asset_file_name))
+			return std::static_pointer_cast<T>(asset_data.at(asset_file_name));
+		else
+			return std::weak_ptr<T>();
 	}
 
 	/// <summary>

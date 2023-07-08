@@ -64,6 +64,14 @@ void IRenderable::set_sorting_layer(Sorting::Layer layer, bool refresh_renderer)
 		core::Renderer::Instance()->refresh();
 	}
 }
+void IRenderable::set_render_depth(int depth)
+{
+	this->render_depth = depth;
+}
+void IRenderable::set_y_pos(float y_pos)
+{
+	this->y_pos = y_pos;
+}
 bool& IRenderable::get_render()
 {
 	return render;
@@ -93,6 +101,16 @@ sf::Shader** IRenderable::get_shader_pointer()
 sf::Shader* IRenderable::get_shader()
 {
 	return shader;
+}
+
+float& IRenderable::get_y_pos()
+{
+	return y_pos;
+}
+
+int& IRenderable::get_render_depth()
+{
+	return render_depth;
 }
 
 Json::Value bm98::IRenderable::serialize_json()

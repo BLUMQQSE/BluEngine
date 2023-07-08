@@ -21,7 +21,7 @@ void CameraComponent::init()
 	camera_view.setCenter(game_object->get_world_position());
 	camera_view.setSize(sf::Vector2f(core::Renderer::Instance()->get_window_size()));
 	//camera_view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
-	sf::Listener::setPosition(sf::Vector3f(game_object->get_center().x, game_object->get_center().y, 0));
+	sf::Listener::setPosition(sf::Vector3f(game_object->get_physical_center().x, game_object->get_physical_center().y, 0));
 }
 
 void CameraComponent::awake()
@@ -36,8 +36,13 @@ void CameraComponent::start()
 
 void CameraComponent::update()
 {
-	sf::Listener::setPosition(sf::Vector3f(game_object->get_center().x, game_object->get_center().y, 0));
+	sf::Listener::setPosition(sf::Vector3f(game_object->get_physical_center().x, game_object->get_physical_center().y, 0));
 	
+}
+
+void CameraComponent::move(Vector2f offset)
+{
+	game_object->move(offset * camera_speed * Time::Instance()->delta_time());
 }
 
 sf::View& CameraComponent::get_camera_view()

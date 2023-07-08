@@ -30,8 +30,8 @@
 				},
 				"position" : 
 				{
-					"x" : 178.89079284667969,
-					"y" : 232.0
+					"x" : 1119.3099365234375,
+					"y" : 1058.4483642578125
 				},
 				"rotation" : 0.0
 			}
@@ -46,14 +46,6 @@
 							"name" : "Inventory",
 							"value" : 
 							{
-								"content" : 
-								[
-									{
-										"current-capacity" : 1,
-										"index" : 0,
-										"item" : "SwordData.json"
-									}
-								],
 								"inventory-type" : "GENERAL",
 								"max-size" : 18
 							}
@@ -74,13 +66,13 @@
 					{
 						"local-position" : 
 						{
-							"x" : -1000.0000610351562,
+							"x" : -1000.0,
 							"y" : -1000.0
 						},
 						"position" : 
 						{
-							"x" : -853.1092529296875,
-							"y" : -800.0
+							"x" : 87.3099365234375,
+							"y" : 26.4483642578125
 						},
 						"rotation" : 0.0
 					}
@@ -112,13 +104,13 @@
 					{
 						"local-position" : 
 						{
-							"x" : -1000.0000610351562,
+							"x" : -1000.0,
 							"y" : -1000.0
 						},
 						"position" : 
 						{
-							"x" : -853.1092529296875,
-							"y" : -800.0
+							"x" : 87.3099365234375,
+							"y" : 26.4483642578125
 						},
 						"rotation" : 0.0
 					}
@@ -145,13 +137,15 @@
 						{
 							"render" : true,
 							"sorting-layer" : "ACTOR",
-							"z-order" : 10
+							"z-order" : 0
 						},
+						"pivot-offset" : 0.0,
 						"size" : 
 						{
 							"x" : 64,
 							"y" : 64
 						},
+						"sorting-group" : false,
 						"sprite-file-path" : "player_sprite_sheet.png"
 					}
 				},
@@ -159,10 +153,13 @@
 					"name" : "RigidbodyComponent",
 					"value" : 
 					{
-						"acceleration" : 0.5,
+						"acceleration" : 3.0,
 						"body-type" : "KINEMATIC",
 						"deceleration" : 2.0,
-						"max-velocity" : 7.0,
+						"freeze-x" : false,
+						"freeze-y" : false,
+						"mass" : 0.0,
+						"max-velocity" : 10.0,
 						"orientation" : "RIGHT"
 					}
 				},
@@ -180,32 +177,32 @@
 									"y" : 0.0
 								},
 								{
-									"x" : 30.0,
+									"x" : 15.0,
 									"y" : 0.0
 								},
 								{
-									"x" : 30.0,
-									"y" : 30.0
+									"x" : 15.0,
+									"y" : 10.0
 								},
 								{
 									"x" : 0.0,
-									"y" : 30.0
+									"y" : 10.0
 								}
 							],
 							"point-count" : 4,
 							"position" : 
 							{
-								"x" : 161.89079284667969,
-								"y" : 240.0
+								"x" : 1112.3099365234375,
+								"y" : 1076.4483642578125
 							},
 							"rotation" : 0.0,
 							"shape-type" : "POLYGON"
 						},
 						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 100.0,
-						"hitbox-offsetX" : 15.0,
-						"hitbox-offsetY" : 40.0,
-						"hitbox-width" : 50.0,
+						"hitbox-height" : 10.0,
+						"hitbox-offsetX" : 25.0,
+						"hitbox-offsetY" : 50.0,
+						"hitbox-width" : 15.0,
 						"trigger" : false
 					}
 				},
@@ -236,20 +233,14 @@
 					"name" : "Damager",
 					"value" : 
 					{
-						"damage-amount" : 10,
-						"damage-target" : null,
-						"damage-type" : null,
-						"damageable-mask" : 
-						[
-							"DEFAULT"
-						]
+						"damager-data" : "Test.json"
 					}
 				}
 			],
 			"info" : 
 			{
 				"name" : "Player",
-				"physics-layer" : "DEFAULT",
+				"physics-layer" : "PLAYER",
 				"tag" : "PLAYER",
 				"unique-id" : 3
 			},
@@ -262,8 +253,8 @@
 				},
 				"position" : 
 				{
-					"x" : 146.89079284667969,
-					"y" : 200.0
+					"x" : 1087.3099365234375,
+					"y" : 1026.4483642578125
 				},
 				"rotation" : 0.0
 			}

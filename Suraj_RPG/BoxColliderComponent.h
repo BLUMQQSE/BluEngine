@@ -15,7 +15,6 @@ public:
 	virtual void init() override;
 	virtual void awake() override;
 	virtual void update() override;
-	virtual void fixed_update() override;
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 
 	virtual void on_draw_gizmos() override;
@@ -29,10 +28,6 @@ public:
 
 	bool check_intersect(const sf::FloatRect& frect);
 	bool check_outer_intersect(const sf::FloatRect& frect);
-	const sf::FloatRect get_bounds() const;
-	const sf::FloatRect get_outer_bounds() const;
-	
-	
 	
 	void set_hitbox(float width, float height, float offset_x, float offset_y);
 	void set_collision_detection(CollisionDetection col);

@@ -21,18 +21,29 @@ namespace Editor
 struct SerializedVar
 {
 	SerializedVar(std::string name, void* variable, Var::Type type, 
-		std::vector<std::string> extra_data = std::vector<std::string>())
+		std::vector<std::string> extra_data = std::vector<std::string>(), bool modifiable = true)
 	{
 		this->name = name;
 		this->variable = variable;
 		this->extra_data = extra_data;
 		this->type = type;
+		this->modifiable_from_editor = modifiable;
+	}
+	
+	SerializedVar(std::string name, void* variable, Var::Type type, bool modifiable)
+	{
+		this->name = name;
+		this->variable = variable;
+		this->extra_data = {};
+		this->type = type;
+		this->modifiable_from_editor = modifiable;
 	}
 
 	std::string name;
 	void* variable;
 	std::vector<std::string> extra_data;
 	Var::Type type;
+	bool modifiable_from_editor;
 
 };
 }

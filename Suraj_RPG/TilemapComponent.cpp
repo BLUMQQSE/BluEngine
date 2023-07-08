@@ -23,7 +23,9 @@ TilemapComponent::TilemapComponent()
 	this->max_size = Vector2i::Zero();
 
 	this->layers = static_cast<int>(Sorting::Layer::UI);
+
 	create_empty_map();
+
 }
 
 TilemapComponent::TilemapComponent(Vector2i position, float grid_size,
@@ -127,7 +129,7 @@ void TilemapComponent::on_destroy()
 	}
 	render_textures.clear();
 	render_sprites.clear();
-	render_layers.clear();
+	renderable_info.clear();
 
 	map_updateables.clear();
 
@@ -311,11 +313,20 @@ void TilemapComponent::update_tilemap_changes()
 	}
 	render_textures.clear();
 	render_sprites.clear();
-	render_layers.clear();
 
+	renderable_info.resize(this->layers);
 	for (int i = 0; i < this->layers; i++)
 	{
-		render_layers.push_back(static_cast<Sorting::Layer>(i));
+		renderable_info[i].set_render(true);
+		renderable_info[i].set_render_depth(0);
+		renderable_info[i].set_y_pos(position.y);
+		renderable_info[i].set_sorting_layer(static_cast<Sorting::Layer>(i));
+		renderable_info[i].set_z_order(-2);
+		renderable_info[i].set_view(get_view());
+	}
+
+	for (int i = 0; i < this->layers; i++)
+	{	
 		render_textures.push_back(new sf::RenderTexture());
 
 		render_textures[i]->create(grid_size_u * max_size.x, grid_size_u * max_size.y);
@@ -343,8 +354,9 @@ void TilemapComponent::update_tilemap_changes()
 	// Z order is set negative to prevent gameobject on level 0 from passing under the layers
 	for (int x = 0; x < render_sprites.size(); x++)
 	{
-		set_z_order(-2, false);
-		Renderer::Instance()->add(Renderer::RenderObject(&render_sprites[x], get_render(), render_layers[x], get_z_order(), get_view_pointer()));
+		//set_z_order(-2, false);
+		//Renderer::Instance()->add(Renderer::RenderObject(&render_sprites[x], get_render(), render_layers[x], get_z_order(), get_view_pointer()));
+		Renderer::Instance()->add(Renderer::RenderObject(&render_sprites[x], &renderable_info[x]));
 	}
 
 	map_updateables.clear();

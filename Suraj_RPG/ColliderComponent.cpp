@@ -18,12 +18,18 @@ void ColliderComponent::init()
 	collider_bounds.init();
 }
 
+void ColliderComponent::fixed_update()
+{
+	collider_bounds.set_position(Vector2f(game_object->get_world_position().x + offset.x,
+								 game_object->get_world_position().y + offset.y));
+}
+
 void ColliderComponent::on_draw_gizmos()
 {
 	if (active)
 	{
 		if (!trigger)
-			Gizmo::outline_color = Color::Red;
+			Gizmo::outline_color = Color::Orange;
 		else
 			Gizmo::outline_color = Color::LimeGreen;
 		Gizmo::draw_convex(collider_bounds);

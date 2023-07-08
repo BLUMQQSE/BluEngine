@@ -25,6 +25,7 @@ void Time::handle_event(Event* event)
 		break;
 	case EventID::_SYSTEM_TIME_UPDATE_:
 		Instance()->update_delta(game_timer.restart().asSeconds());
+		Instance()->update_fps_average();
 		break;
 	case EventID::_SYSTEM_TIME_RESET_FIXED_:
 		Instance()->reset_fixed_delta();
@@ -52,6 +53,21 @@ void Time::update_delta(const float dt)
 void Time::reset_fixed_delta()
 {
 	fixed_delta -= .01f;
+}
+
+void Time::update_fps_average()
+{
+	if (fps_averager == 50)
+	{
+		fps_averager = 0;
+		fps = (unsigned)(fps_col / 50);
+		fps_col = 0;
+	}
+	else
+	{
+		fps_averager++;
+		fps_col += 1000 / (Time::Instance()->delta_time() * 1000);
+	}
 }
 
 void Time::set_time_scale(const float& scale)

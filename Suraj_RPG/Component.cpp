@@ -118,7 +118,8 @@ std::shared_ptr<GameObject> Component::get_game_object()
 
 std::vector<Editor::SerializedVar> Component::get_editor_values()
 {
-	return std::vector<Editor::SerializedVar>();
+	std::vector<Editor::SerializedVar> vars;
+	return vars;
 }
 
 

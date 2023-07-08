@@ -7,6 +7,21 @@ extern float PI;
 extern float RAD2DEG;
 extern float DEG2RAD;
 
+class Vector3f : public sf::Vector2f, IData
+{
+public:
+	Vector3f();
+	Vector3f(float x, float y, float z);
+	Vector3f(sf::Vector3f vec);
+	Vector3f(sf::Vector2f vec);
+
+	float z;
+
+	// Inherited via IData
+	virtual Json::Value serialize_json() override;
+	virtual void unserialize_json(Json::Value obj) override;
+};
+
 /// <summary>
 /// Class to wrap sf::Vector2f and add math functionality.
 /// </summary>
@@ -17,7 +32,8 @@ public:
 	Vector2f(float x, float y);
 	Vector2f(sf::Vector2f vec);
 	Vector2f(sf::Vector2i vec);
-
+	Vector2f(sf::Vector3f vec);
+	
 	float sqr_magnitude();
 	float magnitude();
 
@@ -84,6 +100,7 @@ public:
 };
 
 class ObjectIntersect;
+class LineIntersect;
 /// <summary>
 /// Class to wrap sf::ConvexShape and add math functionality.
 /// </summary>
@@ -214,6 +231,8 @@ public:
 	void init();
 
 	bool contains_point(Vector2f position);
+	
+	LineIntersect line_intersects(Vector2f line_start, Vector2f line_end);
 
 	void move(float x, float y);
 	void set_position(sf::Vector2f position);
@@ -232,7 +251,8 @@ public:
 	/// </summary>
 	/// <returns>The minimum penetration vector between the two shapes. This vector is
 	/// a.position - b.position. If no collision, returns Vector2f::infinity().</returns>
-	static ObjectIntersect Intersection(FloatConvex a, FloatConvex b);
+	static ObjectIntersect Intersection(FloatConvex a, FloatConvex b, Vector2f a_movement
+										= Vector2f::Zero(), Vector2f b_movement = Vector2f::Zero());
 
 
 	// Inherited via IData
@@ -248,6 +268,7 @@ private:
 	ShapeType shape_type = ShapeType::POLYGON;
 	float rotation = 0;
 
+
 	using ConvexShape::getPosition;
 	using ConvexShape::setPosition;
 
@@ -258,9 +279,11 @@ private:
 	static void ProjectVertices(FloatConvex a, Vector2f axis,
 		float& min, float& max);
 
+	/// <returns>Vector2f::Infinity() if no intersection exists, otherwise
+	/// returns the point of contact</returns>
+	Vector2f solve_line_intersection(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
 
 };
-
 
 class Intersect
 {
@@ -274,22 +297,47 @@ public:
 
 	std::vector<Vector2f> get_contact_points()
 	{
-		if (contact_points.size() == 0)
+		if (!calculated_contacts)
 			calculate_contacts();
 		return contact_points;
 	}
 
-	Vector2f get_contact_center()
+	Vector2f get_contact_center(Vector2f first = Vector2f::Zero(), 
+								Vector2f second = Vector2f::Zero())
 	{
-		if (contact_center == Vector2f::Infinity())
-			calculate_contacts();
+		if (!calculated_contacts)
+			calculate_contacts(first, second);
 		return contact_center;
 	}
 
 protected:
+	bool calculated_contacts = false;
 	std::vector<Vector2f> contact_points;
 	// Average of all points in contact
 	Vector2f contact_center = Vector2f::Infinity();
+
+};
+
+class LineIntersect : public Intersect
+{
+public:
+	void add_contact_point(Vector2f contact_point, Vector2f origin)
+	{
+		collision_exists = true;
+		penetration_vector = Vector2f::Zero();
+		contact_points.push_back(contact_point);
+
+		if (contact_points.size() == 1)
+			contact_center = contact_points[0];
+		else
+		{
+			if (Vector2f::SqrDistance(contact_points[0], origin) <
+				Vector2f::SqrDistance(contact_points[1], origin))
+				contact_center = contact_points[0];
+			else
+				contact_center = contact_points[1];
+		}
+	}
 
 };
 
@@ -299,9 +347,12 @@ public:
 	FloatConvex convex_1;
 	FloatConvex convex_2;
 
-	ObjectIntersect()
-	{
+	ObjectIntersect() {}
 
+	ObjectIntersect(FloatConvex a, FloatConvex b)
+	{
+		convex_1 = a;
+		convex_2 = b;
 	}
 
 	ObjectIntersect(Intersect i)
@@ -315,7 +366,7 @@ public:
 	void calculate_contacts(Vector2f first = Vector2f::Zero(), 
 							Vector2f second = Vector2f::Zero()) override
 	{
-		if (contact_points.size() > 0)
+		if (calculated_contacts)
 			return;
 
 		convex_1.move(first.x, first.y);
@@ -324,13 +375,20 @@ public:
 		for (int i = 0; i < convex_1.getPointCount(); i++)
 		{
 			if (convex_2.contains_point(convex_1.getPoint(i)))
+			{
 				contact_points.push_back(convex_1.getPoint(i));
+			}
 		}
 		for (int i = 0; i < convex_2.getPointCount(); i++)
 		{
 			if (convex_1.contains_point(convex_2.getPoint(i)))
+			{
 				contact_points.push_back(convex_2.getPoint(i));
+			}
 		}
+
+		if (contact_points.size() > 0)
+			contact_center = Vector2f::Zero();
 
 		for (int i = 0; i < contact_points.size(); i++)
 			contact_center += contact_points[i];
@@ -338,10 +396,11 @@ public:
 		if (contact_points.size() > 0)
 		{
 			contact_center.x /= contact_points.size();
+			contact_center.y /= contact_points.size();
 		}
+
+		calculated_contacts = true;
 	}
-
-
 };
 
 class TilemapIntersect : public Intersect
@@ -374,6 +433,9 @@ public:
 	virtual void calculate_contacts(Vector2f first = Vector2f::Zero(),
 									Vector2f second = Vector2f::Zero())
 	{
+		if (calculated_contacts)
+			return; 
+
 		for(auto& c1 : convex_1)
 			c1.move(first.x, first.y);
 		for(auto& c2 : convex_2)
@@ -407,7 +469,10 @@ public:
 		if (contact_points.size() > 0)
 		{
 			contact_center.x /= contact_points.size();
+			contact_center.y /= contact_points.size();
 		}
+
+		calculated_contacts = true;
 	}
 };
 

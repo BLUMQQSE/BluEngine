@@ -55,7 +55,12 @@ void SettingsState::init_variables()
 void SettingsState::update_input()
 {
 	if (Input::Instance()->get_action_down("L"))
+	{
 		pb->set_percentage(.5f);
+	}
+
+
+	std::cout <<std::boolalpha<< square.contains_point(Input::Instance()->mouse_position()) << "\n";
 
 	float delta = Time::Instance()->delta_time();
 	if (Input::Instance()->get_action("W"))

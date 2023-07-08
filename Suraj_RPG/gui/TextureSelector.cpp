@@ -357,4 +357,9 @@ void TextureSelector::clear()
 
 }
 
+sf::Vector2f TextureSelector::get_size()
+{
+	return selector.getSize();
+}
+
 }

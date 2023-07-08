@@ -57,17 +57,10 @@ void BoxColliderComponent::init()
 
 void BoxColliderComponent::awake()
 {	
-	//Renderer::Instance()->add(Renderer::RenderObject(&collider_bounds, this));
 }
 
 void BoxColliderComponent::update()
 {
-}
-
-void BoxColliderComponent::fixed_update()
-{
-	collider_bounds.set_position(Vector2f(game_object->get_world_position().x + offset.x,
-		game_object->get_world_position().y + offset.y));
 }
 
 void BoxColliderComponent::add_to_buffer(sf::View* view)
@@ -77,10 +70,10 @@ void BoxColliderComponent::add_to_buffer(sf::View* view)
 void BoxColliderComponent::on_draw_gizmos()
 {
 	ColliderComponent::on_draw_gizmos();
-	Gizmo::fill_color = Gizmo::outline_color;
-	Gizmo::outline_color = Color::Transparent;
-	Gizmo::draw_line(collider_bounds.get_position(), collider_bounds.get_position() +
-					 Vector2f(collider_bounds.getGlobalBounds().width - 2, collider_bounds.getGlobalBounds().height - 2));
+	//Gizmo::fill_color = Gizmo::outline_color;
+	//Gizmo::outline_color = Color::Transparent;
+	//Gizmo::draw_line(collider_bounds.get_position(), collider_bounds.get_position() +
+	//				 Vector2f(collider_bounds.getGlobalBounds().width - 2, collider_bounds.getGlobalBounds().height - 2));
 }
 
 #pragma region IData
@@ -146,16 +139,6 @@ bool BoxColliderComponent::check_intersect(const sf::FloatRect& frect)
 bool BoxColliderComponent::check_outer_intersect(const sf::FloatRect& frect)
 {
 	return false;
-}
-
-const sf::FloatRect BoxColliderComponent::get_bounds() const
-{
-	return sf::FloatRect();
-}
-
-const sf::FloatRect BoxColliderComponent::get_outer_bounds() const
-{
-	return sf::FloatRect();
 }
 
 void BoxColliderComponent::set_hitbox(float width, float height, 

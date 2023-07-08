@@ -102,7 +102,8 @@ private:
 
 	std::vector<sf::Sprite> render_sprites;
 	std::vector<sf::RenderTexture*> render_textures;
-	std::vector<Sorting::Layer> render_layers;
+	std::vector<IRenderable> renderable_info;
+
 	std::unordered_map<Sorting::Layer, PhysicsNS::Layer> physical_layers;
 
 

@@ -19,6 +19,8 @@ public:
 	virtual void set_render(bool render);
 	void set_z_order(char order, bool refresh_renderer = true);
 	void set_sorting_layer(Sorting::Layer layer, bool refresh_renderer = true);
+	void set_render_depth(int depth);
+	void set_y_pos(float y_pos);
 
 	bool& get_render();
 	Sorting::Layer& get_sorting_layer();
@@ -27,6 +29,8 @@ public:
 	sf::View* get_view();
 	sf::Shader** get_shader_pointer();
 	sf::Shader* get_shader();
+	float& get_y_pos();
+	int& get_render_depth();
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
@@ -35,6 +39,9 @@ public:
 private:
 	Sorting::Layer sorting_layer = Sorting::Layer::BACKGROUND;
 	char z_order = 0;
+	// Used by SpriteComponents with sorting_group
+	float y_pos;
+	int render_depth = 0;
 	sf::View* view = nullptr;
 	sf::Shader* shader = nullptr;
 	bool render = true;

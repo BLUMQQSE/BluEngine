@@ -2,6 +2,7 @@
 #include "../core/EventSystem.h"
 #include "../Component.h"
 #include "../Math.h"
+#include "damage/IDamageable.h"
 namespace bm98
 {
 
@@ -67,6 +68,7 @@ private:
     virtual void handle_event(Event* event) override;
 
     Vector2f dialog_tag_pos;
+
 
 };
 

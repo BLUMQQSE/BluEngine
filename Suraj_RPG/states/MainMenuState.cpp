@@ -35,6 +35,7 @@ MainMenuState::MainMenuState(sf::RenderWindow* window, std::stack<State*>* state
 	music.setVolume(0.0);
 	music.setLoop(true);
 	music.play();
+
 }
 
 MainMenuState::~MainMenuState()

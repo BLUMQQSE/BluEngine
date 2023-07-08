@@ -30,11 +30,11 @@ void Renderer::add(RenderObject render_object)
 		{
 			if (render_object.z_order < it->z_order)
 			{
-				if (it == renderables.begin())
-					renderables.push_front(render_object);
-				else
-					renderables.insert(it, render_object);
-				return;
+					if (it == renderables.begin())
+						renderables.push_front(render_object);
+					else
+						renderables.insert(it, render_object);
+					return;
 			}
 		}
 		if (render_object.sorting_layer < it->sorting_layer)
@@ -62,7 +62,7 @@ void Renderer::add_ui(RenderObject ui_render_object)
 	{
 		if (it->sorting_layer == ui_render_object.sorting_layer)
 		{
-			if (ui_render_object.z_order < it->z_order)
+			if ((int)ui_render_object.z_order < (int)it->z_order)
 			{
 				if (it == ui_renderables.begin())
 					ui_renderables.push_front(ui_render_object);
@@ -160,9 +160,12 @@ void Renderer::refresh()
 
 void Renderer::render()
 {
-	render_list(renderables);
+	if (use_y_sort)
+		render_y_sorted_list(renderables);
+	else
+		render_list(renderables);
 
-	if(DRAW_GIZMOS)
+	if(draw_gizmos)
 		EventSystem::Instance()->push_event(EventID::_SYSTEM_RENDERER_DRAW_GIZMOS_);
 	
 	render_list(ui_renderables);
@@ -189,6 +192,111 @@ void Renderer::render_list(std::list<RenderObject>& list)
 			continue;
 		}
 		window->draw(*it->drawable);
+	}
+}
+
+//not working
+void Renderer::render_y_sorted_list(std::list<RenderObject>& list)
+{
+	// Only need to check to reorganize sections containing same SortingLayer && z_order
+	// We can check to sort each of these individual groupings, then render that batch
+	std::list<Renderer::RenderObject>::iterator it;
+	std::list<Renderer::RenderObject>::iterator batch_it;
+	for (it = list.begin(); it != list.end(); ++it)
+	{
+		// find current batch
+		Sorting::Layer layer = it->sorting_layer;
+		char z = it->z_order;
+		batch_it = it;
+		std::vector<RenderObject> batch;
+		while (batch_it->sorting_layer == layer && batch_it->z_order == z)
+		{
+			batch.push_back(*batch_it);
+			if (std::next(batch_it) == list.end())
+				break;
+			else
+				batch_it++;
+		}
+
+
+		// gotta work out how to sort this shit...
+		std::vector<TestShit> test = sort_batch(batch);
+
+		for (int i = 0; i < test.size(); i++)
+		{
+			if (!test[i].render)
+				continue;
+			// reset view to default in case was changed in last loop
+			window->setView(window->getDefaultView());
+
+			if (test[i].view)
+				if (*test[i].view)
+					window->setView(**test[i].view);
+
+			if (test[i].shader)
+			{
+				window->draw(*test[i].drawable, *test[i].shader);
+				continue;
+			}
+			window->draw(*test[i].drawable);
+		}
+		it = batch_it;
+		
+		if (!batch_it->render)
+			continue;
+		// reset view to default in case was changed in last loop
+		window->setView(window->getDefaultView());
+
+		if (batch_it->view)
+			if (*batch_it->view)
+				window->setView(**batch_it->view);
+
+		if (batch_it->shader)
+		{
+			window->draw(*batch_it->drawable, *batch_it->shader);
+			continue;
+		}
+		window->draw(*batch_it->drawable);
+
+
+		continue;
+
+		// now render batch
+		for (it; it != batch_it; ++it)
+		{
+			if (!it->render)
+				continue;
+			// reset view to default in case was changed in last loop
+			window->setView(window->getDefaultView());
+
+			if (it->view)
+				if (*it->view)
+					window->setView(**it->view);
+
+			if (it->shader)
+			{
+				window->draw(*it->drawable, *it->shader);
+				continue;
+			}
+			window->draw(*it->drawable);
+		}
+
+		if (!batch_it->render)
+			continue;
+		// reset view to default in case was changed in last loop
+		window->setView(window->getDefaultView());
+
+		if (batch_it->view)
+			if (*batch_it->view)
+				window->setView(**batch_it->view);
+
+		if (batch_it->shader)
+		{
+			window->draw(*batch_it->drawable, *batch_it->shader);
+			continue;
+		}
+		window->draw(*batch_it->drawable);
+		
 	}
 }
 
@@ -234,8 +342,25 @@ void Renderer::update_top_ui()
 
 }
 
-void Renderer::sort()
+std::vector<Renderer::TestShit> Renderer::sort_batch(std::vector<Renderer::RenderObject> batch)
 {
+	std::vector<Renderer::TestShit> test(batch.size());
+	for(int i = 0; i < batch.size(); i++)
+		test[i] = batch[i];
+
+	for (int k = 1; k < test.size(); k++)
+	{
+		TestShit temp = test[k];
+		int j = k - 1;
+		//					move forward no matter what is lower depth		otherwise move forward if higher(lower) y_pos
+		while (j >= 0 && (temp.render_depth < test[j].render_depth ||     (temp.y_pos < test[j].y_pos && temp.render_depth == test[j].render_depth)))
+		{
+			test[j + 1] = test[j];
+			j = j - 1;
+		}
+		test[j + 1] = temp;
+	}
+	return test;
 }
 
 sf::Vector2u Renderer::get_window_size()

@@ -59,14 +59,15 @@ void bm98::PlayerController::update()
 	if (interactor.lock()->is_interacting())
 		return;
 
-	Vector2f movement = game_object->get_center() - camera.lock()->get_game_object()->get_center();
-	
-	camera.lock()->get_game_object()->move(movement);
+	Vector2f movement = (game_object->get_visual_center() - camera.lock()->get_game_object()->get_visual_center());
+
+	//camera.lock()->get_game_object()->move(movement);
+	camera.lock()->move(movement);
 }
 
 void bm98::PlayerController::late_update()
 {
-	dialog_tag_pos = game_object->get_center() + Vector2f(-35, -60);
+	dialog_tag_pos = game_object->get_visual_center() + Vector2f(-35, -60);
 }
 
 void bm98::PlayerController::fixed_update()
@@ -76,8 +77,9 @@ void bm98::PlayerController::fixed_update()
 
 	//raycast = Physics::Instance()->raycast(game_object->get_center(), Vector2f(0, -1), game_object->self(), 80);
 
-	if(!attack)
-		rigid.lock()->apply_acceleration(movement_input);
+	if (!attack)
+		rigid.lock()->move(movement_input);
+		//rigid.lock()->apply_acceleration(movement_input);
 
 }
 
@@ -87,15 +89,6 @@ void bm98::PlayerController::add_to_buffer(sf::View*)
 
 void PlayerController::on_draw_gizmos()
 {
-	/*
-	if (raycast)
-		Gizmo::fill_color = Color::Red;
-	else
-		Gizmo::fill_color = Color::Green;
-	Gizmo::outline_color = Color::Transparent;
-	Gizmo::draw_line(game_object->get_center(), game_object->get_center() + Vector2f(0, -80));
-	*/
-	//Gizmo::draw_text(game_object->get_center() + Vector2f(100, -100), "PlayerController", 10, Color::Red);
 }
 
 void PlayerController::on_draw_gizmos_selected()
@@ -105,11 +98,11 @@ void PlayerController::on_draw_gizmos_selected()
 
 void bm98::PlayerController::on_collision_enter(Collision info)
 {
-	game_object->get_component<Damager>().lock()->apply_damage();
 }
 
 void PlayerController::on_collision_stay(Collision info)
 {
+	game_object->get_component<Damager>().lock()->apply_damage();
 }
 
 void PlayerController::on_collision_exit(Collision info)
@@ -228,37 +221,46 @@ void PlayerController::update_animations()
 
 		return;
 	}
-	Vector2f movement = rigid.lock()->get_velocity();
-	if (movement.x == 0 && movement.y == 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::UP)
-		anim.lock()->play("IDLE_UP");
-	else if (movement.x == 0 && movement.y == 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::LEFT)
-		anim.lock()->play("IDLE_LEFT");
-	else if (movement.x == 0 && movement.y == 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::DOWN)
-		anim.lock()->play("IDLE_DOWN");
-	else if (movement.x == 0 && movement.y == 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::RIGHT)
-		anim.lock()->play("IDLE_RIGHT");
 
-	else if (movement.x < 0 && movement.y == 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::LEFT)
-		anim.lock()->play("WALK_LEFT", rigid.lock()->get_velocity().x,
-			rigid.lock()->get_max_velocity());
-	else if (movement.x > 0 && movement.y == 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::RIGHT)
-		anim.lock()->play("WALK_RIGHT", rigid.lock()->get_velocity().x,
-			rigid.lock()->get_max_velocity());
-
-	else if (movement.y < 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::UP)
-		anim.lock()->play("WALK_UP", rigid.lock()->get_velocity().y,
-			rigid.lock()->get_max_velocity());
-	else if (movement.y > 0
-		&& rigid.lock()->get_orientation() == Orientation::Direction::DOWN)
-		anim.lock()->play("WALK_DOWN", rigid.lock()->get_velocity().y,
-			rigid.lock()->get_max_velocity());
+	Vector2f movement = rigid.lock()->get_movement_dir();
+	bool moving = movement != Vector2f::Zero();
+	Orientation::Direction dir = rigid.lock()->get_orientation();
+	switch (dir)
+	{
+		case bm98::Orientation::Direction::UP:
+		{
+			if(!moving)
+				anim.lock()->play("IDLE_UP");
+			else
+				anim.lock()->play("WALK_UP");
+				
+		}
+			break;
+		case bm98::Orientation::Direction::DOWN:
+		{
+			if (!moving)
+				anim.lock()->play("IDLE_DOWN");
+			else
+				anim.lock()->play("WALK_DOWN");
+		}
+			break;
+		case bm98::Orientation::Direction::LEFT:
+		{
+			if (!moving)
+				anim.lock()->play("IDLE_LEFT");
+			else
+				anim.lock()->play("WALK_LEFT");
+		}
+			break;
+		case bm98::Orientation::Direction::RIGHT:
+		{
+			if(!moving)
+				anim.lock()->play("IDLE_RIGHT");
+			else
+				anim.lock()->play("WALK_RIGHT");
+		}
+			break;
+	}
 }
 
 void PlayerController::handle_event(Event* event)

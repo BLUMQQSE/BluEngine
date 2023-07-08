@@ -58,12 +58,12 @@ EditorState::EditorState(sf::RenderWindow* window, std::stack<State*>* states, G
 	scene_editor = new SceneEditorView();
 	//editor_view->set_view(scene_view);
 
-	Renderer::Instance()->add(Renderer::RenderObject(&selector_rect, text_select_render, text_select_layer, z_order, &scene_view));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&selector_rect, text_select_render, text_select_layer, z_order, &scene_view));
 }
 
 EditorState::~EditorState()
 {
-	Renderer::Instance()->remove(&selector_rect);
+	Renderer::Instance()->remove_ui(&selector_rect);
 
 	delete scene_view;
 	

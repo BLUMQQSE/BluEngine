@@ -41,8 +41,8 @@ void AudioSource::awake()
 void AudioSource::update()
 {
 	sound.setPosition(sf::Vector3f(
-		game_object->get_center().x,
-		game_object->get_center().y,
+		game_object->get_physical_center().x,
+		game_object->get_physical_center().y,
 		0
 		));
 }

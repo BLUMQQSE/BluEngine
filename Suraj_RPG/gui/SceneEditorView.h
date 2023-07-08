@@ -94,6 +94,7 @@ private:
 
 	void update_component_panel(std::pair<GUI::Panel*, std::vector<Editor::SerializedVar>> vars);
 
+	void reset_gui_to_component_value(GUI::Panel* panel, Editor::SerializedVar var);
 };
 
 }
