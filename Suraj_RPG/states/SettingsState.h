@@ -1,10 +1,12 @@
 #pragma once
 #include "State.h"
 #include "../Math.h"
+#include "../core/EventSystem.h"
 namespace bm98
 {
+using namespace core;
 class SettingsState :
-    public State
+    public State, public Listener
 {
 
     // Could be used to break up displays in settings
@@ -42,7 +44,7 @@ public:
     bool holding = false;
     Vector2f offset = Vector2f::Zero();
 
-    FloatConvex concave = FloatConvex::Polygon(Vector2f(0, 0),
+    FloatConvex concave = FloatConvex::Polygon(Vector2f(100, 20),
         {Vector2f(0,0), Vector2f(200, 0), 
         Vector2f(200, 200), Vector2f(0, 200)});
 
@@ -51,6 +53,18 @@ protected:
     void init_buttons();
     void init_volume_display();
 
+    void draw_gizmos();
+
+    void get_rays();
+    float max_dist = 300;
+    FloatConvex light_bounds = FloatConvex::Circle(Vector2f::Zero(), 600, 30);
+    std::vector<std::tuple<Vector2f, Vector2f, float>> rays;
+    std::vector<Vector2f> ray_dirs;
+    bool draw_lines = true;
+    bool draw_vertex_arrays = false;
+
+    std::vector<std::pair<FloatConvex*, IRenderable>> shapes;
+    
 
 private:
     bool _render = true;
@@ -75,5 +89,8 @@ private:
     void init_gui();
     void init_text();
     void init_drop_downs();
+
+    // Inherited via Listener
+    virtual void handle_event(Event* event) override;
 };
 }

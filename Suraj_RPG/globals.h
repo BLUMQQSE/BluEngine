@@ -206,6 +206,7 @@ enum class Type
 	FlagDropdown,
 	Header,
 	String,
+	Color
 };
 
 static std::string ToString(Type type)
@@ -232,6 +233,8 @@ static std::string ToString(Type type)
 		return "HEADER";
 	case bm98::Var::Type::String:
 		return "STRING";
+	case bm98::Var::Type::Color:
+		return "COLOR";
 	default:
 		return "BOOL";
 	}
@@ -259,6 +262,8 @@ static Type ToType(std::string type)
 		return Type::Header;
 	if (type == "STRING")
 		return Type::String;
+	if (type == "COLOR")
+		return Type::Color;
 
 	return Type::Bool;
 }

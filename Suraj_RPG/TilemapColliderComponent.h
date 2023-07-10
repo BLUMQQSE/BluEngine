@@ -27,6 +27,10 @@ private:
     void create_colliders();
     FloatConvex helper(int x, int y, int z, std::vector<std::vector<std::vector<Tile*>>> map);
 
+
+    // Inherited via ColliderComponent
+    virtual const bool blocks_light() override;
+
 };
 
 }

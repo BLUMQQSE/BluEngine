@@ -22,19 +22,44 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 	init_text();
 	init_gui();
 
+	circle.setFillColor(sf::Color::Transparent);
+	circle.setOutlineColor(Color::Cyan);
+	circle.setOutlineThickness(1);
+	
+	square.setFillColor(sf::Color::Transparent);
+	square.setOutlineColor(Color::Cyan);
+	square.setOutlineThickness(1);
+	
+	concave.setFillColor(sf::Color::Transparent);
+	concave.setOutlineColor(Color::Cyan);
+	concave.setOutlineThickness(1);
+
+	std::vector<IRenderable> renders(3);
+	for (int i = 0; i < 3; i++)
+	{
+		renders[i].set_render(true);
+		renders[i].set_sorting_layer(options_layer);
+		renders[i].set_z_order(z_order);
+	}
+
+	shapes.push_back(std::make_pair(&square, renders[0]));
+	shapes.push_back(std::make_pair(&circle, renders[1]));
+	shapes.push_back(std::make_pair(&concave, renders[2]));
 
 	//Debug::init();
-	Renderer::Instance()->add(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
-	Renderer::Instance()->add(Renderer::RenderObject(&circle, _render, options_layer, z_order));
-	Renderer::Instance()->add(Renderer::RenderObject(&square, _render, options_layer, z_order));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&options_text, _render, options_layer, z_order));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&circle, &shapes[0].second));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&square, &shapes[1].second));
 
-	Renderer::Instance()->add(Renderer::RenderObject(&concave, _render, options_layer, z_order));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&concave, &shapes[2].second));
 
 	pb = std::make_unique<GUI::ProgressBar>();
 	pb->set_position(Vector2f(800, 300));
 	pb->set_size(Vector2f(300, 200));
 	pb->set_percentage(.75f);
 	pb->set_color(sf::Color::Magenta);
+
+	EventSystem::Instance()->subscribe(EventID::_SYSTEM_RENDERER_DRAW_GIZMOS_, this);
 
 }
 
@@ -59,18 +84,15 @@ void SettingsState::update_input()
 		pb->set_percentage(.5f);
 	}
 
-
-	std::cout <<std::boolalpha<< square.contains_point(Input::Instance()->mouse_position()) << "\n";
-
 	float delta = Time::Instance()->delta_time();
 	if (Input::Instance()->get_action("W"))
-		square.move(0, -100 * delta);
+		concave.move(0, -100 * delta);
 	if (Input::Instance()->get_action("A"))
-		square.move(-100 * delta, 0);
+		concave.move(-100 * delta, 0);
 	if (Input::Instance()->get_action("D"))
-		square.move(100 * delta, 0);
+		concave.move(100 * delta, 0);
 	if (Input::Instance()->get_action("S"))
-		square.move(0, 100 * delta);
+		concave.move(0, 100 * delta);
 
 	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT))
 		concave.rotate(10);
@@ -97,7 +119,6 @@ void SettingsState::update_input()
 	{
 		holding = false;
 	}
-
 }
 
 void SettingsState::on_end_state()
@@ -147,11 +168,119 @@ void SettingsState::update_sfml(sf::Event sfEvent)
 
 void SettingsState::late_update()
 {
+}
+void SettingsState::draw_gizmos()
+{
+	sf::VertexArray tris(sf::Triangles, rays.size() * 3);
+
+	int vert_index = 0;
+	for (int i = 0; i < rays.size(); i++)
+	{
+		int ii = (i + 1) % rays.size();
+		
+		tris[vert_index].position = std::get<0>(rays[i]);
+		tris[vert_index+1].position = std::get<1>(rays[i]);
+		tris[vert_index+2].position = std::get<1>(rays[ii]);
+		tris[vert_index].color = sf::Color::White;
+		tris[vert_index+1].color = sf::Color::White;
+		tris[vert_index+2].color = sf::Color::White;
+		vert_index += 3;
+	}
+
+	if (draw_vertex_arrays)
+		Gizmo::draw_vertex_array(tris);
+	if (draw_lines)
+	{
+		if (rays.size() > 0)
+		{
+			for (int i = 0; i < rays.size(); i++)
+			{
+				Gizmo::outline_color = Color::Transparent;
+				Gizmo::fill_color = Color::Red;
+				Gizmo::draw_line(std::get<0>(rays[i]), std::get<1>(rays[i]));
+
+			}
+		}
+	}
+}
+void SettingsState::get_rays()
+{
+	rays.clear();
+	ray_dirs.clear();
+	Vector2f mp = Input::Instance()->mouse_position();
+	
+	// create all rays
+	for (int i = 0; i < shapes.size(); i++)
+	{
+		for (int k = 0; k < shapes[i].first->getPointCount(); k++)
+		{
+			Vector2f dir = Vector2f(shapes[i].first->getPoint(k) - mp).get_normalized();
+			
+			// would also need the left
+			Vector2f left = Vector2f((std::cos(-.0001) * dir.x) - (std::sin(-.0001) * dir.y),
+				(std::sin(-.0001) * dir.x) + (std::cos(-.0001) * dir.y));
+				
+			// would also need the right
+			Vector2f right = Vector2f((std::cos(.0001) * dir.x) - (std::sin(.0001) * dir.y),
+										(std::sin(.0001) * dir.x) + (std::cos(.0001) * dir.y));
+			
+			ray_dirs.push_back(mp + left * 300.f);
+			ray_dirs.push_back(mp + dir * 300.f);
+			ray_dirs.push_back(mp + right * 300.f);
+		}
+	}
+	for (int i = 0; i < light_bounds.getPointCount(); i+=2)
+		ray_dirs.push_back(mp + Vector2f(light_bounds.getPoint(i) - mp).get_normalized() * 300.f);
+	
+	// check for closest intersect
+	for (int i = 0; i < ray_dirs.size(); i++)
+	{
+		bool found_intersect = false;
+		// change to infinity
+		Vector2f closest_intersect = Vector2f::Infinity();
+		for (int k = 0; k < shapes.size(); k++)
+		{
+			LineIntersect l = shapes[k].first->line_intersects(mp, ray_dirs[i]);
+			if (l.collision_exists)
+			{
+				if (!found_intersect)
+				{
+					found_intersect = true;
+					closest_intersect = l.get_contact_center();
+				}
+				else if (Vector2f::SqrDistance(mp, l.get_contact_center()) < Vector2f::SqrDistance(mp, closest_intersect))
+				{
+					found_intersect = true;
+					closest_intersect = l.get_contact_center();
+				}
+			}
+		}
+		// If didn't hit anything, set to go to edge of light_bounds
+		if (!found_intersect)
+		{
+			closest_intersect = ray_dirs[i];
+		}
+		rays.push_back(std::make_tuple(mp, closest_intersect, Vector2f::GetAngle(Vector2f::Up() + mp, mp, closest_intersect)));
+	}
+	
+	// NEXT STEP: Sort all rays by their angle from center
+	std::sort(rays.begin(), rays.end(), [](const std::tuple<Vector2f, Vector2f, float>& lhs, const std::tuple<Vector2f, Vector2f, float>& rhs) -> bool
+	{
+		return get<2>(lhs) > get<2>(rhs);
+	});
+	auto it = std::unique(rays.begin(), rays.end(),
+						  [&](const std::tuple<Vector2f, Vector2f, float>& t1, const std::tuple<Vector2f, Vector2f, float>& t2)
+						  {
+							  return Vector2f::SqrDistance(std::get<1>(t1), std::get<1>(t2)) < 5;
+						  });
+	rays.resize(std::distance(rays.begin(), it));
 
 }
 
 void SettingsState::fixed_update()
 {
+	light_bounds.set_position(Input::Instance()->mouse_position());
+	get_rays();
 	Vector2f dif;
 	dif = FloatConvex::Intersection(square, concave).penetration_vector;
 
@@ -214,6 +343,7 @@ void SettingsState::init_volume_display()
 
 }
 
+
 void SettingsState::init_drop_downs()
 {
 	std::vector<std::string> modes_str;
@@ -227,5 +357,12 @@ void SettingsState::init_drop_downs()
 	flag_drop = std::make_unique<GUI::FlagDropDownList>(600, 100, 150, 30, font, modes_str);
 
 	//drop_downs["FULLSCREEN"] = new GUI::DropDownList(800, 175, 150, 30, font, screen_list, 2);
+}
+void SettingsState::handle_event(Event* event)
+{
+	if (event->get_event_id() == EventID::_SYSTEM_RENDERER_DRAW_GIZMOS_)
+	{
+		draw_gizmos();
+	}
 }
 }

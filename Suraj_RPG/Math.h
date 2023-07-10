@@ -50,6 +50,8 @@ public:
 	static float SqrDistance(sf::Vector2f a, sf::Vector2f b);
 	static float DotProduct(sf::Vector2f a, sf::Vector2f b);
 	static float CrossProduct(sf::Vector2f a, sf::Vector2f b);
+	static float GetAngle(sf::Vector2f a, sf::Vector2f center, sf::Vector2f b);
+	static float GetAngle2(Vector2f a, Vector2f b);
 
 	/// <summary>
 	/// Returns a normalized copy of vector.
@@ -260,7 +262,6 @@ public:
 	virtual void unserialize_json(Json::Value obj) override;
 
 
-
 private:
 	std::vector<Vector2f> model;
 	Vector2f position;
@@ -273,15 +274,14 @@ private:
 	using ConvexShape::setPosition;
 
 	static bool PreliminaryCircleCheck(FloatConvex a, FloatConvex b);
-
-	static void SortPolyModel(FloatConvex& poly);
 	static float GetAngle(Vector2f a, Vector2f b, Vector2f c);
+	static void SortPolyModel(FloatConvex& poly);
 	static void ProjectVertices(FloatConvex a, Vector2f axis,
 		float& min, float& max);
 
 	/// <returns>Vector2f::Infinity() if no intersection exists, otherwise
 	/// returns the point of contact</returns>
-	Vector2f solve_line_intersection(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
+	static Vector2f SolveLineIntersect(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
 
 };
 
@@ -324,6 +324,7 @@ public:
 	void add_contact_point(Vector2f contact_point, Vector2f origin)
 	{
 		collision_exists = true;
+		calculated_contacts = true;
 		penetration_vector = Vector2f::Zero();
 		contact_points.push_back(contact_point);
 
@@ -331,11 +332,17 @@ public:
 			contact_center = contact_points[0];
 		else
 		{
-			if (Vector2f::SqrDistance(contact_points[0], origin) <
-				Vector2f::SqrDistance(contact_points[1], origin))
-				contact_center = contact_points[0];
-			else
-				contact_center = contact_points[1];
+			Vector2f closest_point = Vector2f::Infinity();
+
+			for (int i = 0; i < contact_points.size(); i++)
+			{
+				if (Vector2f::SqrDistance(origin, contact_points[i]) <
+					Vector2f::SqrDistance(origin, closest_point))
+				{
+					closest_point = contact_points[i];
+				}
+			}
+			contact_center = closest_point;
 		}
 	}
 

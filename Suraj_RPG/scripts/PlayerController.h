@@ -27,17 +27,10 @@ public:
     virtual void update() override;
     virtual void late_update() override;
     virtual void fixed_update() override;
-    virtual void add_to_buffer(sf::View* = nullptr) override;
 
-    virtual void on_draw_gizmos() override;
-    virtual void on_draw_gizmos_selected() override;
-
-    virtual void on_collision_enter(Collision info) override;
     virtual void on_collision_stay(Collision info) override;
-    virtual void on_collision_exit(Collision info) override;
 
-
-    virtual void on_trigger_enter(Collider info) override;
+    virtual void on_other_trigger_stay(Collider info) override;
 
     // Inherited via IData
     virtual Json::Value serialize_json() override;

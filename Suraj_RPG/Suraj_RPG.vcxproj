@@ -215,6 +215,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="PointLightComponent.cpp" />
     <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -316,6 +317,7 @@
     <ClInclude Include="IRenderable.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="PointLightComponent.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="pch.h" />
@@ -351,6 +353,10 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Suraj_RPG.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment_shader.frag" />
+    <None Include="vertex_shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

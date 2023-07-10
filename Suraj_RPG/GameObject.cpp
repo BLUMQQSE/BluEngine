@@ -6,6 +6,10 @@
 #include "Collisions.h"
 #include "core/SceneManager.h"
 
+#pragma region Lighting
+#include "PointLightComponent.h"
+#pragma endregion
+
 #pragma region Physics
 
 #include "BoxColliderComponent.h"
@@ -168,6 +172,24 @@ void GameObject::on_trigger_exit(Collider info)
 {
 	for (std::size_t i = 0; i != components.size(); i++)
 		components[i]->on_trigger_exit(info);
+}
+
+void GameObject::on_other_trigger_enter(Collider info)
+{
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_other_trigger_enter(info);
+}
+
+void GameObject::on_other_trigger_stay(Collider info)
+{
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_other_trigger_stay(info);
+}
+
+void GameObject::on_other_trigger_exit(Collider info)
+{
+	for (std::size_t i = 0; i != components.size(); i++)
+		components[i]->on_other_trigger_exit(info);
 }
 
 void GameObject::add_to_buffer(sf::View* view)
@@ -516,6 +538,11 @@ std::weak_ptr<Component> GameObject::add_component_by_name(std::string component
 	if (component_name == "ItemController")
 		return add_component<ItemController>();
 #pragma endregion
+#pragma region L
+	if (component_name == "PointLightComponent")
+		return add_component<PointLightComponent>();
+#pragma endregion
+
 #pragma region P
 	if (component_name == "PlayerController")
 		return add_component<PlayerController>();
@@ -592,6 +619,10 @@ void GameObject::remove_component_by_name(std::string component_name)
 		return remove_component<Interactor>();
 	if (component_name == "ItemController")
 		return remove_component<ItemController>();
+#pragma endregion
+#pragma region L
+	if (component_name == "PointLightComponent")
+		return remove_component<PointLightComponent>();
 #pragma endregion
 #pragma region P
 	if (component_name == "PlayerController")

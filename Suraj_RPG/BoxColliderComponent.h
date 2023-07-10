@@ -46,5 +46,9 @@ private:
 	//sf::CircleShape circle;
 	Vector2f size;
 
+
+	// Inherited via ColliderComponent
+	virtual const bool blocks_light() override;
+
 };
 }

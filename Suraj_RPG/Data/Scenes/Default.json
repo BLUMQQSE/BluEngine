@@ -34490,7 +34490,7 @@
 						"hitbox-offsetX" : 25.0,
 						"hitbox-offsetY" : 50.0,
 						"hitbox-width" : 15.0,
-						"trigger" : false
+						"trigger" : true
 					}
 				}
 			],

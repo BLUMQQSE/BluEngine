@@ -30,7 +30,7 @@ void Effector::apply_effect()
 
 	std::vector<std::weak_ptr<ColliderComponent>> cols;
 	int count = core::Physics::Instance()->OverlapConvex(collider.lock()->get_collider_bounds(),
-														 effect_data.lock()->get_effect_mask(), this->game_object, cols);
+														 effect_data.lock()->get_effect_mask(), this->game_object, Physics::CollisionCheckType::ALL, cols);
 
 	if (count == 0)
 		return;

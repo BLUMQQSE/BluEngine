@@ -110,6 +110,10 @@ public:
 	/// <param name="font_file_name">Name of font file looking for.</param>
 	bool has_font(std::string font_file_name);
 
+	sf::Shader* get_shader(std::string shader_file_name);
+
+	bool has_shader(std::string shader_file_name);
+
 	void shutdown();
 
 private:
@@ -133,12 +137,14 @@ private:
 
 	std::unordered_map<std::string, sf::Texture> textures;
 	std::unordered_map<std::string, sf::Font> fonts;
+	std::unordered_map<std::string, std::unique_ptr<sf::Shader>> shaders;
 
 	void iterate_prefab_directory(std::string dir_path);
 	void iterate_data_asset_directory(std::string dir_path);
 	void iterate_audio_directory(std::string dir_path);
 	void iterate_textures_directory(std::string dir_path);
 	void iterate_fonts_directory(std::string dir_path);
+	void iterate_shader_directory(std::string dir_path);
 
 	void unserialize_data_assets();
 

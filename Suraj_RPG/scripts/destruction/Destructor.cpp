@@ -14,7 +14,7 @@ void Destructor::destruct()
 {
 	std::vector<std::weak_ptr<ColliderComponent>> cols;
 	int count = core::Physics::Instance()->OverlapCircle(game_object->get_world_position(), max_distance,
-		damage_mask, this->game_object, cols);
+		damage_mask, this->game_object, Physics::CollisionCheckType::ALL, cols);
 
 	if (count == 0)
 		return;

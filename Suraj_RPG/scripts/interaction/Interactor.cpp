@@ -71,7 +71,7 @@ void Interactor::fixed_update()
 	potential_interactable = std::weak_ptr<IInteractable>();
 	std::vector<std::weak_ptr<ColliderComponent>> cols;
 	count = core::Physics::Instance()->OverlapCircle(game_object->get_visual_center(), interaction_radius,
-		interactable_mask, this->game_object, cols);
+		interactable_mask, this->game_object, Physics::CollisionCheckType::ALL, cols);
 
 	if (count == 0)
 		return;

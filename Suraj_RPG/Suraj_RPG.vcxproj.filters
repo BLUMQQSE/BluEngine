@@ -70,6 +70,12 @@
     <Filter Include="Scripts\Effect">
       <UniqueIdentifier>{dc1b291f-e051-4415-be35-8b29d24e6d41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components\Lighting">
+      <UniqueIdentifier>{9447612f-5a53-4c67-b03c-7c9578fef528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b03f75fd-2e19-4910-a1ad-5ee9657a0499}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -308,6 +314,9 @@
     </ClCompile>
     <ClCompile Include="Effector.cpp">
       <Filter>Scripts\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLightComponent.cpp">
+      <Filter>Components\Lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -590,10 +599,21 @@
     <ClInclude Include="Effector.h">
       <Filter>Scripts\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="PointLightComponent.h">
+      <Filter>Components\Lighting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Suraj_RPG.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment_shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="vertex_shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

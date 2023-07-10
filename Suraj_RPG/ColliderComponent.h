@@ -80,6 +80,7 @@ public:
 
 	const bool is_trigger() const;
 	const bool is_active();
+	virtual const bool blocks_light() = 0;
 
 protected:
 	FloatConvex collider_bounds;

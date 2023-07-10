@@ -217,6 +217,21 @@ public:
 	/// Called on gameobject containing a trigger which has lost contact with a prior collider.
 	/// </summary>
 	virtual void on_trigger_exit(Collider info);
+	/// <summary>
+	/// Called on object containing a trigger or nontrigger which had entered trigger collider
+	/// for first fixed_update.
+	/// </summary>
+	virtual void on_other_trigger_enter(Collider info);
+	/// <summary>
+	/// Called on gameobject containing a trigger or nontrigger which has maintained contact 
+	/// with another trigger since previous fixed_update.
+	/// </summary>
+	virtual void on_other_trigger_stay(Collider info);
+	/// <summary>
+	/// Called on gameobject containing a trigger or nontrigger which has lost contact
+	///  with a prior trigger.
+	/// </summary>
+	virtual void on_other_trigger_exit(Collider info);
 
 	virtual void add_to_buffer(sf::View* view = nullptr) override;
 

@@ -40,7 +40,7 @@ void ContextSteering::fixed_update()
 
 	std::vector<std::weak_ptr<ColliderComponent>> colliders_in_range;
 	int result = core::Physics::Instance()->OverlapCircle(game_object->get_physical_center(), enemy_data.lock()->get_detection_radius(), enemy_data.lock()->get_target_mask(),
-														  game_object, colliders_in_range);
+														  game_object, Physics::CollisionCheckType::ALL, colliders_in_range);
 
 	for (std::size_t i = 0; i < result; i++)
 	{
@@ -56,7 +56,7 @@ void ContextSteering::fixed_update()
 
 	obstacles.clear();
 	core::Physics::Instance()->OverlapCircle(game_object->get_physical_center(), enemy_data.lock()->get_detection_radius(), enemy_data.lock()->get_obstacle_mask(),
-														  game_object, obstacles);
+														  game_object, Physics::CollisionCheckType::ALL, obstacles);
 
 	detect_dangers();
 	if (result == 0)
@@ -75,8 +75,10 @@ void ContextSteering::fixed_update()
 		
 		PhysicsNS::LayerMask mask = enemy_data.lock()->get_target_mask();
 		mask += enemy_data.lock()->get_obstacle_mask();
-		bool hit = Physics::Instance()->raycast(game_object->get_physical_center(), raycast_dir.get_normalized(), game_object->self(), enemy_data.lock()->get_detection_radius(),
-											  mask, ray);
+		bool hit = Physics::Instance()->raycast(game_object->get_physical_center(), raycast_dir.get_normalized(), game_object->self(), 
+												Physics::CollisionCheckType::COLLIDER,
+												enemy_data.lock()->get_detection_radius(),
+												mask, ray);
 
 		if (hit)
 		{

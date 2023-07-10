@@ -126,6 +126,71 @@ float Vector2f::CrossProduct(sf::Vector2f a, sf::Vector2f b)
 	return a.x * b.y - a.y * b.x;
 }
 
+float Vector2f::GetAngle(sf::Vector2f a, sf::Vector2f center, sf::Vector2f b)
+{
+	float x1 = a.x - center.x; //Vector 1 - x
+	float y1 = a.y - center.y; //Vector 1 - y
+
+	float x2 = b.x - center.x; //Vector 2 - x
+	float y2 = b.y - center.y; //Vector 2 - y
+
+	float angle = atan2(y1, x1) - atan2(y2, x2);
+	angle = angle * 360 / (2 * PI);
+
+	if (angle < 0)
+	{
+		angle += 360;
+	}
+
+	return angle * DEG2RAD;
+
+
+	/*
+	Vector2f A = a -center;
+	Vector2f B = b - center;
+	return std::acos(Vector2f::DotProduct(A, B) / std::abs(A.magnitude() * B.magnitude()));
+
+	
+	float A = std::abs(Vector2f::SqrDistance(a, center));
+	float B = std::abs(Vector2f::SqrDistance(center, b));
+	float C = std::abs(Vector2f::SqrDistance(b, a));
+
+	float angle = std::acos((A + B - C) / (2 * std::sqrt(A) * std::sqrt(B)));
+
+	float x = Vector2f::CrossProduct(a - center, b - center);
+
+	if (x < 0)
+	{
+		return angle;
+	}
+	else if (x == 0)
+	{
+		// DETERMINE IF ANGLE IS 0 OR 180
+		bool is_zero = false;
+		if ((a.x && b.x > 0 || a.x < 0 && b.x < 0) && (a.y && b.y > 0 || a.y < 0 && b.y < 0))
+			return 0;
+
+		return 180 * DEG2RAD;
+
+	}
+	else
+	{
+		return ((angle * RAD2DEG) + 180.0) * DEG2RAD;
+	}
+	*/
+}
+
+float Vector2f::GetAngle2(Vector2f a, Vector2f b)
+{
+	float dot = Vector2f::DotProduct(a, b);
+
+	float det = a.x * b.y - a.y * b.x;
+	float result =  std::atan2(det, dot);
+	
+	if (result < 0)
+		return result + 2*PI;
+}
+
 Vector2f Vector2f::get_normalized()
 {
 	if (sqr_magnitude() != 0)
@@ -429,15 +494,28 @@ LineIntersect FloatConvex::line_intersects(Vector2f line_start, Vector2f line_en
 	for (int i = 0; i < model.size(); i++)
 	{
 		int ii = (i + 1) % model.size();
-		Vector2f check = solve_line_intersection(model[i] + position, model[ii] + position, line_start, line_end);
+		Vector2f check = FloatConvex::SolveLineIntersect(model[i] + position, model[ii] + position, line_start, line_end);
+		if (check != Vector2f::Infinity())
+			inter.add_contact_point(check, line_start);
+		else
+		{
+			check = FloatConvex::SolveLineIntersect(model[ii] + position, model[i] + position, line_start, line_end);
+			if (check != Vector2f::Infinity())
+				inter.add_contact_point(check, line_start);
+		}
+	}/*
+	for (int i = model.size()-1; i >= 0; i--)
+	{
+		int ii = (i - 1) % model.size();
+		Vector2f check = FloatConvex::SolveLineIntersect(model[i] + position, model[ii] + position, line_start, line_end);
 		if (check != Vector2f::Infinity())
 			inter.add_contact_point(check, line_start);
 	}
-
+	*/
 	return inter;
 }
 
-Vector2f FloatConvex::solve_line_intersection(Vector2f a, Vector2f b, Vector2f c, Vector2f d)
+Vector2f FloatConvex::SolveLineIntersect(Vector2f a, Vector2f b, Vector2f c, Vector2f d)
 {
 	Vector2f ab = b - a;
 	Vector2f cd = d - c;
@@ -445,20 +523,24 @@ Vector2f FloatConvex::solve_line_intersection(Vector2f a, Vector2f b, Vector2f c
 
 	float ab_cross_cd = Vector2f::CrossProduct(ab, cd);
 
+	Vector2f ac = c - a;
+
+	// this if is occasionally occuring... could be an issue
 	if (ab_cross_cd == 0)
-		return Vector2f::Infinity();
+	{
+			return Vector2f::Infinity();
+	}
 	else
 	{
-		Vector2f ac = c - a;
 		t1 = Vector2f::CrossProduct(ac, cd) / ab_cross_cd;
 		t2 = -Vector2f::CrossProduct(ab, ac) / ab_cross_cd;
 		ab *= t1;
 
-		if (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1)
+		if ((t1 >= 0 && t1 <= 1.f) && (t2 >= 0 && t2 <= 1.f))
 			return a + ab;
 		return Vector2f::Infinity();
 	}
-
+	
 }
 
 void FloatConvex::move(float x, float y)

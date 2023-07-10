@@ -180,5 +180,10 @@ FloatConvex TilemapColliderComponent::helper(int x, int y, int z, std::vector<st
 	return f;
 }
 
+const bool TilemapColliderComponent::blocks_light()
+{
+	return false;
+}
+
 
 }

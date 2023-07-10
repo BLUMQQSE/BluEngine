@@ -79,6 +79,18 @@ void Component::on_trigger_exit(Collider info)
 {
 }
 
+void Component::on_other_trigger_enter(Collider info)
+{
+}
+
+void Component::on_other_trigger_stay(Collider info)
+{
+}
+
+void Component::on_other_trigger_exit(Collider info)
+{
+}
+
 void Component::set_world_position(Vector2f pos)
 {
 }

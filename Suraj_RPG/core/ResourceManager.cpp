@@ -13,6 +13,7 @@ void ResourceManager::load_resources()
 	iterate_textures_directory("Resources/Images/");
 	iterate_fonts_directory("Fonts/");
 	iterate_audio_directory("Resources/Audio/Sounds/");
+	iterate_shader_directory("Resources/Shaders/");
 	iterate_prefab_directory("Data/Prefabs/");
 	
 	iterate_data_asset_directory("Data/DataAssets/");
@@ -44,14 +45,6 @@ bool ResourceManager::has_prefab_data(std::string prefab_file_name)
 	}
 	return true;
 }
-/*
-DataAsset* ResourceManager::get_data_asset(std::string asset_file_name)
-{
-	return asset_data.at(asset_file_name);
-}
-*/
-
-
 
 bool ResourceManager::has_data_asset(std::string asset_file_name)
 {
@@ -86,7 +79,7 @@ bool ResourceManager::has_sound_data(std::string audio_data_file_name)
 	if (sound_data.find(audio_data_file_name) == sound_data.end())
 	{
 
-		Debug::Instance()->core_log("ResourceManager::AUDIO DATA " + audio_data_file_name + " DOES NOT EXIST", Debug::LogLevel::WARNING);
+		Debug::Instance()->core_log("[ResourceManager] AUDIO DATA " + audio_data_file_name + " NOT FOUND", Debug::LogLevel::WARNING);
 		return false;
 	}
 	return true;
@@ -102,7 +95,7 @@ bool ResourceManager::has_texture(std::string texture_file_name)
 	if (textures.find(texture_file_name) == textures.end())
 	{
 
-		Debug::Instance()->core_log("ResourceManager::TEXTURE " + texture_file_name + " DOES NOT EXIST", Debug::LogLevel::WARNING);
+		Debug::Instance()->core_log("[ResourceManager] TEXTURE " + texture_file_name + " NOT FOUND", Debug::LogLevel::WARNING);
 		return false;
 	}
 	return true;
@@ -117,7 +110,24 @@ bool ResourceManager::has_font(std::string font_file_name)
 {
 	if (fonts.find(font_file_name) == fonts.end())
 	{
-		Debug::Instance()->core_log("ResourceManager::FONT " + font_file_name+ " DOES NOT EXIST", Debug::LogLevel::WARNING);
+		Debug::Instance()->core_log("[ResourceManager] FONT " + font_file_name+ " NOT FOUND", Debug::LogLevel::WARNING);
+		return false;
+	}
+	return true;
+}
+
+sf::Shader* ResourceManager::get_shader(std::string shader_file_name)
+{
+	if (has_shader(shader_file_name))
+		return shaders[shader_file_name].get();
+	return nullptr;
+}
+
+bool ResourceManager::has_shader(std::string shader_file_name)
+{
+	if (shaders.find(shader_file_name) == shaders.end())
+	{
+		Debug::Instance()->core_log("[ResourceManager] Shader " + shader_file_name + " NOT FOUND", Debug::LogLevel::WARNING);
 		return false;
 	}
 	return true;
@@ -254,6 +264,25 @@ void ResourceManager::iterate_fonts_directory(std::string dir_path)
 		
 		iterate_fonts_directory(dir_path + file_name + "/");
 		
+	}
+}
+
+void ResourceManager::iterate_shader_directory(std::string dir_path)
+{
+	for (const auto& entry : std::filesystem::directory_iterator(dir_path))
+	{
+		std::string file_name = entry.path().string().substr(dir_path.size(), entry.path().string().size() - 1);
+		if (!entry.is_directory())
+		{
+			Json::Value obj = FileManager::Instance()->load_from_file(dir_path + file_name);
+
+			shaders[file_name] = std::make_unique<sf::Shader>();
+			shaders[file_name]->loadFromFile(obj["vertex-shader"].asString(), obj["fragment-shader"].asString());
+			continue;
+		}
+
+		iterate_prefab_directory(dir_path + file_name + "/");
+
 	}
 }
 

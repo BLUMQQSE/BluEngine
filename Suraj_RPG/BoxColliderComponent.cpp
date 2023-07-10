@@ -176,4 +176,9 @@ Vector2f BoxColliderComponent::get_offset()
 	return offset;
 }
 
+const bool BoxColliderComponent::blocks_light()
+{
+	return true;
+}
+
 }

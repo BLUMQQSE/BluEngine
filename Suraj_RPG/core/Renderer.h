@@ -263,6 +263,11 @@ public:
 		outline_thickness = 1;
 	}
 
+	static void draw_vertex_array(sf::VertexArray& v)
+	{
+		Renderer::Instance()->draw(&v, view);
+	}
+
 	static void draw_convex(FloatConvex& convex)
 	{
 		convex.setFillColor(fill_color);

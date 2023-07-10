@@ -99,7 +99,7 @@ void Physics::fixed_update()
 
 }
 
-bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameObject> ignore, 
+bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameObject> ignore, CollisionCheckType check_type,
 					  float distance, PhysicsNS::LayerMask mask, std::shared_ptr<RayHit> hit)
 {
 	if (distance == INFINITY)
@@ -118,9 +118,22 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 	
 		if (!mask[objects[i][0].first.lock()->get_info().layer])
 			continue;
-
 		if (objects[i][0].first.lock() == ignore)
 			continue;
+		if (!objects[i][0].first.lock()->get_component_of_type<ColliderComponent>().lock()->is_active())
+			continue;
+
+		switch (check_type)
+		{
+			case bm98::core::Physics::CollisionCheckType::TRIGGER:
+				if (!objects[i][0].first.lock()->get_component_of_type<ColliderComponent>().lock()->is_trigger())
+					continue;
+				break;
+			case bm98::core::Physics::CollisionCheckType::COLLIDER:
+				if (objects[i][0].first.lock()->get_component_of_type<ColliderComponent>().lock()->is_trigger())
+					continue;
+				break;
+		}
 
 		std::weak_ptr<ColliderComponent> c = objects[i][0].first.lock()->get_component_of_type<ColliderComponent>();
 		if (!c.lock())
@@ -226,14 +239,14 @@ bool Physics::raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameO
 
 
 int Physics::OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
-	std::shared_ptr<GameObject> object_to_ignore, std::vector<std::weak_ptr<ColliderComponent>>& collisions)
+	std::shared_ptr<GameObject> object_to_ignore, CollisionCheckType check_type, std::vector<std::weak_ptr<ColliderComponent>>& collisions)
 {
 	FloatConvex circle = FloatConvex::Circle(pos, radius, 30);
-	return OverlapConvex(circle, mask, object_to_ignore, collisions);
+	return OverlapConvex(circle, mask, object_to_ignore, check_type, collisions);
 }
 
 int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, std::shared_ptr<GameObject> object_to_ignore,
-						   std::vector<std::weak_ptr<ColliderComponent>>& collisions)
+						   CollisionCheckType check_type, std::vector<std::weak_ptr<ColliderComponent>>& collisions)
 {
 	std::vector<std::weak_ptr<GameObject>> rel = object_to_ignore->get_all_relatives();
 
@@ -241,14 +254,26 @@ int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, std::s
 	{
 		if (!mask[objects[i][0].first.lock()->get_info().layer])
 			continue;
-
 		if (objects[i][0].first.lock() == object_to_ignore)
 			continue;
-
 		std::weak_ptr<ColliderComponent> c = objects[i][0].first.lock()->get_component_of_type<ColliderComponent>();
-
 		if (!c.lock())
 			continue;
+		if (!c.lock()->is_active())
+			continue;
+		switch (check_type)
+		{
+			case bm98::core::Physics::CollisionCheckType::TRIGGER:
+			{	if (!c.lock()->is_trigger())
+					continue;
+			}
+				break;
+			case bm98::core::Physics::CollisionCheckType::COLLIDER:
+			{
+				if (c.lock()->is_trigger())
+					continue;
+			}	break;
+		}
 
 		std::weak_ptr<GameObject> go = objects[i][0].first;
 		std::vector<std::weak_ptr<GameObject>>::iterator it = std::find_if(rel.begin(), rel.end(),
@@ -361,6 +386,7 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 		{
 			a.second = CollisionState::TRIGGER_EXIT;
 			a.first.lock()->on_trigger_exit(Collider(b.first.lock()));
+			b.first.lock()->on_other_trigger_exit(Collider(a.first.lock()));
 		}
 		if (a.second == CollisionState::COLLISION)
 		{
@@ -372,6 +398,7 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 		{
 			b.second = CollisionState::TRIGGER_EXIT;
 			b.first.lock()->on_trigger_exit(Collider(a.first.lock()));
+			a.first.lock()->on_other_trigger_exit(Collider(b.first.lock()));
 		}
 		if (b.second == CollisionState::COLLISION)
 		{
@@ -395,10 +422,13 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 			{
 				a.second = CollisionState::TRIGGER_ENTRY;
 				a.first.lock()->on_trigger_enter(Collider(b.first.lock()));
+				b.first.lock()->on_other_trigger_enter(Collider(a.first.lock()));
 			}
 			else
+			{
 				a.first.lock()->on_trigger_stay(Collider(b.first.lock()));
-			
+				b.first.lock()->on_other_trigger_stay(Collider(a.first.lock()));
+			}
 		}
 		else if (b_collider.lock()->is_trigger())
 		{
@@ -406,9 +436,13 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 			{
 				b.second = CollisionState::TRIGGER_ENTRY;
 				b.first.lock()->on_trigger_enter(Collider(a.first.lock()));
+				a.first.lock()->on_other_trigger_enter(Collider(b.first.lock()));
 			}
 			else
+			{
 				b.first.lock()->on_trigger_stay(Collider(a.first.lock()));
+				a.first.lock()->on_other_trigger_stay(Collider(b.first.lock()));
+			}
 		}
 		else
 		{
@@ -498,6 +532,7 @@ void Physics::handle_tilemap_collision(std::pair<std::weak_ptr<GameObject>, Coll
 		{
 			a.second = CollisionState::TRIGGER_EXIT;
 			a.first.lock()->on_trigger_exit(Collider(tilemap.first.lock()));
+			tilemap.first.lock()->on_other_trigger_exit(Collider(a.first.lock()));
 		}
 		if (a.second == CollisionState::COLLISION)
 		{
@@ -509,6 +544,7 @@ void Physics::handle_tilemap_collision(std::pair<std::weak_ptr<GameObject>, Coll
 		{
 			tilemap.second = CollisionState::TRIGGER_EXIT;
 			tilemap.first.lock()->on_trigger_exit(Collider(a.first.lock()));
+			a.first.lock()->on_other_trigger_exit(Collider(tilemap.first.lock()));
 		}
 		if (tilemap.second == CollisionState::COLLISION)
 		{

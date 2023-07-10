@@ -44,7 +44,6 @@ void bm98::PlayerController::init()
 void PlayerController::awake()
 {
 	init_animations();
-
 	camera = SceneManager::Instance()->find_with_tag(Tags::Tag::CAMERA,
 											game_object->self()).lock()->get_component<CameraComponent>();
 }
@@ -83,35 +82,16 @@ void bm98::PlayerController::fixed_update()
 
 }
 
-void bm98::PlayerController::add_to_buffer(sf::View*)
-{
-}
-
-void PlayerController::on_draw_gizmos()
-{
-}
-
-void PlayerController::on_draw_gizmos_selected()
-{
-
-}
-
-void bm98::PlayerController::on_collision_enter(Collision info)
-{
-}
 
 void PlayerController::on_collision_stay(Collision info)
 {
 	game_object->get_component<Damager>().lock()->apply_damage();
 }
 
-void PlayerController::on_collision_exit(Collision info)
-{
 
-}
-
-void PlayerController::on_trigger_enter(Collider info)
+void PlayerController::on_other_trigger_stay(Collider info)
 {
+	game_object->get_component<Damager>().lock()->apply_damage();
 }
 
 Json::Value PlayerController::serialize_json()

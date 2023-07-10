@@ -41,6 +41,13 @@ public:
 		TRIGGER_EXIT
 	};
 
+	enum class CollisionCheckType
+	{
+		ALL,
+		TRIGGER,
+		COLLIDER
+	};
+
 	unsigned const get_physics_objects_count() { return objects.size(); }
 
 	void add_to_physics(std::shared_ptr<GameObject> game_object);
@@ -54,7 +61,8 @@ public:
 	/// </summary>
 	/// <returns>
 	/// The closest collider which is not on a gameobject related to the calling gameobject.</returns>
-	bool raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameObject> ignore,
+	bool raycast(Vector2f origin, Vector2f direction, std::shared_ptr<GameObject> ignore, 
+				 CollisionCheckType check_type,
 		float distance = INFINITY, PhysicsNS::LayerMask mask = PhysicsNS::LayerMask(true),
 		std::shared_ptr<RayHit> hit = std::shared_ptr<RayHit>(nullptr));
 
@@ -66,9 +74,11 @@ public:
 	/// <returns>
 	/// All colliders within the circle not related to the object calling the functions.</returns>
 	int OverlapCircle(Vector2f pos, float radius, PhysicsNS::LayerMask mask,
-		std::shared_ptr<GameObject> object_to_ignore, std::vector<std::weak_ptr<ColliderComponent>>& collisions);
+		std::shared_ptr<GameObject> object_to_ignore, CollisionCheckType check_type,
+					  std::vector<std::weak_ptr<ColliderComponent>>& collisions);
 	int OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask,
-		std::shared_ptr<GameObject> object_to_ignore, std::vector<std::weak_ptr<ColliderComponent>>& collisions);
+		std::shared_ptr<GameObject> object_to_ignore, CollisionCheckType check_type,
+					  std::vector<std::weak_ptr<ColliderComponent>>& collisions);
 
 private:
 

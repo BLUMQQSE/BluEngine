@@ -27,6 +27,7 @@ void IRenderable::set_view(sf::View* view)
 {
 	this->view = view;
 }
+/*
 void IRenderable::set_shader(std::pair<std::string, std::string> shader_files, sf::Vector2f light_pos)
 {
 	this->shader->loadFromFile(shader_files.first, shader_files.second);
@@ -36,18 +37,22 @@ void IRenderable::set_shader(std::pair<std::string, std::string> shader_files, s
 
 
 }
+*/
 void IRenderable::set_shader(sf::Shader* shader)
 {
 	this->shader = shader;
 }
+/*
 void IRenderable::set_uniforms(sf::Vector2f light_pos)
 {
 	shader->setUniform("lightPos", light_pos);
 }
+*/
 void IRenderable::set_render(bool render)
 {
 	this->render = render;
 }
+
 void IRenderable::set_z_order(char order, bool refresh_renderer)
 {
 	this->z_order = order;
