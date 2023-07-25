@@ -33,7 +33,8 @@ GameState::GameState(sf::RenderWindow* window, std::stack<State*>* states, Graph
 
 	//active_scene = new Scene(active_scene_name);
 	active_scene = std::make_unique<Scene>(active_scene_name);
-	active_scene->set_start_id(1);
+	active_scene->set_start_id(next_available_id);
+	active_scene->set_graphics_settings(graphics_settings);
 	//SceneManager::Instance()->init(active_scene);
 	EventSystem::Instance()->push_event(EventID::_SYSTEM_SCENEMANAGER_INITIALIZE_, (void*)active_scene.get());
 	

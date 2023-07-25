@@ -268,8 +268,6 @@ void Game::init_window()
     window->setVerticalSyncEnabled(graphics_settings.vertical_sync);
     window->setKeyRepeatEnabled(false);
     
-
-   
 }
 
 void Game::init_states()

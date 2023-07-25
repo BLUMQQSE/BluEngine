@@ -43,7 +43,7 @@ void ParticleSystem::update()
 		if (p.life_time <= 0.f)
 			reset_particle(i);
 
-		vertices[i].position += p.velocity * Time::Instance()->delta_time();
+		vertices[i].position += p.velocity * (float)Time::Instance()->delta_time();
 		float ratio = p.life_time / life_time;
 		vertices[i].color.a = static_cast<sf::Uint8>(ratio * 255);
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "IData.h"
 #include "core/EventSystem.h"
+#include "GraphicsSettings.h"
 namespace bm98
 {
 class GameObject;
@@ -57,6 +58,8 @@ public:
 
 	void clear_scene(bool remove_everything = false);
 
+	// being used to send graphics settings to main camera on launch
+	void set_graphics_settings(GraphicsSettings* gfx) { this->gfx = gfx; }
 
 	// Inherited via IData
 	virtual Json::Value serialize_json() override;
@@ -88,6 +91,8 @@ private:
 	std::vector<std::shared_ptr<GameObject>> objects_in_scene;
 	std::vector<std::shared_ptr<GameObject>> objects_to_add;
 	std::vector<std::shared_ptr<GameObject>> objects_to_remove;
+
+	GraphicsSettings* gfx;
 
 	sf::View* scene_view;
 	void insert_sort();

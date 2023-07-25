@@ -43,6 +43,7 @@ void Scene::init()
 		if (o->has_component<CameraComponent>())
 		{
 			scene_view = &o->get_component<CameraComponent>().lock()->get_camera_view();
+			o->get_component<CameraComponent>().lock()->set_graphics_settings(gfx);
 			Gizmo::set_view(scene_view);
 		}
 	}

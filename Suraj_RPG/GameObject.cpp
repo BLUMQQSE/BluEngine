@@ -7,7 +7,7 @@
 #include "core/SceneManager.h"
 
 #pragma region Lighting
-#include "PointLightComponent.h"
+#include "PointLight.h"
 #pragma endregion
 
 #pragma region Physics
@@ -109,6 +109,7 @@ void GameObject::late_update()
 		return;
 	for (std::size_t i = 0; i != components.size(); i++)
 		components[i]->late_update();
+
 }
 
 void GameObject::fixed_update()
@@ -539,8 +540,8 @@ std::weak_ptr<Component> GameObject::add_component_by_name(std::string component
 		return add_component<ItemController>();
 #pragma endregion
 #pragma region L
-	if (component_name == "PointLightComponent")
-		return add_component<PointLightComponent>();
+	if (component_name == "PointLight")
+		return add_component<PointLight>();
 #pragma endregion
 
 #pragma region P
@@ -621,8 +622,8 @@ void GameObject::remove_component_by_name(std::string component_name)
 		return remove_component<ItemController>();
 #pragma endregion
 #pragma region L
-	if (component_name == "PointLightComponent")
-		return remove_component<PointLightComponent>();
+	if (component_name == "PointLight")
+		return remove_component<PointLight>();
 #pragma endregion
 #pragma region P
 	if (component_name == "PlayerController")

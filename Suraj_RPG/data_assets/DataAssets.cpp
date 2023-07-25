@@ -39,7 +39,6 @@ using namespace core;
 
 void ItemData::unserialize_json(Json::Value obj)
 {
-	std::cout << "flag: " << obj["stackable-limit"].asInt64() << "\n";
 	DataAsset::unserialize_json(obj);
 	stackable_limit = obj["stackable-limit"].asInt64();
 	prefab_file_name = obj["prefab-file-name"].asString();

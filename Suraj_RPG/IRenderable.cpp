@@ -16,7 +16,7 @@ IRenderable::IRenderable(Sorting::Layer layer, char z_order, bool render,
 	set_z_order(z_order);
 	set_render(render);
 	set_view(view);
-	set_shader(shader);
+	//set_shader(shader);
 }
 IRenderable::~IRenderable()
 {
@@ -38,10 +38,12 @@ void IRenderable::set_shader(std::pair<std::string, std::string> shader_files, s
 
 }
 */
+/*
 void IRenderable::set_shader(sf::Shader* shader)
 {
 	this->shader = shader;
 }
+*/
 /*
 void IRenderable::set_uniforms(sf::Vector2f light_pos)
 {
@@ -77,6 +79,44 @@ void IRenderable::set_y_pos(float y_pos)
 {
 	this->y_pos = y_pos;
 }
+void IRenderable::add_shader(std::string key, sf::Shader* shader)
+{
+	shaders[key] = shader;
+}
+void IRenderable::remove_shader(std::string key)
+{
+	shaders.erase(key);
+	float_uniforms.erase(key);
+	bool_uniforms.erase(key);
+	vec2_uniforms.erase(key);
+	color_uniforms.erase(key);
+}
+
+void IRenderable::set_float_uniform(std::string shader_key, std::string uniform_name, float value)
+{
+	if (shaders.count(shader_key) == 0)
+		return;
+	float_uniforms[shader_key] = std::make_pair(uniform_name, value);
+}
+void IRenderable::set_bool_uniform(std::string shader_key, std::string uniform_name, bool value)
+{
+	if (shaders.count(shader_key) == 0)
+		return;
+	bool_uniforms[shader_key] = std::make_pair(uniform_name, value);
+}
+void IRenderable::set_vec2_uniform(std::string shader_key, std::string uniform_name, sf::Vector2f value)
+{
+	if (shaders.count(shader_key) == 0)
+		return;
+	vec2_uniforms[shader_key] = std::make_pair(uniform_name, value);
+}
+void IRenderable::set_color_uniform(std::string shader_key, std::string uniform_name, sf::Color value)
+{
+	if (shaders.count(shader_key) == 0)
+		return;
+	color_uniforms[shader_key] = std::make_pair(uniform_name, value);
+}
+
 bool& IRenderable::get_render()
 {
 	return render;

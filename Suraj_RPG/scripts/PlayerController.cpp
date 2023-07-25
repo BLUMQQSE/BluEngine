@@ -39,6 +39,7 @@ void bm98::PlayerController::init()
 	rigid = game_object->get_component<RigidbodyComponent>();
 	interactor = game_object->get_component<Interactor>();
 	inventory = game_object->get_component<InventoryGUIController>();
+
 }
 
 void PlayerController::awake()
@@ -46,6 +47,8 @@ void PlayerController::awake()
 	init_animations();
 	camera = SceneManager::Instance()->find_with_tag(Tags::Tag::CAMERA,
 											game_object->self()).lock()->get_component<CameraComponent>();
+
+	camera.lock()->set_position(game_object->get_visual_center());
 }
 
 void bm98::PlayerController::update()
@@ -58,14 +61,20 @@ void bm98::PlayerController::update()
 	if (interactor.lock()->is_interacting())
 		return;
 
-	Vector2f movement = (game_object->get_visual_center() - camera.lock()->get_game_object()->get_visual_center());
+	
 
 	//camera.lock()->get_game_object()->move(movement);
-	camera.lock()->move(movement);
+	
+	//camera.lock()->set_position(game_object->get_visual_center());
 }
 
 void bm98::PlayerController::late_update()
 {
+	//Vector2f movement = (game_object->get_visual_center() - camera.lock()->get_game_object()->get_visual_center());
+	//camera.lock()->move(movement);
+	
+	camera.lock()->set_position(game_object->get_visual_center());
+	
 	dialog_tag_pos = game_object->get_visual_center() + Vector2f(-35, -60);
 }
 

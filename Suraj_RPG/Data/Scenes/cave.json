@@ -1,8 +1,112 @@
-
 {
-    "gameobjects" :
-    [
-        {
+	"file-name" : "cave.json",
+	"gameobjects" : 
+	[
+		{
+			"components" : 
+			[
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 20.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 267.60000610351562,
+								"y" : 231.30000305175781
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 20.0,
+						"trigger" : true
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.0,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 0.0,
+						"freeze-x" : false,
+						"freeze-y" : false,
+						"mass" : 0.0,
+						"max-velocity" : 0.0,
+						"orientation" : "UP"
+					}
+				},
+				{
+					"name" : "SceneChange",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "",
+							"interaction-type" : "INSTANT",
+							"require-player-input" : true
+						},
+						"destination-position" : 
+						{
+							"x" : 1300.0,
+							"y" : 700.0
+						},
+						"destination-scene" : "default.json"
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Empty",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED",
+				"unique-id" : 0
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 267.60000610351562,
+					"y" : 231.30000305175781
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
 			"components" : 
 			[
 				{
@@ -15,11 +119,13 @@
 							"sorting-layer" : "BACKGROUND",
 							"z-order" : 0
 						},
+						"pivot-offset" : 0.0,
 						"size" : 
 						{
 							"x" : 64,
 							"y" : 64
 						},
+						"sorting-group" : false,
 						"sprite-file-path" : "sword.png"
 					}
 				},
@@ -59,10 +165,10 @@
 							"shape-type" : "POLYGON"
 						},
 						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 0.0,
+						"hitbox-height" : 10.0,
 						"hitbox-offsetX" : 10.0,
 						"hitbox-offsetY" : 20.0,
-						"hitbox-width" : 0.0,
+						"hitbox-width" : 10.0,
 						"trigger" : true
 					}
 				},
@@ -88,7 +194,8 @@
 			{
 				"name" : "Sword",
 				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED"
+				"tag" : "UNTAGGED",
+				"unique-id" : 0
 			},
 			"transform" : 
 			{
@@ -105,7 +212,6 @@
 				"rotation" : 0.0
 			}
 		}
-    ],
-    "file-name" : "cave.json",
-    "scene-name" : "Cave"
+	],
+	"scene-name" : "Cave"
 }

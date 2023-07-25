@@ -22,24 +22,34 @@ SettingsState::SettingsState(sf::RenderWindow* window, std::stack<State*>* state
 	init_text();
 	init_gui();
 
-	circle.setFillColor(sf::Color::Transparent);
+	background.setSize((sf::Vector2f)window->getSize());
+	background.setTexture(&ResourceManager::Instance()->get_texture("mainmenu_bg.png"));
+	Renderer::Instance()->add_ui(Renderer::RenderObject(&background, &background_renderable));
+
+	circle.setFillColor(sf::Color(255, 255, 255, 150));
 	circle.setOutlineColor(Color::Cyan);
 	circle.setOutlineThickness(1);
 	
-	square.setFillColor(sf::Color::Transparent);
+	square.setFillColor(sf::Color(255, 255, 255, 150));
 	square.setOutlineColor(Color::Cyan);
 	square.setOutlineThickness(1);
 	
-	concave.setFillColor(sf::Color::Transparent);
-	concave.setOutlineColor(Color::Cyan);
+	concave.setFillColor(sf::Color(255, 255, 255, 150));
+	concave.setOutlineColor(Color::White);
 	concave.setOutlineThickness(1);
 
+	light_shader = ResourceManager::Instance()->get_shader("PointLightShader.json");
+	light_shader->setUniform("hasTexture", false);
+	light_shader->setUniform("lightColor", sf::Glsl::Vec4(sf::Color::Green));
+	light_shader->setUniform("intensity", 1.f);
 	std::vector<IRenderable> renders(3);
 	for (int i = 0; i < 3; i++)
 	{
 		renders[i].set_render(true);
 		renders[i].set_sorting_layer(options_layer);
 		renders[i].set_z_order(z_order);
+		// Ex. give a string of unique_id and component name to keep shaders added unique
+		//renders[i].add_shader("[8][PointLight]", light_shader);
 	}
 
 	shapes.push_back(std::make_pair(&square, renders[0]));
@@ -83,6 +93,19 @@ void SettingsState::update_input()
 	{
 		pb->set_percentage(.5f);
 	}
+	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT))
+	{
+		draw_lines = !draw_lines;
+		draw_vertex_arrays = !draw_vertex_arrays;
+	}
+	if (Input::Instance()->get_mouse_scroll_delta() > 0.f)
+	{
+		float r = std::rand() % 255;
+		float g = std::rand() % 255;
+		float b = std::rand() % 255;
+		sf::Color c = sf::Color(r, g, b, 255);
+		light_shader->setUniform("lightColor", sf::Glsl::Vec4(c));
+	}
 
 	float delta = Time::Instance()->delta_time();
 	if (Input::Instance()->get_action("W"))
@@ -94,8 +117,6 @@ void SettingsState::update_input()
 	if (Input::Instance()->get_action("S"))
 		concave.move(0, 100 * delta);
 
-	if (Input::Instance()->get_mouse_down(Input::Mouse::RIGHT))
-		concave.rotate(10);
 
 	if (buttons["BACK"]->is_pressed())
 	{
@@ -128,6 +149,7 @@ void SettingsState::on_end_state()
 
 void SettingsState::update()
 {
+	light_shader->setUniform("lightPos", Input::Instance()->mouse_position());
 	State::update();
 	update_input();
 	Debug::Instance()->mouse_position_display(font);
@@ -188,7 +210,7 @@ void SettingsState::draw_gizmos()
 	}
 
 	if (draw_vertex_arrays)
-		Gizmo::draw_vertex_array(tris);
+		Gizmo::draw_vertex_array(tris, light_shader);
 	if (draw_lines)
 	{
 		if (rays.size() > 0)
@@ -196,7 +218,7 @@ void SettingsState::draw_gizmos()
 			for (int i = 0; i < rays.size(); i++)
 			{
 				Gizmo::outline_color = Color::Transparent;
-				Gizmo::fill_color = Color::Red;
+				Gizmo::fill_color = sf::Color(255, 255, 255, 255);
 				Gizmo::draw_line(std::get<0>(rays[i]), std::get<1>(rays[i]));
 
 			}
@@ -212,6 +234,8 @@ void SettingsState::get_rays()
 	// create all rays
 	for (int i = 0; i < shapes.size(); i++)
 	{
+		if (!FloatConvex::Intersection(*shapes[i].first, light_bounds).collision_exists)
+			continue;
 		for (int k = 0; k < shapes[i].first->getPointCount(); k++)
 		{
 			Vector2f dir = Vector2f(shapes[i].first->getPoint(k) - mp).get_normalized();
@@ -224,13 +248,13 @@ void SettingsState::get_rays()
 			Vector2f right = Vector2f((std::cos(.0001) * dir.x) - (std::sin(.0001) * dir.y),
 										(std::sin(.0001) * dir.x) + (std::cos(.0001) * dir.y));
 			
-			ray_dirs.push_back(mp + left * 300.f);
-			ray_dirs.push_back(mp + dir * 300.f);
-			ray_dirs.push_back(mp + right * 300.f);
+			ray_dirs.push_back(mp + left * max_dist);
+			ray_dirs.push_back(mp + dir * max_dist);
+			ray_dirs.push_back(mp + right * max_dist);
 		}
 	}
 	for (int i = 0; i < light_bounds.getPointCount(); i+=2)
-		ray_dirs.push_back(mp + Vector2f(light_bounds.getPoint(i) - mp).get_normalized() * 300.f);
+		ray_dirs.push_back(mp + Vector2f(light_bounds.getPoint(i) - mp).get_normalized() * max_dist);
 	
 	// check for closest intersect
 	for (int i = 0; i < ray_dirs.size(); i++)
@@ -279,16 +303,21 @@ void SettingsState::get_rays()
 
 void SettingsState::fixed_update()
 {
+	for (int i = 0; i < 3; i++)
+	{
+		if(FloatConvex::Intersection(*shapes[i].first, light_bounds).collision_exists)
+			shapes[i].second.add_shader("[8][PointLight]", light_shader);
+		else
+			shapes[i].second.remove_shader("[8][PointLight]");
+	}
 	light_bounds.set_position(Input::Instance()->mouse_position());
 	get_rays();
 	Vector2f dif;
 	dif = FloatConvex::Intersection(square, concave).penetration_vector;
-
 	if (dif != Vector2f::Infinity())
 	{
 		square.move(dif.x, dif.y);
 	}
-
 }
 
 void SettingsState::render()

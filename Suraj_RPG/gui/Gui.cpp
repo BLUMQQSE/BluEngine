@@ -1238,6 +1238,8 @@ sf::Vector2f ScrollView::get_size()
 
 #pragma region INPUT_BOX
 
+std::pair<bool, InputBox*> InputBox::input_box_in_use = std::make_pair(false, nullptr);
+
 InputBox::InputBox(float x, float y, float width, float height, float character_size, 
 	sf::Font& font, sf::Color color, bool selected)
 {
@@ -1286,6 +1288,10 @@ InputBox::InputBox(float x, float y, float width, float height, float character_
 
 InputBox::~InputBox()
 {
+	// If selected when destroying, reset static field to be false and null ptr
+	if (selected)
+		input_box_in_use = std::make_pair(false, nullptr);
+	
 	Renderer::Instance()->remove_ui(&text);
 	Renderer::Instance()->remove_ui(&box);
 }
@@ -1299,6 +1305,7 @@ void InputBox::update_sfml(sf::Event sfEvent)
 	if (selected)
 	{
 		int char_typed = sfEvent.text.unicode;
+		
 		if (char_typed < 128)
 		{
 			input_logic(char_typed);
@@ -1318,9 +1325,18 @@ void InputBox::update()
 				set_selected(false);
 		}
 	}
-
 	if (selected)
 	{
+		if (Input::Instance()->get_action_down("LEFT_ARROW"))
+		{
+			cursor_index = std::max(0, (int)cursor_index - 1);
+		}
+		if (Input::Instance()->get_action_down("RIGHT_ARROW"))
+		{
+			cursor_index = std::min((int)text.getString().getSize(), (int)cursor_index + 1);
+		}
+
+
 		text.setPosition(
 			(int)(box.getPosition().x + (box.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f),
 			(int)(text.getPosition().y)
@@ -1331,13 +1347,21 @@ void InputBox::update()
 			if (tick_on)
 			{
 				tick_on = false;
+
 				text.setString(text_string.str());
 
 			}
 			else
 			{
 				tick_on = true;
-				text.setString(text_string.str() + "|");
+
+				std::string pre = text.getString();
+				pre = pre.substr(0, cursor_index);
+				std::string post = text.getString();
+				post = post.substr(cursor_index, post.length() - (cursor_index));
+				text.setString(pre + "|" + post);
+				
+				//text.setString(text_string.str() + "|");
 			}
 		}
 		else
@@ -1366,6 +1390,32 @@ void InputBox::set_position(float x, float y)
 
 void InputBox::set_selected(bool sel)
 {
+	// first check if another inputbox needs disabled
+	if (sel)
+	{
+		if (input_box_in_use.first)
+		{
+			// should exist if true, but this is a safety check
+			if (input_box_in_use.second)
+			{
+				input_box_in_use.second->set_selected(false);
+				input_box_in_use = std::make_pair(true, this);
+			}
+		}
+		else
+		{
+			input_box_in_use = std::make_pair(true, this);
+		}
+	}
+	else
+	{
+		if (input_box_in_use.second)
+		{
+			if (input_box_in_use.second == this)
+				input_box_in_use = std::make_pair(false, nullptr);
+		}
+	}
+
 	Input::Instance()->set_using_input_box(sel);
 	selected = sel;
 
@@ -1378,6 +1428,7 @@ void InputBox::set_selected(bool sel)
 	else
 	{
 		text.setString(text_string.str() + "|");
+		cursor_index = text.getString().getSize();
 		tick_on = true;
 		tick_delta = 0;
 	}
@@ -1430,12 +1481,30 @@ const bool InputBox::is_selected() const
 void InputBox::input_logic(int char_typed)
 {
 	if (char_typed != DELETE_KEY && char_typed != ENTER_KEY && char_typed != ESCAPE_KEY)
-		//&& text_string.str().size() < limit)
-		text_string << static_cast<char>(char_typed);
+	{ 	//&& text_string.str().size() < limit)
+
+
+		// TODO: add character in correct place
+		if (text.getString().getSize() > 0 && text.getString().getSize() != cursor_index)
+		{
+			std::string pre = text.getString();
+			pre = pre.substr(0, cursor_index);
+			std::string post = text.getString();
+			post = post.substr(cursor_index, post.length() - (cursor_index));
+			//text.setString(pre + static_cast<char>(char_typed) + post);
+			text_string.str("");
+			text_string << pre << static_cast<char>(char_typed) << post;
+		}
+		else
+			text_string << static_cast<char>(char_typed);
+		
+		cursor_index = std::min((int)text_string.str().length(), (int)cursor_index + 1);
+	}
 	else if (char_typed == DELETE_KEY)
 	{
 		if (text_string.str().length() > 0)
 		{
+			cursor_index = std::max((int)cursor_index - 1, 0);
 			delete_last_char();
 		}
 	}
@@ -1444,8 +1513,20 @@ void InputBox::input_logic(int char_typed)
 		set_selected(false);
 		//selected
 	}
+
 	if (tick_on)
-		text.setString(text_string.str() + "|");
+	{
+		if (text.getString().getSize() > 0)
+		{
+			//std::string pre = text.getString();
+			//pre = pre.substr(0, cursor_index);
+			//std::string post = text.getString();
+		//	post = post.substr(cursor_index, post.length() - (cursor_index));
+		//	text.setString(pre + "|" + post);
+		}
+		else
+			text.setString(text_string.str() + "|");
+	}
 	else
 		text.setString(text_string.str());
 

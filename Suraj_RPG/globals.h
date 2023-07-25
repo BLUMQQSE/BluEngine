@@ -433,6 +433,7 @@ enum class Layer
 	EFFECTS,
 	FOREGROUND_WALLS,
 	FOREGROUND,
+	SHADER,
 	UI,
 	_LAST_DONT_REMOVE
 };
@@ -441,7 +442,7 @@ enum class Layer
 static std::vector<std::string> ToVector()
 {
 	return { "BACKGROUND", "FLOOR", "BACKGROUND_DECORATIONS", "ITEM", "ACTOR", "EFFECTS",
-		 "FOREGROUND_WALLS", "FOREGROUND", "UI" };
+		 "FOREGROUND_WALLS", "FOREGROUND", "SHADER", "UI"};
 }
 
 /// <returns>A Layer corresponding to the string value provided.</returns>
@@ -463,6 +464,8 @@ static Layer ToLayer(std::string layer)
 		return Layer::FOREGROUND_WALLS;
 	if (layer == "FOREGROUND")
 		return Layer::FOREGROUND;
+	if (layer == "SHADER")
+		return Layer::SHADER;
 	if (layer == "UI")
 		return Layer::UI;
 
@@ -493,6 +496,8 @@ static std::string ToString(Layer layer)
 		return "ITEM";
 	case Layer::UI:
 		return "UI";
+	case Layer::SHADER:
+		return "SHADER";
 	default:
 		//core::Debug::Instance()->core_log("Sorting::ToString() FAILED TO CONVERT LAYER " +
 		//	std::to_string(static_cast<int>(layer)), core::Debug::LogLevel::WARNING);
@@ -624,13 +629,14 @@ enum class Tag
 	ACTOR,
 	CAMERA,
 	INTERACTABLE,
+	TILEMAP,
 	_LAST_DONT_REMOVE
 };
 
 /// <returns>A vector of string values for all tags in the enum.</returns>
 static std::vector<std::string> ToVector()
 {
-	return { "UNTAGGED", "PLAYER", "ACTOR", "CAMERA", "INTERACTABLE" };
+	return { "UNTAGGED", "PLAYER", "ACTOR", "CAMERA", "INTERACTABLE", "TILEMAP"};
 }
 
 /// <returns>A Tag corresponding to the string value provided.</returns>
@@ -646,7 +652,8 @@ static Tag ToTag(std::string tag)
 		return Tag::CAMERA;
 	if (tag == "INTERACTABLE")
 		return Tag::INTERACTABLE;
-
+	if (tag == "TILEMAP")
+		return Tag::TILEMAP;
 	//core::Debug::Instance()->core_log("Tags::ToTag() FAILED TO CONVERT STRING: " + tag, core::Debug::LogLevel::WARNING);
 	return Tag::UNTAGGED;
 }
@@ -666,6 +673,8 @@ static std::string ToString(Tag tag)
 		return "CAMERA";
 	case Tag::INTERACTABLE:
 		return "INTERACTABLE";
+	case Tag::TILEMAP:
+		return "TILEMAP";
 	default:
 
 		//core::Debug::Instance()->core_log("Tags::ToString() FAILED TO CONVERT TAG " +

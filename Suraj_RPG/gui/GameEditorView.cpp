@@ -66,6 +66,8 @@ void GameEditorView::toggle_editor(EditorPanel panel_to_toggle)
 
 			context_active = false;
 			context_panel->set_render(false);
+			create_context_panel();
+			align_context_panel();
 		}
 		else
 		{
@@ -77,12 +79,14 @@ void GameEditorView::toggle_editor(EditorPanel panel_to_toggle)
 
 			context_active = true;
 			context_panel->set_render(true);
+			create_context_panel();
 			align_context_panel();
 		}
 		break;
 	case EditorPanel::HEIRARCHY:
 		heir_active = !heir_active;
 		heir_panel->set_render(heir_active);
+		create_context_panel();
 		align_context_panel();
 		break;
 	case EditorPanel::INSPECTOR:
@@ -92,6 +96,7 @@ void GameEditorView::toggle_editor(EditorPanel panel_to_toggle)
 	case EditorPanel::CONTEXT:
 		context_active = !context_active;
 		context_panel->set_render(context_active);
+		create_context_panel();
 		align_context_panel();
 	}
 }

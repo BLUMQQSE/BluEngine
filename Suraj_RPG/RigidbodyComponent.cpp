@@ -22,7 +22,7 @@ void RigidbodyComponent::update()
 	update_movement_state();
 	update_orientation();
 	Vector2f translation = ((external_velocity * external_dir) + (current_velocity * movement_dir))
-		* UNIT_SIZE * Time::Instance()->delta_time();
+		* UNIT_SIZE * (float)Time::Instance()->delta_time();
 	game_object->move(translation);
 }
 

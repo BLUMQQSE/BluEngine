@@ -255,7 +255,7 @@ void ResourceManager::iterate_fonts_directory(std::string dir_path)
 			sf::Font font_to_add;
 			if (!font_to_add.loadFromFile(dir_path + file_name))
 			{
-				Debug::Instance()->core_log("RESOURCEMANAGER FAILED TO LOAD FILE " + file_name, Debug::LogLevel::FAILURE);
+				Debug::Instance()->core_log("[ResourceManager] FAILED TO LOAD FILE " + file_name, Debug::LogLevel::FAILURE);
 			}
 			fonts[file_name] = font_to_add;
 
@@ -277,7 +277,10 @@ void ResourceManager::iterate_shader_directory(std::string dir_path)
 			Json::Value obj = FileManager::Instance()->load_from_file(dir_path + file_name);
 
 			shaders[file_name] = std::make_unique<sf::Shader>();
-			shaders[file_name]->loadFromFile(obj["vertex-shader"].asString(), obj["fragment-shader"].asString());
+			if (!shaders[file_name]->loadFromFile(obj["vertex-shader"].asString(), obj["fragment-shader"].asString()))
+			{
+				Debug::Instance()->core_log("[ResourceManager] FAILED TO LOAD FILE " + file_name, Debug::LogLevel::FAILURE);
+			}
 			continue;
 		}
 

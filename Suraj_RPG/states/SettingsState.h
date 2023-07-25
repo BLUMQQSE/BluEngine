@@ -44,7 +44,7 @@ public:
     bool holding = false;
     Vector2f offset = Vector2f::Zero();
 
-    FloatConvex concave = FloatConvex::Polygon(Vector2f(100, 20),
+    FloatConvex concave = FloatConvex::Polygon(Vector2f(500, 400),
         {Vector2f(0,0), Vector2f(200, 0), 
         Vector2f(200, 200), Vector2f(0, 200)});
 
@@ -57,11 +57,12 @@ protected:
 
     void get_rays();
     float max_dist = 300;
-    FloatConvex light_bounds = FloatConvex::Circle(Vector2f::Zero(), 600, 30);
+    FloatConvex light_bounds = FloatConvex::Circle(Vector2f::Zero(), 300, 30);
     std::vector<std::tuple<Vector2f, Vector2f, float>> rays;
     std::vector<Vector2f> ray_dirs;
-    bool draw_lines = true;
-    bool draw_vertex_arrays = false;
+    bool draw_lines = false;
+    bool draw_vertex_arrays = true;
+    sf::Shader* light_shader = nullptr;
 
     std::vector<std::pair<FloatConvex*, IRenderable>> shapes;
     
@@ -72,6 +73,9 @@ private:
     char z_order = 0;
     sf::Texture background_texture;
     sf::RectangleShape background;
+
+    IRenderable background_renderable{ Sorting::Layer::BACKGROUND, 0, true };
+
     std::map<std::string, std::unique_ptr<GUI::Button>> buttons;
 
     std::map<std::string, std::unique_ptr<GUI::DropDownList>> drop_downs;
@@ -85,6 +89,8 @@ private:
         std::unique_ptr<GUI::Label>>> volume_displays;
 
     std::vector<sf::VideoMode> modes;
+
+
 
     void init_gui();
     void init_text();

@@ -26,18 +26,31 @@ public:
 	{
 		// Constructor should only be used by GUI
 		RenderObject(sf::Drawable* drawable, bool& render, Sorting::Layer& sorting_layer,
-			char& z_order, sf::View** view = nullptr, sf::Shader** shader = nullptr)
+			char& z_order, sf::View** view = nullptr, std::map<std::string, sf::Shader*>* shaders = nullptr,
+					std::map<std::string, std::pair<std::string, float>>* float_uniforms = nullptr,
+					std::map<std::string, std::pair<std::string, bool>>* bool_uniforms = nullptr,
+					std::map<std::string, std::pair<std::string, sf::Glsl::Vec2>>* vec2_uniforms = nullptr,
+					std::map<std::string, std::pair<std::string, sf::Glsl::Vec4>>* color_uniforms = nullptr)
 			:render(render), sorting_layer(sorting_layer), z_order(z_order) 
 		{
 			this->sorting_layer = sorting_layer;
 			this->drawable = drawable;
 			this->z_order = z_order;
 			this->view = view;
-			this->shader = shader;
+			this->shaders = shaders;
+			this->float_uniforms = float_uniforms;
+			this->bool_uniforms = bool_uniforms;
+			this->vec2_uniforms = vec2_uniforms;
+			this->color_uniforms = color_uniforms;
 		}
 		// Optional extension for Y-Sort
 		RenderObject(sf::Drawable* drawable, bool& render, Sorting::Layer& sorting_layer,
-					 char& z_order, float* y_pos, int* render_depth, sf::View** view = nullptr, sf::Shader** shader = nullptr)
+					char& z_order, float* y_pos, int* render_depth, sf::View** view = nullptr, 
+					std::map<std::string, sf::Shader*>* shaders = nullptr,
+					std::map<std::string, std::pair<std::string, float>>* float_uniforms = nullptr,
+					std::map<std::string, std::pair<std::string, bool>>* bool_uniforms = nullptr,
+					std::map<std::string, std::pair<std::string, sf::Glsl::Vec2>>* vec2_uniforms = nullptr,
+					std::map<std::string, std::pair<std::string, sf::Glsl::Vec4>>* color_uniforms = nullptr)
 			:render(render), sorting_layer(sorting_layer), z_order(z_order),
 			y_pos(y_pos), render_depth(render_depth)
 		{
@@ -45,7 +58,11 @@ public:
 			this->drawable = drawable;
 			this->z_order = z_order;
 			this->view = view;
-			this->shader = shader;
+			this->shaders = shaders;
+			this->float_uniforms = float_uniforms;
+			this->bool_uniforms = bool_uniforms;
+			this->vec2_uniforms = vec2_uniforms;
+			this->color_uniforms = color_uniforms;
 			this->render_depth = render_depth;
 			this->y_pos = y_pos;
 		}
@@ -59,7 +76,11 @@ public:
 			this->sorting_layer = renderable->get_sorting_layer();
 			this->z_order = renderable->get_z_order();
 			this->view = renderable->get_view_pointer();
-			this->shader = renderable->get_shader_pointer();
+			this->shaders = renderable->get_shaders();
+			this->float_uniforms = renderable->get_float_uniforms();
+			this->bool_uniforms = renderable->get_bool_uniforms();
+			this->vec2_uniforms = renderable->get_vec2_uniforms();
+			this->color_uniforms = renderable->get_color_uniforms();
 			this->drawable = drawable;
 		}
 		
@@ -104,7 +125,13 @@ public:
 		char& z_order;
 		
 		sf::View** view;
-		sf::Shader** shader;
+		//sf::Shader** shader;
+		std::map<std::string, sf::Shader*>* shaders = nullptr;
+		std::map<std::string, std::pair<std::string, float>>* float_uniforms = nullptr;
+		std::map<std::string, std::pair<std::string, bool>>* bool_uniforms = nullptr;
+		std::map<std::string, std::pair<std::string, sf::Glsl::Vec2>>* vec2_uniforms = nullptr;
+		std::map<std::string, std::pair<std::string, sf::Glsl::Vec4>>* color_uniforms = nullptr;
+
 
 		// Used for y-sort
 		float* y_pos = nullptr;
@@ -119,10 +146,15 @@ public:
 	{
 		TestShit() {}
 		TestShit(Sorting::Layer layer, bool render, sf::Drawable* drawable, char z_order,
-				 sf::View** view, sf::Shader** shader, float y_pos, int render_depth,
-				 bool has_global_bounds)
+				sf::View** view, std::map<std::string, sf::Shader*>* shaders,
+				std::map<std::string, std::pair<std::string, float>>* float_uniforms,
+				std::map<std::string, std::pair<std::string, bool>>* bool_uniforms,
+				std::map<std::string, std::pair<std::string, sf::Glsl::Vec2>>* vec2_uniforms,
+				std::map<std::string, std::pair<std::string, sf::Glsl::Vec4>>* color_uniforms,
+				 float y_pos, int render_depth, bool has_global_bounds)
 			:sorting_layer(layer), render(render), drawable(drawable), z_order(z_order),
-			view(view), shader(shader), y_pos(y_pos), render_depth(render_depth),
+			view(view), shaders(shaders), float_uniforms(float_uniforms), bool_uniforms(bool_uniforms), vec2_uniforms(vec2_uniforms),
+			color_uniforms(color_uniforms), y_pos(y_pos), render_depth(render_depth),
 			has_global_bounds(has_global_bounds)
 		{
 
@@ -134,7 +166,11 @@ public:
 			drawable = r.drawable;
 			z_order = r.z_order;
 			view = r.view;
-			shader = r.shader;
+			shaders = r.shaders;
+			float_uniforms = r.float_uniforms;
+			bool_uniforms = r.bool_uniforms;
+			vec2_uniforms = r.vec2_uniforms;
+			color_uniforms = r.color_uniforms;
 			y_pos = *r.y_pos;
 			render_depth = *r.render_depth;
 			has_global_bounds = r.has_global_bounds;
@@ -146,7 +182,13 @@ public:
 		char z_order;
 
 		sf::View** view = nullptr;
-		sf::Shader** shader = nullptr;
+
+		std::map<std::string, sf::Shader*>* shaders = nullptr;
+		std::map<std::string, std::pair<std::string, float>>* float_uniforms = nullptr;
+		std::map<std::string, std::pair<std::string, bool>>* bool_uniforms = nullptr;
+		std::map<std::string, std::pair<std::string, sf::Glsl::Vec2>>* vec2_uniforms = nullptr;
+		std::map<std::string, std::pair<std::string, sf::Glsl::Vec4>>* color_uniforms = nullptr;
+
 
 		// Used for y-sort
 		float y_pos;
@@ -239,9 +281,11 @@ private:
 
 	void update_top_ui();
 
+	void temp_render_with_shader(sf::Drawable* drawable, sf::Shader* shaders);
+
 	std::vector<TestShit> sort_batch(std::vector<RenderObject> batch);
 
-	bool draw_gizmos = true;
+	bool draw_gizmos = false;
 	bool use_y_sort = true;
 };
 
@@ -263,9 +307,9 @@ public:
 		outline_thickness = 1;
 	}
 
-	static void draw_vertex_array(sf::VertexArray& v)
+	static void draw_vertex_array(sf::VertexArray& v, sf::Shader* shader = nullptr)
 	{
-		Renderer::Instance()->draw(&v, view);
+		Renderer::Instance()->draw(&v, view, shader);
 	}
 
 	static void draw_convex(FloatConvex& convex)

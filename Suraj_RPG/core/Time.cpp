@@ -1,5 +1,6 @@
 #include "../pch.h"
 #include "Time.h"
+#include "Renderer.h"
 
 namespace bm98::core
 {
@@ -41,7 +42,7 @@ void Time::init(float total_time)
 	set_real_time(total_time);
 }
 
-void Time::update_delta(const float dt)
+void Time::update_delta(float dt)
 {
 	total_real_delta += dt;
 	time += delta;

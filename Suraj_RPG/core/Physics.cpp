@@ -4,6 +4,7 @@
 #include "../GameObject.h"
 #include "../tiles/Tile.h"
 #include "../TilemapColliderComponent.h"
+#include "../Light.h"
 namespace bm98::core
 {
 
@@ -41,6 +42,8 @@ void Physics::add_to_physics(std::shared_ptr<GameObject> game_object)
 	}
 
 	objects.push_back(g);
+
+
 }
 
 void Physics::remove_from_physics(std::shared_ptr<GameObject> game_object)
@@ -65,6 +68,7 @@ void Physics::remove_from_physics(std::shared_ptr<GameObject> game_object)
 			}
 		}
 	}
+
 }
 
 void Physics::clear_objects()
@@ -296,7 +300,7 @@ int Physics::OverlapConvex(FloatConvex& shape, PhysicsNS::LayerMask mask, std::s
 
 	}
 	return collisions.size();
-}
+} 
 
 Physics::Physics()
 {
@@ -334,6 +338,7 @@ void Physics::handle_collision(std::pair<std::weak_ptr<GameObject>, CollisionSta
 
 	if (!a_collider.lock() || !b_collider.lock())
 		return;
+	// Currently gonna go with triggers can trigger triggers
 	if (a_collider.lock()->is_trigger() && b_collider.lock()->is_trigger())
 		return;
 	if (!a_collider.lock()->is_active() || !b_collider.lock()->is_active())
@@ -613,4 +618,5 @@ void Physics::handle_event(Event* event)
 		break;
 	}
 }
+
 }

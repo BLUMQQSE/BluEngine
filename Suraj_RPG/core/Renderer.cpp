@@ -5,11 +5,6 @@
 
 namespace bm98::core
 {
-//std::set<Renderer::RenderObject, Renderer::cmpStruct> Renderer::renderables;
-//std::vector<Renderer::GizmoObject> Renderer::gizmos;
-//bool Renderer::draw_gizmos = true;
-//unsigned Renderer::id = 0;
-//sf::RenderTarget* Renderer::window;
 
 float UNIT_SIZE = 32.f;
 float SCALE = 2.f;
@@ -18,8 +13,6 @@ void Renderer::init(RenderTarget* render_target)
 {
 	window = render_target;
 }
-
-
 
 void Renderer::add(RenderObject render_object)
 {
@@ -81,8 +74,6 @@ void Renderer::add_ui(RenderObject ui_render_object)
 			return;
 		}
 	}
-
-
 	// never got placed, so put in back spot
 	ui_renderables.push_back(ui_render_object);
 
@@ -101,8 +92,7 @@ void Renderer::remove(sf::Drawable* drawable)
 		}
 	}
 	
-	Debug::Instance()->core_log("RENDERER ATTEMPTED TO REMOVE NON-EXISTENT RENDERABLE", Debug::LogLevel::WARNING);
-
+	//Debug::Instance()->core_log("RENDERER ATTEMPTED TO REMOVE NON-EXISTENT RENDERABLE", Debug::LogLevel::WARNING);
 }
 
 void Renderer::remove_ui(sf::Drawable* drawable)
@@ -186,10 +176,12 @@ void Renderer::render_list(std::list<RenderObject>& list)
 			if (*it->view)
 				window->setView(**it->view);
 
-		if (it->shader)
+		if (it->shaders)
 		{
-			window->draw(*it->drawable, *it->shader);
-			continue;
+			for (auto& s : *it->shaders)
+			{
+				temp_render_with_shader(it->drawable, s.second);
+			}
 		}
 		window->draw(*it->drawable);
 	}
@@ -233,10 +225,16 @@ void Renderer::render_y_sorted_list(std::list<RenderObject>& list)
 				if (*test[i].view)
 					window->setView(**test[i].view);
 
-			if (test[i].shader)
+			if (test[i].shaders)
 			{
-				window->draw(*test[i].drawable, *test[i].shader);
-				continue;
+				for (auto& s : *test[i].shaders)
+				{
+					temp_render_with_shader(test[i].drawable, s.second);
+					// TODO: Need to apply shaders and draw final drawable
+
+					//window->draw(*test[i].drawable, *test[i].shader);
+					//continue;
+				}
 			}
 			window->draw(*test[i].drawable);
 		}
@@ -251,10 +249,16 @@ void Renderer::render_y_sorted_list(std::list<RenderObject>& list)
 			if (*batch_it->view)
 				window->setView(**batch_it->view);
 
-		if (batch_it->shader)
-		{
-			window->draw(*batch_it->drawable, *batch_it->shader);
-			continue;
+		if(batch_it->shaders)
+		{ 
+			for (auto& s : *batch_it->shaders)
+			{
+				temp_render_with_shader(batch_it->drawable, s.second);
+				// TODO: Need to apply shaders and draw final drawable
+
+				//window->draw(*batch_it->drawable, *batch_it->shader);
+				//continue;
+			}
 		}
 		window->draw(*batch_it->drawable);
 
@@ -273,10 +277,16 @@ void Renderer::render_y_sorted_list(std::list<RenderObject>& list)
 				if (*it->view)
 					window->setView(**it->view);
 
-			if (it->shader)
+			if (it->shaders)
 			{
-				window->draw(*it->drawable, *it->shader);
-				continue;
+				for (auto& s : *it->shaders)
+				{
+					temp_render_with_shader(it->drawable, s.second);
+					// TODO: Need to apply shaders and draw final drawable
+
+					//window->draw(*it->drawable, *it->shader);
+					continue;
+				}
 			}
 			window->draw(*it->drawable);
 		}
@@ -290,10 +300,16 @@ void Renderer::render_y_sorted_list(std::list<RenderObject>& list)
 			if (*batch_it->view)
 				window->setView(**batch_it->view);
 
-		if (batch_it->shader)
+		if (batch_it->shaders)
 		{
-			window->draw(*batch_it->drawable, *batch_it->shader);
-			continue;
+			for (auto& s : *batch_it->shaders)
+			{
+				temp_render_with_shader(batch_it->drawable, s.second);
+				// TODO: Need to apply shaders and draw final drawable
+
+				//window->draw(*batch_it->drawable, *batch_it->shader);
+				continue;
+			}
 		}
 		window->draw(*batch_it->drawable);
 		
@@ -361,6 +377,12 @@ std::vector<Renderer::TestShit> Renderer::sort_batch(std::vector<Renderer::Rende
 		test[j + 1] = temp;
 	}
 	return test;
+}
+
+
+void Renderer::temp_render_with_shader(sf::Drawable* drawable, sf::Shader* shader)
+{
+	window->draw(*drawable, shader);
 }
 
 sf::Vector2u Renderer::get_window_size()

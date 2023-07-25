@@ -340,7 +340,6 @@ private:
 
 class InputBox : public GUIObject
 {
-
 public:
 	InputBox(float x, float y, float width, float height, float character_size, 
 		sf::Font& font, sf::Color color = sf::Color::Black, bool selected = false);
@@ -366,9 +365,13 @@ private:
 	bool selected;
 	//int limit;
 	
+	unsigned cursor_index = 0;
+
 	float tick_timer = .5f;
 	float tick_delta = 0;
 	bool tick_on = false;
+
+	static std::pair<bool, InputBox*> input_box_in_use;
 
 	void input_logic(int char_typed);
 	void delete_last_char();

@@ -315,7 +315,10 @@
     <ClCompile Include="Effector.cpp">
       <Filter>Scripts\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="PointLightComponent.cpp">
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Components\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
       <Filter>Components\Lighting</Filter>
     </ClCompile>
   </ItemGroup>
@@ -599,7 +602,10 @@
     <ClInclude Include="Effector.h">
       <Filter>Scripts\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="PointLightComponent.h">
+    <ClInclude Include="PointLight.h">
+      <Filter>Components\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
       <Filter>Components\Lighting</Filter>
     </ClInclude>
   </ItemGroup>

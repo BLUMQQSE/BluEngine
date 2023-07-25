@@ -142,7 +142,8 @@ std::vector<Editor::SerializedVar> IInteractable::get_editor_values()
 	vals.push_back(Editor::SerializedVar("busy", static_cast<void*>(&busy), Var::Type::Bool));
 	vals.push_back(Editor::SerializedVar("duration", static_cast<void*>(&interaction_duration), Var::Type::Float));
 	vals.push_back(Editor::SerializedVar("timer", static_cast<void*>(&timer_as_float), Var::Type::Float));
-	priority_as_string = Interaction::ToString(interaction_priority);
+	vals.push_back(Editor::SerializedVar("require_input", static_cast<void*>(&require_player_input), Var::Type::Bool));
+	//priority_as_string = Interaction::ToString(interaction_priority);
 	
 
 	return vals;

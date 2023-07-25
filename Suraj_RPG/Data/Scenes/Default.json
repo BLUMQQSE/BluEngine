@@ -55,6 +55,112 @@
 							"position" : 
 							{
 								"x" : 210.0,
+								"y" : 20.0
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 10.0,
+						"hitbox-offsetX" : 10.0,
+						"hitbox-offsetY" : 20.0,
+						"hitbox-width" : 10.0,
+						"trigger" : true
+					}
+				},
+				{
+					"name" : "WeaponController",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INSTANT",
+							"require-player-input" : false
+						},
+						"item-data" : "SwordData.json",
+						"item-state" : "DROPPED"
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Sword2",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED",
+				"unique-id" : 0
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 200.0,
+					"y" : 0.0
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "BACKGROUND",
+							"z-order" : 0
+						},
+						"pivot-offset" : 0.0,
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
+						"sorting-group" : false,
+						"sprite-file-path" : "sword.png"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 10.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 10.0,
+									"y" : 10.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 10.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 210.0,
 								"y" : 220.0
 							},
 							"rotation" : 0.0,
@@ -112,6 +218,217 @@
 			"components" : 
 			[
 				{
+					"name" : "SceneChange",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "Changing Scene to cave.json",
+							"interaction-type" : "INSTANT",
+							"require-player-input" : true
+						},
+						"destination-position" : 
+						{
+							"x" : 100.0,
+							"y" : 200.0
+						},
+						"destination-scene" : "cave.json"
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.5,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 2.0,
+						"freeze-x" : false,
+						"freeze-y" : false,
+						"mass" : 0.0,
+						"max-velocity" : 7.0,
+						"orientation" : "UP"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 20.0,
+									"y" : 20.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 20.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 1138.9000244140625,
+								"y" : 691.79998779296875
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 20.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 20.0,
+						"trigger" : true
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "SceneChange",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED",
+				"unique-id" : 0
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 1138.9000244140625,
+					"y" : 691.79998779296875
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ACTOR",
+							"z-order" : 0
+						},
+						"pivot-offset" : 0.0,
+						"size" : 
+						{
+							"x" : 64,
+							"y" : 64
+						},
+						"sorting-group" : false,
+						"sprite-file-path" : "player.png"
+					}
+				},
+				{
+					"name" : "DummyAI",
+					"value" : null
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.5,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 0.5,
+						"freeze-x" : true,
+						"freeze-y" : true,
+						"mass" : 0.0,
+						"max-velocity" : 7.0,
+						"orientation" : "UP"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 15.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 15.0,
+									"y" : 10.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 10.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 1304.0999755859375,
+								"y" : 844.79998779296875
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 10.0,
+						"hitbox-offsetX" : 25.0,
+						"hitbox-offsetY" : 50.0,
+						"hitbox-width" : 15.0,
+						"trigger" : true
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Dummy",
+				"physics-layer" : "ACTOR",
+				"tag" : "UNTAGGED",
+				"unique-id" : 0
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 1279.0999755859375,
+					"y" : 794.79998779296875
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
 					"name" : "TilemapComponent",
 					"value" : 
 					{
@@ -151,6 +468,10 @@
 							},
 							{
 								"layer" : "FOREGROUND",
+								"physical-layer" : "DEFAULT"
+							},
+							{
+								"layer" : "SHADER",
 								"physical-layer" : "DEFAULT"
 							}
 						],
@@ -33822,7 +34143,7 @@
 			{
 				"name" : "Tilemap",
 				"physics-layer" : "DEFAULT",
-				"tag" : "UNTAGGED",
+				"tag" : "TILEMAP",
 				"unique-id" : 0
 			},
 			"transform" : 
@@ -33838,6 +34159,248 @@
 					"y" : 0.0
 				},
 				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "SpriteComponent",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "ITEM",
+							"z-order" : 0
+						},
+						"pivot-offset" : 0.0,
+						"size" : 
+						{
+							"x" : 32,
+							"y" : 32
+						},
+						"sorting-group" : false,
+						"sprite-file-path" : "chest.png"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 15.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 15.0,
+									"y" : 5.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 5.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 968.70001220703125,
+								"y" : 908.5999755859375
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 5.0,
+						"hitbox-offsetX" : 12.5,
+						"hitbox-offsetY" : 20.0,
+						"hitbox-width" : 10.0,
+						"trigger" : false
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.0,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 0.0,
+						"freeze-x" : false,
+						"freeze-y" : false,
+						"mass" : 0.0,
+						"max-velocity" : 0.0,
+						"orientation" : "DOWN"
+					}
+				},
+				{
+					"name" : "Chest",
+					"value" : 
+					{
+						"IInteractable" : 
+						{
+							"failed-interaction-prompt" : "failed interactable prompt",
+							"interaction-duration" : 0.0,
+							"interaction-priority" : "MID",
+							"interaction-prompt" : "interaction prompt",
+							"interaction-type" : "INPUT",
+							"require-player-input" : true
+						}
+					}
+				},
+				{
+					"name" : "Inventory",
+					"value" : 
+					{
+						"content" : 
+						[
+							{
+								"current-capacity" : 1,
+								"index" : 0,
+								"item" : "SwordData.json"
+							}
+						],
+						"inventory-type" : "GENERAL",
+						"max-size" : 8
+					}
+				},
+				{
+					"name" : "InventoryWindow",
+					"value" : null
+				}
+			],
+			"info" : 
+			{
+				"name" : "Chest",
+				"physics-layer" : "INTERACTABLE",
+				"tag" : "UNTAGGED",
+				"unique-id" : 0
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 956.20001220703125,
+					"y" : 888.5999755859375
+				},
+				"rotation" : 0.0
+			}
+		},
+		{
+			"components" : 
+			[
+				{
+					"name" : "PointLight",
+					"value" : 
+					{
+						"IRenderable" : 
+						{
+							"render" : true,
+							"sorting-layer" : "SHADER",
+							"z-order" : 0
+						},
+						"color" : 
+						{
+							"a" : 255,
+							"b" : 0,
+							"g" : 0,
+							"r" : 255
+						},
+						"intensity" : 1.0,
+						"shader-file-name" : "PointLightShader.json"
+					}
+				},
+				{
+					"name" : "RigidbodyComponent",
+					"value" : 
+					{
+						"acceleration" : 0.0,
+						"body-type" : "KINEMATIC",
+						"deceleration" : 0.0,
+						"freeze-x" : false,
+						"freeze-y" : false,
+						"mass" : 0.0,
+						"max-velocity" : 0.0,
+						"orientation" : "UP"
+					}
+				},
+				{
+					"name" : "BoxColliderComponent",
+					"value" : 
+					{
+						"active" : true,
+						"collider-bounds" : 
+						{
+							"model" : 
+							[
+								{
+									"x" : 0.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 300.0,
+									"y" : 0.0
+								},
+								{
+									"x" : 300.0,
+									"y" : 300.0
+								},
+								{
+									"x" : 0.0,
+									"y" : 300.0
+								}
+							],
+							"point-count" : 4,
+							"position" : 
+							{
+								"x" : 798.5999755859375,
+								"y" : 820.70001220703125
+							},
+							"rotation" : 0.0,
+							"shape-type" : "POLYGON"
+						},
+						"collision-check-type" : "DISCRETE",
+						"hitbox-height" : 300.0,
+						"hitbox-offsetX" : 0.0,
+						"hitbox-offsetY" : 0.0,
+						"hitbox-width" : 300.0,
+						"trigger" : true
+					}
+				}
+			],
+			"info" : 
+			{
+				"name" : "Light",
+				"physics-layer" : "DEFAULT",
+				"tag" : "UNTAGGED",
+				"unique-id" : 0
+			},
+			"transform" : 
+			{
+				"local-position" : 
+				{
+					"x" : 0.0,
+					"y" : 0.0
+				},
+				"position" : 
+				{
+					"x" : 798.5999755859375,
+					"y" : 820.70001220703125
+				},
+				"rotation" : -431602080.0
 			}
 		},
 		{
@@ -34057,461 +34620,6 @@
 				{
 					"x" : 1218.199951171875,
 					"y" : 737.0999755859375
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SpriteComponent",
-					"value" : 
-					{
-						"IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ITEM",
-							"z-order" : 0
-						},
-						"pivot-offset" : 0.0,
-						"size" : 
-						{
-							"x" : 32,
-							"y" : 32
-						},
-						"sorting-group" : false,
-						"sprite-file-path" : "chest.png"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 15.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 15.0,
-									"y" : 5.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 5.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 966.20001220703125,
-								"y" : 908.5999755859375
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 5.0,
-						"hitbox-offsetX" : 12.5,
-						"hitbox-offsetY" : 20.0,
-						"hitbox-width" : 10.0,
-						"trigger" : false
-					}
-				},
-				{
-					"name" : "RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 0.0,
-						"body-type" : "KINEMATIC",
-						"deceleration" : 0.0,
-						"freeze-x" : false,
-						"freeze-y" : false,
-						"mass" : 0.0,
-						"max-velocity" : 0.0,
-						"orientation" : "DOWN"
-					}
-				},
-				{
-					"name" : "Chest",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INPUT",
-							"require-player-input" : true
-						}
-					}
-				},
-				{
-					"name" : "Inventory",
-					"value" : 
-					{
-						"content" : 
-						[
-							{
-								"current-capacity" : 1,
-								"index" : 0,
-								"item" : "SwordData.json"
-							}
-						],
-						"inventory-type" : "GENERAL",
-						"max-size" : 8
-					}
-				},
-				{
-					"name" : "InventoryWindow",
-					"value" : null
-				}
-			],
-			"info" : 
-			{
-				"name" : "Chest",
-				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED",
-				"unique-id" : 0
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 956.20001220703125,
-					"y" : 888.5999755859375
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SceneChange",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INSTANT",
-							"require-player-input" : true
-						},
-						"destination-position" : 
-						{
-							"x" : 100.0,
-							"y" : 200.0
-						},
-						"destination-scene" : "cave.json"
-					}
-				},
-				{
-					"name" : "RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 0.5,
-						"body-type" : "KINEMATIC",
-						"deceleration" : 2.0,
-						"freeze-x" : false,
-						"freeze-y" : false,
-						"mass" : 0.0,
-						"max-velocity" : 7.0,
-						"orientation" : "UP"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 20.0,
-									"y" : 20.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 20.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 1138.9000244140625,
-								"y" : 691.79998779296875
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 20.0,
-						"hitbox-offsetX" : 0.0,
-						"hitbox-offsetY" : 0.0,
-						"hitbox-width" : 20.0,
-						"trigger" : true
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "SceneChange",
-				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED",
-				"unique-id" : 0
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 1138.9000244140625,
-					"y" : 691.79998779296875
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SpriteComponent",
-					"value" : 
-					{
-						"IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "BACKGROUND",
-							"z-order" : 0
-						},
-						"pivot-offset" : 0.0,
-						"size" : 
-						{
-							"x" : 64,
-							"y" : 64
-						},
-						"sorting-group" : false,
-						"sprite-file-path" : "sword.png"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 10.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 10.0,
-									"y" : 10.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 10.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 210.0,
-								"y" : 20.0
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 10.0,
-						"hitbox-offsetX" : 10.0,
-						"hitbox-offsetY" : 20.0,
-						"hitbox-width" : 10.0,
-						"trigger" : true
-					}
-				},
-				{
-					"name" : "WeaponController",
-					"value" : 
-					{
-						"IInteractable" : 
-						{
-							"failed-interaction-prompt" : "failed interactable prompt",
-							"interaction-duration" : 0.0,
-							"interaction-priority" : "MID",
-							"interaction-prompt" : "interaction prompt",
-							"interaction-type" : "INSTANT",
-							"require-player-input" : false
-						},
-						"item-data" : "SwordData.json",
-						"item-state" : "DROPPED"
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "Sword2",
-				"physics-layer" : "INTERACTABLE",
-				"tag" : "UNTAGGED",
-				"unique-id" : 0
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 200.0,
-					"y" : 0.0
-				},
-				"rotation" : 0.0
-			}
-		},
-		{
-			"components" : 
-			[
-				{
-					"name" : "SpriteComponent",
-					"value" : 
-					{
-						"IRenderable" : 
-						{
-							"render" : true,
-							"sorting-layer" : "ACTOR",
-							"z-order" : 0
-						},
-						"pivot-offset" : 0.0,
-						"size" : 
-						{
-							"x" : 64,
-							"y" : 64
-						},
-						"sorting-group" : false,
-						"sprite-file-path" : "player.png"
-					}
-				},
-				{
-					"name" : "DummyAI",
-					"value" : null
-				},
-				{
-					"name" : "RigidbodyComponent",
-					"value" : 
-					{
-						"acceleration" : 0.5,
-						"body-type" : "KINEMATIC",
-						"deceleration" : 0.5,
-						"freeze-x" : true,
-						"freeze-y" : true,
-						"mass" : 0.0,
-						"max-velocity" : 7.0,
-						"orientation" : "UP"
-					}
-				},
-				{
-					"name" : "BoxColliderComponent",
-					"value" : 
-					{
-						"active" : true,
-						"collider-bounds" : 
-						{
-							"model" : 
-							[
-								{
-									"x" : 0.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 15.0,
-									"y" : 0.0
-								},
-								{
-									"x" : 15.0,
-									"y" : 10.0
-								},
-								{
-									"x" : 0.0,
-									"y" : 10.0
-								}
-							],
-							"point-count" : 4,
-							"position" : 
-							{
-								"x" : 1304.0999755859375,
-								"y" : 844.79998779296875
-							},
-							"rotation" : 0.0,
-							"shape-type" : "POLYGON"
-						},
-						"collision-check-type" : "DISCRETE",
-						"hitbox-height" : 10.0,
-						"hitbox-offsetX" : 25.0,
-						"hitbox-offsetY" : 50.0,
-						"hitbox-width" : 15.0,
-						"trigger" : true
-					}
-				}
-			],
-			"info" : 
-			{
-				"name" : "Dummy",
-				"physics-layer" : "ACTOR",
-				"tag" : "UNTAGGED",
-				"unique-id" : 0
-			},
-			"transform" : 
-			{
-				"local-position" : 
-				{
-					"x" : 0.0,
-					"y" : 0.0
-				},
-				"position" : 
-				{
-					"x" : 1279.0999755859375,
-					"y" : 794.79998779296875
 				},
 				"rotation" : 0.0
 			}

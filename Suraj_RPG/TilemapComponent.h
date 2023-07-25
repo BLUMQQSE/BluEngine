@@ -78,6 +78,12 @@ public:
 		return physical_layers[layer]; 
 	}
 
+	void temp_add_shader(sf::Shader* shader)
+	{
+		for (int i = 0; i < renderable_info.size(); i++)
+			renderable_info[i].add_shader("temp", shader);
+	}
+
 	/// <summary>
 	/// Loads tile sheets used by the tilemap from tiles_file_path and loads them into
 	/// the tile_sheets map.

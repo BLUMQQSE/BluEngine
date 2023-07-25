@@ -8,7 +8,7 @@ namespace bm98::core
 
 class Time : public IData, public Listener
 {
-#define FIXED_INTERVAL .02f
+#define FIXED_INTERVAL .015f
 public:
 	// Returns instance of the EventSystem
 	static Time* Instance()
@@ -54,7 +54,7 @@ private:
 
 	void init(float total_time);
 	void set_real_time(const float d); 
-	void update_delta(const float dt);
+	void update_delta(float dt);
 	void update_fixed_delta();
 	void reset_time_since_state_change();
 	void reset_fixed_delta();
